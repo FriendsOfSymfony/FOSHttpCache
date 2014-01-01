@@ -1,15 +1,15 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests\Functional;
+namespace FOS\HttpCache\Tests\Functional;
 
-use FOS\HttpCacheBundle\CacheManager;
+use FOS\HttpCache\CacheManager;
+use FOS\HttpCache\Tests\VarnishTestCase;
 
-class CacheManagerTest extends FunctionalTestCase
+class CacheManagerTest extends VarnishTestCase
 {
     public function testInvalidateTags()
     {
-        $router = \Mockery::mock('\Symfony\Component\Routing\RouterInterface');
-        $cacheManager = new CacheManager($this->varnish, $router);
+        $cacheManager = new CacheManager($this->varnish);
 
         $this->assertMiss(self::getResponse('/tags.php'));
         $this->assertHit(self::getResponse('/tags.php'));
@@ -18,4 +18,4 @@ class CacheManagerTest extends FunctionalTestCase
 
         $this->assertMiss(self::getResponse('/tags.php'));
     }
-} 
+}

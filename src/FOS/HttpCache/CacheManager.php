@@ -2,12 +2,10 @@
 
 namespace FOS\HttpCache;
 
-use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
-use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
-use FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface;
-use FOS\HttpCacheBundle\Invalidation\Method\RefreshInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\RouterInterface;
+use FOS\HttpCache\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\Invalidation\Method\BanInterface;
+use FOS\HttpCache\Invalidation\Method\PurgeInterface;
+use FOS\HttpCache\Invalidation\Method\RefreshInterface;
 
 /**
  * Manages HTTP cache invalidation.

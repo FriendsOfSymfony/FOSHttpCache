@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Invalidation;
+namespace FOS\HttpCache\Invalidation;
 
 /**
  * An HTTP caching reverse proxy
