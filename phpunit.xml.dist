@@ -23,8 +23,8 @@
     </filter>
 
     <listeners>
-        <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
-        <listener class="\FOS\HttpCacheBundle\Tests\Functional\WebServerListener">
+        <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
+        <listener class="\FOS\HttpCache\Tests\Functional\WebServerListener">
             <arguments>
                 <string>functional</string>
             </arguments>
@@ -32,8 +32,9 @@
     </listeners>
 
     <php>
-        <const name="WEB_SERVER_HOST" value="localhost" />
-        <const name="WEB_SERVER_PORT" value="8000" />
+        <const name="VARNISH_FILE" value="../../../../tests/FOS/HttpCache/Tests/Functional/Fixtures/varnish/fos.vcl" />
+        <const name="WEB_SERVER_HOSTNAME" value="fos.lo" />
+        <const name="WEB_SERVER_PORT" value="80" />
         <const name="WEB_SERVER_DOCROOT" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/web" />
     </php>
 </phpunit>
