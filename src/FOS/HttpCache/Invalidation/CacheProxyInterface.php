@@ -8,5 +8,10 @@ namespace FOS\HttpCacheBundle\Invalidation;
  */
 interface CacheProxyInterface
 {
-
-} 
+    /**
+     * Send all pending invalidation requests.
+     *
+     * @return $this
+     */
+    public function flush();
+}

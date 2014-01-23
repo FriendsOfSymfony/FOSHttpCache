@@ -1,9 +1,9 @@
 {
-    "name": "friendsofsymfony/http-cache-bundle",
-    "type": "symfony-bundle",
-    "description": "Set path based HTTP cache headers and send invalidation requests to your HTTP cache",
+    "name": "friendsofsymfony/http-cache",
+    "type": "library",
+    "description": "Tools to manage cache invalidation",
     "keywords": [ "http", "caching", "purge", "invalidation", "varnish", "esi" ],
-    "homepage": "https://github.com/ddeboer/FOSHttpCacheBundle",
+    "homepage": "https://github.com/friendsofsymfony/FOSHttpCache",
     "license": "MIT",
     "authors": [
         {
@@ -17,28 +17,28 @@
         },
         {
             "name": "Community contributions",
-            "homepage": "https://github.com/friendsofsymfony/FOSHttpCacheBundle/contributors"
+            "homepage": "https://github.com/friendsofsymfony/FOSHttpCache/contributors"
         }
     ],
     "require": {
         "php": ">=5.3.3",
-        "symfony/framework-bundle": "~2.1"
+        "guzzle/http": "*"
     },
     "require-dev": {
-        "guzzle/http": "*",
         "guzzle/plugin-mock": "*",
         "mockery/mockery": "*",
-        "monolog/monolog": "*",
-        "sensio/framework-extra-bundle": "~2.1",
-        "symfony/expression-language": "~2.4"
+        "monolog/monolog": "*"
     },
     "suggest": {
         "guzzle/http": "For sending invalidation requests",
-        "sensio/framework-extra-bundle": "For Tagged Cache Invalidation",
-        "symfony/expression-language": "For Tagged Cache Invalidation"
+        "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {
-        "psr-0": { "FOS\\HttpCacheBundle": "" }
+        "psr-0": { "FOS\\HttpCache": "src" }
     },
-    "target-dir": "FOS/HttpCacheBundle"
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle;
+namespace FOS\HttpCache;
 
 use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
 use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
@@ -10,8 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Manages HTTP cache invalidations
+ * Manages HTTP cache invalidation.
  *
+ * @author David de Boer <david@driebit.nl>
  */
 class CacheManager
 {
@@ -26,30 +27,27 @@ class CacheManager
     protected $cache;
 
     /**
-     * @var RouterInterface
-     */
-    protected $router;
-
-    /**
      * Constructor
      *
      * @param CacheProxyInterface $cache  HTTP cache
-     * @param RouterInterface     $router Symfony router
      */
-    public function __construct(CacheProxyInterface $cache, RouterInterface $router)
+    public function __construct(CacheProxyInterface $cache)
     {
         $this->cache = $cache;
-        $this->router = $router;
     }
 
     /**
      * Set the HTTP header name that will hold cache tags
      *
      * @param string $tagsHeader
+     *
+     * @return $this
      */
     public function setTagsHeader($tagsHeader)
     {
         $this->tagsHeader = $tagsHeader;
+
+        return $this;
     }
 
     /**
@@ -63,36 +61,12 @@ class CacheManager
     }
 
     /**
-     * Assign cache tags to a response
-     *
-     * @param Response $response
-     * @param array    $tags
-     * @param bool     $replace  Whether to replace the current tags on the
-     *                           response
-     *
-     * @return $this
-     */
-    public function tagResponse(Response $response, array $tags, $replace = false)
-    {
-        if (!$replace) {
-            $tags = array_merge(
-                $response->headers->get($this->getTagsHeader(), array()),
-                $tags
-            );
-        }
-
-        $uniqueTags = array_unique($tags);
-        $response->headers->set($this->getTagsHeader(), implode(',', $uniqueTags));
-
-        return $this;
-    }
-
-    /**
      * Invalidate a path or URL
      *
      * @param string $path Path or URL
      *
      * @return $this
+     *
      * @throws \RuntimeException
      */
     public function invalidatePath($path)
@@ -101,22 +75,7 @@ class CacheManager
             throw new \RuntimeException('HTTP cache does not support PURGE requests');
         }
 
-        return $this->cache->purge($path);
-
-        return $this;
-    }
-
-    /**
-     * Invalidate a route
-     *
-     * @param string $name       Route name
-     * @param array  $parameters Route parameters (optional)
-     *
-     * @return $this
-     */
-    public function invalidateRoute($name, $parameters = array())
-    {
-        $this->invalidatePath($this->router->generate($name, $parameters));
+        $this->cache->purge($path);
 
         return $this;
     }
@@ -128,6 +87,7 @@ class CacheManager
      * @param array $headers HTTP headers (optional)
      *
      * @return $this
+     *
      * @throws \RuntimeException
      */
     public function refreshPath($path, array $headers = array())
@@ -141,26 +101,9 @@ class CacheManager
         return $this;
     }
 
-    /**
-     * Refresh a route
-     *
-     * @param string $route     Route name
-     * @param array $parameters Route parameters (optional)
-     *
-     * @return $this
-     */
-    public function refreshRoute($route, array $parameters = array())
-    {
-        $this->refreshPath($this->router->generate($route, $parameters));
-
-        return $this;
-    }
-
-
-
     public function invalidateRegex($regex)
     {
-
+        throw new \RuntimeException('not implemented yet');
     }
 
     /**
@@ -169,6 +112,7 @@ class CacheManager
      * @param array $tags Cache tags
      *
      * @return $this
+     *
      * @throws \RuntimeException If HTTP cache does not support BAN requests
      */
     public function invalidateTags(array $tags)
@@ -184,11 +128,14 @@ class CacheManager
     }
 
     /**
-     * Send all invalidation requests
+     * Send all pending invalidation requests.
      *
+     * @return $this
      */
     public function flush()
     {
         $this->cache->flush();
+
+        return $this;
     }
 }
