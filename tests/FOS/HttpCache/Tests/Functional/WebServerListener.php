@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests\Functional;
+namespace FOS\HttpCache\Tests\Functional;
 
 /**
  * A PHPUnit test listener that starts and stops the PHP built-in web server
@@ -27,7 +27,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
 
         $command = sprintf(
             'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
-            WEB_SERVER_HOST,
+            WEB_SERVER_HOSTNAME,
             WEB_SERVER_PORT,
             WEB_SERVER_DOCROOT
         );

@@ -9,13 +9,16 @@ env:
   - SYMFONY_VERSION=2.4.*
   - SYMFONY_VERSION=dev-master
 
-before_script:
-  - sudo apt-get update -qq
+addons:
+  hosts:
+    - fos.lo
 
+before_script:
   # Install Varnish
+  - sudo apt-get update -qq
   - sudo apt-get install -qq varnish
-  - sudo cp -f Tests/Functional/Fixtures/varnish/fos.vcl /etc/varnish/default.vcl
-  - sudo service varnish restart
+  # Install deps
+  - composer update --dev
 
 script: phpunit --coverage-clover=coverage.clover
 

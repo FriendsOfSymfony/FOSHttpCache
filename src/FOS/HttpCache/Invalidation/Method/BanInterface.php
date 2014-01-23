@@ -1,8 +1,8 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Invalidation\Method;
+namespace FOS\HttpCache\Invalidation\Method;
 
-use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\Invalidation\CacheProxyInterface;
 
 /**
  * An HTTP cache that supports invalidation by banning, that is, removing
