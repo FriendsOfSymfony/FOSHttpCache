@@ -1,6 +1,6 @@
 backend default {
     .host = "fos.lo";
-    .port = "80";
+    .port = "8080";
 }
 
 acl invalidators {
