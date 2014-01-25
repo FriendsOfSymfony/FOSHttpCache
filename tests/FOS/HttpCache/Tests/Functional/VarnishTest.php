@@ -21,18 +21,6 @@ class VarnishTest extends VarnishTestCase
         $this->assertMiss(self::getResponse('/json.php'));
     }
 
-    public function testBanHost()
-    {
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertHit(self::getResponse('/cache.php'));
-
-        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
-        $this->assertHit(self::getResponse('/cache.php'));
-
-        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => WEB_SERVER_HOSTNAME))->flush();
-        $this->assertMiss(self::getResponse('/cache.php'));
-    }
-
     public function testBanPathAll()
     {
         $this->assertMiss(self::getResponse('/cache.php'));
