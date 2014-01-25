@@ -34,7 +34,7 @@
     <php>
         <const name="VARNISH_FILE" value="../../../../tests/FOS/HttpCache/Tests/Functional/Fixtures/varnish/fos.vcl" />
         <const name="WEB_SERVER_HOSTNAME" value="fos.lo" />
-        <const name="WEB_SERVER_PORT" value="80" />
+        <const name="WEB_SERVER_PORT" value="8080" />
         <const name="WEB_SERVER_DOCROOT" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/web" />
     </php>
 </phpunit>
