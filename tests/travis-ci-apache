@@ -1,3 +1,5 @@
+Listen 8080
+
 <VirtualHost *:8080>
   DocumentRoot %TRAVIS_BUILD_DIR%/tests/FOS/HttpCache/Tests/Functional/Fixtures/web
 

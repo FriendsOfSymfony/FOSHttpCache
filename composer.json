@@ -36,6 +36,7 @@
     "autoload": {
         "psr-0": {
             "FOS\\HttpCache": "src/",
+            "FOS\\HttpCache\\Test": "tests/",
             "FOS\\HttpCache\\Tests": "tests/"
         }
     },

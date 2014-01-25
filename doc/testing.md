@@ -22,12 +22,14 @@ Functional tests
 ----------------
 
 The library also includes functional tests against a Varnish instance. The
-functional test suite by default uses PHP’s built-in web server. If you do not
-have PHP 5.4 or higher, you will need to copy phpunit.xml.dist to phpunit.xml
-and configure a web server pointing to the folder
-tests/FOS/HttpCache/Tests/Functional/Fixtures/web
+functional test suite by default uses PHP’s built-in web server. If you have
+PHP 5.4 or newer, simply run with the default configuration.
 
-Start a Varnish server and run the functional tests:
+If you want to run the tests on PHP 5.3, you need to configure a webserver
+listening on localhost:8080 that points to the folder
+`tests/FOS/HttpCache/Tests/Functional/Fixtures/web`.
+
+Run the functional tests:
 
 ```bash
 $ phpunit --testsuite functional

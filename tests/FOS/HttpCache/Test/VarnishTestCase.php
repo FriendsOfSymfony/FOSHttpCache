@@ -14,9 +14,12 @@ use Guzzle\Http\Message\Response;
  * You can define a couple of constants in your phpunit to control how this
  * test behaves.
  *
+ * Note that the WEB_SERVER_HOSTNAME must also match with what you have in your
+ * .vcl file.
+ *
  * To define constants in the phpunit file, use this syntax:
  * <php>
- *     <const name="VARNISH_FILE" value="../../../../tests/FOS/HttpCache/Tests/Functional/Fixtures/varnish/fos.vcl" />
+ *     <const name="VARNISH_FILE" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/varnish/fos.vcl" />
  * </php>
  *
  * VARNISH_BINARY       executable for varnish. this can also be the full path
@@ -24,12 +27,10 @@ use Guzzle\Http\Message\Response;
  *                      (default varnishd)
  * VARNISH_PORT         test varnish port to use (default 6181)
  * VARNISH_MGMT_PORT    test varnish mgmt port (default 6182)
- * VARNISH_FILE         varnish configuration file relative to this test class
- *                      (required if not passed to setUp)
+ * VARNISH_FILE         varnish configuration file (required if not passed to setUp)
  * VARNISH_CACHE_DIR    directory to use for cache
  *                      (default /tmp/foshttpcache-test)
- * WEB_SERVER_HOSTNAME  name of the webserver varnish has to talk to
- *                      (default fos.lo)
+ * WEB_SERVER_HOSTNAME  name of the webserver varnish has to talk to (required)
  */
 abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -76,6 +77,7 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
         if (!self::$mgmtPort) {
             self::$mgmtPort = defined('VARNISH_MGMT_PORT') ? VARNISH_MGMT_PORT : 6182;
         }
+
         if ($configFile) {
             self::$configFile = $configFile;
         }
@@ -85,18 +87,18 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
             }
             self::$configFile = VARNISH_FILE;
         }
-
-        if (realpath(self::$configFile) != self::$configFile) {
-            self::$configFile = realpath(__DIR__ . DIRECTORY_SEPARATOR . self::$configFile);
-        }
         if (!file_exists(self::$configFile)) {
             throw new \Exception('Can not find specified varnish config file: ' . self::$configFile);
         }
+
         if (!self::$cacheDir) {
             self::$cacheDir = defined('VARNISH_CACHE_DIR') ? VARNISH_CACHE_DIR : '/tmp/foshttpcache-test';
         }
         if (!self::$hostName) {
-            self::$hostName = defined('WEB_SERVER_HOSTNAME') ? WEB_SERVER_HOSTNAME : 'fos.lo';
+            if (!defined('WEB_SERVER_HOSTNAME')) {
+                throw new \Exception('To use this test, you need to define the WEB_SERVER_HOSTNAME constant in your phpunit.xml');
+            }
+            self::$hostName = WEB_SERVER_HOSTNAME;
         }
     }
 

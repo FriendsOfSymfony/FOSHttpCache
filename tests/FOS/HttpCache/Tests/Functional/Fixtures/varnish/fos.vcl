@@ -1,5 +1,5 @@
 backend default {
-    .host = "fos.lo";
+    .host = "localhost";
     .port = "8080";
 }
 
