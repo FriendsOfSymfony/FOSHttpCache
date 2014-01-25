@@ -21,13 +21,13 @@ sub vcl_recv {
         }
 
         if (req.http.x-cache-tags) {
-            ban("obj.http.x-host ~ " + req.http.x-host
+            ban("obj.http.host ~ " + req.http.x-host
                 + " && obj.http.x-url ~ " + req.http.x-url
                 + " && obj.http.content-type ~ " + req.http.x-content-type
                 + " && obj.http.x-cache-tags ~ " + req.http.x-cache-tags
             );
         } else {
-            ban("obj.http.x-host ~ " + req.http.x-host
+            ban("obj.http.host ~ " + req.http.x-host
                 + " && obj.http.x-url ~ " + req.http.x-url
                 + " && obj.http.content-type ~ " + req.http.x-content-type
             );
@@ -41,7 +41,6 @@ sub vcl_fetch {
 
     # Set ban-lurker friendly custom headers
     set beresp.http.x-url = req.url;
-    set beresp.http.x-host = req.http.host;
 }
 
 sub vcl_hit {
@@ -69,6 +68,5 @@ sub vcl_deliver {
     } else {
         # Remove ban-lurker friendly custom headers when delivering to client
         unset resp.http.x-url;
-        unset resp.http.x-host;
     }
 }
