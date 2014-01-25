@@ -1,63 +1,34 @@
 Varnish
 =======
 
-This chapter describes how to configure Varnish to work with this bundle.
+This chapter describes how to configure Varnish to work with the library.
 
 * [Introduction](#introduction)
-* [Basic configuration](#basic-configuration)
-  * [Basic Varnish configuration](#basic-varnish-configuration)
-  * [Basic bundle configuration](#basic-varnish-configuration)
+* [Basic Varnish configuration](#basic-varnish-configuration)
 * [Purge](#purge)
+* [Refresh](#refresh)
 * [Ban](#ban)
 * [Tagging](#tagging)
 
 Introduction
 ------------
 
-This bundle is compatible with Varnish version 3.0 onwards. In order to use
-this bundle with Varnish, you probably have to make changes to your Varnish
-configuration.
+The [Varnish reverse caching proxy](https://www.varnish-cache.org) is a good
+choice for a caching proxy. This document is not meant to be an introduction to
+Varnish, so if you are not familiar with it, you might want to read some
+tutorial first.
 
-Below you will find detailed Varnish configuration recommendations. For a quick
-overview, have a look at [the configuration that is used for the bundle’s
-functional tests](../../Tests/Functional/Fixtures/varnish/fos.vcl).
+Below, you will find detailed Varnish configuration recommendations for the
+features provided by this library. The examples are tested with Varnish
+version 3.0. For a quick overview, you can also look at [the configuration
+that is used for the library’s functional tests]
+(../tests/Tests/Functional/Fixtures/varnish/fos.vcl).
 
-Basic configuration
--------------------
+Basic Varnish configuration
+---------------------------
 
-### Bundle configuration
-
-```yaml
-# app/config/config.yml
-
-fos_http_cache:
-  http_cache:
-    varnish:
-      ips: 123.123.123.1:6081, 123.123.123.2
-      host: yourwebsite.com
-```
-
-* **host**: This must match the web host clients are using when connecting to varnish.
-  You will not notice if this is mistyped, but cache invalidation will never happen.
-* **ips**: List of IP adresses of your varnish servers. Comma separated.
-* **port**: The port varnish is listening on for incoming web connections.
-
-**TODO: MOVE** When using ESI, you will want to purge individual fragments. To generate the
-corresponding ``_internal`` route, inject the ``http_kernel`` into your controller and
-use HttpKernel::generateInternalUri with the parameters as in the twig
-``render`` tag.
-
-### Basic Varnish configuration
-
-The bundle’s Varnish functionality requires the
-[Guzzle HTTP client](http://docs.guzzlephp.org/en/latest/http-client/client.html)
-to be installed:
-
-```bash
-$ composer require guzzle/http
-```
-
-If you wish to invalidate cached objects in Varnish, begin by adding an [ACL](https://www.varnish-cache.org/docs/3.0/tutorial/vcl.html#example-3-acls)
+To invalidate cached objects in Varnish, begin by adding an
+[ACL](https://www.varnish-cache.org/docs/3.0/tutorial/vcl.html#example-3-acls)
 to your Varnish configuration. This ACL determines which IPs are allowed to
 issue invalidation requests. Let’s call the ACL `invalidators`. The ACL below
 will be used throughout the Varnish examples on this page.
@@ -67,17 +38,18 @@ will be used throughout the Varnish examples on this page.
 
 acl invalidators {
   "localhost";
-  # Add any other IP addresses that your Symfony2 app runs on and that you
+  # Add any other IP addresses that your application runs on and that you
   # want to allow invalidation requests from. For instance:
   # "192.168.1.0"/24;
 }
 ```
 
-Note: please make sure that all web servers running your Symfony2 app that may
-trigger invalidation are whitelisted here. Otherwise, lost cached invalidation
+Warning: Make sure that all web servers running your application that may
+trigger invalidation are whitelisted here. Otherwise, lost cache invalidation
 requests will lead to lots of confusion.
 
-### Purge
+Purge
+-----
 
 To configure Varnish for [handling PURGE requests](https://www.varnish-cache.org/docs/3.0/tutorial/purging.html):
 
@@ -108,7 +80,8 @@ sub vcl_miss {
 }
 ```
 
-### Ban
+Ban
+---
 
 To configure Varnish for [handling BAN requests](https://www.varnish-software.com/static/book/Cache_invalidation.html):
 
@@ -140,7 +113,8 @@ sub vcl_deliver {
 }
 ```
 
-### Refresh
+Refresh
+-------
 
 If you want to invalidate cached objects by [forcing a refresh](https://www.varnish-cache.org/trac/wiki/VCLExampleEnableForceRefresh),
 add the following to your Varnish configuration:
@@ -153,9 +127,10 @@ sub vcl_recv {
 }
 ```
 
-### Tagging
+Tagging
+-------
 
-Add the following to your Varnish configuration to enable [cache tagging](tagging.md).
+Add the following to your Varnish configuration to enable [cache tagging](cache-manaager.md#tags).
 
 ```varnish
 sub vcl_recv {

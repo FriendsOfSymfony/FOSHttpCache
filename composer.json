@@ -34,7 +34,11 @@
         "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {
-        "psr-0": { "FOS\\HttpCache": "src" }
+        "psr-0": {
+            "FOS\\HttpCache": "src/",
+            "FOS\\HttpCache\\Test": "tests/",
+            "FOS\\HttpCache\\Tests": "tests/"
+        }
     },
     "extra": {
         "branch-alias": {

@@ -1,10 +1,19 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests\Functional;
+namespace FOS\HttpCache\Tests\Functional;
 
 /**
- * A PHPUnit test listener that starts and stops the PHP built-in web server
+ * A PHPUnit test listener that starts and stops the PHP built-in web server.
  *
+ * This listener is configured with a couple of constants from the phpunit.xml
+ * file. To define constants in the phpunit file, use this syntax:
+ * <php>
+ *     <const name="WEB_SERVER_HOSTNAME" value="localhost" />
+ * </php>
+ *
+ * WEB_SERVER_HOSTNAME host name of the webserver (required)
+ * WEB_SERVER_PORT     port to listen on (required)
+ * WEB_SERVER_DOCROOT  path to the document root for the server (required)
  */
 class WebServerListener implements \PHPUnit_Framework_TestListener
 {
@@ -27,7 +36,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
 
         $command = sprintf(
             'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
-            WEB_SERVER_HOST,
+            WEB_SERVER_HOSTNAME,
             WEB_SERVER_PORT,
             WEB_SERVER_DOCROOT
         );

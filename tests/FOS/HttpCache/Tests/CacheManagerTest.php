@@ -1,56 +1,43 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests;
+namespace FOS\HttpCache\Tests;
 
-use FOS\HttpCacheBundle\CacheManager;
-use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
+use FOS\HttpCache\CacheManager;
 use \Mockery;
 
 class CacheManagerTest extends \PHPUnit_Framework_TestCase
 {
-    protected $router;
     protected $cacheManager;
 
     public function setUp()
     {
-        $this->router = \Mockery::mock('\Symfony\Component\Routing\Router[generate]');
-        $this->cacheProxy = \Mockery::mock('\FOS\HttpCacheBundle\Invalidation\CacheProxyInterface');
+        $this->cacheProxy = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
     }
 
     public function testInvalidateRoute()
     {
-        $httpCache = \Mockery::mock('\FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface')
+        $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\PurgeInterface')
             ->shouldReceive('purge')->once()->with('/my/route')
-            ->shouldReceive('purge')->once()->with('/route/with/params/id/123')
             ->shouldReceive('flush')->once()
             ->getMock();
 
-        $router = \Mockery::mock('\Symfony\Component\Routing\Router[generate]')
-            ->shouldReceive('generate')
-            ->with('my_route', array())
-            ->andReturn('/my/route')
+        $cacheManager = new CacheManager($httpCache);
 
-            ->shouldReceive('generate')
-            ->with('route_with_params', array('id' => 123))
-            ->andReturn('/route/with/params/id/123')
-            ->getMock();
-
-        $cacheManager = new CacheManager($httpCache, $router);
-
-        $cacheManager->invalidateRoute('my_route')
-            ->invalidateRoute('route_with_params', array('id' => 123))
-            ->flush();
+        $cacheManager
+            ->invalidatePath('/my/route')
+            ->flush()
+        ;
     }
 
     public function testInvalidateTags()
     {
-        $ban = \Mockery::mock('\FOS\HttpCacheBundle\Invalidation\Method\BanInterface')
+        $ban = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\BanInterface')
             ->shouldReceive('ban')
             ->with(array('X-Cache-Tags' => '(post-1|posts)(,.+)?$'))
             ->once()
             ->getMock();
 
-        $cacheManager = new CacheManager($ban, $this->router);
+        $cacheManager = new CacheManager($ban);
         $cacheManager->invalidateTags(array('post-1', 'posts'));
     }
 }

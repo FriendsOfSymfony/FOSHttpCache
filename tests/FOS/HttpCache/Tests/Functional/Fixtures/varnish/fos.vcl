@@ -1,6 +1,6 @@
 backend default {
     .host = "localhost";
-    .port = "8000";
+    .port = "8080";
 }
 
 acl invalidators {
@@ -41,7 +41,6 @@ sub vcl_fetch {
 
     # Set ban-lurker friendly custom headers
     set beresp.http.x-url = req.url;
-    set beresp.http.x-host = req.http.host;
 }
 
 sub vcl_hit {
@@ -69,6 +68,5 @@ sub vcl_deliver {
     } else {
         # Remove ban-lurker friendly custom headers when delivering to client
         unset resp.http.x-url;
-        unset resp.http.x-host;
     }
 }

@@ -1,10 +1,39 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests\Functional;
+namespace FOS\HttpCache\Tests\Functional;
 
-class VarnishTest extends FunctionalTestCase
+use FOS\HttpCache\Invalidation\Varnish;
+use FOS\HttpCache\Test\VarnishTestCase;
+
+class VarnishTest extends VarnishTestCase
 {
     public function testBanAll()
+    {
+        $this->assertMiss(self::getResponse('/cache.php'));
+        $this->assertHit(self::getResponse('/cache.php'));
+
+        $this->assertMiss(self::getResponse('/json.php'));
+        $this->assertHit(self::getResponse('/json.php'));
+
+        $this->varnish->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
+
+        $this->assertMiss(self::getResponse('/cache.php'));
+        $this->assertMiss(self::getResponse('/json.php'));
+    }
+
+    public function testBanHost()
+    {
+        $this->assertMiss(self::getResponse('/cache.php'));
+        $this->assertHit(self::getResponse('/cache.php'));
+
+        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
+        $this->assertHit(self::getResponse('/cache.php'));
+
+        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => WEB_SERVER_HOSTNAME))->flush();
+        $this->assertMiss(self::getResponse('/cache.php'));
+    }
+
+    public function testBanPathAll()
     {
         $this->assertMiss(self::getResponse('/cache.php'));
         $this->assertHit(self::getResponse('/cache.php'));
@@ -17,7 +46,7 @@ class VarnishTest extends FunctionalTestCase
         $this->assertMiss(self::getResponse('/json.php'));
     }
 
-    public function testBanContentType()
+    public function testBanPathContentType()
     {
         $this->assertMiss(self::getResponse('/cache.php'));
         $this->assertHit(self::getResponse('/cache.php'));

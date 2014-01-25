@@ -1,10 +1,10 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Invalidation;
+namespace FOS\HttpCache\Invalidation;
 
-use FOS\HttpCacheBundle\Invalidation\Method\BanInterface;
-use FOS\HttpCacheBundle\Invalidation\Method\PurgeInterface;
-use FOS\HttpCacheBundle\Invalidation\Method\RefreshInterface;
+use FOS\HttpCache\Invalidation\Method\BanInterface;
+use FOS\HttpCache\Invalidation\Method\PurgeInterface;
+use FOS\HttpCache\Invalidation\Method\RefreshInterface;
 use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\CurlException;
@@ -13,11 +13,11 @@ use Guzzle\Http\Message\RequestInterface;
 use Monolog\Logger;
 
 /**
- * Varnish HTTP cache
+ * Varnish HTTP cache invalidator.
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish implements CacheProxyInterface, BanInterface, PurgeInterface, RefreshInterface
+class Varnish implements BanInterface, PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_BAN          = 'BAN';
     const HTTP_METHOD_PURGE        = 'PURGE';
@@ -61,7 +61,8 @@ class Varnish implements CacheProxyInterface, BanInterface, PurgeInterface, Refr
     /**
      * Constructor
      *
-     * @param array           $ips    Varnish IP addresses
+     * @param array           $ips    Varnish IP addresses including port if
+     *                                not port 80. E.g. array('127.0.0.1:6081')
      * @param string          $host   Default hostname
      * @param ClientInterface $client HTTP client (optional). If no HTTP client
      *                                is supplied, a default one will be
@@ -210,7 +211,6 @@ class Varnish implements CacheProxyInterface, BanInterface, PurgeInterface, Refr
                     $ip . $request->getResource(),
                     $request->getHeaders()
                 );
-
                 $allRequests[] = $varnishRequest;
             }
         }

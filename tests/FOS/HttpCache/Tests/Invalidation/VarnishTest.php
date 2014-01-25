@@ -1,13 +1,10 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Tests\EventListener;
+namespace FOS\HttpCache\Tests\EventListener;
 
-use FOS\HttpCacheBundle\Invalidation\Varnish;
+use FOS\HttpCache\Invalidation\Varnish;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\MultiTransferException;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Mock\MockPlugin;
 use \Mockery;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Invalidation\Method;
+namespace FOS\HttpCache\Invalidation\Method;
 
-use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\Invalidation\CacheProxyInterface;
 
 /**
  * An HTTP cache that supports invalidation by refresh requests that force a
@@ -12,15 +12,16 @@ use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
 interface RefreshInterface extends CacheProxyInterface
 {
     /**
-     * Refresh a URL
+     * Refresh a URL.
      *
      * Refreshing a URL will generate a new cached response for the URL,
      * including the query string but excluding any Vary variants.
      *
-     * @param string $url     Path or URL
-     * @param array  $headers HTTP headers (optional)
+     * @param string $url     Path or URL to refresh.
+     * @param array  $headers Extra HTTP headers to send to the caching proxy
+     *                        (optional)
      *
      * @return $this
      */
     public function refresh($url, array $headers = array());
-} 
+}
