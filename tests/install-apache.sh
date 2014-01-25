@@ -1,3 +1,4 @@
+#!/bin/sh
 # https://github.com/travis-ci/travis-ci.github.com/blob/master/docs/user/languages/php.md#apache--php
 
 sudo apt-get install apache2 libapache2-mod-fastcgi
