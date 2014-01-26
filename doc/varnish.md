@@ -107,9 +107,11 @@ sub vcl_fetch {
 
 # Remove tags when delivering to client
 sub vcl_deliver {
-  unset resp.http.x-url;
-  unset resp.http.x-host;
-  unset resp.http.x-content-type;
+  if (! resp.http.X-Cache-Debug) {
+    unset resp.http.x-url;
+    unset resp.http.x-host;
+    unset resp.http.x-content-type;
+  }
 }
 ```
 
