@@ -1,8 +1,8 @@
 <?php
 
-namespace FOS\HttpCacheBundle\Invalidation\Method;
+namespace FOS\HttpCache\Invalidation\Method;
 
-use FOS\HttpCacheBundle\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\Invalidation\CacheProxyInterface;
 
 /**
  * An HTTP cache that supports invalidation by purging, that is, removing one
@@ -22,4 +22,4 @@ interface PurgeInterface extends CacheProxyInterface
      * @return $this
      */
     public function purge($url);
-} 
+}

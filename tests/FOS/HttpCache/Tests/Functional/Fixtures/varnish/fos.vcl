@@ -1,6 +1,6 @@
 backend default {
     .host = "localhost";
-    .port = "8000";
+    .port = "8080";
 }
 
 acl invalidators {
@@ -21,13 +21,13 @@ sub vcl_recv {
         }
 
         if (req.http.x-cache-tags) {
-            ban("obj.http.host ~ " + req.http.x-host
+            ban("obj.http.x-host ~ " + req.http.x-host
                 + " && obj.http.x-url ~ " + req.http.x-url
                 + " && obj.http.content-type ~ " + req.http.x-content-type
                 + " && obj.http.x-cache-tags ~ " + req.http.x-cache-tags
             );
         } else {
-            ban("obj.http.host ~ " + req.http.x-host
+            ban("obj.http.x-host ~ " + req.http.x-host
                 + " && obj.http.x-url ~ " + req.http.x-url
                 + " && obj.http.content-type ~ " + req.http.x-content-type
             );

@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "guzzle/http": "*"
+        "guzzle/http": "3.*"
     },
     "require-dev": {
         "guzzle/plugin-mock": "*",
@@ -30,11 +30,13 @@
         "monolog/monolog": "*"
     },
     "suggest": {
-        "guzzle/http": "For sending invalidation requests",
         "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {
-        "psr-0": { "FOS\\HttpCache": "src" }
+        "psr-0": {
+            "FOS\\HttpCache": "src/",
+            "FOS\\HttpCache\\Tests": "tests/"
+        }
     },
     "extra": {
         "branch-alias": {
