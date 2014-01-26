@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCache;
 
+use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
 use FOS\HttpCache\Invalidation\CacheProxyInterface;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
@@ -65,12 +66,12 @@ class CacheManager
      *
      * @return $this
      *
-     * @throws \RuntimeException
+     * @throws UnsupportedInvalidationMethodException
      */
     public function invalidatePath($path)
     {
         if (!$this->cache instanceof PurgeInterface) {
-            throw new \RuntimeException('HTTP cache does not support PURGE requests');
+            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('PURGE');
         }
 
         $this->cache->purge($path);
@@ -86,12 +87,12 @@ class CacheManager
      *
      * @return $this
      *
-     * @throws \RuntimeException
+     * @throws UnsupportedInvalidationMethodException
      */
     public function refreshPath($path, array $headers = array())
     {
         if (!$this->cache instanceof RefreshInterface) {
-            throw new \RuntimeException('HTTP cache does not support refresh requests');
+            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('REFRESH');
         }
 
         $this->cache->refresh($path, $headers);
@@ -111,12 +112,12 @@ class CacheManager
      *
      * @return $this
      *
-     * @throws \RuntimeException If HTTP cache does not support BAN requests
+     * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
      */
     public function invalidateTags(array $tags)
     {
         if (!$this->cache instanceof BanInterface) {
-            throw new \RuntimeException('HTTP cache does not support BAN requests');
+            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('BAN');
         }
 
         $headers = array($this->getTagsHeader() => '('.implode('|', $tags).')(,.+)?$');
