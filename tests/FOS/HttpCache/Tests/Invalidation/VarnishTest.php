@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCache\Tests\EventListener;
+namespace FOS\HttpCache\Tests\Invalidation;
 
 use FOS\HttpCache\Invalidation\Varnish;
 use Guzzle\Http\Client;
@@ -12,12 +12,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 {
     public function testPurge()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'defaulthost.com');
-    }
-
-    public function testInvalidateUrls()
-    {
-        return;
         $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
             ->shouldReceive('send')
             ->once()
@@ -71,11 +65,14 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
         $varnish = new Varnish($ips, 'my_hostname.dev', $client);
 
-        $varnish->invalidateUrls(array('/url/one', '/url/two'));
+        $varnish->purge('/url/one');
+        $varnish->purge('/url/two');
+
+        $varnish->flush();
     }
 
     public function testCurlExceptionIsLogged()
-    {return;
+    {
         $mock = new MockPlugin();
         $mock->addException(new CurlException('connect to host'));
 
@@ -91,6 +88,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $varnish->setLogger($logger);
 
-        $varnish->invalidateUrl('/test/this/a');
+        $varnish->purge('/test/this/a');
     }
 }
