@@ -16,7 +16,7 @@ Invalidating paths and URLs
 Make sure to configure your proxy for purging first.
 (See [varnish](varnish.md#purge).)
 
-Invalidate a path and a URL:
+Invalidate a path:
 
 ```php
 $cacheManager->invalidatePath('/users');
@@ -38,6 +38,7 @@ Refresh a path:
 ```php
 $cacheManager->refreshPath('/users');
 ```
+
 Refresh an URL:
 
 ```php
