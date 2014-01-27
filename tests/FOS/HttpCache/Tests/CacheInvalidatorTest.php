@@ -2,14 +2,12 @@
 
 namespace FOS\HttpCache\Tests;
 
-use FOS\HttpCache\CacheManager;
+use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
 use \Mockery;
 
-class CacheManagerTest extends \PHPUnit_Framework_TestCase
+class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 {
-    protected $cacheManager;
-
     public function setUp()
     {
         $this->cacheProxy = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
@@ -22,9 +20,9 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->once()
             ->getMock();
 
-        $cacheManager = new CacheManager($httpCache);
+        $cacheInvalidator = new CacheInvalidator($httpCache);
 
-        $cacheManager
+        $cacheInvalidator
             ->invalidatePath('/my/route')
             ->flush()
         ;
@@ -38,9 +36,9 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('flush')->never()
             ->getMock();
 
-        $cacheManager = new CacheManager($httpCache);
+        $cacheInvalidator = new CacheInvalidator($httpCache);
 
-        $cacheManager
+        $cacheInvalidator
             ->refreshPath('/my/route', $headers)
         ;
     }
@@ -58,8 +56,8 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->once()
             ->getMock();
 
-        $cacheManager = new CacheManager($ban);
-        $cacheManager->invalidateTags(array('post-1', 'posts'));
+        $cacheInvalidator = new CacheInvalidator($ban);
+        $cacheInvalidator->invalidateTags(array('post-1', 'posts'));
     }
 
     public function testInvalidateTagsCustomHeader()
@@ -70,30 +68,30 @@ class CacheManagerTest extends \PHPUnit_Framework_TestCase
             ->once()
             ->getMock();
 
-        $cacheManager = new CacheManager($ban);
-        $cacheManager->setTagsHeader('Custom-Tags');
-        $cacheManager->invalidateTags(array('post-1'));
+        $cacheInvalidator = new CacheInvalidator($ban);
+        $cacheInvalidator->setTagsHeader('Custom-Tags');
+        $cacheInvalidator->invalidateTags(array('post-1'));
     }
 
     public function testMethodException()
     {
         $proxy = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
-        $cacheManager = new CacheManager($proxy);
+        $cacheInvalidator = new CacheInvalidator($proxy);
         try {
-            $cacheManager->invalidatePath('/');
+            $cacheInvalidator->invalidatePath('/');
             $this->fail('Expected exception');
         } catch (UnsupportedInvalidationMethodException $e) {
             // success
         }
         try {
-            $cacheManager->refreshPath('/');
+            $cacheInvalidator->refreshPath('/');
             $this->fail('Expected exception');
         } catch (UnsupportedInvalidationMethodException $e) {
             // success
         }
         /*
         try {
-            $cacheManager->invalidateRegex('/');
+            $cacheInvalidator->invalidateRegex('/');
             $this->fail('Expected exception');
         } catch (UnsupportedInvalidationMethodException $e) {
             // success

@@ -5,7 +5,7 @@ Use the HTTP proxy classes (currently this library provides only a client for
 Varnish) for lower-level access to invalidation functionality offered by your
 HTTP proxy.
 
-As with the CacheManager, you need to call `flush()` to actually send requests
+As with the CacheInvalidator, you need to call `flush()` to actually send requests
 to the backend.
 
 * [Purge](#purge)

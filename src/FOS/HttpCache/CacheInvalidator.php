@@ -13,7 +13,7 @@ use FOS\HttpCache\Invalidation\Method\RefreshInterface;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class CacheManager
+class CacheInvalidator
 {
     /**
      * @var string

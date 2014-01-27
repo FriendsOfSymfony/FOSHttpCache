@@ -11,7 +11,7 @@ $ composer require friendsofsymfony/http-cache:@stable
 Getting Started
 ===============
 
-This library mainly provides the CacheManager class. Use this class to collect
+This library mainly provides the CacheInvalidator class. Use this class to collect
 cache invalidation requests in your application and call the `flush` method at
 the end of requests to have it send the invalidation requests to your server.
 
@@ -29,7 +29,7 @@ Basically, there are 3 operations:
 * Ban: This is a way more powerful operation. Remove all requests matching
   specified regular expressions on any desired headers. This can invalidate a
   subset of URLs but also custom headers, as used with the
-  CacheManager::invalidateTags method. In the case of Varnish, this will only
+  CacheInvalidator::invalidateTags method. In the case of Varnish, this will only
   record the fact that cache entries are to be ignored, for performance
   reasons.
 
@@ -39,13 +39,13 @@ All of these methods are explained in detail in the
 Bootstrap
 ---------
 
-The CacheManager is configured with an instance of CacheProxyInterface which
+The CacheInvalidator is configured with an instance of CacheProxyInterface which
 also implements at least one of PurgeInterface, RefreshInterface, BanInterface.
 Using the provided Varnish client, the bootstrap code looks as follows:
 
 
 ```php
-use FOS\HttpCache\CacheManager;
+use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Invalidation\Varnish;
 
 // IPs varnish is listening on
@@ -58,10 +58,10 @@ $varnish = new Varnish(array $ips, $host);
 // logger instance
 $varnish->setLogger(...);
 
-$cacheManager = new CacheManager($varnish);
+$cacheInvalidator = new CacheInvalidator($varnish);
 ```
 
 Thats it, you are ready to start caching. Read on in the next chapter about the
-[Cache Manager](cache-manager.md). You may also want to know more about the
+[Cache Invalidator](cache-invalidator.md). You may also want to know more about the
 [Lower-level HTTP proxy classes](http-proxy.md) like the `Varnish` class we
 used in this example.
