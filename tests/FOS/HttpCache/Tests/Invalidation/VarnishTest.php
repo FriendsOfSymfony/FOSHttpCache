@@ -88,6 +88,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $varnish->setLogger($logger);
 
-        $varnish->purge('/test/this/a');
+        $varnish->purge('/test/this/a')->flush();
     }
 }
