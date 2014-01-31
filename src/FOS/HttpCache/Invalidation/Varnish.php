@@ -9,6 +9,7 @@ use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
+use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Message\RequestInterface;
 use Monolog\Logger;
 
@@ -49,11 +50,15 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     protected $client;
 
     /**
-     * @var \Monolog\Logger
+     * Logger
+     *
+     * @var Logger
      */
     protected $logger;
 
     /**
+     * Request queue
+     *
      * @var array|RequestInterface[]
      */
     protected $queue;
@@ -138,6 +143,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     {
         $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
 
+
         $this->queueRequest(
             self::HTTP_METHOD_REFRESH,
             $url,
@@ -216,32 +222,48 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         }
 
         try {
-            $responses = $this->client->send($allRequests);
+            $this->client->send($allRequests);
         } catch (MultiTransferException $e) {
             /*
              * @todo what if there is no cache server available (405 'Method not allowed')
              */
             foreach ($e as $ea) {
-                if ($ea instanceof CurlException) {
-                    // Usually 'couldn't connect to host', which means: Varnish is down
-                    $level = 'crit';
-                } else {
-                    $level = 'info';
-                }
-
-                $this->log(
-                    sprintf(
-                        'Caught exception while trying to %s %s' . PHP_EOL . 'Message: %s',
-                        $ea->getRequest()->getMethod(),
-                        $ea->getRequest()->getUrl(),
-                        $ea->getMessage()
-                    ),
-                    $level
-                );
+                $this->logException($ea);
             }
         }
     }
 
+    /**
+     * Log request exception
+     *
+     * @param RequestException $e
+     */
+    protected function logException(RequestException $e)
+    {
+        if ($e instanceof CurlException) {
+            // Usually 'couldn't connect to host', which means: Varnish is down
+            $level = 'crit';
+        } else {
+            $level = 'info';
+        }
+
+        $this->log(
+            sprintf(
+                'Caught exception while trying to %s %s' . PHP_EOL . 'Message: %s',
+                $e->getRequest()->getMethod(),
+                $e->getRequest()->getUrl(),
+                $e->getMessage()
+            ),
+            $level
+        );
+    }
+
+    /**
+     * Log error message
+     *
+     * @param string $message Error message
+     * @param string $level   Error level (optional)
+     */
     protected function log($message, $level = 'debug')
     {
         if (null !== $this->logger) {
