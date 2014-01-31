@@ -5,26 +5,24 @@ FOSHttpCache
 [![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCache/badges/coverage.png?s=f9f57d6b28285f38782b38a08b1dbdb24901a764)](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCache/)
 
 
-This is a work in progress to unite the LiipCacheControlBundle and
-DriebitHttpCacheBundle into one good library plus a bundle. We
-[hope to publish this with under the FOS namespace](https://github.com/FriendsOfSymfony/friendsofsymfony.github.com/issues/42).
-
 Introduction
 ------------
 
-This library offers clients to interact with caching proxies to do explicit
-cache invalidation.
+This library integrates your PHP applications with HTTP caching proxies such as Varnish. 
+Use this library to send invalidation requests from your application to the caching proxy
+and to test your caching and invalidation code against a Varnish setup.
 
 Features
 --------
 
-* Send invalidation requests with minimal impact on performance.
-* Easily implement your own HTTP cache client.
+* Send [cache invalidation requests](doc/cache-invalidator.md) with minimal impact on performance.
+* Use the built-in support for [Varnish](doc/varnish.md) or easily implement your own caching proxy client.
+* [Test your application](doc/testing.md) against your Varnish setup.
 
 Documentation
 -------------
 
-Documentation is included in the [doc](doc/index.md) directory.
+[Documentation](doc/index.md) is included in the [doc](doc/index.md) directory.
 
 License
 -------
