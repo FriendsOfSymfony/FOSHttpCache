@@ -66,12 +66,15 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      *
      * @param array           $ips    Varnish IP addresses including port if
      *                                not port 80. E.g. array('127.0.0.1:6081')
-     * @param string          $host   Default hostname
+     * @param string          $host   Default host for purge and refresh
+     *                                requests (optional). This is required if
+     *                                you purge and refresh paths instead of
+     *                                absolute URLs.
      * @param ClientInterface $client HTTP client (optional). If no HTTP client
      *                                is supplied, a default one will be
-     *                                created automatically.
+     *                                created.
      */
-    public function __construct(array $ips, $host, ClientInterface $client = null)
+    public function __construct(array $ips, $host = null, ClientInterface $client = null)
     {
         $this->ips = $ips;
         $this->host = $host;
@@ -140,13 +143,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     public function refresh($url, array $headers = array())
     {
         $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
-
-
-        $this->queueRequest(
-            self::HTTP_METHOD_REFRESH,
-            $url,
-            $headers
-        );
+        $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
     }
@@ -178,18 +175,15 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     {
         $request = $this->client->createRequest($method, $url, $headers);
 
-        // If Host headers hasn't been set and $url doesn't contain a hostname,
-        // set the Host header to the default hostname
-        if ('' == $request->getHeader('Host')) {
-            $parsedUrl = parse_url($url);
-            if (!isset($parsedUrl['host'])) {
-                $request->setHeader('Host', $this->host);
+        // For purge and refresh, add a host header to the request if it hasn't
+        // been set
+        if (self::HTTP_METHOD_BAN !== $method) {
+            if ('' == $request->getHeader('Host')) {
+                $parsedUrl = parse_url($url);
+                if (!isset($parsedUrl['host'])) {
+                    $request->setHeader('Host', $this->host);
+                }
             }
-        }
-
-        if (!isset($parsedUrl['host']) && '' != $request->getHeader('Host')
-        ) {
-            $request->setHeader('Host', $this->host);
         }
 
         $this->queue[] = $request;
@@ -222,9 +216,6 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         try {
             $this->client->send($allRequests);
         } catch (MultiTransferException $e) {
-            /*
-             * @todo what if there is no cache server available (405 'Method not allowed')
-             */
             foreach ($e as $ea) {
                 $this->logException($ea);
             }

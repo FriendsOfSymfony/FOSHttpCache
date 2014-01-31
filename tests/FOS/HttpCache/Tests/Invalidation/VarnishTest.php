@@ -29,7 +29,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('.*', $headers->get('X-Host'));
         $this->assertEquals('.*', $headers->get('X-Url'));
         $this->assertEquals('.*', $headers->get('X-Content-Type'));
-        $this->assertEquals('fos.lo', $headers->get('Host'));
     }
 
     public function testBanPath()
@@ -58,15 +57,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function ($requests) use ($self) {
-                        if (4 !== count($requests)) {
-                            return false;
-                        }
-
+                        $self->assertCount(4, $requests);
                         foreach ($requests as $request) {
-                            if ('PURGE' !== $request->getMethod()) {
-                                return false;
-                            }
-
+                            $self->assertEquals('PURGE', $request->getMethod());
                             $self->assertEquals('my_hostname.dev', $request->getHeaders()->get('host'));
                         }
 
