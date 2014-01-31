@@ -95,10 +95,9 @@ class VarnishTest extends VarnishTestCase
         $this->assertHit($response);
 
         $this->varnish->refresh('/cache.php')->flush();
-
-        sleep(1);
+        usleep(1000);
         $refreshed = self::getResponse('/cache.php');
-        $this->assertGreaterThan((string) $response->getHeader('Age'), (string) $refreshed->getHeader('Age'));
+        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
     }
 
     public function testRefreshContentType()
