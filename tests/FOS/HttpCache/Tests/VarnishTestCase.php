@@ -127,8 +127,8 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
             ' -P ' . self::PID
         );
 
-        // wait 5 milliseconds to let varnish be ready. otherwise we see race conditions.
-        usleep(10000);
+        // wait 20 milliseconds to let varnish be ready. otherwise we see race conditions.
+        usleep(20000);
     }
 
     public function tearDown()
