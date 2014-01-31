@@ -35,6 +35,10 @@ sub vcl_recv {
 
         error 200 "Banned";
     }
+
+    if (req.http.Cache-Control ~ "no-cache" && client.ip ~ invalidators) {
+        set req.hash_always_miss = true;
+    }
 }
 
 sub vcl_fetch {
