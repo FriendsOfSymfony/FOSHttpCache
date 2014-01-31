@@ -1,29 +1,63 @@
 <?php
 
-namespace FOS\HttpCache\Tests\EventListener;
+namespace FOS\HttpCache\Tests\Invalidation;
 
 use FOS\HttpCache\Invalidation\Varnish;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Plugin\Mock\MockPlugin;
+use Guzzle\Http\Message\Response;
+use Guzzle\Http\Message\Request;
 use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
 {
-    public function testPurge()
+    protected $mock;
+    protected $client;
+
+    public function testBanEverything()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'defaulthost.com');
+        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish->ban(array())->flush();
+        $varnish->ban(array())->flush();
+
+        $requests = $this->getRequests();
+        $this->assertCount(1, $requests);
+        $this->assertEquals('BAN', $requests[0]->getMethod());
+
+        $headers = $requests[0]->getHeaders();
+        $this->assertEquals('.*', $headers->get('X-Host'));
+        $this->assertEquals('.*', $headers->get('X-Url'));
+        $this->assertEquals('.*', $headers->get('X-Content-Type'));
+        $this->assertEquals('fos.lo', $headers->get('Host'));
     }
 
-    public function testInvalidateUrls()
+    public function testBanPath()
     {
-        return;
+        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+
+        $hosts = array('fos.lo', 'fos2.lo');
+        $varnish->banPath('/articles/.*', 'text/html', $hosts)->flush();
+
+        $requests = $this->getRequests();
+        $this->assertCount(1, $requests);
+        $this->assertEquals('BAN', $requests[0]->getMethod());
+
+        $headers = $requests[0]->getHeaders();
+        $this->assertEquals('^(fos.lo|fos2.lo)$', $headers->get('X-Host'));
+        $this->assertEquals('/articles/.*', $headers->get('X-Url'));
+        $this->assertEquals('text/html', $headers->get('X-Content-Type'));
+    }
+
+    public function testPurge()
+    {
+        $self = $this; // For PHP 5.3
         $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
             ->shouldReceive('send')
             ->once()
             ->with(
                 \Mockery::on(
-                    function ($requests) {
+                    function ($requests) use ($self) {
                         if (4 !== count($requests)) {
                             return false;
                         }
@@ -33,30 +67,22 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
                                 return false;
                             }
 
-                            if ('my_hostname.dev' !== (string) $request->getHeaders()->get('host')) {
-                                return false;
-                            }
+                            $self->assertEquals('my_hostname.dev', $request->getHeaders()->get('host'));
                         }
 
-                        if (!in_array('/url/one', array($requests[0]->getPath(), $requests[1]->getPath()))) {
-                            return false;
-                        }
+                        $self->assertEquals('127.0.0.1', $requests[0]->getHost());
+                        $self->assertEquals('8080', $requests[0]->getPort());
+                        $self->assertEquals('/url/one', $requests[0]->getPath());
 
-                        if (!in_array('127.0.0.1', array($requests[0]->getHost(), $requests[1]->getHost()))) {
-                            return false;
-                        }
+                        $self->assertEquals('123.123.123.2', $requests[1]->getHost());
+                        $self->assertEquals('/url/one', $requests[1]->getPath());
 
-                        if (!in_array('8080', array($requests[0]->getPort(), $requests[1]->getPort()))) {
-                            return false;
-                        }
+                        $self->assertEquals('127.0.0.1', $requests[2]->getHost());
+                        $self->assertEquals('8080', $requests[2]->getPort());
+                        $self->assertEquals('/url/two', $requests[2]->getPath());
 
-                        if (!in_array('/url/two', array($requests[2]->getPath(), $requests[3]->getPath()))) {
-                            return false;
-                        }
-
-                        if (!in_array('123.123.123.2', array($requests[2]->getHost(), $requests[3]->getHost()))) {
-                            return false;
-                        }
+                        $self->assertEquals('123.123.123.2', $requests[3]->getHost());
+                        $self->assertEquals('/url/two', $requests[3]->getPath());
 
                         return true;
                     }
@@ -71,11 +97,25 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
         $varnish = new Varnish($ips, 'my_hostname.dev', $client);
 
-        $varnish->invalidateUrls(array('/url/one', '/url/two'));
+        $varnish->purge('/url/one');
+        $varnish->purge('/url/two');
+
+        $varnish->flush();
+    }
+
+    public function testRefresh()
+    {
+        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish->refresh('/fresh')->flush();
+
+        $requests = $this->getRequests();
+        $this->assertCount(1, $requests);
+        $this->assertEquals('GET', $requests[0]->getMethod());
+        $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUrl());
     }
 
     public function testCurlExceptionIsLogged()
-    {return;
+    {
         $mock = new MockPlugin();
         $mock->addException(new CurlException('connect to host'));
 
@@ -91,6 +131,22 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $varnish->setLogger($logger);
 
-        $varnish->invalidateUrl('/test/this/a');
+        $varnish->purge('/test/this/a')->flush();
+    }
+
+    protected function setUp()
+    {
+        $this->mock = new MockPlugin();
+        $this->mock->addResponse(new Response(200));
+        $this->client = new Client();
+        $this->client->addSubscriber($this->mock);
+    }
+
+    /**
+     * @return array|Request[]
+     */
+    protected function getRequests()
+    {
+        return $this->mock->getReceivedRequests();
     }
 }
