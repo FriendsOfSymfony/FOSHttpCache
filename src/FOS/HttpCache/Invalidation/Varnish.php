@@ -11,7 +11,7 @@ use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
 use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Message\RequestInterface;
-use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 /**
  * Varnish HTTP cache invalidator.
@@ -50,9 +50,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     protected $client;
 
     /**
-     * Logger
-     *
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -83,9 +81,9 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     /**
      * Set a logger to enable logging
      *
-     * @param \Monolog\Logger $logger
+     * @param LoggerInterface $logger
      */
-    public function setLogger(Logger $logger = null)
+    public function setLogger(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }
