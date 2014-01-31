@@ -2,19 +2,19 @@
 
 namespace FOS\HttpCache\Tests\Functional;
 
-use FOS\HttpCache\CacheManager;
+use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Tests\VarnishTestCase;
 
-class CacheManagerTest extends VarnishTestCase
+class CacheInvalidatorTest extends VarnishTestCase
 {
     public function testInvalidateTags()
     {
-        $cacheManager = new CacheManager($this->varnish);
+        $cacheInvalidator = new CacheInvalidator($this->varnish);
 
         $this->assertMiss(self::getResponse('/tags.php'));
         $this->assertHit(self::getResponse('/tags.php'));
 
-        $cacheManager->invalidateTags(array('tag1'))->flush();
+        $cacheInvalidator->invalidateTags(array('tag1'))->flush();
 
         $this->assertMiss(self::getResponse('/tags.php'));
     }

@@ -132,7 +132,7 @@ sub vcl_recv {
 Tagging
 -------
 
-Add the following to your Varnish configuration to enable [cache tagging](cache-manager.md#tags).
+Add the following to your Varnish configuration to enable [cache tagging](cache-invalidator.md#tags).
 
 ```varnish
 sub vcl_recv {
