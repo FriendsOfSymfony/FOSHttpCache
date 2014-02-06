@@ -121,7 +121,9 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
             self::HTTP_HEADER_CONTENT_TYPE => $contentType
         );
 
-        return $this->ban($headers);
+        $this->ban($headers);
+
+        return $this;
     }
 
     /**
