@@ -12,7 +12,6 @@ use FOS\HttpCache\Invalidation\CacheProxyInterface;
 interface BanInterface extends CacheProxyInterface
 {
     const REGEX_MATCH_ALL = '.*';
-    const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;
 
     /**
      * Ban cached objects matching HTTP headers
@@ -50,5 +49,5 @@ interface BanInterface extends CacheProxyInterface
      *
      * @return $this
      */
-    public function banPath($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null);
+    public function banPath($path, $contentType = null, $hosts = null);
 }

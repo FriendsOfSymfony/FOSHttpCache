@@ -36,11 +36,22 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     protected $ips;
 
     /**
-     * The hostname
+     * The hostname for purge and refresh requests.
      *
      * @var string
      */
     protected $host;
+
+    /**
+     * Map of default headers for ban requests with their default values.
+     *
+     * @var array
+     */
+    protected $defaultBanHeaders = array(
+        self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
+    );
 
     /**
      * HTTP client
@@ -92,16 +103,34 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     }
 
     /**
+     * Set the default headers that get merged with the provided headers in self::ban().
+     *
+     * @param array $headers Hashmap with keys being the header names, values
+     *                       the header values.
+     */
+    public function setDefaultBanHeaders(array $headers)
+    {
+        $this->defaultBanHeaders = $headers;
+    }
+
+    /**
+     * Add or overwrite a default ban header.
+     *
+     * @param string $name  The name of that header
+     * @param string $value The content of that header
+     */
+    public function setDefaultBanHeader($name, $value)
+    {
+        $this->defaultBanHeaders[$name] = $value;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function ban(array $headers)
     {
         $headers = array_merge(
-            array(
-                self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
-                self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
-                self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
-            ),
+            $this->defaultBanHeaders,
             $headers
         );
 
@@ -113,16 +142,25 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     /**
      * {@inheritdoc}
      */
-    public function banPath($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null)
+    public function banPath($path, $contentType = null, $hosts = null)
     {
-        $hosts = is_array($hosts) ? $hosts : array($this->host);
-        $hostRegEx = count($hosts) > 0 ? '^('.join('|', $hosts).')$' : self::REGEX_MATCH_ALL;
+        if (is_array($hosts)) {
+            if (!count($hosts)) {
+                throw new \InvalidArgumentException('Either supply a list of hosts or null, but not an empty array.');
+            }
+            $hosts = '^('.join('|', $hosts).')$';
+        }
 
         $headers = array(
-            self::HTTP_HEADER_HOST         => $hostRegEx,
             self::HTTP_HEADER_URL          => $path,
-            self::HTTP_HEADER_CONTENT_TYPE => $contentType
         );
+
+        if ($contentType) {
+            $headers[self::HTTP_HEADER_CONTENT_TYPE] = $contentType;
+        }
+        if ($hosts) {
+            $headers[self::HTTP_HEADER_HOST] = $hosts;
+        }
 
         return $this->ban($headers);
     }
