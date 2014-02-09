@@ -125,7 +125,7 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
             ' -P ' . self::PID
         );
 
-        $this->waitForVarnish('127.0.0.1', self::$port, 100);
+        $this->waitForVarnish('127.0.0.1', self::$port, 2000);
     }
 
     public function tearDown()
