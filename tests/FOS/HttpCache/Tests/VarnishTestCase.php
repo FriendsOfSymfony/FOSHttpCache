@@ -4,8 +4,6 @@ namespace FOS\HttpCache\Tests;
 
 use FOS\HttpCache\Invalidation\Varnish;
 use Guzzle\Http\Client;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\ServerErrorResponseException;
 use Guzzle\Http\Message\Response;
 
 /**
@@ -127,8 +125,7 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
             ' -P ' . self::PID
         );
 
-        // wait 20 milliseconds to let varnish be ready. otherwise we see race conditions.
-        usleep(20000);
+        $this->waitForVarnish('127.0.0.1', self::$port, 100);
     }
 
     public function tearDown()
@@ -161,5 +158,27 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
     public function assertHit(Response $response, $message = null)
     {
         $this->assertEquals(self::CACHE_HIT, (string) $response->getHeader(self::CACHE_HEADER), $message);
+    }
+
+    /**
+     * Wait for Varnish proxy to be started up and reachable
+     *
+     * @param string $ip
+     * @param int    $port
+     * @param int    $timeout Timeout in milliseconds
+     *
+     * @throws \RuntimeException If Varnish is not reachable within timeout
+     */
+    protected function waitForVarnish($ip, $port, $timeout)
+    {
+        for ($i = 0; $i < $timeout; $i++) {
+            if (@fsockopen($ip, $port)) {
+                return;
+            }
+
+            usleep(1000);
+        }
+
+        throw new \RuntimeException(sprintf('Varnish proxy cannot be reached at %s:%s', '127.0.0.1', self::$port));
     }
 }
