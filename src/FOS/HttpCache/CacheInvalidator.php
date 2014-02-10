@@ -100,13 +100,67 @@ class CacheInvalidator
         return $this;
     }
 
-    public function invalidateRegex($regex)
+    /**
+     * Invalidate all cached objects matching the provided HTTP headers.
+     *
+     * Each header is a a POSIX regular expression, for example
+     * array('X-Host' => '^(www\.)?(this|that)\.com$')
+     *
+     * @param array $headers HTTP headers that path must match to be banned.
+     *
+     * @return $this
+     *
+     * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
+     *
+     * @see BanInterface::ban
+     */
+    public function invalidate(array $headers)
     {
-        throw new \RuntimeException('not implemented yet');
+        if (!$this->cache instanceof BanInterface) {
+            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('BAN');
+        }
+
+        $this->cache->ban($headers);
+
+        return $this;
     }
 
     /**
-     * Invalidate cache tags
+     * Invalidate URLs based on a regular expression for the URI, an optional
+     * content type and optional limit to certain hosts.
+     *
+     * The hosts parameter can either be a regular expression, e.g.
+     * '^(www\.)?(this|that)\.com$' or an array of exact host names, e.g.
+     * array('example.com', 'other.net'). If the parameter is empty, all hosts
+     * are matched.
+
+     * @param string $path        Regular expression pattern for URI to
+     *                            invalidate.
+     * @param string $contentType Regular expression pattern for the content
+     *                            type to limit banning, for instance 'text'.
+     * @param array|string $hosts Regular expression of a host name or list of
+     *                            exact host names to limit banning.
+     *
+     * @return $this
+     *
+     * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
+     *
+     * @see BanInterface::banPath
+     */
+    public function invalidateRegex($path, $contentType = null, $hosts = null)
+    {
+        if (!$this->cache instanceof BanInterface) {
+            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('BAN');
+        }
+
+        $this->cache->banPath($path, $contentType, $hosts);
+
+        return $this;
+    }
+
+    /**
+     * Invalidate cache entries that contain any of the specified tags in their
+     * tag header.
      *
      * @param array $tags Cache tags
      *

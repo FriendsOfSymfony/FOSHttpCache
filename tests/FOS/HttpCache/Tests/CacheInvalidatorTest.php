@@ -43,9 +43,33 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
+    public function testInvalidate()
+    {
+        $headers = array(
+            'X-Header' => '^value.*$',
+            'Other-Header' => '^a|b|c$',
+        );
+
+        $ban = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\BanInterface')
+            ->shouldReceive('ban')
+            ->with($headers)
+            ->once()
+            ->getMock();
+
+        $cacheInvalidator = new CacheInvalidator($ban);
+        $cacheInvalidator->invalidate($headers);
+    }
+
     public function testInvalidateRegex()
     {
-        $this->markTestIncomplete('TODO: implement feature');
+        $ban = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\BanInterface')
+            ->shouldReceive('banPath')
+            ->with('/a', 'b', array('example.com'))
+            ->once()
+            ->getMock();
+
+        $cacheInvalidator = new CacheInvalidator($ban);
+        $cacheInvalidator->invalidateRegex('/a', 'b', array('example.com'));
     }
 
     public function testInvalidateTags()
@@ -89,13 +113,23 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         } catch (UnsupportedInvalidationMethodException $e) {
             // success
         }
-        /*
+        try {
+            $cacheInvalidator->invalidate(array());
+            $this->fail('Expected exception');
+        } catch (UnsupportedInvalidationMethodException $e) {
+            // success
+        }
         try {
             $cacheInvalidator->invalidateRegex('/');
             $this->fail('Expected exception');
         } catch (UnsupportedInvalidationMethodException $e) {
             // success
         }
-         */
+        try {
+            $cacheInvalidator->invalidateTags(array());
+            $this->fail('Expected exception');
+        } catch (UnsupportedInvalidationMethodException $e) {
+            // success
+        }
     }
 }

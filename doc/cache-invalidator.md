@@ -45,24 +45,47 @@ Refresh an URL:
 $cacheInvalidator->refreshPath('http://www.example.com/users');
 ```
 
-Invalidating with a Regular Expression
---------------------------------------
+Invalidating a path with a Regular Expression
+---------------------------------------------
 
 Make sure to configure your proxy for regular expressions first.
 (See [varnish ban](varnish.md#ban).)
 
 You can invalidate all URLs matching a regular expression by using the
-`invalidateRegex` method:
+`invalidateRegex` method. You can further limit the cache entries to invalidate
+with a regular expression for the content type and/or the host name.
 
-For instance, to invalidate all .png files for all host names handled by this
+For instance, to invalidate all .css files for all host names handled by this
 caching proxy:
 
 ```php
-$cacheInvalidator->invalidateRegex('.*png$');
+$cacheInvalidator->invalidateRegex('.*css$');
 ```
 
-If you need other criteria than the path, directly access the cache client.
-See for example [Varnish](varnish.md#ban).
+To invalidate all png files for host example.com:
+
+```php
+$cacheInvalidator->invalidateRegex('.*', 'image/png', array('example.com'));
+```
+
+If you need other criteria than path, content type and hosts, use the
+`invalidate` method.
+
+Invalidating requests with any headers
+--------------------------------------
+
+You can also invalidate the cache based on any headers. If you use non-default
+headers, make sure to configure your proxy accordingly to have them taken into
+account. (See [varnish ban](varnish.md#ban).)
+
+Cache client implementations should fill up the headers to at least have the
+default headers always present to simplify the cache configuration rules.
+
+To invalidate on a custom header X-My-Header, you would do:
+
+```php
+$cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'));
+```
 
 Fluent interface
 ----------------
