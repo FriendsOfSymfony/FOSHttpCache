@@ -11,7 +11,7 @@ before_script:
   - sudo apt-get install -qq varnish
   - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.3' ]; then ./tests/install-apache.sh; fi"
   # Install deps
-  - composer update --dev
+  - composer update --dev --prefer-source
 
 script: phpunit --coverage-clover=coverage.clover
 
