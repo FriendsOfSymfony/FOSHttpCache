@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCache\Tests;
+namespace FOS\HttpCache\Tests\Unit;
 
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;

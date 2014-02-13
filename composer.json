@@ -33,9 +33,9 @@
         "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {
-        "psr-0": {
-            "FOS\\HttpCache": "src/",
-            "FOS\\HttpCache\\Tests": "tests/"
+        "psr-4": {
+            "FOS\\HttpCache\\": "src/",
+            "FOS\\HttpCache\\Tests\\": "tests/"
         }
     },
     "extra": {
