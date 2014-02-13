@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCache\Invalidation;
 
+use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCache\Invalidation\Method\RefreshInterface;
@@ -36,11 +37,22 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     protected $ips;
 
     /**
-     * The hostname
+     * The hostname for purge and refresh requests.
      *
      * @var string
      */
     protected $host;
+
+    /**
+     * Map of default headers for ban requests with their default values.
+     *
+     * @var array
+     */
+    protected $defaultBanHeaders = array(
+        self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
+    );
 
     /**
      * HTTP client
@@ -66,12 +78,15 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      *
      * @param array           $ips    Varnish IP addresses including port if
      *                                not port 80. E.g. array('127.0.0.1:6081')
-     * @param string          $host   Default hostname
+     * @param string          $host   Default host for purge and refresh
+     *                                requests (optional). This is required if
+     *                                you purge and refresh paths instead of
+     *                                absolute URLs.
      * @param ClientInterface $client HTTP client (optional). If no HTTP client
      *                                is supplied, a default one will be
-     *                                created automatically.
+     *                                created.
      */
-    public function __construct(array $ips, $host, ClientInterface $client = null)
+    public function __construct(array $ips, $host = null, ClientInterface $client = null)
     {
         $this->ips = $ips;
         $this->host = $host;
@@ -89,16 +104,34 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     }
 
     /**
+     * Set the default headers that get merged with the provided headers in self::ban().
+     *
+     * @param array $headers Hashmap with keys being the header names, values
+     *                       the header values.
+     */
+    public function setDefaultBanHeaders(array $headers)
+    {
+        $this->defaultBanHeaders = $headers;
+    }
+
+    /**
+     * Add or overwrite a default ban header.
+     *
+     * @param string $name  The name of that header
+     * @param string $value The content of that header
+     */
+    public function setDefaultBanHeader($name, $value)
+    {
+        $this->defaultBanHeaders[$name] = $value;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function ban(array $headers)
     {
         $headers = array_merge(
-            array(
-                self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
-                self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
-                self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
-            ),
+            $this->defaultBanHeaders,
             $headers
         );
 
@@ -110,20 +143,27 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     /**
      * {@inheritdoc}
      */
-    public function banPath($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null)
+    public function banPath($path, $contentType = null, $hosts = null)
     {
-        $hosts = is_array($hosts) ? $hosts : array($this->host);
-        $hostRegEx = count($hosts) > 0 ? '^('.join('|', $hosts).')$' : self::REGEX_MATCH_ALL;
+        if (is_array($hosts)) {
+            if (!count($hosts)) {
+                throw new \InvalidArgumentException('Either supply a list of hosts or null, but not an empty array.');
+            }
+            $hosts = '^('.join('|', $hosts).')$';
+        }
 
         $headers = array(
-            self::HTTP_HEADER_HOST         => $hostRegEx,
             self::HTTP_HEADER_URL          => $path,
-            self::HTTP_HEADER_CONTENT_TYPE => $contentType
         );
 
-        $this->ban($headers);
+        if ($contentType) {
+            $headers[self::HTTP_HEADER_CONTENT_TYPE] = $contentType;
+        }
+        if ($hosts) {
+            $headers[self::HTTP_HEADER_HOST] = $hosts;
+        }
 
-        return $this;
+        return $this->ban($headers);
     }
 
     /**
@@ -142,13 +182,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     public function refresh($url, array $headers = array())
     {
         $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
-
-
-        $this->queueRequest(
-            self::HTTP_METHOD_REFRESH,
-            $url,
-            $headers
-        );
+        $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
     }
@@ -175,23 +209,31 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * @param array  $headers HTTP headers
      *
      * @return RequestInterface Request that was added to the queue
+     *
+     * @throws \UnexpectedValueException
+     * @throws MissingHostException
      */
     protected function queueRequest($method, $url, array $headers = array())
     {
         $request = $this->client->createRequest($method, $url, $headers);
 
-        // If Host headers hasn't been set and $url doesn't contain a hostname,
-        // set the Host header to the default hostname
-        if ('' == $request->getHeader('Host')) {
-            $parsedUrl = parse_url($url);
-            if (!isset($parsedUrl['host'])) {
-                $request->setHeader('Host', $this->host);
-            }
-        }
+        // For purge and refresh, add a host header to the request if it hasn't
+        // been set
+        if (self::HTTP_METHOD_BAN !== $method) {
+            if ('' == $request->getHeader('Host')) {
+                $parsedUrl = parse_url($url);
+                if (false === $parsedUrl) {
+                    throw new \UnexpectedValueException(sprintf('URL %s is invalid', $url));
+                }
 
-        if (!isset($parsedUrl['host']) && '' != $request->getHeader('Host')
-        ) {
-            $request->setHeader('Host', $this->host);
+                if (!isset($parsedUrl['host'])) {
+                    if (null === $this->host || '' == $this->host) {
+                        throw new MissingHostException($url);
+                    }
+
+                    $request->setHeader('Host', $this->host);
+                }
+            }
         }
 
         $this->queue[] = $request;
@@ -224,9 +266,6 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         try {
             $this->client->send($allRequests);
         } catch (MultiTransferException $e) {
-            /*
-             * @todo what if there is no cache server available (405 'Method not allowed')
-             */
             foreach ($e as $ea) {
                 $this->logException($ea);
             }

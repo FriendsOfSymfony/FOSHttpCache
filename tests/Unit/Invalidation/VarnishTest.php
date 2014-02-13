@@ -29,7 +29,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('.*', $headers->get('X-Host'));
         $this->assertEquals('.*', $headers->get('X-Url'));
         $this->assertEquals('.*', $headers->get('X-Content-Type'));
-        $this->assertEquals('fos.lo', $headers->get('Host'));
+        $this->assertEquals('', $headers->get('Host'));
     }
 
     public function testBanPath()
@@ -58,15 +58,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function ($requests) use ($self) {
-                        if (4 !== count($requests)) {
-                            return false;
-                        }
-
+                        $self->assertCount(4, $requests);
                         foreach ($requests as $request) {
-                            if ('PURGE' !== $request->getMethod()) {
-                                return false;
-                            }
-
+                            $self->assertEquals('PURGE', $request->getMethod());
                             $self->assertEquals('my_hostname.dev', $request->getHeaders()->get('host'));
                         }
 
@@ -132,6 +126,17 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $varnish->setLogger($logger);
 
         $varnish->purge('/test/this/a')->flush();
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\MissingHostException
+     * @expectedExceptionMessage cannot be invalidated without a host
+     */
+    public function testMissingHostExceptionIsThrown()
+    {
+        $varnish = new Varnish(array('http://127.0.0.1:123'), null, $this->client);
+
+        $varnish->purge('/path/without/hostname');
     }
 
     protected function setUp()

@@ -50,5 +50,5 @@ interface BanInterface extends CacheProxyInterface
      *
      * @return $this
      */
-    public function banPath($path, $contentType = self::CONTENT_TYPE_ALL, array $hosts = null);
+    public function banPath($path, $contentType = null, $hosts = null);
 }
