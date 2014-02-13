@@ -15,4 +15,6 @@ This documentation covers:
    1. [HTTP proxy](http-proxy.md), the low level details
 3. HTTP proxy configuration
    1. [Varnish](varnish.md)
-4. [Testing](testing.md)
+4. Testing
+   1. Testing [your application](testing-your-application.md)’s caching and invalidation behaviour
+   2. Running [this library](testing-the-library.md)’s tests.
