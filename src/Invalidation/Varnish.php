@@ -2,10 +2,13 @@
 
 namespace FOS\HttpCache\Invalidation;
 
+use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\Exception\HostUnreachableException;
 use FOS\HttpCache\Exception\InvalidUrlException;
 use FOS\HttpCache\Exception\InvalidUrlPartsException;
 use FOS\HttpCache\Exception\InvalidUrlSchemeException;
 use FOS\HttpCache\Exception\MissingHostException;
+use FOS\HttpCache\Exception\ResponseException;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCache\Invalidation\Method\RefreshInterface;
@@ -13,9 +16,7 @@ use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
-use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Message\RequestInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Varnish HTTP cache invalidator.
@@ -56,11 +57,6 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * @var ClientInterface
      */
     protected $client;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
 
     /**
      * Request queue
@@ -123,16 +119,6 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         }
 
         $this->client->setBaseUrl($url);
-    }
-
-    /**
-     * Set a logger to enable logging
-     *
-     * @param LoggerInterface $logger
-     */
-    public function setLogger(LoggerInterface $logger = null)
-    {
-        $this->logger = $logger;
     }
 
     /**
@@ -220,8 +206,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     }
 
     /**
-     * Flush the queue
-     *
+     * {@inheritdoc}
      */
     public function flush()
     {
@@ -268,6 +253,8 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * Requests are sent in parallel to minimise impact on performance.
      *
      * @param RequestInterface[] $requests Requests
+     *
+     * @throws ExceptionCollection
      */
     protected function sendRequests(array $requests)
     {
@@ -287,48 +274,42 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         try {
             $this->client->send($allRequests);
         } catch (MultiTransferException $e) {
-            foreach ($e as $ea) {
-                $this->logException($ea);
+            $this->handleException($e);
+        }
+    }
+
+    /**
+     * Handle request exception
+     *
+     * @param MultiTransferException $exceptions
+     *
+     * @throws ExceptionCollection
+     */
+    protected function handleException(MultiTransferException $exceptions)
+    {
+        $collection = new ExceptionCollection();
+
+        foreach ($exceptions as $exception) {
+            if ($exception instanceof CurlException) {
+                // Varnish unreachable
+                $e = new HostUnreachableException(
+                    $exception->getRequest()->getHost(),
+                    $exception->getMessage(),
+                    $exception
+                );
+            } else {
+                // Other error
+                $e = new ResponseException(
+                    $exception->getCode(),
+                    $exception->getMessage(),
+                    $exception
+                );
             }
-        }
-    }
 
-    /**
-     * Log request exception
-     *
-     * @param RequestException $e
-     */
-    protected function logException(RequestException $e)
-    {
-        if ($e instanceof CurlException) {
-            // Usually 'couldn't connect to host', which means: Varnish is down
-            $level = 'crit';
-        } else {
-            $level = 'info';
+            $collection->add($e);
         }
 
-        $this->log(
-            sprintf(
-                'Caught exception while trying to %s %s' . PHP_EOL . 'Message: %s',
-                $e->getRequest()->getMethod(),
-                $e->getRequest()->getUrl(),
-                $e->getMessage()
-            ),
-            $level
-        );
-    }
-
-    /**
-     * Log error message
-     *
-     * @param string $message Error message
-     * @param string $level   Error level (optional)
-     */
-    protected function log($message, $level = 'debug')
-    {
-        if (null !== $this->logger) {
-            $this->logger->$level($message);
-        }
+        throw $collection;
     }
 
     /**

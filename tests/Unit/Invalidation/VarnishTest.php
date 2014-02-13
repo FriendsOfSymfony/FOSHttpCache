@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\Invalidation;
 
+use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Invalidation\Varnish;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\CurlException;
@@ -107,7 +108,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUrl());
     }
 
-    public function testCurlExceptionIsLogged()
+    public function testUnreachableException()
     {
         $mock = new MockPlugin();
         $mock->addException(new CurlException('connect to host'));
@@ -117,14 +118,12 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
         $varnish = new Varnish(array('http://127.0.0.1:123'), 'my_hostname.dev', $client);
 
-        $logger = \Mockery::mock('\Monolog\Logger')
-            ->shouldReceive('crit')
-            ->with('/connect to host/')
-            ->once()
-            ->getMock();
-        $varnish->setLogger($logger);
-
-        $varnish->purge('/test/this/a')->flush();
+        try {
+            $varnish->purge('/test/this/a')->flush();
+        } catch (ExceptionCollection $exceptions) {
+            $this->assertCount(1, $exceptions);
+            $this->assertInstanceOf('\FOS\HttpCache\Exception\HostUnreachableException', $exceptions->getFirst());
+        }
     }
 
     /**

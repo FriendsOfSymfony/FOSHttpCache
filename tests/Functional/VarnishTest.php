@@ -86,9 +86,20 @@ class VarnishTest extends VarnishTestCase
         $this->assertMiss($response);
         $this->assertHit($this->getResponse('/negotation.php', $html));
 
+        self::getResponse('/negotation.php');
         $this->varnish->purge('/negotation.php')->flush();
         $this->assertMiss($this->getResponse('/negotation.php', $json));
         $this->assertMiss($this->getResponse('/negotation.php', $html));
+    }
+
+    public function testPurgeHost()
+    {
+        $varnish = new Varnish(array('http://127.0.0.1:' . self::$port));
+
+        self::getResponse('/cache.php');
+
+        $varnish->purge('http://localhost:6181/cache.php')->flush();
+        $this->assertMiss(self::getResponse('/cache.php'));
     }
 
     public function testRefresh()
