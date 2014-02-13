@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCache\Tests\Invalidation;
+namespace FOS\HttpCache\Tests\Unit\Invalidation;
 
 use FOS\HttpCache\Invalidation\Varnish;
 use Guzzle\Http\Client;
