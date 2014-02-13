@@ -210,7 +210,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      *
      * @return RequestInterface Request that was added to the queue
      *
-     * @throws \UnexpectedValueException
+     * @throws \InvalidArgumentException
      * @throws MissingHostException
      */
     protected function queueRequest($method, $url, array $headers = array())
@@ -223,11 +223,11 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
             if ('' == $request->getHeader('Host')) {
                 $parsedUrl = parse_url($url);
                 if (false === $parsedUrl) {
-                    throw new \UnexpectedValueException(sprintf('URL %s is invalid', $url));
+                    throw new \InvalidArgumentException(sprintf('URL %s is invalid', $url));
                 }
 
                 if (!isset($parsedUrl['host'])) {
-                    if (null === $this->host || '' == $this->host) {
+                    if (!$this->host) {
                         throw new MissingHostException($url);
                     }
 
