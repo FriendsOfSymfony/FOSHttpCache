@@ -83,7 +83,7 @@ sub vcl_miss {
 Ban
 ---
 
-To configure Varnish for [handling BAN requests](https://www.varnish-software.com/static/book/Cache_invalidation.html):
+To configure Varnish for [handling BAN requests](https://www.varnish-software.com/static/book/Cache_invalidation.html#banning):
 
 ```varnish
 # /etc/varnish/your_varnish.vcl
