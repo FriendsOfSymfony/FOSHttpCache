@@ -2,6 +2,8 @@
 
 namespace FOS\HttpCache\Invalidation;
 
+use FOS\HttpCache\Exception\InvalidSchemeException;
+use FOS\HttpCache\Exception\InvalidServerException;
 use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
@@ -30,11 +32,11 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     const HTTP_HEADER_CACHE        = 'X-Cache-Tags';
 
     /**
-     * IP addresses of all Varnish instances
+     * IP addresses/hostnames of all Varnish instances
      *
      * @var array
      */
-    protected $ips;
+    protected $servers;
 
     /**
      * The hostname for purge and refresh requests.
@@ -76,21 +78,78 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     /**
      * Constructor
      *
-     * @param array           $ips    Varnish IP addresses including port if
-     *                                not port 80. E.g. array('127.0.0.1:6081')
-     * @param string          $host   Default host for purge and refresh
-     *                                requests (optional). This is required if
-     *                                you purge and refresh paths instead of
-     *                                absolute URLs.
-     * @param ClientInterface $client HTTP client (optional). If no HTTP client
-     *                                is supplied, a default one will be
-     *                                created.
+     * @param array           $servers Varnish server hostnames or IP addresses,
+     *                                 including port if not port 80.
+     *                                 E.g. array('127.0.0.1:6081')
+     * @param string          $host    Default application hostname for purge
+     *                                 and refresh (optional). This is required
+     *                                 if you purge and refresh paths instead
+     *                                 of absolute URLs.
+     * @param ClientInterface $client  HTTP client (optional). If no HTTP client
+     *                                 is supplied, a default one will be
+     *                                 created.
      */
-    public function __construct(array $ips, $host = null, ClientInterface $client = null)
+    public function __construct(array $servers, $host = null, ClientInterface $client = null)
     {
-        $this->ips = $ips;
-        $this->host = $host;
         $this->client = $client ?: new Client();
+        $this->setServers($servers);
+        $this->setHost($host);
+    }
+
+    /**
+     * Set Varnish servers
+     *
+     * @param array $servers Varnish server hostnames or IP addresses,
+     *                       including port if not port 80.
+     *                       E.g. array('127.0.0.1:6081')
+     *
+     * @throws InvalidSchemeException If scheme is not HTTP
+     * @throws InvalidServerException If server contains elements other than
+     *                                scheme, host, port
+     */
+    public function setServers(array $servers)
+    {
+        $this->servers = array();
+        foreach ($servers as $server) {
+            // parse_url doesn't work properly when no scheme is supplied, so
+            // prefix server with HTTP scheme if necessary.
+            if (false === strpos($server, '://')) {
+                $server = 'http://' . $server;
+            }
+
+            $parts = parse_url($server);
+            if (isset($parts['scheme']) && 'http' != $parts['scheme']) {
+                throw new InvalidSchemeException($server, $parts['scheme'], 'http');
+            }
+
+            $diff = array_diff(array_keys($parts), array('scheme', 'host', 'port'));
+            if (count($diff) > 0) {
+                throw new InvalidServerException($server);
+            }
+
+            $this->servers[] = sprintf(
+                '%s://%s%s',
+                $parts['scheme'],
+                $parts['host'],
+                isset($parts['port']) ? ':' . $parts['port'] : ''
+            );
+        }
+    }
+
+    /**
+     * Set default application hostname for purge and refresh requests
+     *
+     * @param string $host Your application’s default hostname
+     */
+    public function setHost($host)
+    {
+        if ($host) {
+            if (0 !== strncmp('http://', $host, 7)) {
+                $host = 'http://' . $host;
+            }
+        }
+
+        $this->client->setBaseUrl($host);
     }
 
     /**
@@ -219,21 +278,10 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
 
         // For purge and refresh, add a host header to the request if it hasn't
         // been set
-        if (self::HTTP_METHOD_BAN !== $method) {
-            if ('' == $request->getHeader('Host')) {
-                $parsedUrl = parse_url($url);
-                if (false === $parsedUrl) {
-                    throw new \InvalidArgumentException(sprintf('URL %s is invalid', $url));
-                }
-
-                if (!isset($parsedUrl['host'])) {
-                    if (!$this->host) {
-                        throw new MissingHostException($url);
-                    }
-
-                    $request->setHeader('Host', $this->host);
-                }
-            }
+        if (self::HTTP_METHOD_BAN !== $method
+            && '' == $request->getHeader('Host')
+        ) {
+            throw new MissingHostException($url);
         }
 
         $this->queue[] = $request;
@@ -253,10 +301,10 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         $allRequests = array();
 
         foreach ($requests as $request) {
-            foreach ($this->ips as $ip) {
+            foreach ($this->servers as $server) {
                 $varnishRequest = $this->client->createRequest(
                     $request->getMethod(),
-                    $ip . $request->getResource(),
+                    $server . $request->getResource(),
                     $request->getHeaders()
                 );
                 $allRequests[] = $varnishRequest;
