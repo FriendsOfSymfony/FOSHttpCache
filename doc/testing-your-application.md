@@ -17,7 +17,7 @@ By having your test classes extend `VarnishTestCase`, you get:
 * `$this->varnish` referring to an instance of this library’s Varnish client
   that is configured to talk to your Varnish server
 * convenience methods for executing HTTP requests to your application:
-  `self::getClient()` and `self::getResponse()`
+  `self::getClient()` and `$this->getResponse()`
 * custom assertions `assertHit` and `assertMiss` for validating a cache hit/miss.
 
 Configuration
@@ -109,7 +109,7 @@ class YourFunctionalTest extends VarnishTestCase
         // Varnish to become available.
 
         // Retrieve an URL from your application
-        $response = self::getResponse('/your/resource');
+        $response = $this->getResponse('/your/resource');
 
         // Assert the response was a cache miss (came from the backend
         // application)
@@ -117,7 +117,7 @@ class YourFunctionalTest extends VarnishTestCase
 
         // Assume the URL /your/resource sets caching headers. If we retrieve
         // it again, we should have a cache hit (response delivered by Varnish):
-        $response = self::getResponse('/your/resource');
+        $response = $this->getResponse('/your/resource');
         $this->assertHit($response);
     }
 }
@@ -134,16 +134,16 @@ correctly:
         $url = '/blog/articles/1';
 
         // First request must be a cache miss
-        $this->assertMiss(self::getResponse($url));
+        $this->assertMiss($this->getResponse($url));
 
         // Next requests must be a hit
-        $this->assertHit(self::getResponse($url));
+        $this->assertHit($this->getResponse($url));
 
         // Purge
         $this->varnish->purge('/blog/articles/1');
 
         // First request after must again be a miss
-        $this->assertMiss(self::getResponse($url));
+        $this->assertMiss($this->getResponse($url));
     }
 ```
 
