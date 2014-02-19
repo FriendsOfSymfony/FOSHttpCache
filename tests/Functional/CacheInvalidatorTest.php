@@ -11,11 +11,11 @@ class CacheInvalidatorTest extends VarnishTestCase
     {
         $cacheInvalidator = new CacheInvalidator($this->varnish);
 
-        $this->assertMiss(self::getResponse('/tags.php'));
-        $this->assertHit(self::getResponse('/tags.php'));
+        $this->assertMiss($this->getResponse('/tags.php'));
+        $this->assertHit($this->getResponse('/tags.php'));
 
         $cacheInvalidator->invalidateTags(array('tag1'))->flush();
 
-        $this->assertMiss(self::getResponse('/tags.php'));
+        $this->assertMiss($this->getResponse('/tags.php'));
     }
 }
