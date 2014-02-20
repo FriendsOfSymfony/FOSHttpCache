@@ -5,6 +5,9 @@ namespace FOS\HttpCache\Tests\Functional;
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Tests\VarnishTestCase;
 
+/**
+ * @group webserver
+ */
 class CacheInvalidatorTest extends VarnishTestCase
 {
     public function testInvalidateTags()
