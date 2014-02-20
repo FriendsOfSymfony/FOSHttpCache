@@ -58,14 +58,65 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
     const PID = '/tmp/foshttpcache-varnish.pid';
 
     /**
+     * Get HTTP client for your application
+     *
+     * @return Client
+     */
+    public function getClient()
+    {
+        if (null === self::$client) {
+            self::$client = new Client('http://' . $this->getHostName() . ':' . $this->getVarnishPort());
+        }
+
+        return self::$client;
+    }
+
+    /**
+     * Get HTTP response from your application
+     *
+     * @param string $url
+     * @param array  $headers
+     *
+     * @return Response
+     */
+    public function getResponse($url, array $headers = array())
+    {
+        return $this->getClient()->get($url, $headers)->send();
+    }
+
+    /**
+     * Assert a cache miss
+     *
+     * @param Response $response
+     * @param string   $message  Test failure message (optional)
+     */
+    public function assertMiss(Response $response, $message = null)
+    {
+        $this->assertEquals(self::CACHE_MISS, (string) $response->getHeader(self::CACHE_HEADER), $message);
+    }
+
+    /**
+     * Assert a cache hit
+     *
+     * @param Response $response
+     * @param string   $message  Test failure message (optional)
+     */
+    public function assertHit(Response $response, $message = null)
+    {
+        $this->assertEquals(self::CACHE_HIT, (string) $response->getHeader(self::CACHE_HEADER), $message);
+    }
+
+    /**
      * The default implementation looks at the constant VARNISH_FILE.
+     *
+     * @throws \Exception
      *
      * @return string the path to the varnish server configuration file to use with this test.
      */
     protected function getConfigFile()
     {
         if (!defined('VARNISH_FILE')) {
-            throw new \Exception('Either specify the varnish configuration file path in phpunit.xml or pass it as argument to the setUp method');
+            throw new \Exception('Specify the varnish configuration file path in phpunit.xml or override getConfigFile()');
         }
         $configFile = VARNISH_FILE;
 
@@ -79,6 +130,8 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
     /**
      * The host name to use in the web requests to varnish. This needs to be defined.
      *
+     * @throws \Exception
+     *
      * @return string
      */
     protected function getHostName()
@@ -86,6 +139,7 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
         if (!defined('WEB_SERVER_HOSTNAME')) {
             throw new \Exception('To use this test, you need to define the WEB_SERVER_HOSTNAME constant in your phpunit.xml');
         }
+
         return WEB_SERVER_HOSTNAME;
     }
 
@@ -129,17 +183,18 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
         return defined('VARNISH_CACHE_DIR') ? VARNISH_CACHE_DIR : sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-test';
     }
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         $this->varnish = new Varnish(
             array('http://127.0.0.1:' . $this->getVarnishPort()),
             $this->getHostName() . ':' . $this->getVarnishPort()
         );
 
-        if (file_exists(self::PID)) {
-            exec('kill ' . file_get_contents(self::PID));
-            unlink(self::PID);
-        }
+        $this->stopVarnish();
+
         exec($this->getBinary() .
             ' -a localhost:' . $this->getVarnishPort() .
             ' -T localhost:' . $this->getVarnishMgmtPort() .
@@ -151,36 +206,12 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
         $this->waitForVarnish('127.0.0.1', $this->getVarnishPort(), 2000);
     }
 
-    public function tearDown()
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
     {
-        if (file_exists(self::PID)) {
-            exec('kill ' . file_get_contents(self::PID));
-            unlink(self::PID);
-        }
-    }
-
-    public function getClient()
-    {
-        if (null === self::$client) {
-            self::$client = new Client('http://' . $this->getHostName() . ':' . $this->getVarnishPort());
-        }
-
-        return self::$client;
-    }
-
-    public function getResponse($url, array $headers = array())
-    {
-        return $this->getClient()->get($url, $headers)->send();
-    }
-
-    public function assertMiss(Response $response, $message = null)
-    {
-        $this->assertEquals(self::CACHE_MISS, (string) $response->getHeader(self::CACHE_HEADER), $message);
-    }
-
-    public function assertHit(Response $response, $message = null)
-    {
-        $this->assertEquals(self::CACHE_HIT, (string) $response->getHeader(self::CACHE_HEADER), $message);
+        $this->stopVarnish();
     }
 
     /**
@@ -203,5 +234,16 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
         }
 
         throw new \RuntimeException(sprintf('Varnish proxy cannot be reached at %s:%s', '127.0.0.1', $this->getVarnishPort()));
+    }
+
+    /**
+     * Stop Varnish process if it's running
+     */
+    protected function stopVarnish()
+    {
+        if (file_exists(self::PID)) {
+            exec('kill ' . file_get_contents(self::PID));
+            unlink(self::PID);
+        }
     }
 }
