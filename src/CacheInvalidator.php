@@ -2,11 +2,17 @@
 
 namespace FOS\HttpCache;
 
+use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\Exception\ProxyResponseException;
+use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
 use FOS\HttpCache\Invalidation\CacheProxyInterface;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCache\Invalidation\Method\RefreshInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Manages HTTP cache invalidation.
@@ -21,6 +27,11 @@ class CacheInvalidator
     protected $cache;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var string
      */
     protected $tagsHeader = 'X-Cache-Tags';
@@ -33,6 +44,46 @@ class CacheInvalidator
     public function __construct(CacheProxyInterface $cache)
     {
         $this->cache = $cache;
+    }
+
+    /**
+     * Set event dispatcher
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @return $this
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * Get event dispatcher
+     *
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = new EventDispatcher();
+        }
+
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * Add subscriber
+     *
+     * @param EventSubscriberInterface $subscriber
+     *
+     * @return $this
+     */
+    public function addSubscriber(EventSubscriberInterface $subscriber)
+    {
+        $this->getEventDispatcher()->addSubscriber($subscriber);
+
+        return $this;
     }
 
     /**
@@ -187,11 +238,27 @@ class CacheInvalidator
     /**
      * Send all pending invalidation requests.
      *
+     * @throws ExceptionCollection
+     *
      * @return $this
      */
     public function flush()
     {
-        $this->cache->flush();
+        try {
+            $this->cache->flush();
+        } catch (ExceptionCollection $exceptions) {
+            foreach ($exceptions as $exception) {
+                $event = new Event();
+                $event->setException($exception);
+                if ($exception instanceof ProxyResponseException) {
+                    $this->getEventDispatcher()->dispatch(Events::PROXY_RESPONSE_ERROR, $event);
+                } elseif ($exception instanceof ProxyUnreachableException) {
+                    $this->getEventDispatcher()->dispatch(Events::PROXY_UNREACHABLE_ERROR, $event);
+                }
+            }
+
+            throw $exceptions;
+        }
 
         return $this;
     }

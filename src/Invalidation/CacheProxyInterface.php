@@ -2,6 +2,8 @@
 
 namespace FOS\HttpCache\Invalidation;
 
+use FOS\HttpCache\Exception\ExceptionCollection;
+
 /**
  * An HTTP caching reverse proxy
  *
@@ -13,8 +15,7 @@ interface CacheProxyInterface
      *
      * @return $this
      *
-     * @throws \FOS\HttpCache\Exception\ExceptionCollection If any errors occurred
-     *                                                      during flush
+     * @throws ExceptionCollection If any errors occurred during flush
      */
     public function flush();
 }

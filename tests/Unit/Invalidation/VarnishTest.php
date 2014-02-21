@@ -13,7 +13,11 @@ use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var MockPlugin
+     */
     protected $mock;
+
     protected $client;
 
     public function testBanEverything()
@@ -58,6 +62,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function ($requests) use ($self) {
+                        /** @type Request[] $requests */
                         $self->assertCount(4, $requests);
                         foreach ($requests as $request) {
                             $self->assertEquals('PURGE', $request->getMethod());
@@ -122,7 +127,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             $varnish->purge('/test/this/a')->flush();
         } catch (ExceptionCollection $exceptions) {
             $this->assertCount(1, $exceptions);
-            $this->assertInstanceOf('\FOS\HttpCache\Exception\HostUnreachableException', $exceptions->getFirst());
+            $this->assertInstanceOf('\FOS\HttpCache\Exception\ProxyUnreachableException', $exceptions->getFirst());
         }
     }
 

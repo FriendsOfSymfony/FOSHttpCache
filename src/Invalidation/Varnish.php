@@ -3,12 +3,12 @@
 namespace FOS\HttpCache\Invalidation;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
-use FOS\HttpCache\Exception\HostUnreachableException;
 use FOS\HttpCache\Exception\InvalidUrlException;
 use FOS\HttpCache\Exception\InvalidUrlPartsException;
 use FOS\HttpCache\Exception\InvalidUrlSchemeException;
 use FOS\HttpCache\Exception\MissingHostException;
-use FOS\HttpCache\Exception\ResponseException;
+use FOS\HttpCache\Exception\ProxyResponseException;
+use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCache\Invalidation\Method\RefreshInterface;
@@ -16,6 +16,7 @@ use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
+use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Message\RequestInterface;
 
 /**
@@ -225,10 +226,10 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * @param string $url     URL
      * @param array  $headers HTTP headers
      *
-     * @return RequestInterface Request that was added to the queue
+     * @throws MissingHostException If a relative path is queued for purge/
+     *                              refresh and no base URL is set
      *
-     * @throws \InvalidArgumentException
-     * @throws MissingHostException
+     * @return RequestInterface Request that was added to the queue
      */
     protected function queueRequest($method, $url, array $headers = array())
     {
@@ -292,18 +293,22 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         foreach ($exceptions as $exception) {
             if ($exception instanceof CurlException) {
                 // Varnish unreachable
-                $e = new HostUnreachableException(
+                $e = new ProxyUnreachableException(
                     $exception->getRequest()->getHost(),
                     $exception->getMessage(),
                     $exception
                 );
-            } else {
+            } elseif ($exception instanceof RequestException) {
                 // Other error
-                $e = new ResponseException(
+                $e = new ProxyResponseException(
+                    $exception->getRequest()->getHost(),
                     $exception->getCode(),
                     $exception->getMessage(),
                     $exception
                 );
+            } else {
+                // Unexpected exception type
+                $e = $exception;
             }
 
             $collection->add($e);
@@ -315,14 +320,14 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     /**
      * Filter a URL
      *
-     * @param string $url
-     * @param array  $allowedParts Array of allowed URL parts (optional)
+     * @param string   $url
+     * @param string[] $allowedParts Array of allowed URL parts (optional)
      *
      * @throws InvalidUrlSchemeException If scheme is not HTTP
      * @throws InvalidUrlException       If URL is invalid
      * @throws InvalidUrlPartsException  If scheme contains invalid parts
      *
-     * @return array
+     * @return string
      */
     protected function filterUrl($url, array $allowedParts = array())
     {

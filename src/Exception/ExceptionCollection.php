@@ -3,7 +3,8 @@
 namespace FOS\HttpCache\Exception;
 
 /**
- * A collection of exceptions
+ * A collection of exceptions that might occur during the flush operation of a
+ * CacheProxyInterface implementation
  */
 class ExceptionCollection extends \Exception implements \IteratorAggregate, \Countable
 {
@@ -13,6 +14,8 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
      * Add an exception to the collection
      *
      * @param \Exception $e
+     *
+     * @return $this
      */
     public function add(\Exception $e)
     {
@@ -21,6 +24,8 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
         }
 
         $this->exceptions[] = $e;
+
+        return $this;
     }
 
     /**
