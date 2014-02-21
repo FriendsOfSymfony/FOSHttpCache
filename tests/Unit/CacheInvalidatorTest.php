@@ -8,11 +8,6 @@ use \Mockery;
 
 class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        $this->cacheProxy = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
-    }
-
     public function testInvalidatePath()
     {
         $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\PurgeInterface')

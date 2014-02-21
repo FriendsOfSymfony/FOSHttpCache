@@ -94,7 +94,7 @@ class VarnishTest extends VarnishTestCase
 
     public function testPurgeHost()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:' . self::$port));
+        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getVarnishPort()));
 
         self::getResponse('/cache.php');
 
