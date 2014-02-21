@@ -7,11 +7,8 @@
          convertWarningsToExceptions="true"
          syntaxCheck="true">
     <testsuites>
-        <testsuite name="unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
-        </testsuite>
-        <testsuite name="functional">
-            <directory suffix="Test.php">./tests/Functional</directory>
+        <testsuite name="FOSHttpCache tests">
+            <directory suffix="Test.php">./tests/</directory>
         </testsuite>
     </testsuites>
 
@@ -22,12 +19,8 @@
     </filter>
 
     <listeners>
-        <listener class="\Mockery\Adapter\Phpunit\TestListener"/>
-        <listener class="\FOS\HttpCache\Tests\Functional\WebServerListener">
-            <arguments>
-                <string>functional</string>
-            </arguments>
-        </listener>
+        <listener class="\Mockery\Adapter\Phpunit\TestListener" />
+        <listener class="\FOS\HttpCache\Tests\Functional\WebServerListener" />
     </listeners>
 
     <php>

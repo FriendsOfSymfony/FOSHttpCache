@@ -5,6 +5,9 @@ namespace FOS\HttpCache\Tests\Functional;
 use FOS\HttpCache\Invalidation\Varnish;
 use FOS\HttpCache\Tests\VarnishTestCase;
 
+/**
+ * @group webserver
+ */
 class VarnishTest extends VarnishTestCase
 {
     public function testBanAll()
@@ -29,7 +32,7 @@ class VarnishTest extends VarnishTestCase
         $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => WEB_SERVER_HOSTNAME))->flush();
+        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 

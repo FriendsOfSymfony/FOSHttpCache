@@ -3,7 +3,7 @@
 namespace FOS\HttpCache\Tests\Functional;
 
 /**
- * A PHPUnit test listener that starts and stops the PHP built-in web server.
+ * A PHPUnit test listener that starts and stops the PHP built-in web server
  *
  * This listener is configured with a couple of constants from the phpunit.xml
  * file. To define constants in the phpunit file, use this syntax:
@@ -11,56 +11,100 @@ namespace FOS\HttpCache\Tests\Functional;
  *     <const name="WEB_SERVER_HOSTNAME" value="localhost" />
  * </php>
  *
- * WEB_SERVER_HOSTNAME host name of the webserver (required)
+ * WEB_SERVER_HOSTNAME host name of the web server (required)
  * WEB_SERVER_PORT     port to listen on (required)
  * WEB_SERVER_DOCROOT  path to the document root for the server (required)
  */
 class WebServerListener implements \PHPUnit_Framework_TestListener
 {
-    protected $suite;
+    /**
+     * PHP web server PID
+     *
+     * @var int
+     */
     protected $pid;
 
-    public function __construct($suite)
-    {
-        $this->suite = $suite;
-    }
-
     /**
-     *
+     * Make sure the PHP built-in web server is running for tests with group
+     * 'webserver'
      */
     public function startTestSuite(\PHPUnit_Framework_TestSuite $suite)
     {
-        if ($this->suite != $suite->getName() || null !== $this->pid) {
+        if (!in_array('webserver', $suite->getGroups()) || null !== $this->pid) {
             return;
         }
 
         $command = sprintf(
             'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
-            WEB_SERVER_HOSTNAME,
-            WEB_SERVER_PORT,
-            WEB_SERVER_DOCROOT
+            $this->getHostName(),
+            $this->getPort(),
+            $this->getDocRoot()
         );
 
         exec($command, $output);
-        $this->pid = $output[0];
-    }
+        $this->pid = $pid = $output[0];
 
-    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite)
-    {
-        if ($this->suite != $suite->getName() || null === $this->pid) {
-            return;
-        }
-
-        exec('kill ' . $this->pid);
+        register_shutdown_function(function () use ($pid) {
+            exec('kill ' . $pid);
+        });
     }
 
     /**
      *  We don't need these
      */
+    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite) {}
     public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time) {}
     public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time) {}
     public function addIncompleteTest(\PHPUnit_Framework_Test $test, \Exception $e, $time) {}
     public function addSkippedTest(\PHPUnit_Framework_Test $test, \Exception $e, $time) {}
     public function startTest(\PHPUnit_Framework_Test $test) {}
     public function endTest(\PHPUnit_Framework_Test $test, $time) {}
+
+    /**
+     * Get web server hostname
+     *
+     * @throws \Exception
+     *
+     * @return string
+     */
+    protected function getHostName()
+    {
+        if (!defined('WEB_SERVER_HOSTNAME')) {
+            throw new \Exception('Set WEB_SERVER_HOSTNAME in your phpunit.xml');
+        }
+
+        return WEB_SERVER_HOSTNAME;
+    }
+
+    /**
+     * Get web server port
+     *
+     * @throws \Exception
+     *
+     * @return int
+     */
+    protected function getPort()
+    {
+        if (!defined('WEB_SERVER_PORT')) {
+            throw new \Exception('Set WEB_SERVER_PORT in your phpunit.xml');
+        }
+
+        return WEB_SERVER_PORT;
+    }
+
+    /**
+     * Get web server port
+     *
+     * @throws \Exception
+     *
+     * @return int
+     */
+    protected function getDocRoot()
+    {
+        if (!defined('WEB_SERVER_DOCROOT')) {
+            throw new \Exception('Set WEB_SERVER_DOCROOT in your phpunit.xml');
+        }
+
+        return WEB_SERVER_DOCROOT;
+    }
 }
