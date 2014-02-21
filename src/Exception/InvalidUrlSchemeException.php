@@ -2,8 +2,15 @@
 
 namespace FOS\HttpCache\Exception;
 
-class InvalidSchemeException extends \InvalidArgumentException
+class InvalidUrlSchemeException extends \InvalidArgumentException
 {
+    /**
+     * Constructor
+     *
+     * @param string $host     HTTP host
+     * @param string $scheme   HTTP scheme
+     * @param string $expected Expected HTTP scheme
+     */
     public function __construct($host, $scheme, $expected)
     {
         parent::__construct(sprintf(

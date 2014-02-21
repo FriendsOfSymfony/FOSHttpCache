@@ -2,8 +2,9 @@
 
 namespace FOS\HttpCache\Invalidation;
 
-use FOS\HttpCache\Exception\InvalidSchemeException;
-use FOS\HttpCache\Exception\InvalidServerException;
+use FOS\HttpCache\Exception\InvalidUrlException;
+use FOS\HttpCache\Exception\InvalidUrlPartsException;
+use FOS\HttpCache\Exception\InvalidUrlSchemeException;
 use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
@@ -37,13 +38,6 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * @var array
      */
     protected $servers;
-
-    /**
-     * The hostname for purge and refresh requests.
-     *
-     * @var string
-     */
-    protected $host;
 
     /**
      * Map of default headers for ban requests with their default values.
@@ -81,19 +75,20 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * @param array           $servers Varnish server hostnames or IP addresses,
      *                                 including port if not port 80.
      *                                 E.g. array('127.0.0.1:6081')
-     * @param string          $host    Default application hostname for purge
-     *                                 and refresh (optional). This is required
-     *                                 if you purge and refresh paths instead
-     *                                 of absolute URLs.
+     * @param string          $baseUrl Default application hostname, optionally
+     *                                 including base URL, for purge and refresh
+     *                                 requests (optional). This is required if
+     *                                 you purge and refresh paths instead of
+     *                                 absolute URLs.
      * @param ClientInterface $client  HTTP client (optional). If no HTTP client
      *                                 is supplied, a default one will be
      *                                 created.
      */
-    public function __construct(array $servers, $host = null, ClientInterface $client = null)
+    public function __construct(array $servers, $baseUrl = null, ClientInterface $client = null)
     {
         $this->client = $client ?: new Client();
         $this->setServers($servers);
-        $this->setHost($host);
+        $this->setBaseUrl($baseUrl);
     }
 
     /**
@@ -103,53 +98,31 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      *                       including port if not port 80.
      *                       E.g. array('127.0.0.1:6081')
      *
-     * @throws InvalidSchemeException If scheme is not HTTP
-     * @throws InvalidServerException If server contains elements other than
-     *                                scheme, host, port
+     * @throws InvalidUrlSchemeException If scheme is supplied and is not HTTP
+     * @throws InvalidUrlException       If server is invalid or contains URL
+     *                                   parts other than scheme, host, port
      */
     public function setServers(array $servers)
     {
         $this->servers = array();
         foreach ($servers as $server) {
-            // parse_url doesn't work properly when no scheme is supplied, so
-            // prefix server with HTTP scheme if necessary.
-            if (false === strpos($server, '://')) {
-                $server = 'http://' . $server;
-            }
-
-            $parts = parse_url($server);
-            if (isset($parts['scheme']) && 'http' != $parts['scheme']) {
-                throw new InvalidSchemeException($server, $parts['scheme'], 'http');
-            }
-
-            $diff = array_diff(array_keys($parts), array('scheme', 'host', 'port'));
-            if (count($diff) > 0) {
-                throw new InvalidServerException($server);
-            }
-
-            $this->servers[] = sprintf(
-                '%s://%s%s',
-                $parts['scheme'],
-                $parts['host'],
-                isset($parts['port']) ? ':' . $parts['port'] : ''
-            );
+            $this->servers[] = $this->filterUrl($server, array('scheme', 'host', 'port'));
         }
     }
 
     /**
-     * Set default application hostname for purge and refresh requests
+     * Set application hostname, optionally including a base URL, for purge and
+     * refresh requests
      *
-     * @param string $host Your application’s default hostname
+     * @param string $url Your application’s base URL or hostname
      */
-    public function setHost($host)
+    public function setBaseUrl($url)
     {
-        if ($host) {
-            if (0 !== strncmp('http://', $host, 7)) {
-                $host = 'http://' . $host;
-            }
+        if ($url) {
+            $url = $this->filterUrl($url);
         }
 
-        $this->client->setBaseUrl($host);
+        $this->client->setBaseUrl($url);
     }
 
     /**
@@ -212,7 +185,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         }
 
         $headers = array(
-            self::HTTP_HEADER_URL          => $path,
+            self::HTTP_HEADER_URL => $path,
         );
 
         if ($contentType) {
@@ -356,5 +329,43 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         if (null !== $this->logger) {
             $this->logger->$level($message);
         }
+    }
+
+    /**
+     * Filter a URL
+     *
+     * @param string $url
+     * @param array  $allowedParts Array of allowed URL parts (optional)
+     *
+     * @throws InvalidUrlSchemeException If scheme is not HTTP
+     * @throws InvalidUrlException       If URL is invalid
+     * @throws InvalidUrlPartsException  If scheme contains invalid parts
+     *
+     * @return array
+     */
+    protected function filterUrl($url, array $allowedParts = array())
+    {
+        // parse_url doesn’t work properly when no scheme is supplied, so
+        // prefix server with HTTP scheme if necessary.
+        if (false === strpos($url, '://')) {
+            $url = 'http://' . $url;
+        }
+
+        if (!$parts = parse_url($url)) {
+            throw new InvalidUrlException($url);
+        }
+
+        if (isset($parts['scheme']) && 'http' != $parts['scheme']) {
+            throw new InvalidUrlSchemeException($url, $parts['scheme'], 'http');
+        }
+
+        if (count($allowedParts) > 0) {
+            $diff = array_diff(array_keys($parts), $allowedParts);
+            if (count($diff) > 0) {
+                throw new InvalidUrlPartsException($url, $allowedParts);
+            }
+        }
+
+        return $url;
     }
 }
