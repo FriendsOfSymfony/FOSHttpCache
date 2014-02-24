@@ -3,16 +3,15 @@
 namespace FOS\HttpCache\Tests\Unit;
 
 use FOS\HttpCache\CacheInvalidator;
+use FOS\HttpCache\EventListener\LogSubscriber;
+use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\Exception\ProxyResponseException;
+use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
 use \Mockery;
 
 class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-        $this->cacheProxy = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
-    }
-
     public function testInvalidatePath()
     {
         $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\PurgeInterface')
@@ -131,5 +130,42 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         } catch (UnsupportedInvalidationMethodException $e) {
             // success
         }
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\ExceptionCollection
+     */
+    public function testCacheProxyExceptionsAreLogged()
+    {
+        $unreachableException = new ProxyUnreachableException('http://127.0.0.1', 'Couldn\'t connect to host');
+        $responseException    = new ProxyResponseException('http://127.0.0.1', 403, 'Forbidden');
+
+        $exceptions = new ExceptionCollection();
+        $exceptions->add($unreachableException)->add($responseException);
+
+        $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface')
+            ->shouldReceive('flush')->once()->andThrow($exceptions)
+            ->getMock();
+
+        $cacheInvalidator = new CacheInvalidator($httpCache);
+
+        $logger = \Mockery::mock('\Psr\Log\LoggerInterface')
+            ->shouldReceive('log')->once()
+            ->with(
+                'critical',
+                'Request to caching proxy at http://127.0.0.1 failed with message "Couldn\'t connect to host"',
+                array(
+                    'exception' => $unreachableException
+                )
+            )
+            ->shouldReceive('log')->once()
+            ->with('critical', '403 error response "Forbidden" from caching proxy at http://127.0.0.1', array('exception' => $responseException))
+            ->getMock();
+
+        $cacheInvalidator->addSubscriber(new LogSubscriber($logger));
+
+        $cacheInvalidator
+            ->flush()
+        ;
     }
 }

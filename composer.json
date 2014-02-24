@@ -22,7 +22,8 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "guzzle/http": "3.*"
+        "guzzle/http": "3.*",
+        "symfony/event-dispatcher": "~2.3"
     },
     "require-dev": {
         "guzzle/plugin-mock": "*",
