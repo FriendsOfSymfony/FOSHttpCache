@@ -10,6 +10,7 @@ before_script:
   # Install Varnish
   - sudo apt-get update -qq
   - sudo apt-get install -qq varnish
+  - sh ./tests/install-nginx.sh
   - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.3' ]; then ./tests/install-apache.sh; fi"
   # Install deps
   - composer update --dev --prefer-source
