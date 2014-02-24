@@ -8,6 +8,9 @@ HTTP proxy.
 As with the CacheInvalidator, you need to call `flush()` to actually send requests
 to the backend.
 
+The CacheInvalidator is configured with an instance of CacheProxyInterface which
+also implements at least one of PurgeInterface, RefreshInterface, BanInterface.
+
 * [Purge](#purge)
 * [Ban](#ban)
 * [Refresh](#refresh)

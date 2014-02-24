@@ -26,12 +26,11 @@ sub vcl_fetch {
 
     # Set ban-lurker friendly custom headers
     set beresp.http.x-url = req.url;
-
-
     set beresp.http.x-host = req.http.host;
 }
 
 sub vcl_deliver {
+
     # Add extra headers if debugging is enabled
     if (!resp.http.x-cache-debug) {
         # Remove ban-lurker friendly custom headers when delivering to client

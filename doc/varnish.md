@@ -1,10 +1,10 @@
-Varnish
-=======
+Varnish Configuration
+=====================
 
 This chapter describes how to configure Varnish to work with the library.
 
 * [Introduction](#introduction)
-* [Basic Varnish configuration](#basic-varnish-configuration)
+* [Basic Varnish Configuration](#basic-varnish-configuration)
 * [Purge](#purge)
 * [Refresh](#refresh)
 * [Ban](#ban)
@@ -13,18 +13,13 @@ This chapter describes how to configure Varnish to work with the library.
 Introduction
 ------------
 
-The [Varnish reverse caching proxy](https://www.varnish-cache.org) is a good
-choice for a caching proxy. This document is not meant to be an introduction to
-Varnish, so if you are not familiar with it, you might want to read some
-tutorial first.
-
 Below, you will find detailed Varnish configuration recommendations for the
 features provided by this library. The examples are tested with Varnish
 version 3.0. For a quick overview, you can also look at [the configuration
 that is used for the library’s functional tests]
 (../tests/Tests/Functional/Fixtures/varnish/fos.vcl).
 
-Basic Varnish configuration
+Basic Varnish Configuration
 ---------------------------
 
 To invalidate cached objects in Varnish, begin by adding an
@@ -80,6 +75,20 @@ sub vcl_miss {
 }
 ```
 
+Refresh
+-------
+
+If you want to invalidate cached objects by [forcing a refresh](https://www.varnish-cache.org/trac/wiki/VCLExampleEnableForceRefresh),
+add the following to your Varnish configuration:
+
+```varnish
+sub vcl_recv {
+    if (req.http.Cache-Control ~ "no-cache" && client.ip ~ invalidators) {
+        set req.hash_always_miss = true;
+    }
+}
+```
+
 Ban
 ---
 
@@ -115,24 +124,12 @@ sub vcl_deliver {
 }
 ```
 
-Refresh
--------
-
-If you want to invalidate cached objects by [forcing a refresh](https://www.varnish-cache.org/trac/wiki/VCLExampleEnableForceRefresh),
-add the following to your Varnish configuration:
-
-```varnish
-sub vcl_recv {
-    if (req.http.Cache-Control ~ "no-cache" && client.ip ~ invalidators) {
-        set req.hash_always_miss = true;
-    }
-}
-```
-
 Tagging
 -------
 
 Add the following to your Varnish configuration to enable [cache tagging](cache-invalidator.md#tags).
+The custom `X-Cache-Tags` header should match the tagging header
+[configured in the cache invalidator](cache-invalidator.md#changing-the-tags-header).
 
 ```varnish
 sub vcl_recv {
