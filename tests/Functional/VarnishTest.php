@@ -5,67 +5,70 @@ namespace FOS\HttpCache\Tests\Functional;
 use FOS\HttpCache\Invalidation\Varnish;
 use FOS\HttpCache\Tests\VarnishTestCase;
 
+/**
+ * @group webserver
+ */
 class VarnishTest extends VarnishTestCase
 {
     public function testBanAll()
     {
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertHit(self::getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->assertMiss(self::getResponse('/json.php'));
-        $this->assertHit(self::getResponse('/json.php'));
+        $this->assertMiss($this->getResponse('/json.php'));
+        $this->assertHit($this->getResponse('/json.php'));
 
         $this->varnish->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
 
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertMiss(self::getResponse('/json.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/json.php'));
     }
 
     public function testBanHost()
     {
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertHit(self::getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
 
         $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
-        $this->assertHit(self::getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => WEB_SERVER_HOSTNAME))->flush();
-        $this->assertMiss(self::getResponse('/cache.php'));
+        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
+        $this->assertMiss($this->getResponse('/cache.php'));
     }
 
     public function testBanPathAll()
     {
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertHit(self::getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->assertMiss(self::getResponse('/json.php'));
-        $this->assertHit(self::getResponse('/json.php'));
+        $this->assertMiss($this->getResponse('/json.php'));
+        $this->assertHit($this->getResponse('/json.php'));
 
         $this->varnish->banPath('.*')->flush();
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertMiss(self::getResponse('/json.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/json.php'));
     }
 
     public function testBanPathContentType()
     {
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertHit(self::getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->assertMiss(self::getResponse('/json.php'));
-        $this->assertHit(self::getResponse('/json.php'));
+        $this->assertMiss($this->getResponse('/json.php'));
+        $this->assertHit($this->getResponse('/json.php'));
 
         $this->varnish->banPath('.*', 'text/html')->flush();
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertHit(self::getResponse('/json.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/json.php'));
     }
 
     public function testPurge()
     {
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $this->assertHit(self::getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
 
         $this->varnish->purge('/cache.php')->flush();
-        $this->assertMiss(self::getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse('/cache.php'));
     }
 
     public function testPurgeContentType()
@@ -73,30 +76,41 @@ class VarnishTest extends VarnishTestCase
         $json = array('Accept' => 'application/json');
         $html = array('Accept' => 'text/html');
 
-        $response = self::getResponse('/negotation.php', $json);
+        $response = $this->getResponse('/negotation.php', $json);
         $this->assertMiss($response);
         $this->assertEquals('application/json', $response->getContentType());
-        $this->assertHit(self::getResponse('/negotation.php', $json));
+        $this->assertHit($this->getResponse('/negotation.php', $json));
 
-        $response = self::getResponse('/negotation.php', $html);
+        $response = $this->getResponse('/negotation.php', $html);
         $this->assertEquals('text/html', $response->getContentType());
         $this->assertMiss($response);
-        $this->assertHit(self::getResponse('/negotation.php', $html));
+        $this->assertHit($this->getResponse('/negotation.php', $html));
 
+        self::getResponse('/negotation.php');
         $this->varnish->purge('/negotation.php')->flush();
-        $this->assertMiss(self::getResponse('/negotation.php', $json));
-        $this->assertMiss(self::getResponse('/negotation.php', $html));
+        $this->assertMiss($this->getResponse('/negotation.php', $json));
+        $this->assertMiss($this->getResponse('/negotation.php', $html));
+    }
+
+    public function testPurgeHost()
+    {
+        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getVarnishPort()));
+
+        self::getResponse('/cache.php');
+
+        $varnish->purge('http://localhost:6181/cache.php')->flush();
+        $this->assertMiss(self::getResponse('/cache.php'));
     }
 
     public function testRefresh()
     {
-        $this->assertMiss(self::getResponse('/cache.php'));
-        $response = self::getResponse('/cache.php');
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
         $this->varnish->refresh('/cache.php')->flush();
         usleep(1000);
-        $refreshed = self::getResponse('/cache.php');
+        $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
     }
 
@@ -107,7 +121,7 @@ class VarnishTest extends VarnishTestCase
 
         $this->varnish->refresh('/negotation.php', $json)->flush();
 
-        $this->assertHit(self::getResponse('/negotation.php', $json));
-        $this->assertMiss(self::getResponse('/negotation.php', $html));
+        $this->assertHit($this->getResponse('/negotation.php', $json));
+        $this->assertMiss($this->getResponse('/negotation.php', $html));
     }
 }

@@ -2,7 +2,13 @@
 
 namespace FOS\HttpCache\Invalidation;
 
+use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\Exception\InvalidUrlException;
+use FOS\HttpCache\Exception\InvalidUrlPartsException;
+use FOS\HttpCache\Exception\InvalidUrlSchemeException;
 use FOS\HttpCache\Exception\MissingHostException;
+use FOS\HttpCache\Exception\ProxyResponseException;
+use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCache\Invalidation\Method\RefreshInterface;
@@ -12,7 +18,6 @@ use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
 use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Message\RequestInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Varnish HTTP cache invalidator.
@@ -30,18 +35,11 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     const HTTP_HEADER_CACHE        = 'X-Cache-Tags';
 
     /**
-     * IP addresses of all Varnish instances
+     * IP addresses/hostnames of all Varnish instances
      *
      * @var array
      */
-    protected $ips;
-
-    /**
-     * The hostname for purge and refresh requests.
-     *
-     * @var string
-     */
-    protected $host;
+    protected $servers;
 
     /**
      * Map of default headers for ban requests with their default values.
@@ -62,11 +60,6 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     protected $client;
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * Request queue
      *
      * @var array|RequestInterface[]
@@ -76,31 +69,57 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     /**
      * Constructor
      *
-     * @param array           $ips    Varnish IP addresses including port if
-     *                                not port 80. E.g. array('127.0.0.1:6081')
-     * @param string          $host   Default host for purge and refresh
-     *                                requests (optional). This is required if
-     *                                you purge and refresh paths instead of
-     *                                absolute URLs.
-     * @param ClientInterface $client HTTP client (optional). If no HTTP client
-     *                                is supplied, a default one will be
-     *                                created.
+     * @param array           $servers Varnish server hostnames or IP addresses,
+     *                                 including port if not port 80.
+     *                                 E.g. array('127.0.0.1:6081')
+     * @param string          $baseUrl Default application hostname, optionally
+     *                                 including base URL, for purge and refresh
+     *                                 requests (optional). This is required if
+     *                                 you purge and refresh paths instead of
+     *                                 absolute URLs.
+     * @param ClientInterface $client  HTTP client (optional). If no HTTP client
+     *                                 is supplied, a default one will be
+     *                                 created.
      */
-    public function __construct(array $ips, $host = null, ClientInterface $client = null)
+    public function __construct(array $servers, $baseUrl = null, ClientInterface $client = null)
     {
-        $this->ips = $ips;
-        $this->host = $host;
         $this->client = $client ?: new Client();
+        $this->setServers($servers);
+        $this->setBaseUrl($baseUrl);
     }
 
     /**
-     * Set a logger to enable logging
+     * Set Varnish servers
      *
-     * @param LoggerInterface $logger
+     * @param array $servers Varnish server hostnames or IP addresses,
+     *                       including port if not port 80.
+     *                       E.g. array('127.0.0.1:6081')
+     *
+     * @throws InvalidUrlSchemeException If scheme is supplied and is not HTTP
+     * @throws InvalidUrlException       If server is invalid or contains URL
+     *                                   parts other than scheme, host, port
      */
-    public function setLogger(LoggerInterface $logger = null)
+    public function setServers(array $servers)
     {
-        $this->logger = $logger;
+        $this->servers = array();
+        foreach ($servers as $server) {
+            $this->servers[] = $this->filterUrl($server, array('scheme', 'host', 'port'));
+        }
+    }
+
+    /**
+     * Set application hostname, optionally including a base URL, for purge and
+     * refresh requests
+     *
+     * @param string $url Your application’s base URL or hostname
+     */
+    public function setBaseUrl($url)
+    {
+        if ($url) {
+            $url = $this->filterUrl($url);
+        }
+
+        $this->client->setBaseUrl($url);
     }
 
     /**
@@ -153,7 +172,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         }
 
         $headers = array(
-            self::HTTP_HEADER_URL          => $path,
+            self::HTTP_HEADER_URL => $path,
         );
 
         if ($contentType) {
@@ -188,8 +207,7 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
     }
 
     /**
-     * Flush the queue
-     *
+     * {@inheritdoc}
      */
     public function flush()
     {
@@ -208,10 +226,10 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * @param string $url     URL
      * @param array  $headers HTTP headers
      *
-     * @return RequestInterface Request that was added to the queue
+     * @throws MissingHostException If a relative path is queued for purge/
+     *                              refresh and no base URL is set
      *
-     * @throws \UnexpectedValueException
-     * @throws MissingHostException
+     * @return RequestInterface Request that was added to the queue
      */
     protected function queueRequest($method, $url, array $headers = array())
     {
@@ -219,21 +237,10 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
 
         // For purge and refresh, add a host header to the request if it hasn't
         // been set
-        if (self::HTTP_METHOD_BAN !== $method) {
-            if ('' == $request->getHeader('Host')) {
-                $parsedUrl = parse_url($url);
-                if (false === $parsedUrl) {
-                    throw new \UnexpectedValueException(sprintf('URL %s is invalid', $url));
-                }
-
-                if (!isset($parsedUrl['host'])) {
-                    if (null === $this->host || '' == $this->host) {
-                        throw new MissingHostException($url);
-                    }
-
-                    $request->setHeader('Host', $this->host);
-                }
-            }
+        if (self::HTTP_METHOD_BAN !== $method
+            && '' == $request->getHeader('Host')
+        ) {
+            throw new MissingHostException($url);
         }
 
         $this->queue[] = $request;
@@ -247,16 +254,18 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      * Requests are sent in parallel to minimise impact on performance.
      *
      * @param RequestInterface[] $requests Requests
+     *
+     * @throws ExceptionCollection
      */
     protected function sendRequests(array $requests)
     {
         $allRequests = array();
 
         foreach ($requests as $request) {
-            foreach ($this->ips as $ip) {
+            foreach ($this->servers as $server) {
                 $varnishRequest = $this->client->createRequest(
                     $request->getMethod(),
-                    $ip . $request->getResource(),
+                    $server . $request->getResource(),
                     $request->getHeaders()
                 );
                 $allRequests[] = $varnishRequest;
@@ -266,47 +275,83 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
         try {
             $this->client->send($allRequests);
         } catch (MultiTransferException $e) {
-            foreach ($e as $ea) {
-                $this->logException($ea);
+            $this->handleException($e);
+        }
+    }
+
+    /**
+     * Handle request exception
+     *
+     * @param MultiTransferException $exceptions
+     *
+     * @throws ExceptionCollection
+     */
+    protected function handleException(MultiTransferException $exceptions)
+    {
+        $collection = new ExceptionCollection();
+
+        foreach ($exceptions as $exception) {
+            if ($exception instanceof CurlException) {
+                // Varnish unreachable
+                $e = new ProxyUnreachableException(
+                    $exception->getRequest()->getHost(),
+                    $exception->getMessage(),
+                    $exception
+                );
+            } elseif ($exception instanceof RequestException) {
+                // Other error
+                $e = new ProxyResponseException(
+                    $exception->getRequest()->getHost(),
+                    $exception->getCode(),
+                    $exception->getMessage(),
+                    $exception
+                );
+            } else {
+                // Unexpected exception type
+                $e = $exception;
+            }
+
+            $collection->add($e);
+        }
+
+        throw $collection;
+    }
+
+    /**
+     * Filter a URL
+     *
+     * @param string   $url
+     * @param string[] $allowedParts Array of allowed URL parts (optional)
+     *
+     * @throws InvalidUrlSchemeException If scheme is not HTTP
+     * @throws InvalidUrlException       If URL is invalid
+     * @throws InvalidUrlPartsException  If scheme contains invalid parts
+     *
+     * @return string
+     */
+    protected function filterUrl($url, array $allowedParts = array())
+    {
+        // parse_url doesn’t work properly when no scheme is supplied, so
+        // prefix server with HTTP scheme if necessary.
+        if (false === strpos($url, '://')) {
+            $url = 'http://' . $url;
+        }
+
+        if (!$parts = parse_url($url)) {
+            throw new InvalidUrlException($url);
+        }
+
+        if (isset($parts['scheme']) && 'http' != $parts['scheme']) {
+            throw new InvalidUrlSchemeException($url, $parts['scheme'], 'http');
+        }
+
+        if (count($allowedParts) > 0) {
+            $diff = array_diff(array_keys($parts), $allowedParts);
+            if (count($diff) > 0) {
+                throw new InvalidUrlPartsException($url, $allowedParts);
             }
         }
-    }
 
-    /**
-     * Log request exception
-     *
-     * @param RequestException $e
-     */
-    protected function logException(RequestException $e)
-    {
-        if ($e instanceof CurlException) {
-            // Usually 'couldn't connect to host', which means: Varnish is down
-            $level = 'crit';
-        } else {
-            $level = 'info';
-        }
-
-        $this->log(
-            sprintf(
-                'Caught exception while trying to %s %s' . PHP_EOL . 'Message: %s',
-                $e->getRequest()->getMethod(),
-                $e->getRequest()->getUrl(),
-                $e->getMessage()
-            ),
-            $level
-        );
-    }
-
-    /**
-     * Log error message
-     *
-     * @param string $message Error message
-     * @param string $level   Error level (optional)
-     */
-    protected function log($message, $level = 'debug')
-    {
-        if (null !== $this->logger) {
-            $this->logger->$level($message);
-        }
+        return $url;
     }
 }

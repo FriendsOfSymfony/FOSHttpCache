@@ -2,11 +2,17 @@
 
 namespace FOS\HttpCache;
 
+use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\Exception\ProxyResponseException;
+use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
 use FOS\HttpCache\Invalidation\CacheProxyInterface;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCache\Invalidation\Method\RefreshInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Manages HTTP cache invalidation.
@@ -16,23 +22,68 @@ use FOS\HttpCache\Invalidation\Method\RefreshInterface;
 class CacheInvalidator
 {
     /**
-     * @var string
-     */
-    protected $tagsHeader = 'X-Cache-Tags';
-
-    /**
      * @var CacheProxyInterface
      */
     protected $cache;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * @var string
+     */
+    protected $tagsHeader = 'X-Cache-Tags';
+
+    /**
      * Constructor
      *
-     * @param CacheProxyInterface $cache  HTTP cache
+     * @param CacheProxyInterface $cache HTTP cache
      */
     public function __construct(CacheProxyInterface $cache)
     {
         $this->cache = $cache;
+    }
+
+    /**
+     * Set event dispatcher
+     *
+     * @param EventDispatcherInterface $eventDispatcher
+     *
+     * @return $this
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * Get event dispatcher
+     *
+     * @return EventDispatcherInterface
+     */
+    public function getEventDispatcher()
+    {
+        if (!$this->eventDispatcher) {
+            $this->eventDispatcher = new EventDispatcher();
+        }
+
+        return $this->eventDispatcher;
+    }
+
+    /**
+     * Add subscriber
+     *
+     * @param EventSubscriberInterface $subscriber
+     *
+     * @return $this
+     */
+    public function addSubscriber(EventSubscriberInterface $subscriber)
+    {
+        $this->getEventDispatcher()->addSubscriber($subscriber);
+
+        return $this;
     }
 
     /**
@@ -64,9 +115,9 @@ class CacheInvalidator
      *
      * @param string $path Path or URL
      *
-     * @return $this
-     *
      * @throws UnsupportedInvalidationMethodException
+     *
+     * @return $this
      */
     public function invalidatePath($path)
     {
@@ -82,12 +133,14 @@ class CacheInvalidator
     /**
      * Refresh a path or URL
      *
-     * @param string $path   Path or URL
-     * @param array $headers HTTP headers (optional)
+     * @param string $path    Path or URL
+     * @param array  $headers HTTP headers (optional)
      *
-     * @return $this
+     * @see RefreshInterface::refresh()
      *
      * @throws UnsupportedInvalidationMethodException
+     *
+     * @return $this
      */
     public function refreshPath($path, array $headers = array())
     {
@@ -106,13 +159,13 @@ class CacheInvalidator
      * Each header is a a POSIX regular expression, for example
      * array('X-Host' => '^(www\.)?(this|that)\.com$')
      *
-     * @param array $headers HTTP headers that path must match to be banned.
+     * @see BanInterface::ban()
      *
-     * @return $this
+     * @param array $headers HTTP headers that path must match to be banned.
      *
      * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
      *
-     * @see BanInterface::ban
+     * @return $this
      */
     public function invalidate(array $headers)
     {
@@ -133,7 +186,9 @@ class CacheInvalidator
      * '^(www\.)?(this|that)\.com$' or an array of exact host names, e.g.
      * array('example.com', 'other.net'). If the parameter is empty, all hosts
      * are matched.
-
+     *
+     * @see BanInterface::banPath()
+     *
      * @param string $path        Regular expression pattern for URI to
      *                            invalidate.
      * @param string $contentType Regular expression pattern for the content
@@ -141,11 +196,9 @@ class CacheInvalidator
      * @param array|string $hosts Regular expression of a host name or list of
      *                            exact host names to limit banning.
      *
-     * @return $this
-     *
      * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
      *
-     * @see BanInterface::banPath
+     * @return $this
      */
     public function invalidateRegex($path, $contentType = null, $hosts = null)
     {
@@ -162,11 +215,13 @@ class CacheInvalidator
      * Invalidate cache entries that contain any of the specified tags in their
      * tag header.
      *
+     * @see BanInterface::ban()
+     *
      * @param array $tags Cache tags
      *
-     * @return $this
-     *
      * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
+     *
+     * @return $this
      */
     public function invalidateTags(array $tags)
     {
@@ -183,11 +238,27 @@ class CacheInvalidator
     /**
      * Send all pending invalidation requests.
      *
+     * @throws ExceptionCollection
+     *
      * @return $this
      */
     public function flush()
     {
-        $this->cache->flush();
+        try {
+            $this->cache->flush();
+        } catch (ExceptionCollection $exceptions) {
+            foreach ($exceptions as $exception) {
+                $event = new Event();
+                $event->setException($exception);
+                if ($exception instanceof ProxyResponseException) {
+                    $this->getEventDispatcher()->dispatch(Events::PROXY_RESPONSE_ERROR, $event);
+                } elseif ($exception instanceof ProxyUnreachableException) {
+                    $this->getEventDispatcher()->dispatch(Events::PROXY_UNREACHABLE_ERROR, $event);
+                }
+            }
+
+            throw $exceptions;
+        }
 
         return $this;
     }

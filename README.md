@@ -21,7 +21,7 @@ Features
 
 * Send [cache invalidation requests](doc/cache-invalidator.md) with minimal impact on performance.
 * Use the built-in support for [Varnish](doc/varnish.md) or easily implement your own caching proxy client.
-* [Test your application](doc/testing.md) against your Varnish setup.
+* [Test your application](doc/testing-your-application.md) against your Varnish setup.
 
 Documentation
 -------------

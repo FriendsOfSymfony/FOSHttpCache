@@ -4,11 +4,27 @@ The Cache Invalidator
 Use the CacheInvalidator to explicitly invalidate or refresh paths, URLs or
 headers.
 
+* [Setup](#setup)
 * [Invalidating paths and URLs](#invalidating-paths-and-urls)
 * [Refreshing paths and URLs](#refreshing-paths-and-urls)
 * [Invalidating with a Regular Expression](#invalidating-with-a-regular-expression)
 * [Tags](#tags)
 * [Flushing](#flushing)
+* [Error handling](#error-handling)
+
+Setup
+-----
+
+The CacheInvalidator wraps a low-level caching proxy client. To construct the
+invalidator, pass the proxy client to it. For instance, when using [Varnish](varnish.md):
+
+```php
+use FOS\HttpCache\Invalidation\Varnish;
+use FOS\HttpCache\CacheInvalidator;
+
+$varnish = new Varnish(...);
+$cacheInvalidator = new CacheInvalidator($varnish);
+```
 
 Invalidating paths and URLs
 ---------------------------
@@ -154,3 +170,53 @@ browser.
 
 The Varnish client also sends all invalidation requests in parallel to further
 reduce the time used by invalidation.
+
+Error handling
+--------------
+
+If an error occurs during `flush()`, the method throws an
+[ExceptionCollection](../src/Exception/ExceptionCollection.php) that contains
+an exception for each failed request to the caching proxy.
+
+These exception are of two types:
+* `\FOS\HttpCache\ProxyUnreachableException` when the client cannot connect to
+   the caching proxy
+* `\FOS\HttpCache\ProxyResponseException` when the caching proxy returns an
+   error response, such as 403 Forbidden.
+
+### Logging errors
+
+You can log any exceptions in the following way. First construct a logger that
+implements `\Psr\Log\LoggerInterface`. For instance, when using
+[Monolog](https://github.com/Seldaek/monolog):
+
+```php
+use Monolog\Logger;
+
+$logger = new Logger(...);
+$logger->pushHandler(...);
+```
+
+Then add the logger as a subscriber to the cache invalidator:
+
+```php
+use FOS\HttpCache\EventListener\LogSubscriber;
+
+$subscriber = new LogSubscriber($logger);
+$cacheInvalidator->addSubscriber($subscriber);
+```
+
+Now, if you flush the invalidator, errors will be logged:
+
+```php
+use FOS\HttpCache\Exception\ExceptionCollection;
+
+$cacheInvalidator->invalidatePath(...)
+    ->invalidatePath(...);
+
+try {
+    $cacheInvalidator->flush();
+} catch (ExceptionCollection $exceptions) {
+    // At least one failed request, check your logs!
+}
+```

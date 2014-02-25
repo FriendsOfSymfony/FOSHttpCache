@@ -57,107 +57,161 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
 
     const PID = '/tmp/foshttpcache-varnish.pid';
 
-    protected static $binary;
-    protected static $port;
-    protected static $mgmtPort;
-    protected static $configFile;
-    protected static $cacheDir;
-    protected static $hostName;
-
-    protected function readConfiguration($configFile = null)
-    {
-        if (!self::$binary) {
-            self::$binary = defined('VARNISH_BINARY') ? VARNISH_BINARY : 'varnishd';
-        }
-        if (!self::$port) {
-            self::$port = defined('VARNISH_PORT') ? VARNISH_PORT : 6181;
-        }
-        if (!self::$mgmtPort) {
-            self::$mgmtPort = defined('VARNISH_MGMT_PORT') ? VARNISH_MGMT_PORT : 6182;
-        }
-
-        if ($configFile) {
-            self::$configFile = $configFile;
-        }
-        if (!self::$configFile) {
-            if (!defined('VARNISH_FILE')) {
-                throw new \Exception('Either specify the varnish configuration file path in phpunit.xml or pass it as argument to the setUp method');
-            }
-            self::$configFile = VARNISH_FILE;
-        }
-        if (!file_exists(self::$configFile)) {
-            throw new \Exception('Can not find specified varnish config file: ' . self::$configFile);
-        }
-
-        if (!self::$cacheDir) {
-            self::$cacheDir = defined('VARNISH_CACHE_DIR') ? VARNISH_CACHE_DIR : '/tmp/foshttpcache-test';
-        }
-        if (!self::$hostName) {
-            if (!defined('WEB_SERVER_HOSTNAME')) {
-                throw new \Exception('To use this test, you need to define the WEB_SERVER_HOSTNAME constant in your phpunit.xml');
-            }
-            self::$hostName = WEB_SERVER_HOSTNAME;
-        }
-    }
-
     /**
-     * @param string|null $configFile The varnish configuration file.
-     *      Overwrites the VARNISH_FILE constant.
+     * Get HTTP client for your application
+     *
+     * @return Client
      */
-    public function setUp($configFile = null)
-    {
-        $this->readConfiguration($configFile);
-
-        $this->varnish = new Varnish(
-            array('http://127.0.0.1:' . self::$port),
-            self::$hostName . ':' . self::$port
-        );
-
-        if (file_exists(self::PID)) {
-            exec('kill ' . file_get_contents(self::PID));
-            unlink(self::PID);
-        }
-        exec(self::$binary .
-            ' -a localhost:' . self::$port .
-            ' -T localhost:' . self::$mgmtPort .
-            ' -f ' . self::$configFile .
-            ' -n ' . self::$cacheDir .
-            ' -P ' . self::PID
-        );
-
-        $this->waitForVarnish('127.0.0.1', self::$port, 2000);
-    }
-
-    public function tearDown()
-    {
-        if (file_exists(self::PID)) {
-            exec('kill ' . file_get_contents(self::PID));
-            unlink(self::PID);
-        }
-    }
-
-    public static function getClient()
+    public function getClient()
     {
         if (null === self::$client) {
-            self::$client = new Client('http://' . self::$hostName . ':' . self::$port);
+            self::$client = new Client('http://' . $this->getHostName() . ':' . $this->getVarnishPort());
         }
 
         return self::$client;
     }
 
-    public static function getResponse($url, array $headers = array())
+    /**
+     * Get HTTP response from your application
+     *
+     * @param string $url
+     * @param array  $headers
+     *
+     * @return Response
+     */
+    public function getResponse($url, array $headers = array())
     {
-        return self::getClient()->get($url, $headers)->send();
+        return $this->getClient()->get($url, $headers)->send();
     }
 
+    /**
+     * Assert a cache miss
+     *
+     * @param Response $response
+     * @param string   $message  Test failure message (optional)
+     */
     public function assertMiss(Response $response, $message = null)
     {
         $this->assertEquals(self::CACHE_MISS, (string) $response->getHeader(self::CACHE_HEADER), $message);
     }
 
+    /**
+     * Assert a cache hit
+     *
+     * @param Response $response
+     * @param string   $message  Test failure message (optional)
+     */
     public function assertHit(Response $response, $message = null)
     {
         $this->assertEquals(self::CACHE_HIT, (string) $response->getHeader(self::CACHE_HEADER), $message);
+    }
+
+    /**
+     * The default implementation looks at the constant VARNISH_FILE.
+     *
+     * @throws \Exception
+     *
+     * @return string the path to the varnish server configuration file to use with this test.
+     */
+    protected function getConfigFile()
+    {
+        if (!defined('VARNISH_FILE')) {
+            throw new \Exception('Specify the varnish configuration file path in phpunit.xml or override getConfigFile()');
+        }
+        $configFile = VARNISH_FILE;
+
+        if (!file_exists($configFile)) {
+            throw new \Exception('Can not find specified varnish config file: ' . $configFile);
+        }
+
+        return $configFile;
+    }
+
+    /**
+     * The host name to use in the web requests to varnish. This needs to be defined.
+     *
+     * @throws \Exception
+     *
+     * @return string
+     */
+    protected function getHostName()
+    {
+        if (!defined('WEB_SERVER_HOSTNAME')) {
+            throw new \Exception('To use this test, you need to define the WEB_SERVER_HOSTNAME constant in your phpunit.xml');
+        }
+
+        return WEB_SERVER_HOSTNAME;
+    }
+
+    /**
+     * Defaults to "varnishd"
+     *
+     * @return string
+     */
+    protected function getBinary()
+    {
+        return defined('VARNISH_BINARY') ? VARNISH_BINARY : 'varnishd';
+    }
+
+    /**
+     * Defaults to 6181, the varnish default.
+     *
+     * @return int
+     */
+    protected function getVarnishPort()
+    {
+        return defined('VARNISH_PORT') ? VARNISH_PORT : 6181;
+    }
+
+    /**
+     * Defaults to 6182, the varnish default.
+     *
+     * @return int
+     */
+    protected function getVarnishMgmtPort()
+    {
+        return defined('VARNISH_MGMT_PORT') ? VARNISH_MGMT_PORT : 6182;
+    }
+
+    /**
+     * Defaults to a directory foshttpcache-test in the system tmp directory.
+     *
+     * @return string
+     */
+    protected function getCacheDir()
+    {
+        return defined('VARNISH_CACHE_DIR') ? VARNISH_CACHE_DIR : sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-test';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->varnish = new Varnish(
+            array('http://127.0.0.1:' . $this->getVarnishPort()),
+            $this->getHostName() . ':' . $this->getVarnishPort()
+        );
+
+        $this->stopVarnish();
+
+        exec($this->getBinary() .
+            ' -a localhost:' . $this->getVarnishPort() .
+            ' -T localhost:' . $this->getVarnishMgmtPort() .
+            ' -f ' . $this->getConfigFile() .
+            ' -n ' . $this->getCacheDir() .
+            ' -P ' . self::PID
+        );
+
+        $this->waitForVarnish('127.0.0.1', $this->getVarnishPort(), 2000);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        $this->stopVarnish();
     }
 
     /**
@@ -179,6 +233,17 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
             usleep(1000);
         }
 
-        throw new \RuntimeException(sprintf('Varnish proxy cannot be reached at %s:%s', '127.0.0.1', self::$port));
+        throw new \RuntimeException(sprintf('Varnish proxy cannot be reached at %s:%s', '127.0.0.1', $this->getVarnishPort()));
+    }
+
+    /**
+     * Stop Varnish process if it's running
+     */
+    protected function stopVarnish()
+    {
+        if (file_exists(self::PID)) {
+            exec('kill ' . file_get_contents(self::PID));
+            unlink(self::PID);
+        }
     }
 }

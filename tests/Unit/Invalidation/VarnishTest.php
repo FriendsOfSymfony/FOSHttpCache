@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\Invalidation;
 
+use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Invalidation\Varnish;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\CurlException;
@@ -12,13 +13,16 @@ use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var MockPlugin
+     */
     protected $mock;
+
     protected $client;
 
     public function testBanEverything()
     {
         $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
-        $varnish->ban(array())->flush();
         $varnish->ban(array())->flush();
 
         $requests = $this->getRequests();
@@ -29,7 +33,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('.*', $headers->get('X-Host'));
         $this->assertEquals('.*', $headers->get('X-Url'));
         $this->assertEquals('.*', $headers->get('X-Content-Type'));
-        $this->assertEquals('', $headers->get('Host'));
+        $this->assertEquals('fos.lo', $headers->get('Host'));
     }
 
     public function testBanPath()
@@ -58,6 +62,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function ($requests) use ($self) {
+                        /** @type Request[] $requests */
                         $self->assertCount(4, $requests);
                         foreach ($requests as $request) {
                             $self->assertEquals('PURGE', $request->getMethod());
@@ -108,7 +113,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUrl());
     }
 
-    public function testCurlExceptionIsLogged()
+    public function testUnreachableException()
     {
         $mock = new MockPlugin();
         $mock->addException(new CurlException('connect to host'));
@@ -118,14 +123,12 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
         $varnish = new Varnish(array('http://127.0.0.1:123'), 'my_hostname.dev', $client);
 
-        $logger = \Mockery::mock('\Monolog\Logger')
-            ->shouldReceive('crit')
-            ->with('/connect to host/')
-            ->once()
-            ->getMock();
-        $varnish->setLogger($logger);
-
-        $varnish->purge('/test/this/a')->flush();
+        try {
+            $varnish->purge('/test/this/a')->flush();
+        } catch (ExceptionCollection $exceptions) {
+            $this->assertCount(1, $exceptions);
+            $this->assertInstanceOf('\FOS\HttpCache\Exception\ProxyUnreachableException', $exceptions->getFirst());
+        }
     }
 
     /**
@@ -135,8 +138,58 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
     public function testMissingHostExceptionIsThrown()
     {
         $varnish = new Varnish(array('http://127.0.0.1:123'), null, $this->client);
-
         $varnish->purge('/path/without/hostname');
+    }
+
+    public function testSetBasePathWithHost()
+    {
+        $varnish = new Varnish(array('127.0.0.1'), 'fos.lo', $this->client);
+        $varnish->purge('/path')->flush();
+        $requests = $this->getRequests();
+        $this->assertEquals('fos.lo', $requests[0]->getHeader('Host'));
+    }
+
+    public function testSetBasePathWithPath()
+    {
+        $varnish = new Varnish(array('127.0.0.1'), 'http://fos.lo/my/path', $this->client);
+        $varnish->purge('append')->flush();
+        $requests = $this->getRequests();
+        $this->assertEquals('fos.lo', $requests[0]->getHeader('Host'));
+        $this->assertEquals('http://127.0.0.1/my/path/append', $requests[0]->getUrl());
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\InvalidUrlSchemeException
+     */
+    public function testSetBasePathThrowsInvalidUrlSchemeException()
+    {
+        new Varnish(array('127.0.0.1'), 'https://fos.lo/my/path');
+    }
+
+    public function testSetServersDefaultSchemeIsAdded()
+    {
+        $varnish = new Varnish(array('127.0.0.1'), 'fos.lo', $this->client);
+        $varnish->purge('/some/path')->flush();
+        $requests = $this->getRequests();
+        $this->assertEquals('http://127.0.0.1/some/path', $requests[0]->getUrl());
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\InvalidUrlSchemeException
+     * @expectedExceptionMessage Host "https://127.0.0.1" with scheme "https" is invalid
+     */
+    public function testSetServersThrowsInvalidUrlSchemeException()
+    {
+        new Varnish(array('https://127.0.0.1'));
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
+     * @expectedExceptionMessage Server "http://127.0.0.1:80/some/weird/path" is invalid. Only scheme, host, port URL parts are allowed
+     */
+    public function testSetServersThrowsInvalidServerException()
+    {
+        new Varnish(array('http://127.0.0.1:80/some/weird/path'));
     }
 
     protected function setUp()
