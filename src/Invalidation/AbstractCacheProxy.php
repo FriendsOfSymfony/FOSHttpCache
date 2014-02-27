@@ -104,12 +104,13 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
      */
     public function flush()
     {
-        if (0 === count($this->queue)) {
+        $queue = $this->queue;
+        if (0 === count($queue)) {
             return;
         }
 
-        $this->sendRequests($this->queue);
         $this->queue = array();
+        $this->sendRequests($queue);
     }
 
     /**
@@ -225,9 +226,9 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
     protected function filterUrl($url, array $allowedParts = array())
     {
         // parse_url doesn’t work properly when no scheme is supplied, so
-        // prefix server with HTTP scheme if necessary.
+        // prefix URL with HTTP scheme if necessary.
         if (false === strpos($url, '://')) {
-            $url = $this->getDefaultScheme() . $url;
+            $url = sprintf('%s://%s', $this->getDefaultScheme(), $url);
         }
 
         if (!$parts = parse_url($url)) {
@@ -255,13 +256,14 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
      */
     protected function getDefaultScheme()
     {
-        return 'http://';
+        return 'http';
     }
 
     /**
      * Get schemes allowed by caching proxy
      *
-     * @return string[] Array of schemes allowed by caching proxy
+     * @return string[] Array of schemes allowed by caching proxy, e.g. 'http'
+     *                  or 'https'
      */
     abstract protected function getAllowedSchemes();
 }

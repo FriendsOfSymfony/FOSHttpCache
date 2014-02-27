@@ -3,8 +3,6 @@
 namespace FOS\HttpCache\Tests;
 
 use FOS\HttpCache\Invalidation\Varnish;
-use Guzzle\Http\Client;
-use Guzzle\Http\Message\Response;
 
 /**
  * A phpunit base class to write functional tests with varnish.
@@ -30,81 +28,14 @@ use Guzzle\Http\Message\Response;
  *                      (default /tmp/foshttpcache-test)
  * WEB_SERVER_HOSTNAME  name of the webserver varnish has to talk to (required)
  */
-abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
+abstract class VarnishTestCase extends AbstractCacheProxyTestCase
 {
-    /**
-     * A guzzle http client.
-     *
-     * @var Client
-     */
-    private static $client;
-
     /**
      * @var Varnish
      */
     protected $varnish;
 
-    /**
-     * Name of the debug header varnish is sending to tell if the request was a
-     * hit or miss.
-     *
-     * @var string
-     */
-    const CACHE_HEADER = 'X-Cache';
-
-    const CACHE_MISS = 'MISS';
-    const CACHE_HIT  = 'HIT';
-
     const PID = '/tmp/foshttpcache-varnish.pid';
-
-    /**
-     * Get HTTP client for your application
-     *
-     * @return Client
-     */
-    public function getClient()
-    {
-        if (null === self::$client) {
-            self::$client = new Client('http://' . $this->getHostName() . ':' . $this->getVarnishPort());
-        }
-
-        return self::$client;
-    }
-
-    /**
-     * Get HTTP response from your application
-     *
-     * @param string $url
-     * @param array  $headers
-     *
-     * @return Response
-     */
-    public function getResponse($url, array $headers = array())
-    {
-        return $this->getClient()->get($url, $headers)->send();
-    }
-
-    /**
-     * Assert a cache miss
-     *
-     * @param Response $response
-     * @param string   $message  Test failure message (optional)
-     */
-    public function assertMiss(Response $response, $message = null)
-    {
-        $this->assertEquals(self::CACHE_MISS, (string) $response->getHeader(self::CACHE_HEADER), $message);
-    }
-
-    /**
-     * Assert a cache hit
-     *
-     * @param Response $response
-     * @param string   $message  Test failure message (optional)
-     */
-    public function assertHit(Response $response, $message = null)
-    {
-        $this->assertEquals(self::CACHE_HIT, (string) $response->getHeader(self::CACHE_HEADER), $message);
-    }
 
     /**
      * The default implementation looks at the constant VARNISH_FILE.
@@ -128,22 +59,6 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * The host name to use in the web requests to varnish. This needs to be defined.
-     *
-     * @throws \Exception
-     *
-     * @return string
-     */
-    protected function getHostName()
-    {
-        if (!defined('WEB_SERVER_HOSTNAME')) {
-            throw new \Exception('To use this test, you need to define the WEB_SERVER_HOSTNAME constant in your phpunit.xml');
-        }
-
-        return WEB_SERVER_HOSTNAME;
-    }
-
-    /**
      * Defaults to "varnishd"
      *
      * @return string
@@ -158,7 +73,7 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
      *
      * @return int
      */
-    protected function getVarnishPort()
+    protected function getCachingProxyPort()
     {
         return defined('VARNISH_PORT') ? VARNISH_PORT : 6181;
     }
@@ -189,21 +104,21 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->varnish = new Varnish(
-            array('http://127.0.0.1:' . $this->getVarnishPort()),
-            $this->getHostName() . ':' . $this->getVarnishPort()
+            array('http://127.0.0.1:' . $this->getCachingProxyPort()),
+            $this->getHostName() . ':' . $this->getCachingProxyPort()
         );
 
         $this->stopVarnish();
 
         exec($this->getBinary() .
-            ' -a localhost:' . $this->getVarnishPort() .
+            ' -a localhost:' . $this->getCachingProxyPort() .
             ' -T localhost:' . $this->getVarnishMgmtPort() .
             ' -f ' . $this->getConfigFile() .
             ' -n ' . $this->getCacheDir() .
             ' -P ' . self::PID
         );
 
-        $this->waitForVarnish('127.0.0.1', $this->getVarnishPort(), 2000);
+        $this->waitForVarnish('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
 
     /**
@@ -233,7 +148,7 @@ abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
             usleep(1000);
         }
 
-        throw new \RuntimeException(sprintf('Varnish proxy cannot be reached at %s:%s', '127.0.0.1', $this->getVarnishPort()));
+        throw new \RuntimeException(sprintf('Varnish proxy cannot be reached at %s:%s', '127.0.0.1', $this->getCachingProxyPort()));
     }
 
     /**
