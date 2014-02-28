@@ -211,12 +211,13 @@ class Varnish implements BanInterface, PurgeInterface, RefreshInterface
      */
     public function flush()
     {
-        if (0 === count($this->queue)) {
+        $queue = $this->queue;
+        if (0 === count($queue)) {
             return;
         }
 
-        $this->sendRequests($this->queue);
         $this->queue = array();
+        $this->sendRequests($queue);
     }
 
     /**
