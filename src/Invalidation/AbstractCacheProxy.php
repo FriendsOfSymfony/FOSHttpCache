@@ -235,7 +235,7 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
             throw new InvalidUrlException($url);
         }
 
-        if (!in_array($parts['scheme'], $this->getAllowedSchemes())) {
+        if (!in_array(strtolower($parts['scheme']), $this->getAllowedSchemes())) {
             throw new InvalidUrlSchemeException($url, $parts['scheme'], $this->getAllowedSchemes());
         }
 
