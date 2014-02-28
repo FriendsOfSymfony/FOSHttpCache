@@ -118,17 +118,23 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $mock = new MockPlugin();
         $mock->addException(new CurlException('connect to host'));
 
-        $client = new Client('');
+        $client = new Client();
         $client->addSubscriber($mock);
 
         $varnish = new Varnish(array('http://127.0.0.1:123'), 'my_hostname.dev', $client);
 
         try {
-            $varnish->purge('/test/this/a')->flush();
+            $varnish->purge('/paths')->flush();
         } catch (ExceptionCollection $exceptions) {
             $this->assertCount(1, $exceptions);
             $this->assertInstanceOf('\FOS\HttpCache\Exception\ProxyUnreachableException', $exceptions->getFirst());
         }
+
+        $mock->clearQueue();
+        $mock->addResponse(new Response(200));
+
+        // Queue must now be empty, so exception above must not be thrown again.
+        $varnish->purge('/path')->flush();
     }
 
     /**
