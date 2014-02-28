@@ -59,6 +59,18 @@ abstract class VarnishTestCase extends AbstractCacheProxyTestCase
     }
 
     /**
+     * Get directory that holds VCL files
+     *
+     * Defaults to the directory that the VCL config file is in.
+     *
+     * @return string
+     */
+    protected function getConfigDir()
+    {
+        return dirname(realpath($this->getConfigFile()));
+    }
+
+    /**
      * Defaults to "varnishd"
      *
      * @return string
@@ -115,6 +127,7 @@ abstract class VarnishTestCase extends AbstractCacheProxyTestCase
             ' -T localhost:' . $this->getVarnishMgmtPort() .
             ' -f ' . $this->getConfigFile() .
             ' -n ' . $this->getCacheDir() .
+            ' -p vcl_dir=' . $this->getConfigDir() .
             ' -P ' . self::PID
         );
 
