@@ -8,10 +8,45 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
+use FOS\HttpCache\Invalidation\Varnish;
 use \Mockery;
 
 class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 {
+    public function testSupportsTrue()
+    {
+        $httpCache = new Varnish(array('localhost'));
+
+        $cacheInvalidator = new CacheInvalidator($httpCache);
+
+        $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::PATH));
+        $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::REFRESH));
+        $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::INVALIDATE));
+    }
+
+    public function testSupportsFalse()
+    {
+        $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
+
+        $cacheInvalidator = new CacheInvalidator($httpCache);
+
+        $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::PATH));
+        $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::REFRESH));
+        $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::INVALIDATE));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSupportsInvalid()
+    {
+        $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\CacheProxyInterface');
+
+        $cacheInvalidator = new CacheInvalidator($httpCache);
+
+        $cacheInvalidator->supports('garbage');
+    }
+
     public function testInvalidatePath()
     {
         $httpCache = \Mockery::mock('\FOS\HttpCache\Invalidation\Method\PurgeInterface')
