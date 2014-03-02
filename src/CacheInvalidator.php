@@ -22,6 +22,21 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CacheInvalidator
 {
     /**
+     * Value to check support of invalidatePath operation.
+     */
+    const PATH = 'path';
+
+    /**
+     * Value to check support of refreshPath operation.
+     */
+    const REFRESH = 'refresh';
+
+    /**
+     * Value to check support of invalidate operation.
+     */
+    const INVALIDATE = 'invalidate';
+
+    /**
      * @var CacheProxyInterface
      */
     protected $cache;
@@ -44,6 +59,34 @@ class CacheInvalidator
     public function __construct(CacheProxyInterface $cache)
     {
         $this->cache = $cache;
+    }
+
+    /**
+     * Check whether this invalidator instance supports the specified
+     * operation.
+     *
+     * Support for PATH means invalidatePath will work, REFRESH means
+     * refreshPath works and INVALIDATE is about all other invalidation
+     * methods.
+     *
+     * @param string $operation one of the class constants.
+     *
+     * @return bool
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function supports($operation)
+    {
+        switch ($operation) {
+            case self::PATH:
+                return $this->cache instanceof PurgeInterface;
+            case self::REFRESH:
+                return $this->cache instanceof RefreshInterface;
+            case self::INVALIDATE:
+                return $this->cache instanceof BanInterface;
+            default:
+                throw new \InvalidArgumentException('Unknown operation ' . $operation);
+        }
     }
 
     /**
@@ -189,12 +232,12 @@ class CacheInvalidator
      *
      * @see BanInterface::banPath()
      *
-     * @param string $path        Regular expression pattern for URI to
-     *                            invalidate.
-     * @param string $contentType Regular expression pattern for the content
-     *                            type to limit banning, for instance 'text'.
-     * @param array|string $hosts Regular expression of a host name or list of
-     *                            exact host names to limit banning.
+     * @param string       $path        Regular expression pattern for URI to
+     *                                  invalidate.
+     * @param string       $contentType Regular expression pattern for the content
+     *                                  type to limit banning, for instance 'text'.
+     * @param array|string $hosts       Regular expression of a host name or list of
+     *                                  exact host names to limit banning.
      *
      * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
      *

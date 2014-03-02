@@ -15,7 +15,7 @@ class InvalidUrlPartsException extends InvalidUrlException
         parent::__construct(sprintf(
             'Server "%s" is invalid. Only %s URL parts are allowed.',
             $server,
-            implode($allowed, ', ')
+            implode(', ', $allowed)
         ));
     }
-} 
+}

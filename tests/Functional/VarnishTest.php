@@ -82,7 +82,7 @@ class VarnishTest extends VarnishTestCase
         $this->assertHit($this->getResponse('/negotation.php', $json));
 
         $response = $this->getResponse('/negotation.php', $html);
-        $this->assertEquals('text/html', $response->getContentType());
+        $this->assertContains('text/html', $response->getContentType());
         $this->assertMiss($response);
         $this->assertHit($this->getResponse('/negotation.php', $html));
 
@@ -94,7 +94,7 @@ class VarnishTest extends VarnishTestCase
 
     public function testPurgeHost()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getVarnishPort()));
+        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getCachingProxyPort()));
 
         self::getResponse('/cache.php');
 
