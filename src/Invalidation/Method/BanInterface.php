@@ -7,7 +7,6 @@ use FOS\HttpCache\Invalidation\CacheProxyInterface;
 /**
  * An HTTP cache that supports invalidation by banning, that is, removing
  * objects from the cache that match a regular expression
- *
  */
 interface BanInterface extends CacheProxyInterface
 {
@@ -41,12 +40,12 @@ interface BanInterface extends CacheProxyInterface
      * array('example.com', 'other.net'). If the parameter is empty, all hosts
      * are matched.
 
-     * @param string $path        Regular expression pattern for URI to
-     *                            invalidate.
-     * @param string $contentType Regular expression pattern for the content
-     *                            type to limit banning, for instance 'text'.
-     * @param array|string $hosts Regular expression of a host name or list of
-     *                            exact host names to limit banning.
+     * @param string       $path        Regular expression pattern for URI to
+     *                                  invalidate.
+     * @param string       $contentType Regular expression pattern for the content
+     *                                  type to limit banning, for instance 'text'.
+     * @param array|string $hosts       Regular expression of a host name or list
+     *                                  of exact host names to limit banning.
      *
      * @return $this
      */

@@ -128,9 +128,9 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
     /**
      * Create request
      *
-     * @param string $method HTTP method
-     * @param string $url    URL
-     * @param array $headers HTTP headers
+     * @param string $method  HTTP method
+     * @param string $url     URL
+     * @param array  $headers HTTP headers
      *
      * @return RequestInterface
      */

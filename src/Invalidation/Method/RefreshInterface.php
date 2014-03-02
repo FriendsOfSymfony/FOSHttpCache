@@ -7,7 +7,6 @@ use FOS\HttpCache\Invalidation\CacheProxyInterface;
 /**
  * An HTTP cache that supports invalidation by refresh requests that force a
  * cache miss for one specific URL
- *
  */
 interface RefreshInterface extends CacheProxyInterface
 {

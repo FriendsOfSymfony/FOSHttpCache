@@ -19,4 +19,4 @@ class InvalidUrlException extends \InvalidArgumentException
 
         parent::__construct($msg);
     }
-} 
+}

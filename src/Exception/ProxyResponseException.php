@@ -20,4 +20,4 @@ class ProxyResponseException extends \RuntimeException
             $previous
         );
     }
-} 
+}

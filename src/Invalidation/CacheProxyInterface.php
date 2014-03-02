@@ -5,8 +5,7 @@ namespace FOS\HttpCache\Invalidation;
 use FOS\HttpCache\Exception\ExceptionCollection;
 
 /**
- * An HTTP caching reverse proxy
- *
+ * An HTTP caching reverse proxy.
  */
 interface CacheProxyInterface
 {
