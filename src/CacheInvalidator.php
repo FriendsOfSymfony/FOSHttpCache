@@ -77,7 +77,7 @@ class CacheInvalidator
      */
     public function supports($operation)
     {
-        switch($operation) {
+        switch ($operation) {
             case self::PATH:
                 return $this->cache instanceof PurgeInterface;
             case self::REFRESH:
@@ -232,12 +232,12 @@ class CacheInvalidator
      *
      * @see BanInterface::banPath()
      *
-     * @param string $path        Regular expression pattern for URI to
-     *                            invalidate.
-     * @param string $contentType Regular expression pattern for the content
-     *                            type to limit banning, for instance 'text'.
-     * @param array|string $hosts Regular expression of a host name or list of
-     *                            exact host names to limit banning.
+     * @param string       $path        Regular expression pattern for URI to
+     *                                  invalidate.
+     * @param string       $contentType Regular expression pattern for the content
+     *                                  type to limit banning, for instance 'text'.
+     * @param array|string $hosts       Regular expression of a host name or list of
+     *                                  exact host names to limit banning.
      *
      * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
      *

@@ -7,7 +7,6 @@ use FOS\HttpCache\Invalidation\CacheProxyInterface;
 /**
  * An HTTP cache that supports invalidation by purging, that is, removing one
  * URL from the cache
- *
  */
 interface PurgeInterface extends CacheProxyInterface
 {

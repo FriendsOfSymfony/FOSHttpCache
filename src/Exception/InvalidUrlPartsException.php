@@ -18,4 +18,4 @@ class InvalidUrlPartsException extends InvalidUrlException
             implode(', ', $allowed)
         ));
     }
-} 
+}

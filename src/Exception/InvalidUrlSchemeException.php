@@ -7,9 +7,9 @@ class InvalidUrlSchemeException extends \InvalidArgumentException
     /**
      * Constructor
      *
-     * @param string $host     HTTP host
-     * @param string $scheme   HTTP scheme
-     * @param array  $allowed  Expected HTTP schemes
+     * @param string $host    HTTP host
+     * @param string $scheme  HTTP scheme
+     * @param array  $allowed Expected HTTP schemes
      */
     public function __construct($host, $scheme, array $allowed)
     {
