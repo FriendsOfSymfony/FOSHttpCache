@@ -3,6 +3,7 @@
 namespace FOS\HttpCache;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
@@ -73,7 +74,7 @@ class CacheInvalidator
      *
      * @return bool
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function supports($operation)
     {
@@ -85,7 +86,7 @@ class CacheInvalidator
             case self::INVALIDATE:
                 return $this->cache instanceof BanInterface;
             default:
-                throw new \InvalidArgumentException('Unknown operation ' . $operation);
+                throw new InvalidArgumentException('Unknown operation ' . $operation);
         }
     }
 
