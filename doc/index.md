@@ -13,15 +13,18 @@ If you use Symfony2, have a look at the
 The bundle provides the invalidator as a service, along with a number of
 Symfony2-specific features to help with caching and caching proxies.
 
-This documentation covers:
+Table of Contents
+-----------------
 
 1. [Installation and Getting Started](installation.md)
 2. [An Introduction to Cache Invalidation](invalidation-introduction.md)
-2. [The Cache Invalidator](cache-invalidator.md)
-3. [Caching Proxy Clients](caching-proxy.md)
-   1. [Interfaces](interfaces.md)
-   2. [Varnish Configuration](varnish-configuration.md)
-   3. [Nginx](nginx.md)
-4. Testing
+3. Caching Proxy Configuration
+   1. [Varnish Configuration](varnish-configuration.md)
+   2. Nginx Configuration
+4. [Caching Proxy Clients](proxy-clients.md)
+   1. [Varnish client](varnish-client.md)
+   2. Nginx client
+5. [The Cache Invalidator](cache-invalidator.md)
+6. Testing
    1. [Testing Your Application](testing-your-application.md)
    2. [Testing the Library](testing-the-library.md)

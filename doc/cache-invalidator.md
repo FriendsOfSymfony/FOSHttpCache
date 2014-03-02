@@ -1,25 +1,43 @@
 The Cache Invalidator
 =====================
 
-Use the cache invalidator to explicitly invalidate or refresh paths, URLs or
-headers.
+Use the cache invalidator to invalidate or refresh paths, URLs and headers.
+It is the invalidator that you will probably use most when interacting with
+the library. 
 
+* [Setup](#setup)
 * [Invalidating Paths and URLs](#invalidating-paths-and-urls)
 * [Refreshing Paths and URLs](#refreshing-paths-and-urls)
 * [Invalidating with a Regular Expression](#invalidating-with-a-regular-expression)
   * [URL, Content Type and Hostname](#urls-content-type-and-hostname)
   * [Any Header](#any-header)
 * [Tags](#tags)
-  * [Changing the Tags Header](#changing-the-tags-header)
+  * [Custom Tags Header](#custom-tags-header)
 * [Flushing](#flushing)
 * [Error handling](#error-handling)
   * [Logging errors](#logging-errors)
 
+Setup
+-----
+
+Create the cache invalidator by passing a [proxy client](proxy-clients.md) as
+an [adapter](http://en.wikipedia.org/wiki/Adapter_pattern):
+
+```php
+use FOS\HttpCache\CacheInvalidator;
+use FOS\HttpCache\Invalidation;
+
+$client = new Invalidation\Varnish();
+// or
+$client = new Invalidation\Nginx();
+
+$cacheInvalidator = new CacheInvalidator($client);
+```
+
 Invalidating Paths and URLs
 ---------------------------
 
-Make sure to configure your proxy for purging first.
-(See [varnish](varnish.md#purge).)
+Make sure to [configure your proxy](proxy-configuration.md) for purging first.
 
 Invalidate a path:
 
@@ -29,64 +47,64 @@ $cacheInvalidator->invalidatePath('/users')
 ;
 ```
 
-See below for the `[flush()](#flushing)` method.
+See below for the [flush](#flushing) method.
 
-Invalidate an URL:
+Invalidate a URL:
+
 ```php
-$cacheInvalidator->invalidatePath('http://www.example.com/users');
+$cacheInvalidator->invalidatePath('http://www.example.com/users')->flush();
 ```
 
 Refreshing Paths and URLs
 -------------------------
 
-Make sure to configure your proxy for refreshing first.
-(See [varnish](varnish.md#refresh).)
+Make sure to [configure your proxy](proxy-configuration.md) for refreshing
+first.
 
 Refresh a path:
 
 ```php
-$cacheInvalidator->refreshPath('/users');
+$cacheInvalidator->refreshPath('/users')->flush();
 ```
 
-Refresh an URL:
+Refresh a URL:
 
 ```php
-$cacheInvalidator->refreshPath('http://www.example.com/users');
+$cacheInvalidator->refreshPath('http://www.example.com/users')->flush();
 ```
 
 Invalidating With a Regular Expression
 --------------------------------------
 
-Make sure to configure your proxy for regular expressions first.
-(See [varnish ban](varnish.md#ban).)
+Make sure to [configure your proxy](proxy-configuration.md) for banning first.
 
 ### URL, Content Type and Hostname
 
 You can invalidate all URLs matching a regular expression by using the
 `invalidateRegex` method. You can further limit the cache entries to invalidate
-with a regular expression for the content type and/or the hostname.
+with a regular expression for the content type and/or the application hostname.
 
 For instance, to invalidate all .css files for all hostnames handled by this
 caching proxy:
 
 ```php
-$cacheInvalidator->invalidateRegex('.*css$');
+$cacheInvalidator->invalidateRegex('.*css$')->flush();
 ```
 
 To invalidate all .png files for host example.com:
 
 ```php
-$cacheInvalidator->invalidateRegex('.*', 'image/png', array('example.com'));
+$cacheInvalidator
+    ->invalidateRegex('.*', 'image/png', array('example.com'))
+    ->flush()
+;
 ```
-
-If you need other criteria than path, content type and hosts, use the
-`invalidate` method.
 
 ### Any Header
 
 You can also invalidate the cache based on any headers. If you use non-default
-headers, make sure to configure your proxy accordingly to have them taken into
-account. (See [varnish ban](varnish.md#ban).)
+headers, make sure to [configure your proxy accordingly](proxy-configuration.md)
+to have them taken into account.
 
 Cache client implementations should fill up the headers to at least have the
 default headers always present to simplify the cache configuration rules.
@@ -94,13 +112,13 @@ default headers always present to simplify the cache configuration rules.
 To invalidate on a custom header X-My-Header, you would do:
 
 ```php
-$cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'));
+$cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'))->flush();
 ```
 
 Tags
 ----
 
-Make sure to [configure your proxy for tagging](varnish.md#tagging) first.
+Make sure to [configure your proxy for tagging](proxy-configuration.md) first.
 
 You will have to make sure your web application adds the correct tags on all
 responses by setting the `X-Cache-Tags` header. The
@@ -117,18 +135,18 @@ Assume you sent four responses:
 You can now invalidate some URLs using tags:
 
 ```php
-$cacheInvalidator->invalidateTags(array('group-a', 'tag-four'));
+$cacheInvalidator->invalidateTags(array('group-a', 'tag-four'))->flush();
 ```
 
 This will ban all requests having either the tag `group-a` /or/ `tag-four`. In
-the above example, this will invalidate "/two", "/three" and "/four". Only "/one"
+the above example, this will invalidate `/two`, `/three` and `/four`. Only `/one`
 will stay in the cache.
 
-### Changing The Tags Header
+### Custom Tags Header
 
 Tagging uses a custom HTTP header to identify tags. You can change the default
 header `X-Cache-Tags` by calling `setTagsHeader()`. Make sure to reflect this
-change in your [caching proxy configuration](varnish.md#tagging).
+change in your [caching proxy configuration](varnish-configuration.md#tagging).
 
 Flushing
 --------
@@ -165,6 +183,27 @@ These exception are of two types:
 * `\FOS\HttpCache\ProxyResponseException` when the caching proxy returns an
    error response, such as 403 Forbidden.
 
+So, to catch exceptions:
+
+```php
+use FOS\HttpCache\Exception\ExceptionCollection;
+
+$cacheInvalidator
+    ->invalidatePath('/users');
+
+try {
+    $cacheInvalidator->flush();
+} catch (ExceptionCollection $exceptions) {
+    // The first exception that occurred
+    var_dump($exceptions->getFirst());
+
+    // Iterate over the exception collection
+    foreach ($exceptions as $exception) {
+        var_dump($exception);
+    }
+}
+```
+
 ### Logging errors
 
 You can log any exceptions in the following way. First construct a logger that
@@ -174,8 +213,8 @@ implements `\Psr\Log\LoggerInterface`. For instance, when using
 ```php
 use Monolog\Logger;
 
-$logger = new Logger(...);
-$logger->pushHandler(...);
+$monolog = new Logger(...);
+$monolog->pushHandler(...);
 ```
 
 Then add the logger as a subscriber to the cache invalidator:
@@ -183,7 +222,7 @@ Then add the logger as a subscriber to the cache invalidator:
 ```php
 use FOS\HttpCache\EventListener\LogSubscriber;
 
-$subscriber = new LogSubscriber($logger);
+$subscriber = new LogSubscriber($monolog);
 $cacheInvalidator->addSubscriber($subscriber);
 ```
 

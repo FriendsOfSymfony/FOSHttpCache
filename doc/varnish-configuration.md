@@ -9,15 +9,16 @@ This chapter describes how to configure Varnish to work with the library.
 * [Refresh](#refresh)
 * [Ban](#ban)
 * [Tagging](#tagging)
+* [Debugging](#debugging)
 
 Introduction
 ------------
 
-Below, you will find detailed Varnish configuration recommendations for the
+Below you will find detailed Varnish configuration recommendations for the
 features provided by this library. The examples are tested with Varnish
 version 3.0. For a quick overview, you can also look at [the configuration
 that is used for the library’s functional tests]
-(../tests/Tests/Functional/Fixtures/varnish/fos.vcl).
+(../tests/Tests/Functional/Fixtures/varnish/).
 
 Basic Varnish Configuration
 ---------------------------
@@ -39,6 +40,8 @@ acl invalidators {
 }
 ```
 
+See also this library’s [basic configuration](../tests/Tests/Functional/Fixtures/varnish/fos.vcl).
+
 Warning: Make sure that all web servers running your application that may
 trigger invalidation are whitelisted here. Otherwise, lost cache invalidation
 requests will lead to lots of confusion.
@@ -52,28 +55,30 @@ To configure Varnish for [handling PURGE requests](https://www.varnish-cache.org
 # /etc/varnish/your_varnish.vcl
 
 sub vcl_recv {
-  if (req.request == "PURGE") {
-    if (!client.ip ~ invalidators) {
-      error 405 "PURGE not allowed";
+    if (req.request == "PURGE") {
+        if (!client.ip ~ invalidators) {
+          error 405 "PURGE not allowed";
+        }
+        return (lookup);
     }
-    return (lookup);
-  }
 }
 
 sub vcl_hit {
-  if (req.request == "PURGE") {
-    purge;
-    error 200 "Purged";
-  }
+    if (req.request == "PURGE") {
+        purge;
+        error 200 "Purged";
+    }
 }
 
 sub vcl_miss {
-  if (req.request == "PURGE") {
-    purge;
-    error 404 "Not in cache";
-  }
+    if (req.request == "PURGE") {
+        purge;
+        error 404 "Not in cache";
+    }
 }
 ```
+
+See also this library’s [purge.vcl](../tests/Tests/Functional/Fixtures/varnish/purge.vcl).
 
 Refresh
 -------
@@ -89,6 +94,8 @@ sub vcl_recv {
 }
 ```
 
+See also this library’s [refresh.vcl](../tests/Tests/Functional/Fixtures/varnish/refresh.vcl).
+
 Ban
 ---
 
@@ -98,52 +105,60 @@ To configure Varnish for [handling BAN requests](https://www.varnish-software.co
 # /etc/varnish/your_varnish.vcl
 
 sub vcl_recv {
-  if (req.request == "BAN") {
-      if (!client.ip ~ invalidators) {
-          error 405 "Not allowed.";
-      }
-      ban("obj.http.x-host ~ " + req.http.x-ban-host + " && obj.http.x-url ~ " + req.http.x-ban-url + " && obj.http.x-content-type ~ " + req.http.x-ban-content-type);
-      error 200 "Banned";
-  }
+    if (req.request == "BAN") {
+        if (!client.ip ~ invalidators) {
+            error 405 "Not allowed.";
+        }
+
+        ban("obj.http.x-host ~ " + req.http.x-ban-host
+            + " && obj.http.x-url ~ " + req.http.x-ban-url
+            + " && obj.http.x-content-type ~ " + req.http.x-ban-content-type
+        );
+
+        error 200 "Banned";
+    }
 }
 
-# Set BAN lurker friendly tags on object
 sub vcl_fetch {
-  set beresp.http.x-url = req.url;
-  set beresp.http.x-host = req.http.host;
-  set beresp.http.x-content-type = req.http.content-type;
+    # Set BAN lurker friendly tags on object
+    set beresp.http.x-url = req.url;
+    set beresp.http.x-host = req.http.host;
 }
 
-# Remove tags when delivering to client
 sub vcl_deliver {
-  if (! resp.http.X-Cache-Debug) {
-    unset resp.http.x-url;
-    unset resp.http.x-host;
-    unset resp.http.x-content-type;
-  }
+    # Remove tags when delivering to client
+    if (!resp.http.X-Cache-Debug) {
+        unset resp.http.x-url;
+        unset resp.http.x-host;
+    }
 }
 ```
+
+See also this library’s [ban.vcl](../tests/Tests/Functional/Fixtures/varnish/ban.vcl).
 
 Tagging
 -------
 
 Add the following to your Varnish configuration to enable [cache tagging](cache-invalidator.md#tags).
 The custom `X-Cache-Tags` header should match the tagging header
-[configured in the cache invalidator](cache-invalidator.md#changing-the-tags-header).
+[configured in the cache invalidator](cache-invalidator.md#custom-tags-header).
 
 ```varnish
 sub vcl_recv {
-    # ...
-
     if (req.request == "BAN") {
-        # ...
+        if (!client.ip ~ invalidators) {
+            error 405 "Not allowed.";
+        }
+
         if (req.http.x-cache-tags) {
+            # Banning tags
             ban("obj.http.host ~ " + req.http.x-host
                 + " && obj.http.x-url ~ " + req.http.x-url
                 + " && obj.http.content-type ~ " + req.http.x-content-type
                 + " && obj.http.x-cache-tags ~ " + req.http.x-cache-tags
             );
         } else {
+            # Not banning tags
             ban("obj.http.host ~ " + req.http.x-host
                 + " && obj.http.x-url ~ " + req.http.x-url
                 + " && obj.http.content-type ~ " + req.http.x-content-type
@@ -154,3 +169,25 @@ sub vcl_recv {
     }
 }
 ```
+
+See also this library’s [ban.vcl](../tests/Tests/Functional/Fixtures/varnish/ban.vcl).
+
+Debugging
+---------
+
+Configure your Varnish to set a debug header that shows whether a cache hit or miss occurred:
+
+```varnish
+sub vcl_deliver {
+    # Add extra headers if debugging is enabled
+    if (resp.http.x-cache-debug) {
+        if (obj.hits > 0) {
+            set resp.http.X-Cache = "HIT";
+        } else {
+            set resp.http.X-Cache = "MISS";
+        }
+    }
+}
+```
+
+See also this library’s [debug.vcl](../tests/Tests/Functional/Fixtures/varnish/debug.vcl).
