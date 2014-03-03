@@ -6,7 +6,7 @@ namespace FOS\HttpCache\Exception;
  * A collection of exceptions that might occur during the flush operation of a
  * CacheProxyInterface implementation
  */
-class ExceptionCollection extends \Exception implements \IteratorAggregate, \Countable
+class ExceptionCollection extends \Exception implements \IteratorAggregate, \Countable,  HttpCacheExceptionInterface
 {
     protected $exceptions = array();
 
@@ -29,9 +29,9 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
     }
 
     /**
-     * Get first exception in collection
+     * Get first exception in collection or null, if there is none.
      *
-     * @return \Exception | null
+     * @return \Exception|null
      */
     public function getFirst()
     {

@@ -165,7 +165,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \FOS\HttpCache\Exception\InvalidUrlSchemeException
+     * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
      */
     public function testSetBasePathThrowsInvalidUrlSchemeException()
     {
@@ -181,7 +181,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \FOS\HttpCache\Exception\InvalidUrlSchemeException
+     * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
      * @expectedExceptionMessage Host "https://127.0.0.1" with scheme "https" is invalid
      */
     public function testSetServersThrowsInvalidUrlSchemeException()

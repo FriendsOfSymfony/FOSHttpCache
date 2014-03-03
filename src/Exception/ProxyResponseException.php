@@ -3,18 +3,26 @@
 namespace FOS\HttpCache\Exception;
 
 /**
- * An error response from the caching proxy
+ * Wrapping an error response from the caching proxy.
  */
-class ProxyResponseException extends \RuntimeException
+class ProxyResponseException extends \RuntimeException implements HttpCacheExceptionInterface
 {
-    public function __construct($proxy, $statusCode, $statusMessage, \Exception $previous = null)
+    /**
+     * @param string     $host          The host name that was contacted.
+     * @param string     $statusCode    The status code of the reply.
+     * @param string     $statusMessage The content of the reply.
+     * @param \Exception $previous      The exception from guzzle.
+     *
+     * @return ProxyUnreachableException
+     */
+    public static function proxyResponse($host, $statusCode, $statusMessage, \Exception $previous = null)
     {
-        parent::__construct(
+        return new ProxyResponseException(
             sprintf(
                 '%s error response "%s" from caching proxy at %s',
                 $statusCode,
                 $statusMessage,
-                $proxy
+                $host
             ),
             $statusCode,
             $previous

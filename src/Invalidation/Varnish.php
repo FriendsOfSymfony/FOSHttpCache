@@ -2,6 +2,7 @@
 
 namespace FOS\HttpCache\Invalidation;
 
+use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
@@ -77,7 +78,7 @@ class Varnish extends AbstractCacheProxy implements BanInterface, PurgeInterface
     {
         if (is_array($hosts)) {
             if (!count($hosts)) {
-                throw new \InvalidArgumentException('Either supply a list of hosts or null, but not an empty array.');
+                throw new InvalidArgumentException('Either supply a list of hosts or null, but not an empty array.');
             }
             $hosts = '^('.join('|', $hosts).')$';
         }
@@ -133,7 +134,7 @@ class Varnish extends AbstractCacheProxy implements BanInterface, PurgeInterface
         if (self::HTTP_METHOD_BAN !== $method
             && '' == $request->getHeader('Host')
         ) {
-            throw new MissingHostException($url);
+            throw MissingHostException::missingHost($url);
         }
 
         return $request;
