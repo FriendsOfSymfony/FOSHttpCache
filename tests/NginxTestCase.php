@@ -70,7 +70,7 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
      */
     protected function getCachingProxyPort()
     {
-        return defined('NGINX_PORT') ? VARNISH_PORT : 6183;
+        return defined('NGINX_PORT') ? NGINX_PORT : 6183;
     }
 
     /**
