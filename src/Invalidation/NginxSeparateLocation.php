@@ -3,6 +3,7 @@
 namespace FOS\HttpCache\Invalidation;
 
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
+use Guzzle\Http\ClientInterface;
 
 /**
  * Nginx HTTP cache invalidator for separate location setup.
