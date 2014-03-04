@@ -1,8 +1,8 @@
 FOSHttpCache
 ============
 [![Build Status](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache.png?branch=1.0.0-alpha1)](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache) 
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCache/badges/quality-score.png?s=5b808e92306a54228a81378ec20a47bb5313a5c7)](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCache/)
-[![Code Coverage](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCache/badges/coverage.png?s=f9f57d6b28285f38782b38a08b1dbdb24901a764)](https://scrutinizer-ci.com/g/ddeboer/FOSHttpCache/)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/badges/quality-score.png?s=bc263d4deb45becdb1469b71e8630c5e65efdcf4)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/) 
+[![Code Coverage](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/badges/coverage.png?s=a19df7bb7e830642fb937891aebe8c3e1c9f59c0)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/)
 
 Introduction
 ------------
