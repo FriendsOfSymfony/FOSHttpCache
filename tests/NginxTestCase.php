@@ -15,11 +15,12 @@ use FOS\HttpCache\Invalidation\NginxSeparateLocation as Nginx;
  *     <const name="NGINX_FILE" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/nginx/fos.conf" />
  * </php>
  *
- * NGINX_BINARY       executable for nginx. this can also be the full path
+ * NGINX_BINARY       Executable for NGINX. This can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default nginx)
- * NGINX_PORT         test nginx port to use (default 6183)
- * NGINX_FILE         nginx configuration file (required if not passed to setUp)
+ * NGINX_PORT         Test NGINX port to use (default 6183)
+ * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
+ * NGINX_CACHE_PATH   NGINX configuration file (required if not passed to setUp)
  */
 abstract class NginxTestCase extends AbstractCacheProxyTestCase
 {
@@ -28,7 +29,7 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
      */
     protected $nginx;
 
-    const PID = '/tmp/fos/nginx.pid';
+    const PID = '/tmp/foshttpcache-nginx.pid';
 
     /**
      * The default implementation looks at the constant NGINX_FILE.
@@ -85,6 +86,8 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
 
         $this->stopNginx();
 
+        $this->emptyCache();
+
         exec($this->getBinary() .
             ' -c ' . $this->getConfigFile() .
             ' -g "pid ' . self::PID . ';"'
@@ -132,4 +135,26 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
             exec('kill ' . file_get_contents(self::PID));
         }
     }
+
+    /**
+     * Empty Nginx cache
+     */
+    protected function emptyCache()
+    {
+        exec('rm -rf ' . $this->getCachePath()."*");
+    }
+
+    /**
+     * Get NGINX cache path
+     */
+    protected function getCachePath()
+    {
+        if (!defined('NGINX_CACHE_PATH')) {
+            throw new \Exception('Specify the NGINX cache path in phpunit.xml or override getCachePath()');
+        }
+
+       return NGINX_CACHE_PATH;
+
+    }
+
 }

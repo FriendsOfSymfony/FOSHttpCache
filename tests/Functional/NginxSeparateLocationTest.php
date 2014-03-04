@@ -20,4 +20,17 @@ class NginxSeparateLocationTest extends NginxTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
+    public function testRefresh()
+    {
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $response = $this->getResponse('/cache.php');
+        $this->assertHit($response);
+
+        $this->nginx->refresh('/cache.php')->flush();
+        usleep(1000);
+        $refreshed = $this->getResponse('/cache.php');
+        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+    }
+
+
 }

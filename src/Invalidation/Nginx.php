@@ -26,7 +26,7 @@ abstract class Nginx extends AbstractCacheProxy implements PurgeInterface, Refre
      */
     public function refresh($url, array $headers = array())
     {
-        $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
+        $headers = array_merge($headers, array('X-FOS-refresh' => '1'));
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
