@@ -1,67 +1,44 @@
-Installation
-============
-
-This library is available on [Packagist](https://packagist.org/packages/friendsofsymfony/http-cache).
-You can install it using Composer:
-
-```bash
-$ composer require friendsofsymfony/http-cache:@stable
-```
-
-Getting Started
+Getting started
 ===============
 
-This library mainly provides the CacheInvalidator class. Use this class to collect
-cache invalidation requests in your application and call the `flush` method at
-the end of requests to have it send the invalidation requests to your server.
+Installation
+------------
 
-Cache Invalidation
-------------------
+The FOSHttpCache library is available on [Packagist](https://packagist.org/packages/friendsofsymfony/http-cache).
+You can install it using [Composer](https://getcomposer.org/):
 
-Basically, there are 3 operations:
-
-* Purge: Invalidate a specific URL in all its variants (as specified by the
-  VARY header) and with all query strings. In the case of Varnish, this will
-  remove the entries from the cache immediately.
-* Refresh: Similar to purge: Invalidate a specific URL with all query strings,
-  but not its variants. Do an immediate request to the backend to have the page
-  in the cache again.
-* Ban: This is a way more powerful operation. Remove all requests matching
-  specified regular expressions on any desired headers. This can invalidate a
-  subset of URLs but also custom headers, as used with the
-  CacheInvalidator::invalidateTags method. In the case of Varnish, this will only
-  record the fact that cache entries are to be ignored, for performance
-  reasons.
-
-All of these methods are explained in detail in the
-[Invalidation](invalidation.md) chapter.
-
-Bootstrap
----------
-
-The CacheInvalidator is configured with an instance of CacheProxyInterface which
-also implements at least one of PurgeInterface, RefreshInterface, BanInterface.
-Using the provided Varnish client, the bootstrap code looks as follows:
-
-
-```php
-use FOS\HttpCache\CacheInvalidator;
-use FOS\HttpCache\Invalidation\Varnish;
-
-// IPs varnish is listening on
-$ips = array('10.0.0.1:6081', '10.0.0.2:6081');
-// hostname to use in requests
-$host = 'www.test.com';
-$varnish = new Varnish(array $ips, $host);
-
-// to get log messages if invalidation fails unexpectedly, give the client a
-// logger instance
-$varnish->setLogger(...);
-
-$cacheInvalidator = new CacheInvalidator($varnish);
+```bash
+$ composer require friendsofsymfony/http-cache:~1.0
 ```
 
-Thats it, you are ready to start caching. Read on in the next chapter about the
-[Cache Invalidator](cache-invalidator.md). You may also want to know more about the
-[Lower-level HTTP proxy classes](http-proxy.md) like the `Varnish` class we
-used in this example.
+Configuration
+-------------
+
+There are three things you need to do to get started:
+1. [configure your caching proxy](proxy-configuration.md)
+2. [set up a client for your caching proxy](proxy-clients.md)
+3. [set up the cache invalidator](cache-invalidator).
+
+Overview
+--------
+
+This library mainly consists of:
+* low-level clients for communicating with caching proxies (Varnish and Nginx)
+* a cache invalidator that acts as an abstraction layer for the caching proxy
+  clients
+* test classes that you can use for integration testing your application
+  against a caching proxy.
+
+Measures have been taken to minimise the performance impact of sending
+invalidation requests:
+* Requests are not sent immediately, but aggregated to be sent in parallel.
+* You can determine when the requests should be sent. For optimal performance,
+  do so after the response has been sent to the client.
+
+Continue Reading
+----------------
+
+* If you are new to cache invalidation, you may want to read
+  [An Introduction to Cache Invalidation](invalidation-introduction.md) first.
+* Continue with the [Proxy Configuration](proxy-configuration.md) chapter to
+  learn how to configure your caching proxy to work with this library.
