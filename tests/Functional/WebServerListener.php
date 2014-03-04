@@ -3,7 +3,8 @@
 namespace FOS\HttpCache\Tests\Functional;
 
 /**
- * A PHPUnit test listener that starts and stops the PHP built-in web server
+ * A PHPUnit test listener that starts and stops the PHP/HHVM built-in web
+ * server
  *
  * This listener is configured with a couple of constants from the phpunit.xml
  * file. To define constants in the phpunit file, use this syntax:
@@ -34,15 +35,13 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
             return;
         }
 
-        $command = sprintf(
-            'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
-            $this->getHostName(),
-            $this->getPort(),
-            $this->getDocRoot()
-        );
+        if (defined('HHVM_VERSION')) {
+            $pid = $this->startHhvmWebServer();
+        } else {
+            $pid = $this->startPhpWebServer();
+        }
 
-        exec($command, $output);
-        $this->pid = $pid = $output[0];
+        $this->pid = $pid;
 
         register_shutdown_function(function () use ($pid) {
             exec('kill ' . $pid);
@@ -106,5 +105,42 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
         }
 
         return WEB_SERVER_DOCROOT;
+    }
+
+    /**
+     * Start HHVM built-in web server
+     *
+     * @return int PID
+     */
+    protected function startHhvmWebServer()
+    {
+        $cur = getcwd();
+        chdir($this->getDocRoot());
+        $command = sprintf(
+            'hhvm -m server -p %d >/dev/null 2>&1 & echo $!',
+            $this->getPort()
+        );
+        exec($command, $output);
+        chdir($cur);
+
+        return $output[0];
+    }
+
+    /**
+     * Start PHP built-in web server
+     *
+     * @return int PID
+     */
+    protected function startPhpWebServer()
+    {
+        $command = sprintf(
+            'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
+            $this->getHostName(),
+            $this->getPort(),
+            $this->getDocRoot()
+        );
+        exec($command, $output);
+
+        return $output[0];
     }
 }
