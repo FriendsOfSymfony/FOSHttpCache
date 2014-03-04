@@ -34,70 +34,12 @@ $varnish = new Varnish($servers, 'my-cool-app.com');
 Usage
 -----
 
-The Varnish clients supports all cache invalidation methods:
-* [purge](proxy-clients.md#purge)
-* [refresh](proxy-clients.md#refresh)
-* [ban](proxy-clients.md#ban).
+The Varnish client supports all cache invalidation methods:
+1. [purge](proxy-clients.md#purge); make sure to first [configure Varnish for purge](varnish-configuration.md#purge)
+2. [refresh](proxy-clients.md#refresh); make sure to first [configure Varnish for refresh](varnish-configuration.md#refresh)
+3. [ban](proxy-clients.md#ban); make sure to first [configure Varnish for ban](varnish-configuration.md#ban).
 
-Make sure to [configure your Varnish servers](varnish-configuration.md) for
-each method that you wish to use.
-
-Purge
------
-
-Make sure to first [configure Varnish for purge](varnish-configuration.md#purge).
-
-```php
-$proxy
-    ->purge('/my/path')
-    ->purge('http://myapp.dev/absolute/url')
-    ->flush()
-;
-```
-
-Read more about [purging](proxy-clients.md#purgeinterface).
-
-Refresh
--------
-
-Make sure to first [configure Varnish for refresh](varnish-configuration.md#refresh).
-
-```php
-$varnish
-    ->refresh('/my/path')
-    ->refresh('http://myapp.dev/absolute/url')
-    ->flush()
-;
-```
-
-Read more about [refreshing](proxy-clients.md#refreshinterface).
-
-Ban
----
-
-Make sure to first [configure Varnish for ban](varnish-configuration.md#ban).
-
-```php
-$varnish->banPath('.*png$')
-    ->banPath('/articles/.*', 'text/html')
-    ->banPath('.*png$', null, 'example.com')
-    ->flush()
-;
-```
-
-To ban an array of header regular expressions:
-
-```php
-$varnish
-    ->ban(
-        array(
-            Varnish::HTTP_HEADER_URL => '.*\.png$',
-            Varnish::HTTP_HEADER_HOST => '.*example\.com',
-            Varnish::HTTP_HEADER_CACHE => 'my-tag',
-        )
-    )
-    ->flush()
-;
-```
-
-Read more about [banning](proxy-clients.md#baninterface).
+* See the [Caching Proxy Clients](proxy-clients.md) chapter for more information
+  on how to use the invalidation methods.
+* See the [Varnish Configuration](varnish-configuration.md) chapter for more on
+  preparing your Varnish server for handling invalidation requests.
