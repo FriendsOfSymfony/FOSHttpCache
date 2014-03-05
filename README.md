@@ -1,6 +1,6 @@
 FOSHttpCache
 ============
-[![Build Status](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache.png?branch=1.0.0-alpha1)](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache) 
+[![Build Status](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache.png?branch=master)](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache) 
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/badges/quality-score.png?s=bc263d4deb45becdb1469b71e8630c5e65efdcf4)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/) 
 [![Code Coverage](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/badges/coverage.png?s=a19df7bb7e830642fb937891aebe8c3e1c9f59c0)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/)
 
