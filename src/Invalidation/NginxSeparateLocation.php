@@ -50,7 +50,7 @@ class NginxSeparateLocation extends Nginx implements PurgeInterface
     ) {
         $this->purge_location = $purge_location;
         parent::__construct($servers, $baseUrl, $client);
-    ) }
+    }
 
     /**
      * {@inheritdoc}
