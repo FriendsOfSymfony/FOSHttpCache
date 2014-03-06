@@ -25,14 +25,32 @@ class NginxSeparateLocation extends Nginx implements PurgeInterface
     protected $purge_location;
 
     /**
-     * @inheritdoc
-     * @param string           $purge_location Path location that trigger purging. It depends on your configuration.
+     * {@inheritdoc}
+     *
+     * @param array           $servers Caching proxy server hostnames or IP addresses,
+     *                                 including port if not port 80.
+     *                                 E.g. array('127.0.0.1:6081')
+     * @param string          $baseUrl Default application hostname, optionally
+     *                                 including base URL, for purge and refresh
+     *                                 requests (optional). This is required if
+     *                                 you purge and refresh paths instead of
+     *                                 absolute URLs.
+     * @param ClientInterface $client  HTTP client (optional). If no HTTP client
+     *                                 is supplied, a default one will be
+     *                                 created.
+     * @param string          $purge_location Path location that trigger purging. 
+     *                                 It depends on your configuration.
      */
 
-    public function __construct(array $servers, $baseUrl = null, ClientInterface $client = null, $purge_location = 'purge') {
+    public function __construct(
+	array $servers, 
+	$baseUrl = null, 
+	ClientInterface $client = null, 
+	$purge_location = 'purge'
+    ) {
         $this->purge_location = $purge_location;
-	parent::__construct($servers, $baseUrl, $client);
-    }
+        parent::__construct($servers, $baseUrl, $client);
+    ) }
 
     /**
      * {@inheritdoc}
