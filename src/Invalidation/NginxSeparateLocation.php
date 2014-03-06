@@ -24,7 +24,6 @@ class NginxSeparateLocation extends Nginx implements PurgeInterface
      */
     protected $purge_location;
 
-
     /**
      * @inheritdoc
      * @param string           $purge_location Path location that trigger purging. It depends on your configuration.
