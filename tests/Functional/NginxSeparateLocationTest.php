@@ -32,5 +32,4 @@ class NginxSeparateLocationTest extends NginxTestCase
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
     }
 
-
 }
