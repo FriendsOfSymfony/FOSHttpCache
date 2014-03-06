@@ -37,6 +37,6 @@ abstract class Nginx extends AbstractCacheProxy implements PurgeInterface, Refre
      */
     protected function getAllowedSchemes()
     {
-        return array('http');
+        return array('http', 'https');
     }
 }
