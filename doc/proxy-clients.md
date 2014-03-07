@@ -4,18 +4,21 @@ Caching Proxy Clients
 You can use the caching proxy clients either wrapped by the cache invalidator
 (recommended), or directly for low-level access to invalidation functionality.
 
+* [Setup](#setup)
+* [CacheProxyInterface](#cacheproxyinterface)
+* [Purge](#purge)
+* [Refresh](#refresh)
+* [Ban](#ban)
+
+Setup
+-----
+
 You should set up at least one caching proxy client:
 
 * [Varnish client](varnish-client.md)
-* [Nginx client](nginx-client.md)
+* Nginx client
 
-Continue reading here for general information about the interfaces that are
-implemented by the clients.
-
-* [CacheProxyInterface](#cacheproxyinterface)
-* [PurgeInterface](#purgeinterface)
-* [RefreshInterface](#refreshinterface)
-* [BanInterface](#baninterface)
+Then continue here to find out how to use the proxy clients.
 
 CacheProxyInterface
 -------------------
@@ -32,8 +35,8 @@ requests to the caching proxy. This is on purpose: this way, we can send
 all requests together, reducing the performance impact of sending invalidation
 requests.
 
-PurgeInterface
---------------
+Purge
+-----
 
 If the caching proxy understands [purge requests](invalidation-introduction.md#purge),
 its client should implement `PurgeInterface`. Use the `purge($url)` method to
@@ -48,8 +51,8 @@ $client
 ;
 ```
 
-RefreshInterface
-----------------
+Refresh
+-------
 
 If the caching proxy understands [refresh requests](invalidation-introduction.md#refresh),
 its client should implement `RefreshInterface`. Use the
@@ -74,8 +77,8 @@ $client
 ;
 ```
 
-BanInterface
-------------
+Ban
+---
 
 If the caching proxy understands [ban requests](invalidation-introduction.md#ban),
 its client should implement `BanInterface`.
