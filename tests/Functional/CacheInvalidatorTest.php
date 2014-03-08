@@ -12,7 +12,7 @@ class CacheInvalidatorTest extends VarnishTestCase
 {
     public function testInvalidateTags()
     {
-        $cacheInvalidator = new CacheInvalidator($this->varnish);
+        $cacheInvalidator = new CacheInvalidator($this->getVarnish());
 
         $this->assertMiss($this->getResponse('/tags.php'));
         $this->assertHit($this->getResponse('/tags.php'));

@@ -18,7 +18,7 @@ class VarnishTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->varnish->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
+        $this->getVarnish()->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertMiss($this->getResponse('/json.php'));
@@ -29,10 +29,10 @@ class VarnishTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
+        $this->getVarnish()->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->varnish->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
+        $this->getVarnish()->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
@@ -44,7 +44,7 @@ class VarnishTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->varnish->banPath('.*')->flush();
+        $this->getVarnish()->banPath('.*')->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertMiss($this->getResponse('/json.php'));
     }
@@ -57,7 +57,7 @@ class VarnishTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->varnish->banPath('.*', 'text/html')->flush();
+        $this->getVarnish()->banPath('.*', 'text/html')->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/json.php'));
     }
@@ -67,7 +67,7 @@ class VarnishTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->varnish->purge('/cache.php')->flush();
+        $this->getVarnish()->purge('/cache.php')->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
@@ -87,7 +87,7 @@ class VarnishTest extends VarnishTestCase
         $this->assertHit($this->getResponse('/negotation.php', $html));
 
         self::getResponse('/negotation.php');
-        $this->varnish->purge('/negotation.php')->flush();
+        $this->getVarnish()->purge('/negotation.php')->flush();
         $this->assertMiss($this->getResponse('/negotation.php', $json));
         $this->assertMiss($this->getResponse('/negotation.php', $html));
     }
@@ -108,7 +108,7 @@ class VarnishTest extends VarnishTestCase
         $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $this->varnish->refresh('/cache.php')->flush();
+        $this->getVarnish()->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
@@ -119,7 +119,7 @@ class VarnishTest extends VarnishTestCase
         $json = array('Accept' => 'application/json');
         $html = array('Accept' => 'text/html');
 
-        $this->varnish->refresh('/negotation.php', $json)->flush();
+        $this->getVarnish()->refresh('/negotation.php', $json)->flush();
 
         $this->assertHit($this->getResponse('/negotation.php', $json));
         $this->assertMiss($this->getResponse('/negotation.php', $html));
