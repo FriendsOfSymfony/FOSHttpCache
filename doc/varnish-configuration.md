@@ -40,7 +40,7 @@ acl invalidators {
 }
 ```
 
-See also this library’s [basic configuration](../tests/Tests/Functional/Fixtures/varnish/fos.vcl).
+See also this library’s [basic configuration](../tests/Functional/Fixtures/varnish/fos.vcl).
 
 Warning: Make sure that all web servers running your application that may
 trigger invalidation are whitelisted here. Otherwise, lost cache invalidation
@@ -78,7 +78,7 @@ sub vcl_miss {
 }
 ```
 
-See also this library’s [purge.vcl](../tests/Tests/Functional/Fixtures/varnish/purge.vcl).
+See also this library’s [purge.vcl](../tests/Functional/Fixtures/varnish/purge.vcl).
 
 Refresh
 -------
@@ -94,7 +94,7 @@ sub vcl_recv {
 }
 ```
 
-See also this library’s [refresh.vcl](../tests/Tests/Functional/Fixtures/varnish/refresh.vcl).
+See also this library’s [refresh.vcl](../tests/Functional/Fixtures/varnish/refresh.vcl).
 
 Ban
 ---
@@ -134,7 +134,7 @@ sub vcl_deliver {
 }
 ```
 
-See also this library’s [ban.vcl](../tests/Tests/Functional/Fixtures/varnish/ban.vcl).
+See also this library’s [ban.vcl](../tests/Functional/Fixtures/varnish/ban.vcl).
 
 Tagging
 -------
@@ -170,7 +170,7 @@ sub vcl_recv {
 }
 ```
 
-See also this library’s [ban.vcl](../tests/Tests/Functional/Fixtures/varnish/ban.vcl).
+See also this library’s [ban.vcl](../tests/Functional/Fixtures/varnish/ban.vcl).
 
 Debugging
 ---------
@@ -190,4 +190,4 @@ sub vcl_deliver {
 }
 ```
 
-See also this library’s [debug.vcl](../tests/Tests/Functional/Fixtures/varnish/debug.vcl).
+See also this library’s [debug.vcl](../tests/Functional/Fixtures/varnish/debug.vcl).
