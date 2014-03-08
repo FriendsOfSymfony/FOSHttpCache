@@ -125,7 +125,7 @@ abstract class AbstractCacheProxyTestCase extends \PHPUnit_Framework_TestCase
             sprintf(
                 'Caching proxy cannot be reached at %s:%s',
                 $ip,
-                $this->getCachingProxyPort()
+                $port
             )
         );
     }
