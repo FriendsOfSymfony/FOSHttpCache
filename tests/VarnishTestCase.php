@@ -113,55 +113,9 @@ abstract class VarnishTestCase extends AbstractCacheProxyTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
-    {
-        $this->varnish = new Varnish(
-            array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-            $this->getHostName() . ':' . $this->getCachingProxyPort()
-        );
-
-        $this->stopVarnish();
-
-        exec($this->getBinary() .
-            ' -a localhost:' . $this->getCachingProxyPort() .
-            ' -T localhost:' . $this->getVarnishMgmtPort() .
-            ' -f ' . $this->getConfigFile() .
-            ' -n ' . $this->getCacheDir() .
-            ' -p vcl_dir=' . $this->getConfigDir() .
-            ' -P ' . self::PID
-        );
-
-        $this->waitForVarnish('127.0.0.1', $this->getCachingProxyPort(), 2000);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown()
     {
         $this->stopVarnish();
-    }
-
-    /**
-     * Wait for Varnish proxy to be started up and reachable
-     *
-     * @param string $ip
-     * @param int    $port
-     * @param int    $timeout Timeout in milliseconds
-     *
-     * @throws \RuntimeException If Varnish is not reachable within timeout
-     */
-    protected function waitForVarnish($ip, $port, $timeout)
-    {
-        for ($i = 0; $i < $timeout; $i++) {
-            if (@fsockopen($ip, $port)) {
-                return;
-            }
-
-            usleep(1000);
-        }
-
-        throw new \RuntimeException(sprintf('Varnish proxy cannot be reached at %s:%s', '127.0.0.1', $this->getCachingProxyPort()));
     }
 
     /**
@@ -173,5 +127,44 @@ abstract class VarnishTestCase extends AbstractCacheProxyTestCase
             exec('kill ' . file_get_contents(self::PID));
             unlink(self::PID);
         }
+    }
+
+    /**
+     * Start Varnish process if it's not yet running
+     */
+    protected function startVarnish()
+    {
+        exec($this->getBinary() .
+            ' -a localhost:' . $this->getCachingProxyPort() .
+            ' -T localhost:' . $this->getVarnishMgmtPort() .
+            ' -f ' . $this->getConfigFile() .
+            ' -n ' . $this->getCacheDir() .
+            ' -p vcl_dir=' . $this->getConfigDir() .
+            ' -P ' . self::PID
+        );
+
+        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function clearCache()
+    {
+        // Clear Varnish cache by restarting
+        $this->stopVarnish();
+        $this->startVarnish();
+    }
+
+    protected function getVarnish()
+    {
+        if (null === $this->varnish) {
+            $this->varnish = new Varnish(
+                array('http://127.0.0.1:' . $this->getCachingProxyPort()),
+                $this->getHostName() . ':' . $this->getCachingProxyPort()
+            );
+        }
+
+        return $this->varnish;
     }
 }
