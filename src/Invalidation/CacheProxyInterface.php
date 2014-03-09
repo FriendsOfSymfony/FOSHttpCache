@@ -6,6 +6,8 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 
 /**
  * An HTTP caching reverse proxy.
+ *
+ * Implementations should implement at least one of the Method interfaces.
  */
 interface CacheProxyInterface
 {
