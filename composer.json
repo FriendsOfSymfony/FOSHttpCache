@@ -2,7 +2,7 @@
     "name": "friendsofsymfony/http-cache",
     "type": "library",
     "description": "Tools to manage cache invalidation",
-    "keywords": [ "http", "caching", "purge", "invalidation", "varnish", "esi" ],
+    "keywords": [ "http", "caching", "purge", "invalidation", "varnish" ],
     "homepage": "https://github.com/friendsofsymfony/FOSHttpCache",
     "license": "MIT",
     "authors": [
