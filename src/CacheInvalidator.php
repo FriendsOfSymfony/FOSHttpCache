@@ -282,14 +282,14 @@ class CacheInvalidator
     /**
      * Send all pending invalidation requests.
      *
-     * @throws ExceptionCollection
+     * @return int The number of cache invalidations performed per caching server.
      *
-     * @return $this
+     * @throws ExceptionCollection If any errors occurred during flush.
      */
     public function flush()
     {
         try {
-            $this->cache->flush();
+            return $this->cache->flush();
         } catch (ExceptionCollection $exceptions) {
             foreach ($exceptions as $exception) {
                 $event = new Event();
@@ -303,7 +303,5 @@ class CacheInvalidator
 
             throw $exceptions;
         }
-
-        return $this;
     }
 }
