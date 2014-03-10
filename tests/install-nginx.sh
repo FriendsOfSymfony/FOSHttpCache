@@ -9,16 +9,14 @@ tar -xvf ngx_cache_purge-2.1.tar.gz
 cd nginx-1.4.6
 
 ./configure \
-  --conf-path=/etc/nginx/nginx.conf \
-  --error-log-path=/var/log/nginx/error.log \
-  --pid-path=/var/run/nginx.pid \
-  --lock-path=/var/lock/nginx.lock \
-  --http-log-path=/var/log/nginx/access.log \
-  --with-http_dav_module \
-  --http-client-body-temp-path=/var/lib/nginx/body \
-  --http-proxy-temp-path=/var/lib/nginx/proxy \
+  --error-log-path=/tmp/foshttpcache-error.log \
+  --http-log-path=/tmp/foshttpcache-access.log \
+  --pid-path=/tmp/foshttpcache-nginx.pid \
+  --lock-path=/tmp/foshttpcache-nginx.lock \
+  --http-client-body-temp-path=/tmp/foshttpcache-body \
+  --http-proxy-temp-path=/tmp/foshttpcache-proxy \
   --with-http_stub_status_module \
-  --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
+  --http-fastcgi-temp-path=/tmp/foshttpcache-fastcgi \
   --with-debug \
   --add-module=/tmp/custom_nginx/ngx_cache_purge-2.1
 
