@@ -25,6 +25,7 @@
 
     <php>
         <const name="VARNISH_FILE" value="./tests/Functional/Fixtures/varnish/fos.vcl" />
+        <const name="NGINX_BINARY" value="/tmp/custom_nginx/nginx-1.4.6/objs/nginx" />
         <const name="NGINX_FILE" value="./tests/Functional/Fixtures/nginx/fos.conf" />
         <const name="NGINX_CACHE_PATH" value="/tmp/fos_nginx_cache/" />
         <const name="WEB_SERVER_HOSTNAME" value="localhost" />
