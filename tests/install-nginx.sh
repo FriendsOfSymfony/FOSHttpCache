@@ -1,4 +1,4 @@
-apt-get install build-essential libc6 libpcre3 libpcre3-dev libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base
+sudo apt-get install build-essential libc6 libpcre3 libpcre3-dev libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base
 cd /tmp/
 mkdir custom_nginx
 cd custom_nginx
@@ -22,4 +22,4 @@ cd nginx-1.4.6
   --with-debug \
   --add-module=/tmp/custom_nginx/ngx_cache_purge-2.1
 
-./make && ./make install
+/usr/bin/make
