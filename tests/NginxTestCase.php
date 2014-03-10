@@ -2,7 +2,7 @@
 
 namespace FOS\HttpCache\Tests;
 
-use FOS\HttpCache\Invalidation\NginxSeparateLocation as Nginx;
+use FOS\HttpCache\Invalidation\Nginx;
 
 /**
  * A phpunit base class to write functional tests with NGINX.
@@ -81,19 +81,21 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     {
         $this->nginx = new Nginx(
             array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-            $this->getHostName() . ':' . $this->getCachingProxyPort()
+            $this->getHostName() . ':' . $this->getCachingProxyPort(),
+            null,
+            'purge'
         );
 
         $this->stopNginx();
 
-        $this->emptyCache();
+        $this->clearCache();
 
         exec($this->getBinary() .
             ' -c ' . $this->getConfigFile() .
             ' -g "pid ' . self::PID . ';"'
         );
 
-        $this->waitForNginx('127.0.0.1', $this->getCachingProxyPort(), 2000);
+        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
 
     /**
@@ -102,28 +104,6 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     protected function tearDown()
     {
         $this->stopNginx();
-    }
-
-    /**
-     * Wait for Nginx proxy to be started up and reachable
-     *
-     * @param string $ip
-     * @param int    $port
-     * @param int    $timeout Timeout in milliseconds
-     *
-     * @throws \RuntimeException If Nginx is not reachable within timeout
-     */
-    protected function waitForNginx($ip, $port, $timeout)
-    {
-        for ($i = 0; $i < $timeout; $i++) {
-            if (@fsockopen($ip, $port)) {
-                return;
-            }
-
-            usleep(1000);
-        }
-
-        throw new \RuntimeException(sprintf('Nginx proxy cannot be reached at %s:%s', '127.0.0.1', $this->getCachingProxyPort()));
     }
 
     /**
@@ -137,9 +117,9 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     }
 
     /**
-     * Empty Nginx cache
+     * Clear Nginx cache
      */
-    protected function emptyCache()
+    protected function clearCache()
     {
         exec('rm -rf ' . $this->getCachePath()."*");
     }
