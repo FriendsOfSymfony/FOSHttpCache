@@ -1,13 +1,13 @@
-Testing your application
+Testing Your Application
 ========================
 
 This chapter describes how to test your application against a Varnish instance.
 
 * [VarnishTestCase](#varnishtestcase)
 * [Configuration](#configuration)
-  * [Setting constants](#setting-constants)
-  * [Overriding getters](#overriding-getters)
-  * [Enable assertions](#enable-assertions)
+  * [Setting Constants](#setting-constants)
+  * [Overriding Getters](#overriding-getters)
+  * [Enable Assertions](#enable-assertions)
 * [Usage](#usage)
 
 VarnishTestCase
@@ -35,16 +35,15 @@ All you have to do, is to refer the class to your Varnish configuration (VCL)
 file. The recommended way to configure the test case is by setting constants
 in your `phpunit.xml`. Alternatively, you can override the getter methods:
 
-
 | Constant             | Getter                 | Default    | Description                                 |
 | -------------------- | ---------------------- | ---------- | ------------------------------------------- |
 | `VARNISH_FILE`       | `getConfigFile()`      |            | your Varnish configuration (VCL) file       |
 | `VARNISH_BINARY`     | `getBinary()`          | `varnishd` | your Varnish binary                         |
-| `VARNISH_PORT`       | `getVarnishPort()`     | `6181`     | port Varnish listens on                     |
+| `VARNISH_PORT`       | `getCachingProxyPort()`| `6181`     | port Varnish listens on                     |
 | `VARNISH_MGMT_PORT`  | `getVarnishMgmtPort()` | `6182`     | Varnish management port                     |
 | `WEB_SERVER_HOSTNAME`| `getHostName()`        |            | hostname your application can be reached at |
 
-### Setting constants
+### Setting Constants
 
 Compare this library’s configuration to see how the constants are set:
 
@@ -59,7 +58,7 @@ Compare this library’s configuration to see how the constants are set:
 </phpunit>
 ```
 
-### Overriding getters
+### Overriding Getters
 
 You can override getters in your test class in the following way.
 
@@ -75,11 +74,10 @@ class YourFunctionalTest extends VarnishTestCase
 }
 ```
 
-### Enable assertions
+### Enable Assertions
 
 For the `assertHit` and `assertMiss` assertions to work, you should add a
-custom `X-Debug` header to responses served by your Varnish. See
-[this library’s VCL](../tests/FOS/HttpCache/Functional/Fixtures/Varnish/fos.vcl) for an example.
+[custom `X-Debug` header](varnish-configuration#debugging) to responses served by your Varnish.
 
 Usage
 -----

@@ -184,14 +184,14 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
         foreach ($exceptions as $exception) {
             if ($exception instanceof CurlException) {
                 // Caching proxy unreachable
-                $e = new ProxyUnreachableException(
+                $e = ProxyUnreachableException::proxyUnreachable(
                     $exception->getRequest()->getHost(),
                     $exception->getMessage(),
                     $exception
                 );
             } elseif ($exception instanceof RequestException) {
                 // Other error
-                $e = new ProxyResponseException(
+                $e = ProxyResponseException::proxyResponse(
                     $exception->getRequest()->getHost(),
                     $exception->getCode(),
                     $exception->getMessage(),
@@ -217,9 +217,8 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
      * @param string   $url
      * @param string[] $allowedParts Array of allowed URL parts (optional)
      *
-     * @throws InvalidUrlSchemeException If scheme is not HTTP
-     * @throws InvalidUrlException       If URL is invalid
-     * @throws InvalidUrlPartsException  If scheme contains invalid parts
+     * @throws InvalidUrlException If URL is invalid, the scheme is not http or
+     *                             contains parts that are not expected.
      *
      * @return string The URL (with default scheme if there was no scheme)
      */
@@ -232,17 +231,17 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
         }
 
         if (!$parts = parse_url($url)) {
-            throw new InvalidUrlException($url);
+            throw InvalidUrlException::invalidUrl($url);
         }
 
         if (!in_array(strtolower($parts['scheme']), $this->getAllowedSchemes())) {
-            throw new InvalidUrlSchemeException($url, $parts['scheme'], $this->getAllowedSchemes());
+            throw InvalidUrlException::invalidUrlScheme($url, $parts['scheme'], $this->getAllowedSchemes());
         }
 
         if (count($allowedParts) > 0) {
             $diff = array_diff(array_keys($parts), $allowedParts);
             if (count($diff) > 0) {
-                throw new InvalidUrlPartsException($url, $allowedParts);
+                throw InvalidUrlException::invalidUrlParts($url, $allowedParts);
             }
         }
 

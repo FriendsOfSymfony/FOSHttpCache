@@ -3,13 +3,21 @@
 namespace FOS\HttpCache\Exception;
 
 /**
- * Thrown when a request to the reverse caching proxy fails
+ * Thrown when a request to the reverse caching proxy fails to establish a
+ * connection.
  */
-class ProxyUnreachableException extends \RuntimeException
+class ProxyUnreachableException extends \RuntimeException implements HttpCacheExceptionInterface
 {
-    public function __construct($host, $message, \Exception $previous = null)
+    /**
+     * @param string     $host     The host name that was contacted.
+     * @param string     $message  The error message from guzzle.
+     * @param \Exception $previous The exception from guzzle.
+     *
+     * @return ProxyUnreachableException
+     */
+    public static function proxyUnreachable($host, $message, \Exception $previous = null)
     {
-        parent::__construct(
+        return new ProxyUnreachableException(
             sprintf(
                 'Request to caching proxy at %s failed with message "%s"',
                 $host,

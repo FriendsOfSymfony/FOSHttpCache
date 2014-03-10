@@ -79,6 +79,14 @@ abstract class AbstractCacheProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Clear the cache between each test
+     */
+    protected function setUp()
+    {
+        $this->clearCache();
+    }
+
+    /**
      * Get the hostname where your application can be reached
      *
      * @throws \Exception
@@ -95,9 +103,42 @@ abstract class AbstractCacheProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Wait for caching proxy to be started up and reachable
+     *
+     * @param string $ip
+     * @param int    $port
+     * @param int    $timeout Timeout in milliseconds
+     *
+     * @throws \RuntimeException If proxy is not reachable within timeout
+     */
+    protected function waitFor($ip, $port, $timeout)
+    {
+        for ($i = 0; $i < $timeout; $i++) {
+            if (@fsockopen($ip, $port)) {
+                return;
+            }
+
+            usleep(1000);
+        }
+
+        throw new \RuntimeException(
+            sprintf(
+                'Caching proxy cannot be reached at %s:%s',
+                $ip,
+                $port
+            )
+        );
+    }
+
+    /**
      * Get port at which the caching proxy is running
      *
      * @return int
      */
     abstract protected function getCachingProxyPort();
+
+    /**
+     * Clear the cache
+     */
+    abstract protected function clearCache();
 }

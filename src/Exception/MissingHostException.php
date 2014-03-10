@@ -2,14 +2,18 @@
 
 namespace FOS\HttpCache\Exception;
 
-class MissingHostException extends \RuntimeException
+/**
+ * Thrown when there is no default host configured and an invalidation request
+ * with just a path is made.
+ */
+class MissingHostException extends \RuntimeException implements HttpCacheExceptionInterface
 {
     /**
-     * Constructor
+     * @param string $path The path that was asked to be invalidated.
      *
-     * @param string $path Path
+     * @return MissingHostException
      */
-    public function __construct($path)
+    public static function missingHost($path)
     {
         $msg = sprintf(
             'Path "%s" cannot be invalidated without a host. '
@@ -18,6 +22,6 @@ class MissingHostException extends \RuntimeException
             $path
         );
 
-        parent::__construct($msg);
+        return new MissingHostException($msg);
     }
 }
