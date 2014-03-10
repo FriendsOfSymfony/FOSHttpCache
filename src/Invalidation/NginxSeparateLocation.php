@@ -11,10 +11,10 @@ use Guzzle\Http\ClientInterface;
  * @author Simone Fumagalli <simone@iliveinperego.com>
  *
  */
-class NginxSeparateLocation extends Nginx implements PurgeInterface
+class NginxSeparateLocation extends Nginx implements 
 {
 
-    const HTTP_METHOD_PURGE        = 'GET';
+    const HTTP_METHOD_PURGE        = 'PURGE';
 
     /**
      * Path location that triggers purging.

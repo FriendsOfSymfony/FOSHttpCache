@@ -1,4 +1,5 @@
-sudo apt-get install build-essential libc6 libpcre3 libpcre3-dev libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base
+sudo apt-get install nginx build-essential libc6 libpcre3 libpcre3-dev
+libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base
 cd /tmp/
 mkdir custom_nginx
 cd custom_nginx
@@ -9,17 +10,9 @@ tar -xvf ngx_cache_purge-2.1.tar.gz
 cd nginx-1.4.6
 
 ./configure \
-  --conf-path=/etc/nginx/nginx.conf \
-  --error-log-path=/var/log/nginx/error.log \
-  --pid-path=/var/run/nginx.pid \
-  --lock-path=/var/lock/nginx.lock \
-  --http-log-path=/var/log/nginx/access.log \
-  --with-http_dav_module \
-  --http-client-body-temp-path=/var/lib/nginx/body \
-  --http-proxy-temp-path=/var/lib/nginx/proxy \
-  --with-http_stub_status_module \
-  --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \
-  --with-debug \
-  --add-module=/tmp/custom_nginx/ngx_cache_purge-2.1
+	  --with-debug \
+	    --add-module=/tmp/custom_nginx/ngx_cache_purge-2.1
 
 /usr/bin/make
+sudo /usr/bin/make install
+sudo chmod -R 777 /usr/local/nginx
