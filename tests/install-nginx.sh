@@ -9,6 +9,9 @@ tar -xvf ngx_cache_purge-2.1.tar.gz
 cd nginx-1.4.6
 
 ./configure \
+  --prefix=/tmp/
+  --sbin=/tmp/custom_nginx/nginx-1.4.6/objs/nginx
+  --conf-path=/tmp/
   --error-log-path=/tmp/foshttpcache-error.log \
   --http-log-path=/tmp/foshttpcache-access.log \
   --pid-path=/tmp/foshttpcache-nginx.pid \
