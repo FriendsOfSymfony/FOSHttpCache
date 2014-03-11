@@ -10,13 +10,13 @@ sub vcl_recv {
 sub vcl_hit {
     if (req.request == "PURGE") {
         purge;
-        error 200 "Purged";
+        error 204 "Purged";
     }
 }
 
 sub vcl_miss {
     if (req.request == "PURGE") {
         purge;
-        error 404 "Not in cache";
+        error 204 "Purged (Not in cache)";
     }
 }
