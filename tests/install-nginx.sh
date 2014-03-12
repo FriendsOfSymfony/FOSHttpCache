@@ -10,8 +10,9 @@ tar -xvf ngx_cache_purge-2.1.tar.gz
 cd nginx-1.4.6
 
 ./configure \
-  --with-debug \
-  --add-module=/tmp/custom_nginx/ngx_cache_purge-2.1
+	  --with-debug \
+	    --add-module=/tmp/custom_nginx/ngx_cache_purge-2.1
 
 /usr/bin/make
+sudo /usr/bin/make install
 sudo chmod -R 777 /usr/local/nginx
