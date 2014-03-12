@@ -14,3 +14,4 @@ cd nginx-1.4.6
   --add-module=/tmp/custom_nginx/ngx_cache_purge-2.1
 
 /usr/bin/make
+sudo chmod -R 777 /usr/local/nginx
