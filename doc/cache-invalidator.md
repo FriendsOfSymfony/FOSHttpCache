@@ -170,6 +170,9 @@ When using the [Symfony bundle](https://github.com/FriendsOfSymfony/FOSHttpCache
 you don’t have to call `flush()`, as the bundle flushes the invalidator for you
 after the response has been sent.
 
+As `flush()` empties the invalidation queue, you can safely call the method 
+multiple times.
+
 Error handling
 --------------
 

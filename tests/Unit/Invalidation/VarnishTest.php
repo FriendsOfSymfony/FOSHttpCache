@@ -198,6 +198,38 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         new Varnish(array('http://127.0.0.1:80/some/weird/path'));
     }
 
+    public function testFlushCountSuccess()
+    {
+        $self = $this;
+        $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
+            ->shouldReceive('send')
+            ->once()
+            ->with(
+                \Mockery::on(
+                    function ($requests) use ($self) {
+                        /** @type Request[] $requests */
+                        $self->assertCount(4, $requests);
+                        foreach ($requests as $request) {
+                            $self->assertEquals('PURGE', $request->getMethod());
+                        }
+
+                        return true;
+                    }
+                )
+            )
+            ->getMock();
+
+        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $client);
+
+        $this->assertEquals(
+            2,
+            $varnish
+                ->purge('/c')
+                ->purge('/b')
+                ->flush()
+        );
+    }
+
     protected function setUp()
     {
         $this->mock = new MockPlugin();

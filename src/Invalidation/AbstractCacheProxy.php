@@ -106,11 +106,13 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
     {
         $queue = $this->queue;
         if (0 === count($queue)) {
-            return;
+            return 0;
         }
 
         $this->queue = array();
         $this->sendRequests($queue);
+
+        return count($queue);
     }
 
     /**
