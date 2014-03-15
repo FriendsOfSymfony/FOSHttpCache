@@ -4,8 +4,6 @@ namespace FOS\HttpCache\Invalidation;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidUrlException;
-use FOS\HttpCache\Exception\InvalidUrlPartsException;
-use FOS\HttpCache\Exception\InvalidUrlSchemeException;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use Guzzle\Http\Client;
