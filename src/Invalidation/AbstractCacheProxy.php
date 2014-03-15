@@ -72,7 +72,6 @@ abstract class AbstractCacheProxy implements CacheProxyInterface
      *                       addresses, including port if not port 80.
      *                       E.g. array('127.0.0.1:6081')
      *
-     * @throws InvalidUrlSchemeException If scheme is supplied and is not HTTP
      * @throws InvalidUrlException       If server is invalid or contains URL
      *                                   parts other than scheme, host, port
      */
