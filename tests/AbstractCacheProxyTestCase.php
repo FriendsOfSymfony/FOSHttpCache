@@ -27,7 +27,7 @@ abstract class AbstractCacheProxyTestCase extends \PHPUnit_Framework_TestCase
      *
      * @var Client
      */
-    private static $client;
+    protected $client;
 
     /**
      * Assert a cache miss
@@ -71,11 +71,11 @@ abstract class AbstractCacheProxyTestCase extends \PHPUnit_Framework_TestCase
      */
     public function getClient()
     {
-        if (null === self::$client) {
-            self::$client = new Client('http://' . $this->getHostName() . ':' . $this->getCachingProxyPort());
+        if (null === $this->client) {
+            $this->client = new Client('http://' . $this->getHostName() . ':' . $this->getCachingProxyPort());
         }
 
-        return self::$client;
+        return $this->client;
     }
 
     /**
