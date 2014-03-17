@@ -2,10 +2,9 @@
 
 namespace FOS\HttpCache\Invalidation;
 
-use FOS\HttpCache\Exception\MissingHostException;
-use FOS\HttpCache\Invalidation\Method\BanInterface;
 use FOS\HttpCache\Invalidation\Method\PurgeInterface;
 use FOS\HttpCache\Invalidation\Method\RefreshInterface;
+use Guzzle\Http\ClientInterface;
 
 /**
  * Nginx HTTP cache invalidator.
@@ -14,14 +13,9 @@ use FOS\HttpCache\Invalidation\Method\RefreshInterface;
  */
 class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterface
 {
-
     const HTTP_METHOD_PURGE        = 'PURGE';
     const HTTP_METHOD_REFRESH      = 'GET';
-    const HTTP_HEADER_HOST         = 'X-Host';
-    const HTTP_HEADER_URL          = 'X-Url';
-    const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
-    const HTTP_HEADER_CACHE        = 'X-Cache-Tags';
-    const HTTP_HEADER_REFRESH      = 'X-FOS-refresh';
+    const HTTP_HEADER_REFRESH      = 'X-Refresh';
 
     /**
      * Path location that triggers purging.
@@ -42,18 +36,16 @@ class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterfa
      *                                 requests (optional). This is required if
      *                                 you purge and refresh paths instead of
      *                                 absolute URLs.
+     * @param string          $purgeLocation Path that triggers purge (optional).
      * @param ClientInterface $client  HTTP client (optional). If no HTTP client
      *                                 is supplied, a default one will be
      *                                 created.
-     * @param string          $purgeLocation Path location that trigger purging. 
-     *                                 It depends on your configuration.
      */
-
     public function __construct(
-	array $servers, 
-	$baseUrl = null, 
-	ClientInterface $client = null, 
-	$purgeLocation = false
+        array $servers,
+        $baseUrl = null,
+        $purgeLocation = false,
+        ClientInterface $client = null
     ) {
         $this->purgeLocation = $purgeLocation;
         parent::__construct($servers, $baseUrl, $client);
@@ -75,12 +67,11 @@ class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterfa
      */
     public function purge($url)
     {
-
-	if ($this->purgeLocation) {
-        	$this->queueRequest(self::HTTP_METHOD_PURGE, $this->purgeLocation.$url);
-	} else {
-		$this->queueRequest(self::HTTP_METHOD_PURGE, $url);
-	}
+        if ($this->purgeLocation) {
+            $this->queueRequest(self::HTTP_METHOD_PURGE, $this->purgeLocation.$url);
+        } else {
+            $this->queueRequest(self::HTTP_METHOD_PURGE, $url);
+        }
 
         return $this;
     }
