@@ -23,7 +23,7 @@ Table of Contents
    2. [Nginx Configuration](nginx-configuration.md)
 4. [Caching Proxy Clients](proxy-clients.md)
    1. [Varnish client](varnish-client.md)
-   2. [Nginx client](nginx-client.md)
+   2. [Nginx Client](nginx-client.md)
 5. [The Cache Invalidator](cache-invalidator.md)
 6. Testing
    1. [Testing Your Application](testing-your-application.md)
