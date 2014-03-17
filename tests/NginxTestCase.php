@@ -49,7 +49,7 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
             throw new \Exception('Can not find specified nginx config file: ' . $configFile);
         }
 
-	$configFile = __DIR__."/../".$configFile;
+	    $configFile = __DIR__."/../".$configFile;
 
         return $configFile;
     }
@@ -65,7 +65,7 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     }
 
     /**
-     * Defaults to 6183, the nginx default.
+     * Defaults to 6183, the Nginx default.
      *
      * @return int
      */
@@ -81,9 +81,7 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     {
         $this->nginx = new Nginx(
             array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-            $this->getHostName() . ':' . $this->getCachingProxyPort(),
-            null,
-            'purge'
+            $this->getHostName() . ':' . $this->getCachingProxyPort()
         );
 
         $this->stopNginx();
@@ -130,11 +128,9 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     protected function getCachePath()
     {
         if (!defined('NGINX_CACHE_PATH')) {
-            throw new \Exception('Specify the NGINX cache path in phpunit.xml or override getCachePath()');
+            throw new \Exception('Specify the NGINX_CACHE_PATH in phpunit.xml or override getCachePath()');
         }
 
        return NGINX_CACHE_PATH;
-
     }
-
 }
