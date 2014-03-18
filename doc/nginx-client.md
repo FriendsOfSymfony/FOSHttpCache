@@ -16,7 +16,7 @@ Nginx runs on if it is not port 80.
 ```php
 use FOS\HttpCache\Invalidation\Nginx;
 
-$servers = array('10.0.0.1', '10.0.0.2:6081'); // Port 80 assumed for 10.0.0.1
+$servers = array('10.0.0.1', '10.0.0.2:6183'); // Port 80 assumed for 10.0.0.1
 $nginx = new Nginx($servers);
 ```
 
@@ -47,4 +47,4 @@ Further reading:
 * See the [Caching Proxy Clients](proxy-clients.md) chapter for more information
   on how to use the invalidation methods.
 * See the [Nginx Configuration](nginx-configuration.md) chapter for more on
-  preparing your Varnish server for handling invalidation requests.
+  preparing your Nginx server for handling invalidation requests.
