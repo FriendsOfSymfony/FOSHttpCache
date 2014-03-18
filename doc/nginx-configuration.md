@@ -34,7 +34,8 @@ Refresh
 -------
 
 If you want to invalidate cached objects by [forcing a refresh](invalidation-introduction.md#refresh)
-you have to use [proxy_cache_bypass](http://wiki.nginx.org/HttpProxyModule#proxy_cache_bypass).
+you have to use the built-in [proxy_cache_bypass](http://wiki.nginx.org/HttpProxyModule#proxy_cache_bypass)
+operation.
 
 There are many ways to have a request bypass the cache. This library uses a
 custom HTTP header named X-Refresh.
