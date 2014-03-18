@@ -18,10 +18,10 @@ class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterfa
     const HTTP_HEADER_REFRESH      = 'X-Refresh';
 
     /**
-     * Path location that triggers purging.
-     * It depends on your configuration. 
+     * Path location that triggers purging. If false, same location purging is
+     * assumed.
      *
-     * @var mixed
+     * @var string|false
      */
     protected $purgeLocation;
 
