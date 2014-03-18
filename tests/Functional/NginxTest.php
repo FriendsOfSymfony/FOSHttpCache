@@ -28,7 +28,7 @@ class NginxTest extends NginxTestCase
         $this->nginx = new Nginx(
             array('http://127.0.0.1:' . $this->getCachingProxyPort()),
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
-            'purge'
+            '/purge'
         );
         $this->nginx->purge('/cache.php')->flush();
 

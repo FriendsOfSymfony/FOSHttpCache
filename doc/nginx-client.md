@@ -32,7 +32,7 @@ If you have configured Nginx to support purge requests at a separate location,
 supply that location to the class as the third parameter:
 
 ```php
-$nginx = new Nginx($servers, 'my-cool-app.com', 'purge');
+$nginx = new Nginx($servers, 'my-cool-app.com', '/purge');
 ```
 
 Usage
