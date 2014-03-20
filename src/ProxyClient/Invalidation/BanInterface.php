@@ -1,14 +1,14 @@
 <?php
 
-namespace FOS\HttpCache\Invalidation\Method;
+namespace FOS\HttpCache\ProxyClient\Invalidation;
 
-use FOS\HttpCache\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 
 /**
  * An HTTP cache that supports invalidation by banning, that is, removing
  * objects from the cache that match a regular expression
  */
-interface BanInterface extends CacheProxyInterface
+interface BanInterface extends ProxyClientInterface
 {
     const REGEX_MATCH_ALL = '.*';
     const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;

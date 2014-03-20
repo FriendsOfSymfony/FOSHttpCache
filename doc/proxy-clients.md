@@ -5,7 +5,7 @@ You can use the caching proxy clients either wrapped by the cache invalidator
 (recommended), or directly for low-level access to invalidation functionality.
 
 * [Setup](#setup)
-* [CacheProxyInterface](#cacheproxyinterface)
+* [ProxyClientInterface](#cacheproxyinterface)
 * [Purge](#purge)
 * [Refresh](#refresh)
 * [Ban](#ban)
@@ -20,16 +20,16 @@ You should set up at least one caching proxy client:
 
 Then continue here to find out how to use the proxy clients.
 
-CacheProxyInterface
+ProxyClientInterface
 -------------------
 
-Each client is an implementation of [CacheProxyInterface](../src/Invalidation/CacheProxyInterface.php).
+Each client is an implementation of [ProxyClientInterface](../src/ProxyClient/ProxyClientInterface.php).
 All other interfaces, `PurgeInterface`, `RefreshInterface` and `BanInterface`
-extend this `CacheProxyInterface`. So each client implements at least one of
+extend this `ProxyClientInterface`. So each client implements at least one of
 the three [invalidation methods](invalidation-introduction.md#invalidation-methods),
 depending on the caching proxy’s abilities.
 
-The `CacheProxyInterface` has one method: `flush()`. After collecting
+The `ProxyClientInterface` has one method: `flush()`. After collecting
 invalidation requests, `flush()` needs to be called to actually send the
 requests to the caching proxy. This is on purpose: this way, we can send
 all requests together, reducing the performance impact of sending invalidation

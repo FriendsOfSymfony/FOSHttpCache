@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCache\Invalidation;
+namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidUrlException;
@@ -18,7 +18,7 @@ use Guzzle\Http\Message\RequestInterface;
  *
  * @author David de Boer <david@driebit.nl>
  */
-abstract class AbstractCacheProxy implements CacheProxyInterface
+abstract class AbstractProxyClient implements ProxyClientInterface
 {
     /**
      * IP addresses/hostnames of all caching proxy servers

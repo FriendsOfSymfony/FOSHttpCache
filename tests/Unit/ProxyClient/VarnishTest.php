@@ -1,9 +1,9 @@
 <?php
 
-namespace FOS\HttpCache\Tests\Unit\Invalidation;
+namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
-use FOS\HttpCache\Invalidation\Varnish;
+use FOS\HttpCache\ProxyClient\Varnish;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Plugin\Mock\MockPlugin;

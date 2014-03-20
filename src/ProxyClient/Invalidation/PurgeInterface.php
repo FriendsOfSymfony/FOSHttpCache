@@ -1,8 +1,8 @@
 <?php
 
-namespace FOS\HttpCache\Invalidation\Method;
+namespace FOS\HttpCache\ProxyClient\Invalidation;
 
-use FOS\HttpCache\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 
 /**
  * An HTTP cache that supports invalidation by purging, that is, removing one
@@ -11,7 +11,7 @@ use FOS\HttpCache\Invalidation\CacheProxyInterface;
  * Implementations should be configurable with a default host to be able to
  * handle purge calls that do not contain a full URL but only a path.
  */
-interface PurgeInterface extends CacheProxyInterface
+interface PurgeInterface extends ProxyClientInterface
 {
     /**
      * Purge a URL

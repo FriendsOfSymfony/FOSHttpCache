@@ -4,7 +4,7 @@ namespace FOS\HttpCache\Exception;
 
 /**
  * A collection of exceptions that might occur during the flush operation of a
- * CacheProxyInterface implementation
+ * ProxyClientInterface implementation
  */
 class ExceptionCollection extends \Exception implements \IteratorAggregate, \Countable,  HttpCacheExceptionInterface
 {
