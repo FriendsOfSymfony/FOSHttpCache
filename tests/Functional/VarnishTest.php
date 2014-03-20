@@ -7,6 +7,7 @@ use FOS\HttpCache\Tests\VarnishTestCase;
 
 /**
  * @group webserver
+ * @group varnish
  */
 class VarnishTest extends VarnishTestCase
 {
@@ -98,7 +99,7 @@ class VarnishTest extends VarnishTestCase
 
         self::getResponse('/cache.php');
 
-        $varnish->purge('http://localhost:6181/cache.php')->flush();
+        $varnish->purge('http://127.0.0.1:6181/cache.php')->flush();
         $this->assertMiss(self::getResponse('/cache.php'));
     }
 
