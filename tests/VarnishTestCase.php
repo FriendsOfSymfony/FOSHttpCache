@@ -37,7 +37,7 @@ use FOS\HttpCache\ProxyClient\Varnish;
  *                      (default /tmp/foshttpcache-test)
  * WEB_SERVER_HOSTNAME  name of the webserver varnish has to talk to (required)
  */
-abstract class VarnishTestCase extends AbstractCacheProxyTestCase
+abstract class VarnishTestCase extends AbstractProxyClientTestCase
 {
     /**
      * @var Varnish
@@ -155,6 +155,11 @@ abstract class VarnishTestCase extends AbstractCacheProxyTestCase
         $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
 
+    protected function resetProxyDaemon() 
+    {       
+        $this->clearCache();
+    }
+    
     /**
      * {@inheritdoc}
      */

@@ -16,7 +16,7 @@ Nginx runs on if it is not port 80.
 ```php
 use FOS\HttpCache\Invalidation\Nginx;
 
-$servers = array('10.0.0.1', '10.0.0.2:6183'); // Port 80 assumed for 10.0.0.1
+$servers = array('10.0.0.1', '10.0.0.2:8088'); // Port 80 assumed for 10.0.0.1
 $nginx = new Nginx($servers);
 ```
 

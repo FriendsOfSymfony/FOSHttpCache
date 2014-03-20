@@ -2,7 +2,8 @@
 
 namespace FOS\HttpCache\Tests;
 
-use FOS\HttpCache\Invalidation\Nginx;
+use FOS\HttpCache\ProxyClient\Nginx;
+use Guzzle\Http\Message\Response;
 
 /**
  * A phpunit base class to write functional tests with NGINX.
@@ -18,16 +19,18 @@ use FOS\HttpCache\Invalidation\Nginx;
  * NGINX_BINARY       Executable for NGINX. This can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default nginx)
- * NGINX_PORT         Test NGINX port to use (default 6183)
+ * NGINX_PORT         Test NGINX port to use (default 8088)
  * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
  * NGINX_CACHE_PATH   NGINX configuration file (required if not passed to setUp)
  */
-abstract class NginxTestCase extends AbstractCacheProxyTestCase
+abstract class NginxTestCase extends AbstractProxyClientTestCase
 {
     /**
      * @var Nginx
      */
     protected $nginx;
+
+    const CACHE_EXPIRED = 'EXPIRED';
 
     const PID = '/tmp/foshttpcache-nginx.pid';
 
@@ -65,35 +68,41 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     }
 
     /**
-     * Defaults to 6183, the Nginx default.
+     * Defaults to 8088.
      *
      * @return int
      */
     protected function getCachingProxyPort()
     {
-        return defined('NGINX_PORT') ? NGINX_PORT : 6183;
+        return defined('NGINX_PORT') ? NGINX_PORT : 8088;
+    }
+
+    /**
+     * Get NGINX cache path
+     */
+    protected function getCacheDir()
+    {
+        if (!defined('NGINX_CACHE_PATH')) {
+            throw new \Exception('Specify the NGINX_CACHE_PATH in phpunit.xml or override getCacheDir()');
+        }
+
+        return NGINX_CACHE_PATH;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function getNginx($purgeLocation = false)
     {
-        $this->nginx = new Nginx(
-            array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-            $this->getHostName() . ':' . $this->getCachingProxyPort()
-        );
+        if (null === $this->nginx) {
+            $this->nginx = new Nginx(
+                array('http://127.0.0.1:' . $this->getCachingProxyPort()),
+                $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                $purgeLocation
+            );
+        }
 
-        $this->stopNginx();
-
-        $this->clearCache();
-
-        exec($this->getBinary() .
-            ' -c ' . $this->getConfigFile() .
-            ' -g "pid ' . self::PID . ';"'
-        );
-
-        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
+        return $this->nginx;
     }
 
     /**
@@ -105,7 +114,7 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     }
 
     /**
-     * Stop Nginx process if it's running
+     * Stop Nginx process if it's running.
      */
     protected function stopNginx()
     {
@@ -115,22 +124,29 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     }
 
     /**
+     * Start Nginx process if it's not yet running.
+     */
+    protected function startNginx()
+    {
+        exec($this->getBinary() .
+            ' -c ' . $this->getConfigFile() .
+            ' -g "pid ' . self::PID . ';"'
+        );
+
+        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
+    }
+
+    protected function resetProxyDaemon() 
+    {       
+        $this->clearCache();
+        $this->startNginx();
+    }
+    
+    /**
      * Clear Nginx cache
      */
     protected function clearCache()
     {
-        exec('rm -rf ' . $this->getCachePath()."*");
-    }
-
-    /**
-     * Get NGINX cache path
-     */
-    protected function getCachePath()
-    {
-        if (!defined('NGINX_CACHE_PATH')) {
-            throw new \Exception('Specify the NGINX_CACHE_PATH in phpunit.xml or override getCachePath()');
-        }
-
-       return NGINX_CACHE_PATH;
+        exec('rm -rf ' . $this->getCacheDir()."*");
     }
 }

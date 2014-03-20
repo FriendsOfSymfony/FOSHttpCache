@@ -2,7 +2,7 @@
 
 namespace FOS\HttpCache\Tests\Functional;
 
-use FOS\HttpCache\Invalidation\Nginx;
+use FOS\HttpCache\ProxyClient\Nginx;
 use FOS\HttpCache\Tests\NginxTestCase;
 
 /**
@@ -11,26 +11,47 @@ use FOS\HttpCache\Tests\NginxTestCase;
  */
 class NginxTest extends NginxTestCase
 {
-    public function testPurge()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->nginx->purge('/cache.php')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
-    }
-
     public function testPurgeSeparateLocation()
     {
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->nginx = new Nginx(
-            array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-            $this->getHostName() . ':' . $this->getCachingProxyPort(),
-            '/purge'
-        );
-        $this->nginx->purge('/cache.php')->flush();
+        $nginx = $this->getNginx('/purge');
+
+        $nginx->purge('/cache.php')->flush();
+
+        $this->assertMiss($this->getResponse('/cache.php'));
+    }
+
+    public function testPurgeSeparateLocationPath()
+    {
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
+
+        $nginx = $this->getNginx('/purge');
+        $nginx->purge('/cache.php')->flush();
+
+        $this->assertMiss($this->getResponse('/cache.php'));
+    }
+
+    public function testPurgeSameLocation()
+    {
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
+
+        $nginx = $this->getNginx();
+        $nginx->purge('/cache.php')->flush();
+
+        $this->assertMiss($this->getResponse('/cache.php'));
+    }
+
+    public function testPurgeSameLocationPath()
+    {
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
+
+        $nginx = $this->getNginx();
+        $nginx->purge('/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
@@ -41,7 +62,21 @@ class NginxTest extends NginxTestCase
         $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $this->nginx->refresh('/cache.php')->flush();
+        $nginx = $this->getNginx();
+        $nginx->refresh('/cache.php')->flush();
+        usleep(1000);
+        $refreshed = $this->getResponse('/cache.php');
+        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+    }
+
+    public function testRefreshPath()
+    {
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $response = $this->getResponse('/cache.php');
+        $this->assertHit($response);
+
+        $nginx = $this->getNginx();
+        $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));

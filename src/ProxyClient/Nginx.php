@@ -1,9 +1,9 @@
 <?php
 
-namespace FOS\HttpCache\Invalidation;
+namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\Invalidation\Method\PurgeInterface;
-use FOS\HttpCache\Invalidation\Method\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use Guzzle\Http\ClientInterface;
 
 /**
@@ -11,7 +11,7 @@ use Guzzle\Http\ClientInterface;
  *
  * @author Simone Fumagalli <simone@iliveinperego.com>
  */
-class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterface
+class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_PURGE        = 'PURGE';
     const HTTP_METHOD_REFRESH      = 'GET';
@@ -44,10 +44,10 @@ class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterfa
     public function __construct(
         array $servers,
         $baseUrl = null,
-        $purgeLocation = false,
+        $purgeLocation = '',
         ClientInterface $client = null
     ) {
-        $this->purgeLocation = $purgeLocation;
+        $this->purgeLocation = (string) $purgeLocation;
         parent::__construct($servers, $baseUrl, $client);
     }
 
@@ -67,11 +67,8 @@ class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterfa
      */
     public function purge($url)
     {
-        if ($this->purgeLocation) {
-            $this->queueRequest(self::HTTP_METHOD_PURGE, $this->purgeLocation.$url);
-        } else {
-            $this->queueRequest(self::HTTP_METHOD_PURGE, $url);
-        }
+        $purgeUrl = $this->purgeLocation.$url;
+        $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl);
 
         return $this;
     }

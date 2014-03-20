@@ -28,7 +28,7 @@ interface RefreshInterface extends ProxyClientInterface
      * Refreshing a URL will generate a new cached response for the URL,
      * including the query string but excluding any Vary variants.
      *
-     * If the $url is just a path, the cache proxy class will add a default
+     * If the $url is just a path, the proxy client class will add a default
      * host name.
      *
      * @param string $url     Path or URL to refresh.
