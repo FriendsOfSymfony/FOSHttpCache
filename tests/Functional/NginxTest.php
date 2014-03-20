@@ -16,7 +16,7 @@ class NginxTest extends NginxTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->nginx->purge('/cache.php')->flush();
+        $this->nginx->purge('http://localhost:6183/cache.php')->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
@@ -24,13 +24,13 @@ class NginxTest extends NginxTestCase
     {
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
-
+        
         $this->nginx = new Nginx(
             array('http://127.0.0.1:' . $this->getCachingProxyPort()),
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
             '/purge'
         );
-        $this->nginx->purge('/cache.php')->flush();
+        $this->nginx->purge('http://localhost:6183/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
@@ -41,7 +41,7 @@ class NginxTest extends NginxTestCase
         $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $this->nginx->refresh('/cache.php')->flush();
+        $this->nginx->refresh('http://localhost:6183/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
