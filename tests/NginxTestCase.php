@@ -3,6 +3,7 @@
 namespace FOS\HttpCache\Tests;
 
 use FOS\HttpCache\Invalidation\Nginx;
+use Guzzle\Http\Message\Response;
 
 /**
  * A phpunit base class to write functional tests with NGINX.
@@ -28,6 +29,8 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
      * @var Nginx
      */
     protected $nginx;
+    
+    const CACHE_EXPIRED = 'EXPIRED';
 
     const PID = '/tmp/foshttpcache-nginx.pid';
 
@@ -52,6 +55,17 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
 	    $configFile = __DIR__."/../".$configFile;
 
         return $configFile;
+    }
+    
+    /**
+     * Assert a cache expired
+     *
+     * @param Response $response
+     * @param string   $message  Test failure message (optional)
+     */
+    public function assertExpired(Response $response, $message = null)
+    {
+        $this->assertEquals(self::CACHE_EXPIRED, (string) $response->getHeader(self::CACHE_HEADER), $message);
     }
 
     /**

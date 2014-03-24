@@ -11,15 +11,58 @@ use FOS\HttpCache\Tests\NginxTestCase;
  */
 class NginxTest extends NginxTestCase
 {
-    public function testPurge()
+    /**
+     * @dataProvider fileProvider
+     */
+    public function testPurge($file)
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
+        $this->assertMiss($this->getResponse($file));
+        $this->assertHit($this->getResponse($file));
 
-        $this->nginx->purge('http://localhost:6183/cache.php')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->nginx->purge('http://localhost:6183'.$file)->flush();
+        $this->assertMiss($this->getResponse($file));
     }
 
+    /**
+     * @dataProvider fileProvider
+     */
+    public function testExpired($file)
+    {
+        $this->assertMiss($this->getResponse($file));
+        $this->assertHit($this->getResponse($file));
+
+        sleep(12);
+
+        $this->assertExpired($this->getResponse($file));
+    }
+    
+    /**
+     * @dataProvider fileProvider
+     */
+    public function testRefresh($file)
+    {
+        $this->assertMiss($this->getResponse($file));
+        $response = $this->getResponse($file);
+        $this->assertHit($response);
+
+        $this->nginx->refresh('http://localhost:6183/'.$file)->flush();
+        usleep(1000);
+        $refreshed = $this->getResponse($file);
+        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+    }
+    
+    public function fileProvider()
+    {
+        return array(
+          array("/cache_cache-control.php"),
+          array("/cache_expires.php"),
+          array("/cache_x-accel-expires.php")
+        );
+    }
+
+    /*
+     * @ToDo load a custom config to run thi test
+     */
     public function testPurgeSeparateLocation()
     {
         $this->assertMiss($this->getResponse('/cache.php'));
@@ -34,16 +77,5 @@ class NginxTest extends NginxTestCase
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
-
-    public function testRefresh()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $response = $this->getResponse('/cache.php');
-        $this->assertHit($response);
-
-        $this->nginx->refresh('http://localhost:6183/cache.php')->flush();
-        usleep(1000);
-        $refreshed = $this->getResponse('/cache.php');
-        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
-    }
+    
 }
