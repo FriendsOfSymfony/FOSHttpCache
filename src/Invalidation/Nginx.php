@@ -68,9 +68,11 @@ class Nginx extends AbstractCacheProxy implements PurgeInterface, RefreshInterfa
     public function purge($url)
     {
     
-        $purgeUrl = str_replace($this->client->getBaseUrl(), 
-        				$this->client->getBaseUrl().$this->purgeLocation, 
-        				$url );
+        $purgeUrl = str_replace(
+            $this->client->getBaseUrl(), 
+            $this->client->getBaseUrl().$this->purgeLocation, 
+            $url
+        );
         
         $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl);
 
