@@ -11,15 +11,22 @@ use FOS\HttpCache\Tests\NginxTestCase;
  */
 class NginxTest extends NginxTestCase
 {
+
     /**
      * @dataProvider fileProvider
      */
-    public function testPurge($file)
+    public function testPurgeSeparateLocation($file)
     {
         $this->assertMiss($this->getResponse($file));
         $this->assertHit($this->getResponse($file));
+        
+        $this->nginx = new Nginx(
+            array('http://127.0.0.1:' . $this->getCachingProxyPort()),
+            $this->getHostName() . ':' . $this->getCachingProxyPort(),
+            '/purge'
+        );
+        $this->nginx->purge('http://localhost:6183/'.$file)->flush();
 
-        $this->nginx->purge('http://localhost:6183'.$file)->flush();
         $this->assertMiss($this->getResponse($file));
     }
 
@@ -60,22 +67,4 @@ class NginxTest extends NginxTestCase
         );
     }
 
-    /*
-     * @ToDo load a custom config to run thi test
-     */
-    public function testPurgeSeparateLocation()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-        
-        $this->nginx = new Nginx(
-            array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-            $this->getHostName() . ':' . $this->getCachingProxyPort(),
-            '/purge'
-        );
-        $this->nginx->purge('http://localhost:6183/cache.php')->flush();
-
-        $this->assertMiss($this->getResponse('/cache.php'));
-    }
-    
 }
