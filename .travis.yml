@@ -13,7 +13,7 @@ before_script:
   # Install NGINX
   - sh ./tests/install-nginx.sh
   # Starting webserver
-  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.3' ]; then ./tests/install-apache.sh; else php -S localhost:8080 -t ./tests/Functional/Fixtures/web/ > /tmp/fos_ws.log 2>&1 & fi"
+  - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.3' ]; then ./tests/install-apache.sh; fi"
   # Install deps
   - composer update --dev --prefer-source
 
@@ -24,6 +24,5 @@ after_script:
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
   
 after_failure:
-  - cat /tmp/fos_ws.log
   - cat /tmp/fos_nginx_error.log
   - cat /tmp/fos_nginx_access.log
