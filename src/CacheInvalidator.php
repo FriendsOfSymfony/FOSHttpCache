@@ -6,11 +6,11 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
-use FOS\HttpCache\Exception\UnsupportedInvalidationMethodException;
-use FOS\HttpCache\Invalidation\CacheProxyInterface;
-use FOS\HttpCache\Invalidation\Method\BanInterface;
-use FOS\HttpCache\Invalidation\Method\PurgeInterface;
-use FOS\HttpCache\Invalidation\Method\RefreshInterface;
+use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
+use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -38,7 +38,7 @@ class CacheInvalidator
     const INVALIDATE = 'invalidate';
 
     /**
-     * @var CacheProxyInterface
+     * @var ProxyClientInterface
      */
     protected $cache;
 
@@ -55,9 +55,9 @@ class CacheInvalidator
     /**
      * Constructor
      *
-     * @param CacheProxyInterface $cache HTTP cache
+     * @param ProxyClientInterface $cache HTTP cache
      */
-    public function __construct(CacheProxyInterface $cache)
+    public function __construct(ProxyClientInterface $cache)
     {
         $this->cache = $cache;
     }
@@ -159,14 +159,14 @@ class CacheInvalidator
      *
      * @param string $path Path or URL
      *
-     * @throws UnsupportedInvalidationMethodException
+     * @throws UnsupportedProxyOperationException
      *
      * @return $this
      */
     public function invalidatePath($path)
     {
         if (!$this->cache instanceof PurgeInterface) {
-            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('PURGE');
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('PURGE');
         }
 
         $this->cache->purge($path);
@@ -182,14 +182,14 @@ class CacheInvalidator
      *
      * @see RefreshInterface::refresh()
      *
-     * @throws UnsupportedInvalidationMethodException
+     * @throws UnsupportedProxyOperationException
      *
      * @return $this
      */
     public function refreshPath($path, array $headers = array())
     {
         if (!$this->cache instanceof RefreshInterface) {
-            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('REFRESH');
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('REFRESH');
         }
 
         $this->cache->refresh($path, $headers);
@@ -207,14 +207,14 @@ class CacheInvalidator
      *
      * @param array $headers HTTP headers that path must match to be banned.
      *
-     * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
      * @return $this
      */
     public function invalidate(array $headers)
     {
         if (!$this->cache instanceof BanInterface) {
-            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('BAN');
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
         }
 
         $this->cache->ban($headers);
@@ -240,14 +240,14 @@ class CacheInvalidator
      * @param array|string $hosts       Regular expression of a host name or list of
      *                                  exact host names to limit banning.
      *
-     * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
      * @return $this
      */
     public function invalidateRegex($path, $contentType = null, $hosts = null)
     {
         if (!$this->cache instanceof BanInterface) {
-            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('BAN');
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
         }
 
         $this->cache->banPath($path, $contentType, $hosts);
@@ -263,14 +263,14 @@ class CacheInvalidator
      *
      * @param array $tags Cache tags
      *
-     * @throws UnsupportedInvalidationMethodException If HTTP cache does not support BAN requests
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
      * @return $this
      */
     public function invalidateTags(array $tags)
     {
         if (!$this->cache instanceof BanInterface) {
-            throw UnsupportedInvalidationMethodException::cacheDoesNotImplement('BAN');
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
         }
 
         $headers = array($this->getTagsHeader() => '('.implode('|', $tags).')(,.+)?$');

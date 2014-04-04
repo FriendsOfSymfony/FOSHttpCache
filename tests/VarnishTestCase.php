@@ -2,7 +2,7 @@
 
 namespace FOS\HttpCache\Tests;
 
-use FOS\HttpCache\Invalidation\Varnish;
+use FOS\HttpCache\ProxyClient\Varnish;
 
 /**
  * A phpunit base class to write functional tests with varnish.

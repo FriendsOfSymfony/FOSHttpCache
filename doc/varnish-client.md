@@ -14,7 +14,7 @@ that you want to send invalidation requests to. Make sure to include the port
 Varnish runs on if it is not port 80.
 
 ```php
-use FOS\HttpCache\Invalidation\Varnish;
+use FOS\HttpCache\ProxyClient\Varnish;
 
 $servers = array('10.0.0.1', '10.0.0.2:6081'); // Port 80 assumed for 10.0.0.1
 $varnish = new Varnish($servers);

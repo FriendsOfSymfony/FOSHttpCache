@@ -25,11 +25,11 @@ an [adapter](http://en.wikipedia.org/wiki/Adapter_pattern):
 
 ```php
 use FOS\HttpCache\CacheInvalidator;
-use FOS\HttpCache\Invalidation;
+use FOS\HttpCache\ProxyClient;
 
-$client = new Invalidation\Varnish();
+$client = new ProxyClient\Varnish();
 // or
-$client = new Invalidation\Nginx();
+$client = new ProxyClient\Nginx();
 
 $cacheInvalidator = new CacheInvalidator($client);
 ```

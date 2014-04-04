@@ -2,7 +2,7 @@
 
 namespace FOS\HttpCache\Tests\Functional;
 
-use FOS\HttpCache\Invalidation\Varnish;
+use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Tests\VarnishTestCase;
 
 /**

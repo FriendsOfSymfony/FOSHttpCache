@@ -1,15 +1,15 @@
 <?php
 
-namespace FOS\HttpCache\Invalidation;
+namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 
 /**
- * An HTTP caching reverse proxy.
+ * An HTTP caching reverse proxy client
  *
- * Implementations should implement at least one of the Method interfaces.
+ * Implementations should implement at least one of the Invalidation interfaces.
  */
-interface CacheProxyInterface
+interface ProxyClientInterface
 {
     /**
      * Send all pending invalidation requests.

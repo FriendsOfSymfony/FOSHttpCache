@@ -1,8 +1,8 @@
 <?php
 
-namespace FOS\HttpCache\Invalidation\Method;
+namespace FOS\HttpCache\ProxyClient\Invalidation;
 
-use FOS\HttpCache\Invalidation\CacheProxyInterface;
+use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 
 /**
  * An HTTP cache that supports invalidation by refresh requests that force a
@@ -11,7 +11,7 @@ use FOS\HttpCache\Invalidation\CacheProxyInterface;
  * Implementations should be configurable with a default host to be able to
  * handle refresh calls that do not contain a full URL but only a path.
  */
-interface RefreshInterface extends CacheProxyInterface
+interface RefreshInterface extends ProxyClientInterface
 {
     /**
      * Refresh a URL.

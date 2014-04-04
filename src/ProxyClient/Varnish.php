@@ -1,19 +1,19 @@
 <?php
 
-namespace FOS\HttpCache\Invalidation;
+namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\Exception\MissingHostException;
-use FOS\HttpCache\Invalidation\Method\BanInterface;
-use FOS\HttpCache\Invalidation\Method\PurgeInterface;
-use FOS\HttpCache\Invalidation\Method\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 
 /**
  * Varnish HTTP cache invalidator.
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish extends AbstractCacheProxy implements BanInterface, PurgeInterface, RefreshInterface
+class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_BAN          = 'BAN';
     const HTTP_METHOD_PURGE        = 'PURGE';
