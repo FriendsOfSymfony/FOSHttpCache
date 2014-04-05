@@ -7,6 +7,7 @@ use FOS\HttpCache\Tests\VarnishTestCase;
 
 /**
  * @group webserver
+ * @group varnish
  */
 class VarnishTest extends VarnishTestCase
 {
