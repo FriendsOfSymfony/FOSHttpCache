@@ -19,7 +19,7 @@ use Guzzle\Http\Message\Response;
  * NGINX_BINARY       Executable for NGINX. This can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default nginx)
- * NGINX_PORT         Test NGINX port to use (default 6183)
+ * NGINX_PORT         Test NGINX port to use (default 8088)
  * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
  * NGINX_CACHE_PATH   NGINX configuration file (required if not passed to setUp)
  */
@@ -79,13 +79,13 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
     }
 
     /**
-     * Defaults to 6183, the Nginx default.
+     * Defaults to 8088, the Nginx default.
      *
      * @return int
      */
     protected function getCachingProxyPort()
     {
-        return defined('NGINX_PORT') ? NGINX_PORT : 6183;
+        return defined('NGINX_PORT') ? NGINX_PORT : 8088;
     }
 
     /**

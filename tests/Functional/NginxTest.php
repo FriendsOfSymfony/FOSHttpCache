@@ -25,7 +25,7 @@ class NginxTest extends NginxTestCase
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
             '/purge'
         );
-        $this->nginx->purge('http://127.0.0.1:6183/'.$file)->flush();
+        $this->nginx->purge('http://127.0.0.1:8088/'.$file)->flush();
 
         $this->assertMiss($this->getResponse($file));
     }
@@ -52,7 +52,7 @@ class NginxTest extends NginxTestCase
         $response = $this->getResponse($file);
         $this->assertHit($response);
 
-        $this->nginx->refresh('http://127.0.0.1:6183/'.$file)->flush();
+        $this->nginx->refresh('http://127.0.0.1:8088/'.$file)->flush();
         usleep(1000);
         $refreshed = $this->getResponse($file);
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
