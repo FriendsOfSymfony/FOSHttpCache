@@ -63,7 +63,7 @@ class NginxTest extends NginxTestCase
         return array(
           array("/cache_cache-control.php"),
           array("/cache_expires.php"),
-          array("/cache_x-accel-expires.php")
+          array("/nginx/cache_x-accel-expires.php")
         );
     }
 
