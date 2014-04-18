@@ -12,59 +12,31 @@ use FOS\HttpCache\Tests\NginxTestCase;
 class NginxTest extends NginxTestCase
 {
 
-    /**
-     * @dataProvider fileProvider
-     */
-    public function testPurgeSeparateLocation($file)
+    public function testPurgeSeparateLocation()
     {
-        $this->assertMiss($this->getResponse($file));
-        $this->assertHit($this->getResponse($file));
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
         
         $this->nginx = new Nginx(
             array('http://127.0.0.1:' . $this->getCachingProxyPort()),
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
             '/purge'
         );
-        $this->nginx->purge('http://127.0.0.1:8088/'.$file)->flush();
+        $this->nginx->purge('http://127.0.0.1:8088/cache.php')->flush();
 
-        $this->assertMiss($this->getResponse($file));
+        $this->assertMiss($this->getResponse('/cache.php'));
     }
 
-    /**
-     * @dataProvider fileProvider
-     */
-    public function testExpired($file)
+    public function testRefresh()
     {
-        $this->assertMiss($this->getResponse($file));
-        $this->assertHit($this->getResponse($file));
-
-        sleep(12);
-
-        $this->assertExpired($this->getResponse($file));
-    }
-    
-    /**
-     * @dataProvider fileProvider
-     */
-    public function testRefresh($file)
-    {
-        $this->assertMiss($this->getResponse($file));
-        $response = $this->getResponse($file);
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $this->nginx->refresh('http://127.0.0.1:8088/'.$file)->flush();
+        $this->nginx->refresh('http://127.0.0.1:8088/cache.php')->flush();
         usleep(1000);
-        $refreshed = $this->getResponse($file);
+        $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
     }
     
-    public function fileProvider()
-    {
-        return array(
-          array("/cache_cache-control.php"),
-          array("/cache_expires.php"),
-          array("/nginx/cache_x-accel-expires.php")
-        );
-    }
-
 }
