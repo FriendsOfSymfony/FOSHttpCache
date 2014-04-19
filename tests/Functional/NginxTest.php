@@ -22,7 +22,7 @@ class NginxTest extends NginxTestCase
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
             '/purge'
         );
-        $this->nginx->purge('http://127.0.0.1:8088/cache.php')->flush();
+        $this->nginx->purge('http://localhost:8088/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
@@ -37,7 +37,7 @@ class NginxTest extends NginxTestCase
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
             ''
         );
-        $this->nginx->purge('http://127.0.0.1:8088/cache.php')->flush();
+        $this->nginx->purge('http://localhost:8088/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
@@ -48,7 +48,7 @@ class NginxTest extends NginxTestCase
         $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $this->nginx->refresh('http://127.0.0.1:8088/cache.php')->flush();
+        $this->nginx->refresh('http://localhost:8088/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
