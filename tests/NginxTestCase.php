@@ -2,7 +2,7 @@
 
 namespace FOS\HttpCache\Tests;
 
-use FOS\HttpCache\Invalidation\Nginx;
+use FOS\HttpCache\ProxyClient\Nginx;
 use Guzzle\Http\Message\Response;
 
 /**
@@ -23,13 +23,13 @@ use Guzzle\Http\Message\Response;
  * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
  * NGINX_CACHE_PATH   NGINX configuration file (required if not passed to setUp)
  */
-abstract class NginxTestCase extends AbstractCacheProxyTestCase
+abstract class NginxTestCase extends AbstractProxyClientTestCase
 {
     /**
      * @var Nginx
      */
     protected $nginx;
-    
+
     const CACHE_EXPIRED = 'EXPIRED';
 
     const PID = '/tmp/foshttpcache-nginx.pid';
@@ -56,7 +56,7 @@ abstract class NginxTestCase extends AbstractCacheProxyTestCase
 
         return $configFile;
     }
-    
+
     /**
      * Assert a cache expired
      *

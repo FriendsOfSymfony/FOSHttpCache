@@ -2,7 +2,7 @@
 
 namespace FOS\HttpCache\Tests\Functional;
 
-use FOS\HttpCache\Invalidation\Nginx;
+use FOS\HttpCache\ProxyClient\Nginx;
 use FOS\HttpCache\Tests\NginxTestCase;
 
 /**
@@ -16,7 +16,7 @@ class NginxTest extends NginxTestCase
     {
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
-        
+
         $this->nginx = new Nginx(
             array('http://127.0.0.1:' . $this->getCachingProxyPort()),
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
@@ -31,7 +31,7 @@ class NginxTest extends NginxTestCase
     {
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
-        
+
         $this->nginx = new Nginx(
             array('http://127.0.0.1:' . $this->getCachingProxyPort()),
             $this->getHostName() . ':' . $this->getCachingProxyPort(),
@@ -53,5 +53,5 @@ class NginxTest extends NginxTestCase
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
     }
-    
+
 }

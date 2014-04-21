@@ -9,7 +9,7 @@ use Guzzle\Http\Message\Response;
  * Abstract caching proxy test case
  *
  */
-abstract class AbstractCacheProxyTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * Name of the debug header varnish is sending to tell if the request was a

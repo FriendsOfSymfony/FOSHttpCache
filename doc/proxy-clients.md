@@ -5,7 +5,7 @@ You can use the caching proxy clients either wrapped by the cache invalidator
 (recommended), or directly for low-level access to invalidation functionality.
 
 * [Setup](#setup)
-* [ProxyClientInterface](#cacheproxyinterface)
+* [ProxyClientInterface](#proxyclientinterface)
 * [Purge](#purge)
 * [Refresh](#refresh)
 * [Ban](#ban)
