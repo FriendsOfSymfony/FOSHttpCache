@@ -58,17 +58,6 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     }
 
     /**
-     * Assert a cache expired
-     *
-     * @param Response $response
-     * @param string   $message  Test failure message (optional)
-     */
-    public function assertExpired(Response $response, $message = null)
-    {
-        $this->assertEquals(self::CACHE_EXPIRED, (string) $response->getHeader(self::CACHE_HEADER), $message);
-    }
-
-    /**
      * Defaults to "nginx"
      *
      * @return string
@@ -79,7 +68,7 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     }
 
     /**
-     * Defaults to 8088, the Nginx default.
+     * Defaults to 8088.
      *
      * @return int
      */
@@ -89,25 +78,31 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     }
 
     /**
+     * Get NGINX cache path
+     */
+    protected function getCacheDir()
+    {
+        if (!defined('NGINX_CACHE_PATH')) {
+            throw new \Exception('Specify the NGINX_CACHE_PATH in phpunit.xml or override getCacheDir()');
+        }
+
+        return NGINX_CACHE_PATH;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function getNginx($purgeLocation = false)
     {
-        $this->nginx = new Nginx(
-            array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-            $this->getHostName() . ':' . $this->getCachingProxyPort()
-        );
+        if (null === $this->nginx) {
+            $this->varnish = new Nginx(
+                array('http://127.0.0.1:' . $this->getCachingProxyPort()),
+                $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                $purgeLocation
+            );
+        }
 
-        $this->stopNginx();
-
-        $this->clearCache();
-
-        exec($this->getBinary() .
-            ' -c ' . $this->getConfigFile() .
-            ' -g "pid ' . self::PID . ';"'
-        );
-
-        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
+        return $this->nginx;
     }
 
     /**
@@ -119,7 +114,7 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     }
 
     /**
-     * Stop Nginx process if it's running
+     * Stop Nginx process if it's running.
      */
     protected function stopNginx()
     {
@@ -129,22 +124,23 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     }
 
     /**
+     * Start Nginx process if it's not yet running.
+     */
+    protected function startNginx()
+    {
+        exec($this->getBinary() .
+            ' -c ' . $this->getConfigFile() .
+            ' -g "pid ' . self::PID . ';"'
+        );
+
+        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
+    }
+
+    /**
      * Clear Nginx cache
      */
     protected function clearCache()
     {
-        exec('rm -rf ' . $this->getCachePath()."*");
-    }
-
-    /**
-     * Get NGINX cache path
-     */
-    protected function getCachePath()
-    {
-        if (!defined('NGINX_CACHE_PATH')) {
-            throw new \Exception('Specify the NGINX_CACHE_PATH in phpunit.xml or override getCachePath()');
-        }
-
-       return NGINX_CACHE_PATH;
+        exec('rm -rf ' . $this->getCacheDir()."*");
     }
 }

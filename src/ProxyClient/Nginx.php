@@ -44,10 +44,10 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     public function __construct(
         array $servers,
         $baseUrl = null,
-        $purgeLocation = false,
+        $purgeLocation = '',
         ClientInterface $client = null
     ) {
-        $this->purgeLocation = $purgeLocation;
+        $this->purgeLocation = (string) $purgeLocation;
         parent::__construct($servers, $baseUrl, $client);
     }
 
@@ -67,7 +67,6 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
      */
     public function purge($url)
     {
-
         $purgeUrl = str_replace(
             $this->client->getBaseUrl(),
             $this->client->getBaseUrl().$this->purgeLocation,
