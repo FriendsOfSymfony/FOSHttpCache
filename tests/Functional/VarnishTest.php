@@ -4,6 +4,7 @@ namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Tests\VarnishTestCase;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 
 /**
  * @group webserver
@@ -123,5 +124,73 @@ class VarnishTest extends VarnishTestCase
 
         $this->assertHit($this->getResponse('/negotation.php', $json));
         $this->assertMiss($this->getResponse('/negotation.php', $html));
+    }
+
+    public function testUserContext()
+    {
+        $response1 = $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
+        $this->assertEquals('foo', $response1->getBody(true));
+        $this->assertEquals("MISS", $response1->getHeader("X-HeadCache")->__toString());
+
+        $response2 = $this->getResponse('/user_context.php', array(), array('cookies' => array('bar')));
+        $this->assertEquals('bar', $response2->getBody(true));
+        $this->assertEquals("MISS", $response1->getHeader("X-HeadCache")->__toString());
+
+        $cachedResponse1 = $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
+        $this->assertEquals('foo', $cachedResponse1->getBody(true));
+        $this->assertEquals("HIT", $cachedResponse1->getHeader("X-HeadCache")->__toString());
+        $this->assertHit($cachedResponse1);
+
+        $cachedResponse2 = $this->getResponse('/user_context.php', array(), array('cookies' => array('bar')));
+        $this->assertEquals('bar', $cachedResponse2->getBody(true));
+        $this->assertEquals("HIT", $cachedResponse2->getHeader("X-HeadCache")->__toString());
+        $this->assertHit($cachedResponse2);
+
+        $headResponse1 = $this->getClient()->head('/user_context.php', array(), array('cookies' => array('foo')))->send();
+
+        $this->assertEquals('foo', $headResponse1->getHeader("X-HeadTest")->__toString());
+        $this->assertEquals("HIT", $headResponse1->getHeader("X-HeadCache")->__toString());
+        $this->assertHit($headResponse1);
+
+        $headResponse2 = $this->getClient()->head('/user_context.php', array(), array('cookies' => array('bar')))->send();
+
+        $this->assertEquals('bar', $headResponse2->getHeader("X-HeadTest")->__toString());
+        $this->assertEquals("HIT", $headResponse2->getHeader("X-HeadCache")->__toString());
+        $this->assertHit($headResponse2);
+
+    }
+
+    public function testUserContextUnauthorize()
+    {
+        try {
+            $this->getResponse('/user_context.php', array(), array('cookies' => array('miam')));
+
+            $this->fail('Response should return a 403');
+        } catch (ClientErrorResponseException $e) {
+            $this->assertEquals("MISS", $e->getResponse()->getHeader("X-HeadCache")->__toString());
+            $this->assertEquals("403", $e->getResponse()->getStatusCode());
+        }
+
+        try {
+            $this->getResponse('/user_context.php', array(), array('cookies' => array('miam')));
+
+            $this->fail('Response should return a 403');
+        } catch (ClientErrorResponseException $e) {
+            $this->assertEquals("HIT", $e->getResponse()->getHeader("X-HeadCache")->__toString());
+            $this->assertEquals("403", $e->getResponse()->getStatusCode());
+        }
+    }
+
+    public function testUserContextNotUsed()
+    {
+        //First request in get
+        $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
+
+        //Second request in head or post
+        $postResponse = $this->getClient()->post('/user_context.php', array(), null, array('cookies' => array('foo')))->send();
+
+        $this->assertEquals('POST', $postResponse->getBody(true));
+        $this->assertEquals("MISS", $postResponse->getHeader("X-HeadCache")->__toString());
+        $this->assertMiss($postResponse);
     }
 }

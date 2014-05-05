@@ -1,0 +1,24 @@
+<?php
+
+header('X-Cache-Debug: 1');
+
+if ('POST' == strtoupper($_SERVER['REQUEST_METHOD'])) {
+    echo "POST";
+    exit;
+}
+
+if (!isset($_COOKIE[0]) || ($_COOKIE[0] != "foo" && $_COOKIE[0] != "bar")) {
+    header('HTTP/1.1 403');
+    exit;
+}
+
+header('Cache-Control: max-age=3600');
+header('Vary: X-FOSHttpCache-Hash');
+
+if ($_COOKIE[0] == "foo") {
+    header('X-HeadTest: foo');
+    echo "foo";
+} else {
+    header('X-HeadTest: bar');
+    echo "bar";
+}
