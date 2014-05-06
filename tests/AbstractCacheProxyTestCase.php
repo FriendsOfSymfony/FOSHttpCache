@@ -59,9 +59,9 @@ abstract class AbstractCacheProxyTestCase extends \PHPUnit_Framework_TestCase
      *
      * @return Response
      */
-    public function getResponse($url, array $headers = array())
+    public function getResponse($url, array $headers = array(), $options = array())
     {
-        return $this->getClient()->get($url, $headers)->send();
+        return $this->getClient()->get($url, $headers, $options)->send();
     }
 
     /**

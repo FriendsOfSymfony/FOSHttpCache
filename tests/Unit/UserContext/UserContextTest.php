@@ -1,0 +1,35 @@
+<?php
+
+namespace FOS\HttpCache\Tests\Unit\UserContext;
+
+use FOS\HttpCache\UserContext\UserContext;
+
+class UserContextTest extends \PHPUnit_Framework_TestCase
+{
+    public function testAddParameter()
+    {
+        $userContext = new UserContext();
+        $userContext->addParameter('authenticated', true);
+
+        $this->assertTrue($userContext->hasParameter('authenticated'));
+
+        $parameters = $userContext->getParameters();
+
+        $this->assertEquals(true, $parameters['authenticated']);
+    }
+
+    public function testSetParameters()
+    {
+        $userContext = new UserContext();
+
+        $userContext->addParameter('authenticated', true);
+        $userContext->setParameters(array(
+            'roles' => array('ROLE_USER'),
+            'foo' => 'bar'
+        ));
+
+        $this->assertFalse($userContext->hasParameter('authenticated'));
+        $this->assertTrue($userContext->hasParameter('foo'));
+        $this->assertTrue($userContext->hasParameter('roles'));
+    }
+}
