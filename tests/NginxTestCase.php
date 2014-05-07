@@ -95,7 +95,7 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     protected function getNginx($purgeLocation = false)
     {
         if (null === $this->nginx) {
-            $this->varnish = new Nginx(
+            $this->nginx = new Nginx(
                 array('http://127.0.0.1:' . $this->getCachingProxyPort()),
                 $this->getHostName() . ':' . $this->getCachingProxyPort(),
                 $purgeLocation
