@@ -18,7 +18,7 @@ class NginxTest extends NginxTestCase
 
         $nginx = $this->getNginx('/purge');
 
-        $nginx->purge($this->getHostname() . '/cache.php')->flush();
+        $nginx->purge('/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
@@ -40,7 +40,7 @@ class NginxTest extends NginxTestCase
         $this->assertHit($this->getResponse('/cache.php'));
 
         $nginx = $this->getNginx();
-        $nginx->purge($this->getHostname() . '/cache.php')->flush();
+        $nginx->purge('/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
@@ -63,7 +63,7 @@ class NginxTest extends NginxTestCase
         $this->assertHit($response);
 
         $nginx = $this->getNginx();
-        $nginx->refresh($this->getHostname() . '/cache.php')->flush();
+        $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
