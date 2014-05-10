@@ -146,6 +146,11 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
         $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
 
+    protected function resetProxyDaemon() 
+    {       
+        $this->clearCache();
+    }
+    
     /**
      * {@inheritdoc}
      */
