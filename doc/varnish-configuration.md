@@ -9,6 +9,7 @@ This chapter describes how to configure Varnish to work with the library.
 * [Refresh](#refresh)
 * [Ban](#ban)
 * [Tagging](#tagging)
+* [User Context](#user-context)
 * [Debugging](#debugging)
 
 Introduction
@@ -179,49 +180,44 @@ To configure your Varnish to support [user context hashing](user-context.md):
 
 ```varnish
 sub vcl_recv {
-    // Handle the original request: send a HEAD request to retrieve the user hash
-    if (req.restarts == 0 && req.http.cookie && (req.request == "GET" || req.request == "HEAD")) {
-        set req.http.x-original-url     = req.url;
-        set req.http.x-original-request = req.request;
+    # Handle the original request: send a request with a
+    # specific accept header to retrieve the user hash
+    if (req.restarts == 0 && (req.http.cookie || req.http.authorization) && (req.request == "GET" || req.request == "HEAD")) {
+        set req.http.x-original-url    = req.url;
+        set req.http.x-original-accept = req.http.accept;
 
-        # Retrieve a unique session id from the cookie
-        set req.http.x-session-id = req.http.cookie;
+        set req.url         = "/user_context_hash.php";
+        set req.http.accept = "application/vnd.fos.user-context-hash";
 
-        set req.url     = "/user_context_head.php";
-        set req.request = "HEAD";
+        #
+        # By default, Varnish does not look for cache when a Cookie or
+        # Authorization header is present.
+        # See: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0#L63
+        #
+        # You can force this lookup by uncommenting the line below.
+        #
+        #return (lookup);
+    } elsif (req.restarts > 0 && req.http.accept ~ "application/vnd.fos.user-context-hash") {
+        # After the hash request, reset the request to the original one, which
+        # will be restarted in vcl_deliver.
 
-        # By default, Varnish does not cache when cookies are present.
-        # So remove Cookie header and store it in a temporary header.
-        set req.http.x-original-cookie = req.http.cookie;
-        unset req.http.cookie;
-    }
-
-    // After the HEAD request, reset the request to the original one, which
-    // will be restarted in vcl_deliver.
-    if (req.restarts > 0 && req.http.X-Original-Method) {
-        set req.request = req.http.x-original-method;
-        set req.url     = req.http.x-original-url;
+        set req.http.accept = req.http.x-original-accept;
+        set req.url         = req.http.x-original-url;
 
         unset req.http.req.http.x-original-method;
         unset req.http.req.http.x-original-url;
-    }
-}
 
-sub vcl_miss {
-    // When creating backend request, varnish force GET method (bug ?)
-    set bereq.request = req.request;
-
-    // Re-add cookies to any requests that will go to the backend application
-    if (bereq.http.X-Temp-Cookie) {
-        set bereq.http.cookie = bereq.http.x-original-cookie;
-        unset req.http.x-original-cookie;
+        # We do the original request with the user hash as provided by  the backend.
+        # We want to look for cache even when the Cookie or Authorization header are present.
+        # It is the responsibility of the backend to Vary on the user hash to separate cached data.
+        return (lookup);
     }
 }
 
 sub vcl_deliver {
-    // After receiving the HEAD response, copy the hash to the original request
-    // and restart that.
-    if (req.request == "HEAD" && resp.http.x-user-context-hash) {
+    # After receiving the hash response, copy the hash header
+    # to the original request and restart that.
+    if (resp.http.content-type ~ "application/vnd.fos.user-context-hash") {
         set req.http.x-user-context-hash = resp.http.x-user-context-hash;
 
         return (restart);
@@ -231,30 +227,34 @@ sub vcl_deliver {
 
 See also this library’s [user_context.vcl](../tests/Functional/Fixtures/varnish/user_context.vcl).
 
-## Extracting req.http.X-FOSHttpCache-SessionId
+## Extract a correct user identifier
 
-In the example above, we set the unique user id to the plain value of the
-cookie:
-
-```varnish
-set req.http.X-Session-Id = req.http.cookie;
-```
+When caching the hash request, we consider that a Cookie or Authorization header
+contain the user identifier (like PHPSESSID cookie).
 
 However, in some situations, for instance when using Google Analytics, cookie
-values are different for each request. Because of this, the HEAD request will
+values are different for each request. Because of this, the hash request will
 not be cached. To make that request cacheable, we must extract a stable session
-id and store that in the `X-Session-Id` header:
+id and store that in the `X-User-Id` header.
+
+We can do this as [explained in the varnish documentation](https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies):
 
 ```varnish
-set req.http.X-Session-Id = ";" + req.http.cookie;
-set req.http.X-Session-Id = regsuball(req.http.X-Session-Id, "; +", ";");
-set req.http.X-Session-Id = regsuball(req.http.X-Session-Id, ";(PHPSESSID)=", "; \1=");
-set req.http.X-Session-Id = regsuball(req.http.X-Session-Id, ";[^ ][^;]*", "");
-set req.http.X-Session-Id = regsuball(req.http.X-Session-Id, "^[; ]+|[; ]+$", "");
+set req.http.X-User-Id = ";" + req.http.cookie;
+set req.http.X-User-Id = regsuball(req.http.X-User-Id, "; +", ";");
+set req.http.X-User-Id = regsuball(req.http.X-User-Id, ";(PHPSESSID)=", "; \1=");
+set req.http.X-User-Id = regsuball(req.http.X-User-Id, ";[^ ][^;]*", "");
+set req.http.X-User-Id = regsuball(req.http.X-User-Id, "^[; ]+|[; ]+$", "");
 ```
 
 If your application’s user authentication is based on cookie other than
 PHPSESSID, change `PHPSESSID` to your cookie name.
+
+We also need to change the Vary header in the hash response.
+
+```php
+header('Vary: X-User-Id');
+```
 
 Debugging
 ---------
