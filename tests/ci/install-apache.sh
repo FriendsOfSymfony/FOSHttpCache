@@ -8,6 +8,6 @@ sudo a2enmod rewrite actions fastcgi alias
 echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
 # configure apache virtual hosts
-sudo cp -f tests/travis-ci-apache /etc/apache2/sites-available/default
+sudo cp -f tests/ci/travis-ci-apache /etc/apache2/sites-available/default
 sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
 sudo service apache2 restart
