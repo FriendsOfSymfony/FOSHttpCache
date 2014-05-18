@@ -23,9 +23,13 @@ class UserContextNocacheTest extends UserContextTestCase
 {
     protected function getConfigFile()
     {
-        return './tests/Functional/Fixtures/varnish/user_context_nocache.vcl';
+        switch ($this->getVarnishVersion()) {
+            case '4.0':
+                return './tests/Functional/Fixtures/varnish-4/user_context_nocache.vcl';
+            default:
+                return './tests/Functional/Fixtures/varnish-3/user_context_nocache.vcl';
+        }
     }
-
     /**
      * {@inheritDoc}
      */

@@ -122,21 +122,61 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function waitFor($ip, $port, $timeout)
     {
+        if (!$this->wait(
+            $timeout,
+            function () use ($ip, $port) {
+                return true == @fsockopen($ip, $port);
+            }
+        )) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Caching proxy cannot be reached at %s:%s',
+                    $ip,
+                    $port
+                )
+            );
+        }
+    }
+
+    /**
+     * Wait for caching proxy to be started up and reachable
+     *
+     * @param string $ip
+     * @param int    $port
+     * @param int    $timeout Timeout in milliseconds
+     *
+     * @throws \RuntimeException If proxy is not reachable within timeout
+     */
+    protected function waitUntil($ip, $port, $timeout)
+    {
+        if (!$this->wait(
+            $timeout,
+            function () use ($ip, $port) {
+                // This doesn't seem to work
+                return false == @fsockopen($ip, $port);
+            }
+        )) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Caching proxy still up at %s:%s',
+                    $ip,
+                    $port
+                )
+            );
+        }
+    }
+
+    protected function wait($timeout, $callback)
+    {
         for ($i = 0; $i < $timeout; $i++) {
-            if (@fsockopen($ip, $port)) {
-                return;
+            if ($callback()) {
+                return true;
             }
 
             usleep(1000);
         }
 
-        throw new \RuntimeException(
-            sprintf(
-                'Caching proxy cannot be reached at %s:%s',
-                $ip,
-                $port
-            )
-        );
+        return false;
     }
 
     /**
