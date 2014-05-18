@@ -22,7 +22,7 @@ Features
 * Send [cache invalidation requests](doc/cache-invalidator.md) with minimal impact on performance.
 * Use the built-in support for [Varnish](doc/varnish.md) or easily implement your own caching proxy client.
 * [Test your application](doc/testing-your-application.md) against your Varnish setup.
-* This library is compatible with [HHVM](http://www.hhvm.com/blog/).
+* This library is fully compatible with [HHVM](http://www.hhvm.com).
 
 Documentation
 -------------

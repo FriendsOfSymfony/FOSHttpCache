@@ -12,8 +12,7 @@
 namespace FOS\HttpCache\Tests\Functional;
 
 /**
- * A PHPUnit test listener that starts and stops the PHP/HHVM built-in web
- * server
+ * A PHPUnit test listener that starts and stops the PHP built-in web server
  *
  * This listener is configured with a couple of constants from the phpunit.xml
  * file. To define constants in the phpunit file, use this syntax:
@@ -40,17 +39,17 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
      */
     public function startTestSuite(\PHPUnit_Framework_TestSuite $suite)
     {
+        // Only run on PHP >= 5.4 as PHP below that and HHVM don't have a
+        // built-in web server
+        if (defined('HHVM_VERSION') || version_compare(PHP_VERSION, '5.4.0', '<')) {
+            return;
+        }
+
         if (!in_array('webserver', $suite->getGroups()) || null !== $this->pid) {
             return;
         }
 
-        if (defined('HHVM_VERSION')) {
-            $pid = $this->startHhvmWebServer();
-        } else {
-            $pid = $this->startPhpWebServer();
-        }
-
-        $this->pid = $pid;
+        $this->pid = $pid = $this->startPhpWebServer();
 
         register_shutdown_function(function () use ($pid) {
             exec('kill ' . $pid);
@@ -115,25 +114,6 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
         }
 
         return WEB_SERVER_DOCROOT;
-    }
-
-    /**
-     * Start HHVM built-in web server
-     *
-     * @return int PID
-     */
-    protected function startHhvmWebServer()
-    {
-        $cur = getcwd();
-        chdir($this->getDocRoot());
-        $command = sprintf(
-            'hhvm -m server -p %d >/dev/null 2>&1 & echo $!',
-            $this->getPort()
-        );
-        exec($command, $output);
-        chdir($cur);
-
-        return $output[0];
     }
 
     /**
