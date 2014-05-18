@@ -125,12 +125,53 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
     {
         $command = sprintf(
             'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
-            $this->getHostName(),
+            '0.0.0.0', // on travis, localhost is not 127.0.0.1 and nginx gets confused.
             $this->getPort(),
             $this->getDocRoot()
         );
         exec($command, $output);
 
+        $this->waitFor($this->getHostName(), $this->getPort(), 2000);
+
         return $output[0];
+    }
+
+    /**
+     * Wait for caching proxy to be started up and reachable
+     *
+     * @param string $ip
+     * @param int    $port
+     * @param int    $timeout Timeout in milliseconds
+     *
+     * @throws \RuntimeException If proxy is not reachable within timeout
+     */
+    protected function waitFor($ip, $port, $timeout)
+    {
+        for ($i = 0; $i < $timeout; $i++) {
+            if (@fsockopen($ip, $port)) {
+                return;
+            }
+
+            usleep(1000);
+        }
+
+        $client = new \Guzzle\Http\Client();
+        $url = sprintf('http://%s:%d/cache.php', $this->getHostName(), $this->getPort());
+        for (; $i < $timeout; $i++) {
+            try {
+                if ($client->get($url)->send()->isSuccessful()) {
+                    return;
+                }
+            } catch (\Exception $e) {
+            }
+        }
+
+        throw new \RuntimeException(
+            sprintf(
+                'Webserver cannot be reached at %s:%s',
+                $ip,
+                $port
+            )
+        );
     }
 }

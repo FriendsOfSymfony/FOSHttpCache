@@ -97,7 +97,7 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
         if (null === $this->nginx) {
             $this->nginx = new Nginx(
                 array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-                $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                $this->getHostName(),
                 $purgeLocation
             );
         }
@@ -136,12 +136,12 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
         $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
 
-    protected function resetProxyDaemon() 
-    {       
+    protected function resetProxyDaemon()
+    {
         $this->clearCache();
         $this->startNginx();
     }
-    
+
     /**
      * Clear Nginx cache
      */
