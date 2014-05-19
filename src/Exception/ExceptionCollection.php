@@ -47,6 +47,8 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
         if ($this->count() > 0) {
             return $this->exceptions[0];
         }
+
+        return null;
     }
 
     /**
