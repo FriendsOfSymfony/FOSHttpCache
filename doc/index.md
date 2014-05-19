@@ -25,7 +25,7 @@ Table of Contents
    1. [Varnish client](varnish-client.md)
    2. Nginx client
 5. [The Cache Invalidator](cache-invalidator.md)
-6. [Cache on user context](user-context.md)
+6. [Cache on User Context](user-context.md)
 7. Testing
    1. [Testing Your Application](testing-your-application.md)
    2. [Testing the Library](testing-the-library.md)
