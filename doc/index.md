@@ -20,10 +20,10 @@ Table of Contents
 2. [An Introduction to Cache Invalidation](invalidation-introduction.md)
 3. Caching Proxy Configuration
    1. [Varnish Configuration](varnish-configuration.md)
-   2. Nginx Configuration
+   2. [Nginx Configuration](nginx-configuration.md)
 4. [Caching Proxy Clients](proxy-clients.md)
    1. [Varnish client](varnish-client.md)
-   2. Nginx client
+   2. [Nginx Client](nginx-client.md)
 5. [The Cache Invalidator](cache-invalidator.md)
 6. [Cache on User Context](user-context.md)
 7. Testing

@@ -179,7 +179,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \FOS\HttpCache\Exception\ExceptionCollection
      */
-    public function testCacheProxyExceptionsAreLogged()
+    public function testProxyClientExceptionsAreLogged()
     {
         $unreachableException = ProxyUnreachableException::proxyUnreachable('http://127.0.0.1', 'Couldn\'t connect to host');
         $responseException    = ProxyResponseException::proxyResponse('http://127.0.0.1', 403, 'Forbidden');

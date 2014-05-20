@@ -17,6 +17,7 @@ use Guzzle\Http\Exception\ClientErrorResponseException;
 
 /**
  * @group webserver
+ * @group varnish
  */
 class VarnishTest extends VarnishTestCase
 {

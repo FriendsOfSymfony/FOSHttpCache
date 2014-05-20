@@ -5,10 +5,10 @@ include "ban.vcl";
 include "user_context.vcl";
 
 backend default {
-    .host = "localhost";
+    .host = "127.0.0.1";
     .port = "8080";
 }
 
 acl invalidators {
-    "localhost";
+    "127.0.0.1";
 }
