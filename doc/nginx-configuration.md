@@ -21,11 +21,17 @@ Purge
 Nginx does not support [purge requests](invalidation-introduction.md#purge) out
 of the box. You can add cache purging functionality by installing the
 [ngx_cache_purge](https://github.com/FRiCKLE/ngx_cache_purge) module.
+Unfortunately, you need to compile Nginx yourself to add the module.
+
 For more information:
 
 * see [this tutorial](http://mcnearney.net/blog/2010/2/28/compiling-nginx-cache-purging-support/)
   by Lance McNearney
-* on Debian systems, you can run [install-nginx.sh](../tests/install-nginx.sh).
+* on Debian systems, you can run [install-nginx.sh](../tests/install-nginx.sh)
+  to compile nginx like done for this library.
+
+**Note**: The Nginx *purge* does not remove variants, only the page matching
+the request.
 
 Please refer to the [ngx_cache_purge module documentation](https://github.com/FRiCKLE/ngx_cache_purge)
 for more on configuring Nginx to support purge requests.
@@ -38,4 +44,4 @@ you have to use the built-in [proxy_cache_bypass](http://wiki.nginx.org/HttpProx
 operation.
 
 There are many ways to have a request bypass the cache. This library uses a
-custom HTTP header named X-Refresh.
+custom HTTP header named `X-Refresh`.
