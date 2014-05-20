@@ -19,10 +19,15 @@ Purge
 -----
 
 Nginx does not support [purge requests](invalidation-introduction.md#purge) out
-of the box. You can add cache purging functionality by installing the
-[ngx_cache_purge](https://github.com/FRiCKLE/ngx_cache_purge) module.
-Unfortunately, you need to compile Nginx yourself to add the module.
+of the box. There is the [ngx_cache_purge](https://github.com/FRiCKLE/ngx_cache_purge)
+module that adds some support. However, the semantics are not the same as for
+Varnish: **The Nginx *purge* only removes the requested page, but no variants**.
 
+You could use the [*refresh*](#Refresh) method which is easier to set up and
+provides the same invalidation semantics, additionally preparing the cache with
+the new content.
+
+Unfortunately, you need to compile Nginx yourself to add the module.
 For more information:
 
 * see [this tutorial](http://mcnearney.net/blog/2010/2/28/compiling-nginx-cache-purging-support/)
