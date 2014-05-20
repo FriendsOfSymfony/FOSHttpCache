@@ -144,8 +144,8 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     protected function startVarnish()
     {
         exec($this->getBinary() .
-            ' -a localhost:' . $this->getCachingProxyPort() .
-            ' -T localhost:' . $this->getVarnishMgmtPort() .
+            ' -a 127.0.0.1:' . $this->getCachingProxyPort() .
+            ' -T 127.0.0.1:' . $this->getVarnishMgmtPort() .
             ' -f ' . $this->getConfigFile() .
             ' -n ' . $this->getCacheDir() .
             ' -p vcl_dir=' . $this->getConfigDir() .
@@ -155,11 +155,11 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
         $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
 
-    protected function resetProxyDaemon() 
-    {       
+    protected function resetProxyDaemon()
+    {
         $this->clearCache();
     }
-    
+
     /**
      * {@inheritdoc}
      */
