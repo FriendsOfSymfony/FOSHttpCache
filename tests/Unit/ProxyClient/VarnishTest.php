@@ -191,6 +191,24 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
+     * @expectedExceptionMessage URL "http:///this is no url" is invalid.
+     */
+    public function testSetServersThrowsInvalidUrlException()
+    {
+        new Varnish(array('http:///this is no url'));
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
+     * @expectedExceptionMessage URL "this ://is no url" is invalid.
+     */
+    public function testSetServersThrowsWeirdInvalidUrlException()
+    {
+        new Varnish(array('this ://is no url'));
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
      * @expectedExceptionMessage Host "https://127.0.0.1" with scheme "https" is invalid
      */
     public function testSetServersThrowsInvalidUrlSchemeException()
@@ -205,6 +223,18 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
     public function testSetServersThrowsInvalidServerException()
     {
         new Varnish(array('http://127.0.0.1:80/some/weird/path'));
+    }
+
+    public function testFlushEmpty()
+    {
+        $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
+            ->shouldReceive('send')
+            ->never()
+            ->getMock()
+        ;
+
+        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $client);
+        $this->assertEquals(0, $varnish->flush());
     }
 
     public function testFlushCountSuccess()

@@ -241,6 +241,9 @@ abstract class AbstractProxyClient implements ProxyClientInterface
         if (!$parts = parse_url($url)) {
             throw InvalidUrlException::invalidUrl($url);
         }
+        if (empty($parts['scheme'])) {
+            throw InvalidUrlException::invalidUrl($url, 'empty scheme');
+        }
 
         if (!in_array(strtolower($parts['scheme']), $this->getAllowedSchemes())) {
             throw InvalidUrlException::invalidUrlScheme($url, $parts['scheme'], $this->getAllowedSchemes());
