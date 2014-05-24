@@ -23,15 +23,15 @@ Caching on user context works as follows:
 
 1. A client requests `/foo.php` (the *original request*).
 2. The [caching proxy](invalidation-introduction.md#http-caching-terminology)
-   receives the request. It reads the session id, which is unique for each
-   user. The caching proxy sends a HEAD request (the *hash request*) with that
-   session id in a custom header (e.g., `X-Session-Id`) to a
-   specific URL, e.g., `/auth.php`.
+   receives the request. It sends a request (the *hash request*) with a special
+   accept header (`application/vnd.fos.user-context-hash`) to a specific URL,
+   e.g., `/auth.php`.
 3. The [application](invalidation-introduction.md#http-caching-terminology)
    receives the hash request. The application knows the client’s user context
    (roles, permissions, etc.) and generates a hash based on that information.
    The application then returns a response containing that hash in a custom
-   header (`X-User-Context-Hash`).
+   header (`X-User-Context-Hash`) and specify the `Content-Type` of this response
+   to `application/vnd.fos.user-context-hash`.
 4. The caching proxy receives the hash response, copies the hash header to the
    client’s original request for `/foo.php` and restarts that request.
 5. If the response to this request should differ per user context, the 
@@ -102,13 +102,14 @@ It is up to you to return the user context hash in response to the hash request
 ```php
 $hash = $hashGenerator->generateHash();
 
-if ('HEAD' == strtoupper($_SERVER['REQUEST_METHOD'])) {
+if ('application/vnd.fos.user-context-hash' == strtolower($_SERVER['HTTP_ACCEPT'])) {
     header(sprintf('X-User-Context-Hash: %s', $hash));
+    header('Content-Type: application/vnd.fos.user-context-hash');
     exit;
 }
 
-// 405 Method not allowed in case of non-HEAD requests
-header('HTTP/1.1 405');
+// 406 Not acceptable in case of an incorrect accept header
+header('HTTP/1.1 406');
 ```
 
 If you use Symfony2, the [FOSHttpCacheBundle](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle)
@@ -117,7 +118,7 @@ will set the correct response headers for you.
 ### Caching the Hash Response
 
 To optimize user context hashing performance, you should cache the hash
-response. By varying on the session header (`X-Session-Id` above), the
+response. By varying on the Cookie and Authorization header, the
 application will return the correct hash for each user. This way, subsequent
 hash requests (step 3 above) will be served from cache instead of requiring a
 roundtrip to the application.
@@ -125,10 +126,11 @@ roundtrip to the application.
 ```php
 //...
 
-if ('HEAD' == strtoupper($_SERVER['REQUEST_METHOD'])) {
+if ('application/vnd.fos.user-context-hash' == strtolower($_SERVER['HTTP_ACCEPT'])) {
     header(sprintf('X-User-Context-Hash: %s', $hash));
+    header('Content-Type: application/vnd.fos.user-context-hash');
     header('Cache-Control: max-age=3600');
-    header('Vary: X-Session-Id');
+    header('Vary: Cookie, Authorization');
     exit;
 }
 
