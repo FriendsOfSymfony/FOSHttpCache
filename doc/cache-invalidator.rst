@@ -107,6 +107,8 @@ To invalidate on a custom header X-My-Header, you would do:
 
     $cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'))->flush();
 
+.. _tags:
+
 Tags
 ----
 
@@ -140,6 +142,8 @@ You can now invalidate some URLs using tags:
 This will ban all requests having either the tag `group-a` /or/ `tag-four`. In
 the above example, this will invalidate `/two`, `/three` and `/four`. Only `/one`
 will stay in the cache.
+
+.. _custom_tags_header:
 
 Custom Tags Header
 ~~~~~~~~~~~~~~~~~~

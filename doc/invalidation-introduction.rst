@@ -8,31 +8,35 @@ and continue to the [Cache Invalidator](cache-invalidator.md).
 HTTP Caching Terminology
 ------------------------
 
-Client
-    The client that requests web representations of the application data.
-    This client can be visitor of a website, or for instance a client that
-    fetches data from a REST API.
+.. glossary::
 
-Application
-    Also *backend application* or *origin server*. The web application that
-    holds the data.
+    Client
+        The client that requests web representations of the application data.
+        This client can be visitor of a website, or for instance a client that
+        fetches data from a REST API.
 
-Caching proxy
-    Also `reverse caching proxy <http://en.wikipedia.org/wiki/Reverse_proxy>`_.
-    Examples: Varnish, Nginx.
+    Application
+        Also *backend application* or *origin server*. The web application that
+        holds the data.
 
-Time to live (TTL)
-    Maximum lifetime of some content. Expressed in either an expiry date
-    for the content (the `Expires:` header) or its maximum age (the
-    `max-age` and `s-maxage` cache control directives).
+    Caching proxy
+        Also `reverse caching proxy <http://en.wikipedia.org/wiki/Reverse_proxy>`_.
+        Examples: Varnish, Nginx.
+
+    Time to live (TTL)
+        Maximum lifetime of some content. Expressed in either an expiry date
+        for the content (the `Expires:` header) or its maximum age (the
+        `max-age` and `s-maxage` cache control directives).
 
 What is Cache Invalidation?
 ---------------------------
 
+.. epigraph::
+
     There are only two hard things in Computer Science: cache invalidation and
     naming things.
 
-    *— Phil Karlton*
+    *-- Phil Karlton*
 
 The problem
 ~~~~~~~~~~~
