@@ -88,7 +88,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Clear the cache between each test
+     * Prepare the proxy daemon.
      */
     protected function setUp()
     {
@@ -145,6 +145,11 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      * @return int
      */
     abstract protected function getCachingProxyPort();
+
+    /**
+     * Ensure the daemon is running and its cache is clear.
+     */
+    abstract protected function resetProxyDaemon();
 
     /**
      * Clear the cache

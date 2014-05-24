@@ -1,37 +1,19 @@
-sub vcl_recv {
-    if (req.restarts == 0 && (req.http.cookie || req.http.authentication) && (req.request == "GET" || req.request == "HEAD") && req.http.x-hash-cache) {
-        set req.http.x-original-url    = req.url;
-        set req.http.x-original-accept = req.http.accept;
+include "debug.vcl";
+include "user_context.vcl";
 
-        set req.http.accept            = "application/vnd.fos.user-context-hash";
-        set req.url                    = "/user_context_hash_cache.php";
-
-        return (lookup);
-    } elsif (req.restarts > 0 && req.http.accept ~ "application/vnd.fos.user-context-hash") {
-        set req.url         = req.http.x-original-url;
-        set req.http.accept = req.http.x-original-accept;
-
-        unset req.http.x-original-url;
-        unset req.http.x-original-accept;
-
-        return (lookup);
-    }
+backend default {
+    .host = "127.0.0.1";
+    .port = "8080";
 }
 
-sub vcl_deliver {
-    set resp.http.X-HashCache = "MISS";
+sub fos_handle_context {
+    set req.url = "/user_context_hash_cache.php";
 
-    if (resp.http.content-type ~ "application/vnd.fos.user-context-hash") {
-        set req.http.x-user-context-hash = resp.http.x-user-context-hash;
+    # By default, Varnish does not look for cache when a Cookie or
+    # Authorization header is present.
+    # See: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0#L63
+    #
+    # We force the lookup, the backend must vary on all relevant headers used to build the hash.
 
-        if (obj.hits > 0) {
-            set req.http.X-HashCache = "HIT";
-        } else {
-            set req.http.X-HashCache = "MISS";
-        }
-
-        return (restart);
-    } elsif (req.http.X-HashCache) {
-        set resp.http.X-HashCache = req.http.X-HashCache;
-    }
+    return (lookup);
 }
