@@ -2,8 +2,7 @@ An Introduction to Cache Invalidation
 =====================================
 
 This general introduction explains cache invalidation concepts. If you are
-already familiar with cache invalidation, you may wish to skip this chapter
-and continue to the [Cache Invalidator](cache-invalidator.md).
+already familiar with cache invalidation, you may wish to skip this chapter.
 
 HTTP Caching Terminology
 ------------------------
@@ -44,7 +43,7 @@ The problem
 HTTP caching is a great solution for improving the performance of your web
 application. For lower load on the application and fastest response time, you
 want to cache content for a long period. But at the same time, you want your
-clients see fresh content as soon as there was an update.
+clients to see fresh content as soon as there is an update.
 
 Instead of finding some compromise, you can have both with cache invalidation.
 When application data changes, the application takes care of invalidating its
@@ -91,7 +90,7 @@ Cache invalidation has two possible downsides:
   changed, a lot more is involved in invalidating all of its representations.
   In other words, invalidation adds a layer of complexity to your application.
   This library tries to help reduce complexity, for instance by
-  [tagging](#tags) cached content. Additionally, if you use Symfony2, we
+  :ref:`tagging <tags>` cached content. Additionally, if you use Symfony2, we
   recommend you use the FOSHttpCacheBundle_.
   which provides additional functionality to make invalidation easier.
 * Invalidation is done through requests to your caching proxy. Sending these

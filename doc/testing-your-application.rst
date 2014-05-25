@@ -43,16 +43,12 @@ Setting Constants
 
 Compare this library’s configuration to see how the constants are set:
 
-.. code-block:: xml
-
-    <?xml version="1.0" encoding="UTF-8"?>
-
-    <phpunit ...>
-        <php>
-            <const name="VARNISH_FILE" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/varnish/fos.vcl" />
-            <const name="WEB_SERVER_HOSTNAME" value="localhost" />
-        </php>
-    </phpunit>
+.. literalinclude:: ../phpunit.xml.dist
+    :prepend:
+        <?xml version="1.0" encoding="UTF-8"?>
+        <phpunit ...>
+    :language: xml
+    :start-after: <php>
 
 Overriding Getters
 ~~~~~~~~~~~~~~~~~~
@@ -117,7 +113,8 @@ correctly:
 
     public function testCachePurge()
     {
-        // Again, Varnish is restarted, so your test is independent
+        // Again, Varnish is restarted, so your test is independent from
+        // other tests
 
         $url = '/blog/articles/1';
 

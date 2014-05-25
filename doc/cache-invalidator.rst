@@ -29,8 +29,10 @@ Create the cache invalidator by passing a proxy client as
 Invalidating Paths and URLs
 ---------------------------
 
-Make sure to :doc:`configure your proxy <proxy-configuration>` for purging
-first.
+.. note::
+
+    Make sure to :doc:`configure your proxy <proxy-configuration>` for purging
+    first.
 
 Invalidate a path:
 
@@ -51,8 +53,10 @@ Invalidate a URL:
 Refreshing Paths and URLs
 -------------------------
 
-Make sure to :doc:`configure your proxy <proxy-configuration>` for refreshing
-first.
+.. note::
+
+    Make sure to :doc:`configure your proxy <proxy-configuration>` for refreshing
+    first.
 
 .. code-block:: php
 
@@ -68,7 +72,10 @@ Refresh a URL:
 Invalidating With a Regular Expression
 --------------------------------------
 
-Make sure to :doc:`configure your proxy <proxy-configuration>` for banning first.
+.. note::
+
+    Make sure to :doc:`configure your proxy <proxy-configuration>` for banning
+    first.
 
 URL, Content Type and Hostname
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,7 +91,7 @@ caching proxy:
 
     $cacheInvalidator->invalidateRegex('.*css$')->flush();
 
-To invalidate all .png files for host example.com:
+To invalidate all .png files on host example.com:
 
 .. code-block:: php
 
@@ -96,9 +103,12 @@ To invalidate all .png files for host example.com:
 Any Header
 ~~~~~~~~~~
 
-You can also invalidate the cache based on any headers. If you use non-default
-headers, make sure to [configure your proxy accordingly](proxy-configuration.md)
-to have them taken into account.
+You can also invalidate the cache based on any headers.
+
+.. note::
+
+    If you use non-default headers, make sure to :doc:`configure your proxy <proxy-configuration>`
+    to have them taken into account.
 
 Cache client implementations should fill up the headers to at least have the
 default headers always present to simplify the cache configuration rules.
@@ -111,14 +121,17 @@ To invalidate on a custom header ``X-My-Header``, you would do:
 
 .. _tags:
 
-Tags
-----
+Invalidating Tags
+-----------------
 
-Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first.
+.. note::
 
-You will have to make sure your web application adds the correct tags on all
-responses by setting the ``X-Cache-Tags`` header. The FOSHttpCacheBundle_ does
-does this for you when you’re using Symfony.
+    Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first.
+
+With tags you can group related representations so it becomes easier to
+invalidate them. You will have to make sure your web application adds the
+correct tags on all responses by setting the ``X-Cache-Tags`` header. The
+FOSHttpCacheBundle_ does does this for you when you’re using Symfony.
 
 Assume you sent four responses:
 

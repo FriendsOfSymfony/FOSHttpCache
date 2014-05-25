@@ -8,7 +8,7 @@ features provided by this library. The examples are tested with Nginx version
 Purge
 ~~~~~
 
-Nginx does not support :ref:`purge requests <purge>` out of the box. The
+Nginx does not support :term:`purge` requests out of the box. The
 `ngx_cache_purge <https://github.com/FRiCKLE/ngx_cache_purge>`_ adds some support.
 
 .. note::
@@ -41,7 +41,7 @@ for more on configuring Nginx to support purge requests.
 Refresh
 ~~~~~~~
 
-If you want to invalidate cached objects by :ref:`forcing a refresh <refresh>`
+If you want to invalidate cached objects by forcing a :term:`refresh`
 you have to use the built-in `proxy_cache_bypass <http://wiki.nginx.org/HttpProxyModule#proxy_cache_bypass/>`_
 operation.
 
