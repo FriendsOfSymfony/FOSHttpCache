@@ -48,7 +48,6 @@ add the following to your Varnish configuration:
 .. literalinclude:: ../tests/Functional/Fixtures/varnish/refresh.vcl
     :language: c
 
-
 Ban
 ~~~
 
@@ -72,6 +71,8 @@ Add the following to your Varnish configuration to enable :ref:`cache tagging <t
     :language: c
     :emphasize-lines: 8-13
     :linenos:
+
+.. _varnish user context:
 
 User Context
 ~~~~~~~~~~~~

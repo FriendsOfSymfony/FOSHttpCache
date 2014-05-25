@@ -34,7 +34,7 @@ is available as the second parameter:
 
 .. note::
 
-    To use the client, you also to :doc:`configure Varnish <varnish-configuration>` accordingly.
+    To use the client, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
 
 Nginx Client
 ~~~~~~~~~~~~
@@ -67,7 +67,7 @@ supply that location to the class as the third parameter:
 
 .. note::
 
-    To use the client, you also to :doc:`configure Nginx <nginx-configuration>` accordingly.
+    To use the client, you need to :doc:`configure Nginx <nginx-configuration>` accordingly.
 
 Using the Clients
 -----------------
@@ -97,7 +97,7 @@ Nginx    ✓       ✓
 Purge
 ~~~~~
 
-If the caching proxy understands :ref:`purge requests <purge>`,
+If the caching proxy understands :term:`purge` requests,
 its client should implement ``PurgeInterface``. Use the ``purge($url)`` method to
 purge one specific URL. The URL can be either an absolute URL or a relative
 path:
@@ -113,10 +113,9 @@ path:
 Refresh
 ~~~~~~~
 
-If the caching proxy understands :ref:`refresh requests <refresh>`,
-its client should implement ``RefreshInterface``. Use the
-``refresh($url, array $headers = array())`` method to refresh one specific
-URL. The URL can be either an absolute URL or a relative path:
+If the caching proxy understands :term:`refresh` requests,
+its client should implement ``RefreshInterface``. Use ``refresh()`` to refresh
+one specific URL. The URL can be either an absolute URL or a relative path:
 
 .. code-block:: php
 
@@ -126,8 +125,8 @@ URL. The URL can be either an absolute URL or a relative path:
         ->flush()
     ;
 
-You can also specify HTTP headers. For instance, to only refresh the JSON
-representation of an URL:
+You can specify HTTP headers as the second argument to ``refresh()``. For
+instance, to only refresh the JSON representation of an URL:
 
 .. code-block:: php
 
@@ -139,7 +138,7 @@ representation of an URL:
 Ban
 ~~~
 
-If the caching proxy understands :ref:`ban requests <ban>`,
+If the caching proxy understands :term:`ban` requests,
 its client should implement ``BanInterface``.
 
 You can invalidate all URLs matching a regular expression by using the
@@ -172,6 +171,8 @@ combination of headers that should be banned. For instance, when using the
 Varnish client:
 
 .. code-block:: php
+
+    use FOS\HttpCache\ProxyClient\Varnish;
 
     $varnish->ban(array(
         Varnish::HTTP_HEADER_URL   => '.*\.png$',

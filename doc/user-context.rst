@@ -10,47 +10,39 @@ The FOSHttpCache library includes a solution to vary cached responses based on
 user context (whether the user is authenticated, his access rights, or other
 information).
 
-* [Overview](#overview)
-* [Proxy Client Configuration](#proxy-client-configuration)
-* [Calculating the User Context Hash](#calculating-the-user-context-hash)
-* [Context Providers](#context-providers)
-* [Returning the User Context Hash](#returning-the-user-context-hash)
-
 Overview
 --------
 
 Caching on user context works as follows:
 
-1. A client requests ``/foo.php`` (the *original request*).
-2. The [caching proxy](invalidation-introduction.md#http-caching-terminology)
-   receives the request. It sends a request (the *hash request*) with a special
-   accept header (``application/vnd.fos.user-context-hash``) to a specific URL,
+1. A :term:`client` requests ``/foo.php`` (the *original request*).
+2. The :term:`caching proxy`  receives the request. It sends a request
+   (the *hash request*) with a special accept header
+   (``application/vnd.fos.user-context-hash``) to a specific URL,
    e.g., ``/auth.php``.
-3. The [application](invalidation-introduction.md#http-caching-terminology)
-   receives the hash request. The application knows the client’s user context
-   (roles, permissions, etc.) and generates a hash based on that information.
-   The application then returns a response containing that hash in a custom
-   header (``X-User-Context-Hash``) and specify the ``Content-Type`` of this response
-   to ``application/vnd.fos.user-context-hash``.
+3. The :term:`application` receives the hash request. The application knows the
+   client’s user context (roles, permissions, etc.) and generates a hash based
+   on that information. The application then returns a response containing that
+   hash in a custom header (``X-User-Context-Hash``) and with ``Content-Type``
+   ``application/vnd.fos.user-context-hash``.
 4. The caching proxy receives the hash response, copies the hash header to the
    client’s original request for ``/foo.php`` and restarts that request.
 5. If the response to this request should differ per user context, the
    application specifies so by setting a ``Vary: X-User-Context-Hash`` header.
-   The appropriate representation of ``/foo.php`` will then be returned to the
-   client.
+   The appropriate user role dependent representation of ``/foo.php`` will
+   then be returned to the client.
 
 Proxy Client Configuration
 --------------------------
 
 Currently, user context caching is only supported by Varnish. See the
-[Varnish Configuration Chapter](varnish-configuration.md#user-context) on how
-to prepare Varnish for user context caching.
+:ref:`Varnish Configuration <varnish user context>` on how to prepare Varnish properly.
 
 Calculating the User Context Hash
 ---------------------------------
 
 The user context hash calculation (step 3 above) is managed by the
-[HashGenerator](../src/UserContext/HashGenerator.php). Because the calculation
+`HashGenerator <../../../src/UserContext/HashGenerator.php>`_. Because the calculation
 itself will be different per application, you need to implement at least one
 ContextProvider and register that with the HashGenerator.
 
@@ -68,7 +60,7 @@ for the current user context.
 Context Providers
 -----------------
 
-Each provider is passed the [UserContext](../src/UserContext/UserContext.php)
+Each provider is passed the `UserContext <../../../src/UserContext/UserContext.php>`_
 and updates that with parameters which influence the varied response.
 
 A provider that looks at whether the user is authenticated could look like this:
@@ -112,10 +104,11 @@ It is up to you to return the user context hash in response to the hash request
     // 406 Not acceptable in case of an incorrect accept header
     header('HTTP/1.1 406');
 
-If you use Symfony2, the [FOSHttpCacheBundle](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle)
-will set the correct response headers for you.
+If you use Symfony2, the FOSHttpCacheBundle_ will set the correct response
+headers for you.
 
-### Caching the Hash Response
+Caching the Hash Response
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To optimize user context hashing performance, you should cache the hash
 response. By varying on the Cookie and Authorization header, the
@@ -123,26 +116,17 @@ application will return the correct hash for each user. This way, subsequent
 hash requests (step 3 above) will be served from cache instead of requiring a
 roundtrip to the application.
 
-.. code-block:: php
-
-    //...
-
-    if ('application/vnd.fos.user-context-hash' == strtolower($_SERVER['HTTP_ACCEPT'])) {
-        header(sprintf('X-User-Context-Hash: %s', $hash));
-        header('Content-Type: application/vnd.fos.user-context-hash');
-        header('Cache-Control: max-age=3600');
-        header('Vary: Cookie, Authorization');
-        exit;
-    }
-
-    //...
+.. literalinclude:: ../tests/Functional/Fixtures/web/user_context_hash_cache.php
+    :language: php
+    :start-after: header
+    :emphasize-lines: 7-8
 
 Here we say that the hash is valid for one hour. Keep in mind, however, that
 you need to invalidate the hash response when the parameters that determine
 the context change for a user, for instance, when the user logs in or out, or
 is granted extra permissions by an administrator.
 
-The original request
+The Original Request
 --------------------
 
 After following the steps above, the following code renders a homepage

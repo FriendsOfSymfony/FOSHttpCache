@@ -8,7 +8,7 @@ the library.
 Setup
 -----
 
-Create the cache invalidator by passing a :doc:`proxy-client <proxy-clients>` as
+Create the cache invalidator by passing a proxy client as
 `adapter <http://en.wikipedia.org/wiki/Adapter_pattern>`_:
 
 .. code-block:: php
@@ -22,7 +22,9 @@ Create the cache invalidator by passing a :doc:`proxy-client <proxy-clients>` as
 
     $cacheInvalidator = new CacheInvalidator($client);
 
-See :ref:`proxy client setup <client setup>` for more on constructing a client.
+.. note::
+
+    See :ref:`proxy client setup <client setup>` for more on constructing a client.
 
 Invalidating Paths and URLs
 ---------------------------
@@ -101,7 +103,7 @@ to have them taken into account.
 Cache client implementations should fill up the headers to at least have the
 default headers always present to simplify the cache configuration rules.
 
-To invalidate on a custom header X-My-Header, you would do:
+To invalidate on a custom header ``X-My-Header``, you would do:
 
 .. code-block:: php
 
@@ -139,9 +141,9 @@ You can now invalidate some URLs using tags:
     $cacheInvalidator->invalidateTags(array('group-a', 'tag-four'))->flush();
 
 
-This will ban all requests having either the tag `group-a` /or/ `tag-four`. In
-the above example, this will invalidate `/two`, `/three` and `/four`. Only `/one`
-will stay in the cache.
+This will ban all requests having either the tag ``group-a`` /or/ ``tag-four``.
+In the above example, this will invalidate ``/two``, ``/three`` and ``/four``.
+Only ``/one`` will stay in the cache.
 
 .. _custom_tags_header:
 

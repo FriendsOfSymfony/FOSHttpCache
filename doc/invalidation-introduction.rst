@@ -108,50 +108,41 @@ Cached content can be invalidated in three ways. Some caching proxies, such as
 Varnish, support all three methods. Others, such as Nginx, support purge and
 refresh only.
 
-.. _purge:
 
-Purge
-~~~~~
+.. glossary::
 
-Purge removes content from the caching proxy immediately. The next time a
-client requests the URL, data is fetched from the application, stored in
-the caching proxy, and returned to the client.
+    Purge
+        Purge removes content from the caching proxy immediately. The next time a
+        client requests the URL, data is fetched from the application, stored in
+        the caching proxy, and returned to the client.
 
-Purge removes a specific URL in all its variants (as specified by the ``Vary``
-header) and with all its query strings.
+        Purge removes a specific URL in all its variants (as specified by the ``Vary``
+        header) and with all its query strings.
 
-.. _refresh:
+    Refresh
+        Just like purge, refresh removes cached content immediately. Additionally, the
+        new content is fetched from the backend application. The next time a client
+        requests the URL, no roundtrip to the application is necessary, as the new data
+        is already available in the cache.
 
-Refresh
-~~~~~~~
+        Refresh invalidates a specific URL with all query string, but *not* its variants.
 
-Just like purge, refresh removes cached content immediately. Additionally, the
-new content is fetched from the backend application. The next time a client
-requests the URL, no roundtrip to the application is necessary, as the new data
-is already available in the cache.
+    Ban
+        Unlike purge and refresh, ban does not remove the content from the cache
+        immediately. Instead, a reference to the content is added to a blacklist (or
+        ban list). Every client request is checked against this blacklist. If the
+        request happens to match blacklisted content, fresh content is fetched from the
+        application, stored in the caching proxy and returned to the client.
 
-Refresh invalidates a specific URL with all query string, but *not* its variants.
+        Bans cannot remove content from cache immediately because that would require
+        going through all cached content, which could take a long time and reduce
+        performance of the cache. Varnish contains a `ban lurker`_ that crawls the
+        content to eventually throw out banned data even when it’s not requested by any
+        client.
 
-.. _ban:
-
-Ban
-~~~
-
-Unlike purge and refresh, ban does not remove the content from the cache
-immediately. Instead, a reference to the content is added to a blacklist (or
-ban list). Every client request is checked against this blacklist. If the
-request happens to match blacklisted content, fresh content is fetched from the
-application, stored in the caching proxy and returned to the client.
-
-Bans cannot remove content from cache immediately because that would require
-going through all cached content, which could take a long time and reduce
-performance of the cache. Varnish contains a `ban lurker`_ that crawls the
-content to eventually throw out banned data even when it’s not requested by any
-client.
-
-The ban solution may seem cumbersome, but offers more powerful cache
-invalidation, such as selecting content to be banned by regular expressions.
-This opens the way for powerful invalidation schemes, such as tagging cache
-entries.
+        The ban solution may seem cumbersome, but offers more powerful cache
+        invalidation, such as selecting content to be banned by regular expressions.
+        This opens the way for powerful invalidation schemes, such as tagging cache
+        entries.
 
 .. _ban lurker: https://www.varnish-software.com/blog/ban-lurker
