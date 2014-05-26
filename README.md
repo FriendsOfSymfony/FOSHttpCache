@@ -19,9 +19,13 @@ Symfony2-specific features to help with caching and caching proxies.
 Features
 --------
 
-* Send [cache invalidation requests](doc/cache-invalidator.md) with minimal impact on performance.
-* Use the built-in support for [Varnish](doc/varnish.md) or easily implement your own caching proxy client.
-* [Test your application](doc/testing-your-application.md) against your Varnish setup.
+* Send [cache invalidation requests](http://foshttpcache.readthedocs.org/en/latest/cache-invalidator.html)
+  with minimal impact on performance.
+* Use the built-in support for [Varnish](http://foshttpcache.readthedocs.org/en/latest/varnish-configuration.html),
+  [Nginx](http://foshttpcache.readthedocs.org/en/latest/nginx-configuration.html)
+  or easily implement your own caching proxy client.
+* [Test your application](http://foshttpcache.readthedocs.org/en/latest/testing-your-application.html)
+  against your Varnish setup.
 * This library is fully compatible with [HHVM](http://www.hhvm.com).
 
 Documentation
