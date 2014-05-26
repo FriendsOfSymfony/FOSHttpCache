@@ -27,7 +27,7 @@ Features
 Documentation
 -------------
 
-[Documentation](doc/index.md) is included in the [doc](doc/index.md) directory.
+For more information, see [the documentation](http://foshttpcache.readthedocs.org/en/latest/).
 
 License
 -------
