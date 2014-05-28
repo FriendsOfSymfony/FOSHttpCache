@@ -11,7 +11,7 @@
 
 header('X-Cache-Debug: 1');
 
-// The application listens for hash request (but checking accept header)
+// The application listens for hash request (by checking the accept header)
 // and creates an X-User-Context-Hash based on parameters in the request.
 // In this case it's based on Cookie.
 if ('application/vnd.fos.user-context-hash' == strtolower($_SERVER['HTTP_ACCEPT'])) {

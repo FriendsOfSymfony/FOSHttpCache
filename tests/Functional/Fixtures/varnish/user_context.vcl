@@ -1,9 +1,17 @@
-## generically handle user context. needs to be included from a vcl that
-## defines a sub fos_handle_context that adds the right backend url.
-
 sub vcl_recv {
+
+    # Prevent tampering attacks on the hash mechanism
     if (req.restarts == 0
-        && (req.http.cookie || req.http.authentication)
+        && (req.http.accept ~ "application/vnd.fos.user-context-hash"
+            || req.http.x-user-context-hash
+        )
+    ) {
+        error 400;
+    }
+
+    # Lookup the context hash if there are credentials on the request
+    if (req.restarts == 0
+        && (req.http.cookie || req.http.authorization)
         && (req.request == "GET" || req.request == "HEAD")
     ) {
         set req.http.x-original-url    = req.url;
@@ -11,40 +19,58 @@ sub vcl_recv {
 
         set req.http.accept            = "application/vnd.fos.user-context-hash";
 
-        call fos_handle_context;
-    } elsif (req.restarts > 0 && req.http.accept ~ "application/vnd.fos.user-context-hash") {
+        # A little hack for testing both scenarios. Choose one for your application.
+        if (req.http.x-cache-hash) {
+            set req.url = "/user_context_hash_cache.php";
+        } else {
+            set req.url = "/user_context_hash_nocache.php";
+        }
+
+        # Force the lookup, the backend must tell not to cache or vary on all
+        # headers that are used to build the hash.
+
+        return (lookup);
+    }
+
+    # Rebuild the original request which now has the hash.
+    if (req.restarts > 0
+        && req.http.accept == "application/vnd.fos.user-context-hash"
+        && req.http.x-user-context-hash
+    ) {
         set req.url         = req.http.x-original-url;
         set req.http.accept = req.http.x-original-accept;
 
         unset req.http.x-original-url;
         unset req.http.x-original-accept;
 
-        # We do the original request with the user hash as provided by the backend.
-        # We lookup in the cache even when the Cookie or Authorization header are present.
-        # It is the responsibility of the backend to Vary on the user hash to
-        # properly separate cached data.
+        # Force the lookup, the backend must tell not to cache or vary on the
+        # user hash to properly separate cached data.
 
         return (lookup);
     }
 }
 
 sub vcl_deliver {
-    set resp.http.X-HashCache = "MISS";
-
-    # After receiving the hash response, copy the hash header
-    # to the original request and restart it.
-
-    if (resp.http.content-type ~ "application/vnd.fos.user-context-hash") {
+    # On receiving the hash response, copy the hash header to the original
+    # request and restart.
+    if (req.restarts == 0
+        && resp.http.content-type ~ "application/vnd.fos.user-context-hash"
+    ) {
         set req.http.x-user-context-hash = resp.http.x-user-context-hash;
 
-        if (obj.hits > 0) {
-            set req.http.X-HashCache = "HIT";
-        } else {
-            set req.http.X-HashCache = "MISS";
-        }
-
         return (restart);
-    } elsif (req.http.X-HashCache) {
-        set resp.http.X-HashCache = req.http.X-HashCache;
     }
+
+    # If we get here, this is a real response that gets sent to the client.
+
+    # Remove the vary on context user hash, this is nothing public. Keep all
+    # other vary headers.
+    set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *x-user-context-hash *", "");
+    set resp.http.Vary = regsub(resp.http.Vary, "^, *", "");
+    if (resp.http.Vary == "") {
+        remove resp.http.Vary;
+    }
+
+    # Sanity check to prevent ever exposing the hash to a client.
+    remove resp.http.x-user-context-hash;
 }

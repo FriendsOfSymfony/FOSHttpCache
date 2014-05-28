@@ -82,6 +82,37 @@ abstract class UserContextTestCase extends VarnishTestCase
         }
     }
 
+    public function testUserContextNoExposeHash()
+    {
+        try {
+            $response = $this->getResponse(
+                '/user_context_hash_nocache.php',
+                array('accept' => 'application/vnd.fos.user-context-hash'),
+                array('cookies' => array('miam'))
+            );
+
+            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
+        } catch (ClientErrorResponseException $e) {
+            $this->assertEquals(400, $e->getResponse()->getStatusCode());
+            $this->assertFalse($e->getResponse()->hasHeader('x-user-context-hash'));
+        }
+    }
+
+    public function testUserContextNoForgedHash()
+    {
+        try {
+            $response = $this->getResponse(
+                '/user_context_hash_nocache.php',
+                array('x-user-context-hash' => 'miam'),
+                array('cookies' => array('miam'))
+            );
+
+            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
+        } catch (ClientErrorResponseException $e) {
+            $this->assertEquals(400, $e->getResponse()->getStatusCode());
+        }
+    }
+
     public function testUserContextNotUsed()
     {
         //First request in get

@@ -1,14 +1,20 @@
 Cache on User Context
 =====================
 
-In applications that differentiate between user types, served content can be
-different per user type. For instance, on one and the same URL a guest sees a
-‘Log in’ message; an editor sees an ‘Edit’ button and the administrator a link
-to the admin backend.
+Some applications differentiate the content between types of users. For
+instance, on one and the same URL a guest sees a ‘Log in’ message; an editor
+sees an ‘Edit’ button and the administrator a link to the admin backend.
 
-The FOSHttpCache library includes a solution to vary cached responses based on
-user context (whether the user is authenticated, his access rights, or other
-information).
+The FOSHttpCache library includes a solution to cache responses per user
+context (whether the user is authenticated, groups the user is in, or other
+information), rather than individually.
+
+.. caution::
+
+    Whenever you share caches, make sure to not output any individual content
+    like the user name. If you have individual parts of a page, you can load
+    those parts over AJAX requests or look into ESI_. Both approaches integrate
+    with the concepts presented in this chapter.
 
 Overview
 --------
@@ -130,7 +136,8 @@ The Original Request
 --------------------
 
 After following the steps above, the following code renders a homepage
-differently depending on whether the user is logged in or not:
+differently depending on whether the user is logged in or not, using the
+*credentials of the particular user*:
 
 .. code-block:: php
 
@@ -145,3 +152,27 @@ differently depending on whether the user is logged in or not:
     } else {
         echo "You are anonymous";
     }
+
+.. _paywall_usage:
+
+Alternative for Paywalls: Authorization Request
+-----------------------------------------------
+
+If you can't efficiently determine a general user hash for the whole
+application (e.g. you have a paywall_ where individual users are limited to
+individual content), you can follow a slightly different approach:
+
+* Instead of doing a hash lookup request to a specific authentication URL, you
+  keep the request URL unchanged, but send a HEAD request with a specific
+  ``Accept`` header.
+* In your application, you intercept such requests after the access decision
+  has taken place but before expensive operations like loading the actual data
+  have taken place and return early with a 200 or 403 status.
+* If the status was 200, you restart the request in Varnish, and cache the
+  response even though a ``Cookie`` or ``Authorization`` header is present, so
+  that further requests on the same URL by other authorized users can be
+  served from cache. On status 403 you return an error page or redirect to the
+  URL where the content can be bought.
+
+.. _ESI: http://en.wikipedia.org/wiki/Edge_Side_Includes
+.. _paywall: http://en.wikipedia.org/wiki/Paywall

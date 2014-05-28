@@ -77,10 +77,36 @@ Add the following to your Varnish configuration to enable :ref:`cache tagging <t
 User Context
 ~~~~~~~~~~~~
 
-To configure your Varnish to support :doc:`user context hashing <user-context>`:
+.. sidebar:: Caching User Specific Content
 
-.. literalinclude:: ../tests/Functional/Fixtures/varnish/user_context_nocache.vcl
+    By default, Varnish does not check for cached data as soon as the request
+    has a ``Cookie`` or ``Authorization`` header, as per the `default VCL`_.
+    For the user context, you make Varnish cache even when there are
+    credentials present.
+
+    You need to be very careful when doing this: Your application is
+    responsible for properly specifying what may or may not be shared. If a
+    content only depends on the hash, ``Vary`` on the header containing the
+    hash and set a ``Cache-Control`` header to make Varnish cache the request.
+    If the response is individual however, you need to ``Vary`` on the
+    ``Cookie`` and/or ``Authorization`` header and probably want to send a
+    header like ``Cache-Control: s-maxage=0`` to prevent Varnish from caching.
+
+To support :doc:`user context hashing <user-context>` you need to add some logic
+to the recv and the deliver methods:
+
+.. literalinclude:: ../tests/Functional/Fixtures/varnish/user_context.vcl
     :language: c
+    :emphasize-lines: 8-13
+    :linenos:
+
+.. note::
+
+    If you want the context hash to be cached, you need to set the `req.url` to
+    always the same URL, or Varnish will cache every hash lookup separately.
+
+    However, if you have a :ref:`paywall scenario <paywall_usage>`, you need to
+    leave the original URL unchanged.
 
 Extracting the user identifier
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -128,3 +154,5 @@ Configure your Varnish to set a debug header that shows whether a cache hit or m
 
 .. literalinclude:: ../tests/Functional/Fixtures/varnish/debug.vcl
     :language: c
+
+.. _`default VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0#L63
