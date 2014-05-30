@@ -1,7 +1,7 @@
 FOSHttpCache
 ============
 
-This is the documentation for the FOSHttpCache library.
+This is the documentation for the `FOSHttpCache library <https://github.com/FriendsOfSymfony/FOSHttpCache>`_.
 
 This library integrates your PHP applications with HTTP caching proxies such as
 Varnish. Use this library to send invalidation requests from your application
