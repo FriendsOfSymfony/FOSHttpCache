@@ -48,7 +48,7 @@ ContextProvider and register that with the HashGenerator.
 
 .. code-block:: php
 
-    use namespace FOS\HttpCache\UserContext\HashGenerator;
+    use FOS\HttpCache\UserContext\HashGenerator;
 
     $hashGenerator = new HashGenerator();
     $hashGenerator->registerProvider(IsAuthenticatedProvider());
@@ -67,8 +67,8 @@ A provider that looks at whether the user is authenticated could look like this:
 
 .. code-block:: php
 
-    use namespace FOS\HttpCache\UserContext\ContextProviderInterface;
-    use namespace FOS\HttpCache\UserContext\UserContext;
+    use FOS\HttpCache\UserContext\ContextProviderInterface;
+    use FOS\HttpCache\UserContext\UserContext;
 
     class IsAuthenticatedProvider implements ContextProviderInterface
     {
