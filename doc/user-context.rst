@@ -47,10 +47,9 @@ Currently, user context caching is only supported by Varnish. See the
 Calculating the User Context Hash
 ---------------------------------
 
-The user context hash calculation (step 3 above) is managed by the
-`HashGenerator <../../../src/UserContext/HashGenerator.php>`_. Because the calculation
-itself will be different per application, you need to implement at least one
-ContextProvider and register that with the HashGenerator.
+The user context hash calculation (step 3 above) is managed by the HashGenerator.
+Because the calculation itself will be different per application, you need to
+implement at least one ContextProvider and register that with the HashGenerator.
 
 .. code-block:: php
 
@@ -90,6 +89,8 @@ A provider that looks at whether the user is authenticated could look like this:
             $userContext->addParameter('authenticated', $this->userService->isAuthenticated());
         }
     }
+
+.. _return context hash:
 
 Returning the User Context Hash
 -------------------------------
@@ -131,6 +132,12 @@ Here we say that the hash is valid for one hour. Keep in mind, however, that
 you need to invalidate the hash response when the parameters that determine
 the context change for a user, for instance, when the user logs in or out, or
 is granted extra permissions by an administrator.
+
+.. note::
+
+    If you base the user hash on the Cookie header, you should
+    :ref:`clean up that header <cookie_header>` to make the hash request
+    properly cacheable.
 
 The Original Request
 --------------------
