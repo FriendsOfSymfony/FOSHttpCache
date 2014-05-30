@@ -93,56 +93,56 @@ User Context
     header like ``Cache-Control: s-maxage=0`` to prevent Varnish from caching.
 
 To support :doc:`user context hashing <user-context>` you need to add some logic
-to the recv and the deliver methods:
+to the ``recv`` and the ``deliver`` methods:
 
 .. literalinclude:: ../tests/Functional/Fixtures/varnish/user_context.vcl
     :language: c
     :emphasize-lines: 8-13
     :linenos:
 
+Your backend application should respond to the ``application/vnd.fos.user-context-hash``
+request with :ref:`a proper user hash <return context hash>`.
+
 .. note::
 
-    If you want the context hash to be cached, you need to set the `req.url` to
+    If you want the context hash to be cached, you need to set the ``req.url`` to
     always the same URL, or Varnish will cache every hash lookup separately.
 
     However, if you have a :ref:`paywall scenario <paywall_usage>`, you need to
     leave the original URL unchanged.
 
-Extracting the user identifier
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. _cookie_header:
 
-In the example above, we set the unique user id to the plain value of the
-cookie:
+Cleaning the Cookie Header
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: c
+In the examples above, an unaltered Cookie header is passed to the backend to
+use for determining the user context hash. However, cookies as they are sent
+by a browser are unreliable. For instance, when using Google Analytics, cookie
+values are different for each request. Because of this, the hash request would
+not be cached, but multiple hashes would be generated for one and the same user.
 
-    set req.http.X-User-Id = req.http.cookie;
-
-However, in some situations, for instance when using Google Analytics, cookie
-values are different for each request. Because of this, the hash request will
-not be cached. To make that request cacheable, we must extract a stable session
-id and store that in the ``X-User-Id`` header.
-
-We can do this as
+To make the hash request cacheable, you must extract a stable user session id.
+You can do this as
 `explained in the varnish documentation <https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies>`_:
 
 .. code-block:: c
 
-    set req.http.X-User-Id = ";" + req.http.cookie;
-    set req.http.X-User-Id = regsuball(req.http.X-User-Id, "; +", ";");
-    set req.http.X-User-Id = regsuball(req.http.X-User-Id, ";(PHPSESSID)=", "; \1=");
-    set req.http.X-User-Id = regsuball(req.http.X-User-Id, ";[^ ][^;]*", "");
-    set req.http.X-User-Id = regsuball(req.http.X-User-Id, "^[; ]+|[; ]+$", "");
+    sub vcl_recv {
+        # ...
 
-You also need to change the Vary header in the hash response:
+        set req.http.cookie = ";" + req.http.cookie;
+        set req.http.cookie = regsuball(req.http.cookie, "; +", ";");
+        set req.http.cookie = regsuball(req.http.cookie, ";(PHPSESSID)=", "; \1=");
+        set req.http.cookie = regsuball(req.http.cookie, ";[^ ][^;]*", "");
+        set req.http.cookie = regsuball(req.http.cookie, "^[; ]+|[; ]+$", "");
 
-.. code-block:: php
-
-    header('Vary: X-User-Id');
+        # ...
+    }
 
 .. note::
 
-    If your application’s user authentication is based on cookie other than
+    If your application’s user authentication is based on a cookie other than
     PHPSESSID, change ``PHPSESSID`` to your cookie name.
 
 .. _varnish_debugging:
