@@ -24,7 +24,7 @@ use FOS\HttpCache\ProxyClient\Varnish;
  *
  * To define constants in the phpunit file, use this syntax:
  * <php>
- *     <const name="VARNISH_FILE" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/varnish/fos.vcl" />
+ *     <const name="VARNISH_FILE" value="./tests/Functional/Fixtures/varnish-3/fos.vcl" />
  * </php>
  *
  * VARNISH_BINARY       executable for varnish. this can also be the full path
@@ -120,6 +120,16 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     }
 
     /**
+     * Defaults to 3
+     *
+     * @return int
+     */
+    protected function getVarnishVersion()
+    {
+        return getenv('VARNISH_VERSION') ?: 3;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function tearDown()
@@ -133,8 +143,9 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     protected function stopVarnish()
     {
         if (file_exists(self::PID)) {
-            exec('kill ' . file_get_contents(self::PID));
+            exec('kill -9 ' . file_get_contents(self::PID));
             unlink(self::PID);
+            $this->waitUntil('127.0.0.1', $this->getCachingProxyPort(), 2000);
         }
     }
 
