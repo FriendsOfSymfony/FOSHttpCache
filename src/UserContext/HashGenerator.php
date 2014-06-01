@@ -16,7 +16,28 @@ namespace FOS\HttpCache\UserContext;
  */
 class HashGenerator
 {
+    /**
+     * @var ContextProviderInterface[]
+     */
     private $providers = array();
+
+    /**
+     * Constructor
+     *
+     * @param ContextProviderInterface[] $providers
+     *
+     * @throws \InvalidArgumentException If no providers are supplied
+     */
+    public function __construct(array $providers)
+    {
+        if (0 === count($providers)) {
+            throw new \InvalidArgumentException('You must supply at least one provider');
+        }
+
+        foreach ($providers as $provider) {
+            $this->registerProvider($provider);
+        }
+    }
 
     /**
      * Register a provider to be called for updating a UserContext before generating the Hash

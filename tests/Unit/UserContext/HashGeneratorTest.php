@@ -19,8 +19,7 @@ class HashGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerateHash()
     {
-        $hashGenerator = new HashGenerator();
-        $hashGenerator->registerProvider(new FooProvider());
+        $hashGenerator = new HashGenerator(array(new FooProvider()));
 
         $expectedHash = hash('sha256', serialize(array('foo' => 'bar')));
 
