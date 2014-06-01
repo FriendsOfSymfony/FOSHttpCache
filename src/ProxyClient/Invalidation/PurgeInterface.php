@@ -25,8 +25,7 @@ interface PurgeInterface extends ProxyClientInterface
     /**
      * Purge a URL
      *
-     * Purging a URL will remove the cache for the URL, including the query
-     * string, with all its Vary variants.
+     * Purging a URL will remove the cache for the URL (including the query string)
      *
      * If the $url is just a path, the proxy client class will add a default
      * host name.

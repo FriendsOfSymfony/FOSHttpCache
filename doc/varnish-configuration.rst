@@ -36,6 +36,8 @@ Purge
 
 To configure Varnish for `handling PURGE requests <https://www.varnish-cache.org/docs/3.0/tutorial/purging.html>`_:
 
+Purge removes a specific URL (including query strings) in all its variants (as specified by the ``Vary`` header).
+
 Varnish 3
 """""""""
 
@@ -46,13 +48,14 @@ Varnish 4
 """""""""
 
 .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/purge.vcl
-    :language: c
 
 Refresh
 ~~~~~~~
 
 If you want to invalidate cached objects by `forcing a refresh <https://www.varnish-cache.org/trac/wiki/VCLExampleEnableForceRefresh>`_
 add the following to your Varnish configuration:
+
+Refresh invalidates a specific URL including the query string, but *not* its variants.
 
 Varnish 3 & 4
 """""""""""""
@@ -78,6 +81,10 @@ Varnish 4
 .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
     :language: c
     :lines: 1-7, 15-18, 20-
+
+Varnish contains a `ban lurker`_ that crawls the content to eventually throw out banned data even when it’s not requested by any client.
+
+.. _ban lurker: https://www.varnish-software.com/blog/ban-lurker
 
 Tagging
 ~~~~~~~

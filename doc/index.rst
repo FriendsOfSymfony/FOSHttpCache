@@ -5,8 +5,7 @@ This is the documentation for the `FOSHttpCache library <https://github.com/Frie
 
 This library integrates your PHP applications with HTTP caching proxies such as
 Varnish. Use this library to send invalidation requests from your application
-to the caching proxy and to test your caching and invalidation code against a
-Varnish setup.
+to the caching proxy and to test your caching and invalidation setup.
 
 If you use Symfony2, have a look at the FOSHttpCacheBundle_. The bundle
 provides the Invalidator as a service, along with a number of
