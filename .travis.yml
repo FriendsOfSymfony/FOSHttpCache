@@ -14,6 +14,12 @@ matrix:
     - php: 5.5
       env: VARNISH_VERSION=4.0
 
+branches:
+  only:
+    - master
+    # Build maintenance branches for older releases if needed. such branches should be named like "1.2"
+    - '/^\d+\.\d+$/'
+
 before_script:
   # Install Varnish
   - curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add -
