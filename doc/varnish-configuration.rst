@@ -117,21 +117,6 @@ Varnish 4
 User Context
 ~~~~~~~~~~~~
 
-.. sidebar:: Caching User Specific Content
-
-    By default, Varnish does not check for cached data as soon as the request
-    has a ``Cookie`` or ``Authorization`` header, as per the `default VCL`_.
-    For the user context, you make Varnish cache even when there are
-    credentials present.
-
-    You need to be very careful when doing this: Your application is
-    responsible for properly specifying what may or may not be shared. If a
-    content only depends on the hash, ``Vary`` on the header containing the
-    hash and set a ``Cache-Control`` header to make Varnish cache the request.
-    If the response is individual however, you need to ``Vary`` on the
-    ``Cookie`` and/or ``Authorization`` header and probably want to send a
-    header like ``Cache-Control: s-maxage=0`` to prevent Varnish from caching.
-
 To support :doc:`user context hashing <user-context>` you need to add some logic
 to the ``recv`` and the ``deliver`` methods:
 
@@ -151,13 +136,29 @@ Varnish 4
     :emphasize-lines: 8-13
     :linenos:
 
+.. sidebar:: Caching User Specific Content
+
+    By default, Varnish does not check for cached data as soon as the request
+    has a ``Cookie`` or ``Authorization`` header, as per the `default VCL`_.
+    For the user context, you make Varnish cache even when there are
+    credentials present.
+
+    You need to be very careful when doing this: Your application is
+    responsible for properly specifying what may or may not be shared. If a
+    content only depends on the hash, ``Vary`` on the header containing the
+    hash and set a ``Cache-Control`` header to make Varnish cache the request.
+    If the response is individual however, you need to ``Vary`` on the
+    ``Cookie`` and/or ``Authorization`` header and probably want to send a
+    header like ``Cache-Control: s-maxage=0`` to prevent Varnish from caching.
+
 Your backend application should respond to the ``application/vnd.fos.user-context-hash``
 request with :ref:`a proper user hash <return context hash>`.
 
 .. note::
 
-    If you want the context hash to be cached, you need to set the ``req.url`` to
-    always the same URL, or Varnish will cache every hash lookup separately.
+    If you want the context hash to be cached, you need to always set the
+    ``req.url`` to the same URL, or Varnish will cache every hash lookup
+    separately.
 
     However, if you have a :ref:`paywall scenario <paywall_usage>`, you need to
     leave the original URL unchanged.
