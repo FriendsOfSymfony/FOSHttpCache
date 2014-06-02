@@ -40,16 +40,6 @@ class HashGenerator
     }
 
     /**
-     * Register a provider to be called for updating a UserContext before generating the Hash
-     *
-     * @param ContextProviderInterface $provider A context provider to be called to get context information about the current request.
-     */
-    public function registerProvider(ContextProviderInterface $provider)
-    {
-        $this->providers[] = $provider;
-    }
-
-    /**
      * Collect UserContext parameters and generate a hash from that
      *
      * @return string The hash generated
@@ -68,5 +58,15 @@ class HashGenerator
         ksort($parameters);
 
         return hash("sha256", serialize($parameters));
+    }
+
+    /**
+     * Register a provider to be called for updating a UserContext before generating the Hash
+     *
+     * @param ContextProviderInterface $provider A context provider to be called to get context information about the current request.
+     */
+    private function registerProvider(ContextProviderInterface $provider)
+    {
+        $this->providers[] = $provider;
     }
 }
