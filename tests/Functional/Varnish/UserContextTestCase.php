@@ -81,48 +81,4 @@ abstract class UserContextTestCase extends VarnishTestCase
             $this->assertEquals(403, $e->getResponse()->getStatusCode());
         }
     }
-
-    public function testUserContextNoExposeHash()
-    {
-        try {
-            $response = $this->getResponse(
-                '/user_context_hash_nocache.php',
-                array('accept' => 'application/vnd.fos.user-context-hash'),
-                array('cookies' => array('miam'))
-            );
-
-            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
-        } catch (ClientErrorResponseException $e) {
-            $this->assertEquals(400, $e->getResponse()->getStatusCode());
-            $this->assertFalse($e->getResponse()->hasHeader('x-user-context-hash'));
-        }
-    }
-
-    public function testUserContextNoForgedHash()
-    {
-        try {
-            $response = $this->getResponse(
-                '/user_context_hash_nocache.php',
-                array('x-user-context-hash' => 'miam'),
-                array('cookies' => array('miam'))
-            );
-
-            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
-        } catch (ClientErrorResponseException $e) {
-            $this->assertEquals(400, $e->getResponse()->getStatusCode());
-        }
-    }
-
-    public function testUserContextNotUsed()
-    {
-        //First request in get
-        $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
-
-        //Second request in head or post
-        $postResponse = $this->getClient()->post('/user_context.php', array(), null, array('cookies' => array('foo')))->send();
-
-        $this->assertEquals('POST', $postResponse->getBody(true));
-        $this->assertEquals('MISS', $postResponse->getHeader('X-HashCache'));
-        $this->assertMiss($postResponse);
-    }
 }

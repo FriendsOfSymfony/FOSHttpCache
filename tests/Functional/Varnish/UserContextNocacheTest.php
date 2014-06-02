@@ -30,6 +30,7 @@ class UserContextNocacheTest extends UserContextTestCase
                 return './tests/Functional/Fixtures/varnish-3/user_context_nocache.vcl';
         }
     }
+
     /**
      * {@inheritDoc}
      */
