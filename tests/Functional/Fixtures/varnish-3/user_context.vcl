@@ -14,8 +14,8 @@ sub vcl_recv {
         && (req.http.cookie || req.http.authorization)
         && (req.request == "GET" || req.request == "HEAD")
     ) {
-        set req.http.x-original-url    = req.url;
-        set req.http.x-original-accept = req.http.accept;
+        set req.http.x-fos-original-url    = req.url;
+        set req.http.x-fos-original-accept = req.http.accept;
 
         set req.http.accept            = "application/vnd.fos.user-context-hash";
 
@@ -38,11 +38,11 @@ sub vcl_recv {
     if (req.restarts > 0
         && req.http.accept == "application/vnd.fos.user-context-hash"
     ) {
-        set req.url         = req.http.x-original-url;
-        set req.http.accept = req.http.x-original-accept;
+        set req.url         = req.http.x-fos-original-url;
+        set req.http.accept = req.http.x-fos-original-accept;
 
-        unset req.http.x-original-url;
-        unset req.http.x-original-accept;
+        unset req.http.x-fos-original-url;
+        unset req.http.x-fos-original-accept;
 
         # Force the lookup, the backend must tell not to cache or vary on the
         # user hash to properly separate cached data.

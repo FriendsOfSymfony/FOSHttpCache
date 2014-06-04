@@ -154,6 +154,13 @@ request with :ref:`a proper user hash <return context hash>`.
 
 .. note::
 
+    We do not use ``x-original-url`` here, as the header will be sent to the
+    backend and some applications look at this header, which would lead to
+    problems. For example, the Microsoft IIS rewriting module uses this header
+    and Symfony2 has to look into that header to support IIS.
+
+.. note::
+
     If you want the context hash to be cached, you need to always set the
     ``req.url`` to the same URL, or Varnish will cache every hash lookup
     separately.
