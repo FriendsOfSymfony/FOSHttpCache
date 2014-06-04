@@ -39,7 +39,6 @@ sub vcl_recv {
     # Rebuild the original request which now has the hash.
     if (req.restarts > 0
         && req.http.accept == "application/vnd.fos.user-context-hash"
-        && req.http.x-user-context-hash
     ) {
         set req.url         = req.http.x-original-url;
         set req.http.accept = req.http.x-original-accept;

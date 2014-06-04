@@ -125,7 +125,6 @@ Varnish 3
 
 .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
     :language: c
-    :emphasize-lines: 8-13
     :linenos:
 
 Varnish 4
@@ -133,7 +132,6 @@ Varnish 4
 
 .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/user_context.vcl
     :language: c
-    :emphasize-lines: 8-13
     :linenos:
 
 .. sidebar:: Caching User Specific Content
