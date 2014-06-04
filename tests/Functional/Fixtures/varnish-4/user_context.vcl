@@ -21,8 +21,10 @@ sub vcl_recv {
 
         set req.http.accept            = "application/vnd.fos.user-context-hash";
 
-        # A little hack for testing both scenarios. Choose one for your application.
-        if (req.http.x-cache-hash) {
+        # A little hack for testing all scenarios. Choose one for your application.
+        if ("failure" == req.http.x-cache-hash) {
+            set req.url = "/user_context_hash_failure.php";
+        } elsif (req.http.x-cache-hash) {
             set req.url = "/user_context_hash_cache.php";
         } else {
             set req.url = "/user_context_hash_nocache.php";
@@ -49,6 +51,14 @@ sub vcl_recv {
         # user hash to properly separate cached data.
 
         return (hash);
+    }
+}
+
+sub vcl_backend_response {
+    if (bereq.http.accept ~ "application/vnd.fos.user-context-hash"
+        && beresp.status >= 500
+    ) {
+        return (abandon);
     }
 }
 

@@ -19,8 +19,10 @@ sub vcl_recv {
 
         set req.http.accept            = "application/vnd.fos.user-context-hash";
 
-        # A little hack for testing both scenarios. Choose one for your application.
-        if (req.http.x-cache-hash) {
+        # A little hack for testing all scenarios. Choose one for your application.
+        if ("failure" == req.http.x-cache-hash) {
+            set req.url = "/user_context_hash_failure.php";
+        } elsif (req.http.x-cache-hash) {
             set req.url = "/user_context_hash_cache.php";
         } else {
             set req.url = "/user_context_hash_nocache.php";
@@ -50,11 +52,21 @@ sub vcl_recv {
     }
 }
 
+sub vcl_fetch {
+    if (req.restarts == 0
+        && req.http.accept ~ "application/vnd.fos.user-context-hash"
+        && beresp.status >= 500
+    ) {
+        error 503 "Hash error";
+    }
+}
+
 sub vcl_deliver {
     # On receiving the hash response, copy the hash header to the original
     # request and restart.
     if (req.restarts == 0
         && resp.http.content-type ~ "application/vnd.fos.user-context-hash"
+        && resp.status == 200
     ) {
         set req.http.x-user-context-hash = resp.http.x-user-context-hash;
 
