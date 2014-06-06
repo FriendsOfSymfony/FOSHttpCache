@@ -238,5 +238,5 @@ texinfo_documents = [
 #texinfo_show_urls = 'footnote'
 
 rst_epilog = """
-.. _FOSHttpCacheBundle: https://github.com/ddeboer/FOSHttpCacheBundle
+.. _FOSHttpCacheBundle: https://github.com/FriendsOfSymfony/FOSHttpCacheBundle
 """
