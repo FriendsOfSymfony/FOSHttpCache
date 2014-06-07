@@ -11,6 +11,12 @@ Composer_:
 
     $ composer require friendsofsymfony/http-cache:~1.0
 
+.. note::
+
+    This library follows `Semantic Versioning`_. Because constraint ``~1.0``
+    will only increment the minor and patch numbers, it will not introduce BC
+    breaks.
+
 Configuration
 -------------
 
@@ -40,3 +46,4 @@ invalidation requests:
 
 .. _Packagist: https://packagist.org/packages/friendsofsymfony/http-cache
 .. _Composer: http://getcomposer.org
+.. _Semantic Versioning: http://semver.org/
