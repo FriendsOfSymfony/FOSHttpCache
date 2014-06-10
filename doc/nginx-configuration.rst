@@ -5,28 +5,25 @@ Below you will find detailed Nginx configuration recommendations for the
 features provided by this library. The examples are tested with Nginx version
 1.4.6.
 
+Nginx cache is a set of key/value pairs. The key is built with elements taken from the requests 
+(URI, cookies, http headers etc) as specified by `proxy_cache_key` directive.
+
+When we interact with the cache to purge/refresh entries we must send to Nginx a request which has 
+the very same values, for the elements used for building the key, as the request that create the entry.
+In this way Nginx can build the correct key and apply the required operation to the entry.
+
+By default Nginx key is build with `$scheme$proxy_host$request_uri`. For a full list of the elements
+you can use in the key see `this page from the official documentation <http://nginx.org/en/docs/http/ngx_http_core_module.html#variables>`_
+
 Purge
 ~~~~~
 
-Nginx does not support :term:`purge` requests out of the box. The
-`ngx_cache_purge <https://github.com/FRiCKLE/ngx_cache_purge>`_ adds some support.
+Nginx does not support :term:`purge` functionality out of the box but you can easily add it with 
+`ngx_cache_purge <https://github.com/FRiCKLE/ngx_cache_purge>`_ module. You just need to compile 
+Nginx from sources adding `ngx_cache_purge` with `--add-module`
 
-.. note::
-
-    The Nginx *purge* does not remove variants, only the page matching the
-    request.
-
-You could use the refresh method (see below) which is easier to set up and
-provides the same invalidation semantics, additionally preparing the cache with
-the new content.
-
-Unfortunately, you need to compile Nginx yourself to add the module.
-For more information:
-
-* see `this tutorial <http://mcnearney.net/blog/2010/2/28/compiling-nginx-cache-purging-support/>`_
-  by Lance McNearney
-* on Debian systems, you can run `install-nginx.sh <../../../tests/install-nginx.sh>`_
-  to compile Nginx the same way this library is tested on Travis.
+You can check the script `install-nginx.sh <../../../tests/install-nginx.sh>`_ to get an idea
+about the steps you need to perform.
 
 Then configure Nginx for purge requests:
 
@@ -42,11 +39,12 @@ Refresh
 ~~~~~~~
 
 If you want to invalidate cached objects by forcing a :term:`refresh`
-you have to use the built-in `proxy_cache_bypass <http://wiki.nginx.org/HttpProxyModule#proxy_cache_bypass/>`_
-operation.
+you have to use the built-in `proxy_cache_bypass <http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_bypass>`_
+directive.
 
-There are many ways to have a request bypass the cache. This library uses a
-custom HTTP header named ``X-Refresh``. Add the following to the ``location``
+This directive defines conditions under which the response will not be taken from a cache. This library uses a custom HTTP header 
+named ``X-Refresh``. Add a line like the following one in the right place
+
 section:
 
 .. literalinclude:: ../tests/Functional/Fixtures/nginx/fos.conf
