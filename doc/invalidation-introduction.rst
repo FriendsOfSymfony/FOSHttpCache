@@ -1,3 +1,5 @@
+.. _invalidation introduction:
+
 An Introduction to Cache Invalidation
 =====================================
 

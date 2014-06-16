@@ -1,3 +1,5 @@
+.. _testing your application:
+
 Testing Your Application
 ========================
 

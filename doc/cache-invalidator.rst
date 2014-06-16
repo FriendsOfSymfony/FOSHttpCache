@@ -68,6 +68,7 @@ Refresh a URL:
 
     $cacheInvalidator->refreshPath('http://www.example.com/users')->flush();
 
+.. _invalidate regex:
 
 Invalidating With a Regular Expression
 --------------------------------------
