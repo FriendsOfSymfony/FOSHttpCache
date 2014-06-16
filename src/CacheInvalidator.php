@@ -49,17 +49,17 @@ class CacheInvalidator
     /**
      * @var ProxyClientInterface
      */
-    protected $cache;
+    private $cache;
 
     /**
      * @var EventDispatcherInterface
      */
-    protected $eventDispatcher;
+    private $eventDispatcher;
 
     /**
      * @var string
      */
-    protected $tagsHeader = 'X-Cache-Tags';
+    private $tagsHeader = 'X-Cache-Tags';
 
     /**
      * Constructor

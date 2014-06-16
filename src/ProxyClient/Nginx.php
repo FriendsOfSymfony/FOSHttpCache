@@ -32,7 +32,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
      *
      * @var string|false
      */
-    protected $purgeLocation;
+    private $purgeLocation;
 
     /**
      * {@inheritdoc}

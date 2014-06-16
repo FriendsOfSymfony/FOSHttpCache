@@ -37,7 +37,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      *
      * @var array
      */
-    protected $defaultBanHeaders = array(
+    private $defaultBanHeaders = array(
         self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
