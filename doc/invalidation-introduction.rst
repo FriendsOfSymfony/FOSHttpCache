@@ -24,8 +24,15 @@ HTTP Caching Terminology
 
     Time to live (TTL)
         Maximum lifetime of some content. Expressed in either an expiry date
-        for the content (the `Expires:` header) or its maximum age (the
-        `max-age` and `s-maxage` cache control directives).
+        for the content (the ``Expires:`` header) or its maximum age (the
+        ``max-age`` and ``s-maxage`` cache control directives).
+
+    Invalidation
+        Invalidating a piece of content means telling the caching proxy to no
+        longer serve that content to clients. The proxy can choose to either
+        discard the content immediately, or do so when it is next requested.
+        On that next request, the proxy will fetch a fresh copy from the
+        application.
 
 What is Cache Invalidation?
 ---------------------------

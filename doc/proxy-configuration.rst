@@ -1,3 +1,5 @@
+.. _proxy-configuration:
+
 Caching Proxy Configuration
 ===========================
 
