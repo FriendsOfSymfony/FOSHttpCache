@@ -86,6 +86,8 @@ Varnish contains a `ban lurker`_ that crawls the content to eventually throw out
 
 .. _ban lurker: https://www.varnish-software.com/blog/ban-lurker
 
+.. _varnish_tagging:
+
 Tagging
 ~~~~~~~
 
