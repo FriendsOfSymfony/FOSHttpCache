@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 class Event extends BaseEvent
 {
-    protected $exception;
+    private $exception;
 
     /**
      * Set exception

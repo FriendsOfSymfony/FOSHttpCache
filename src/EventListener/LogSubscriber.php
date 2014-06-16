@@ -22,7 +22,7 @@ class LogSubscriber implements EventSubscriberInterface
     /**
      * @var LoggerInterface
      */
-    protected $logger;
+    private $logger;
 
     public function __construct(LoggerInterface $logger)
     {
@@ -50,7 +50,7 @@ class LogSubscriber implements EventSubscriberInterface
         $this->log(LogLevel::CRITICAL, $event->getException());
     }
 
-    protected function log($level, \Exception $exception)
+    private function log($level, \Exception $exception)
     {
         $context = array(
             'exception' => $exception

@@ -34,21 +34,21 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      *
      * @var array
      */
-    protected $servers;
+    private $servers;
 
     /**
      * HTTP client
      *
      * @var ClientInterface
      */
-    protected $client;
+    private $client;
 
     /**
      * Request queue
      *
      * @var array|RequestInterface[]
      */
-    protected $queue;
+    private $queue;
 
     /**
      * Constructor
@@ -156,7 +156,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      *
      * @throws ExceptionCollection
      */
-    protected function sendRequests(array $requests)
+    private function sendRequests(array $requests)
     {
         $allRequests = array();
 
