@@ -14,6 +14,8 @@ sub vcl_hit {
     }
 }
 
+# The purge in vcl_miss is necessary to purge all variants in the cases where
+# you hit an object, but miss a particular variant.
 sub vcl_miss {
     if (req.method == "PURGE") {
         purge;
