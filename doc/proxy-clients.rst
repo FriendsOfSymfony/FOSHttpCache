@@ -15,9 +15,7 @@ Varnish Client
 
 At minimum, supply an array containing IPs or hostnames of the Varnish servers
 that you want to send invalidation requests to. Make sure to include the port
-Varnish runs on if it is not port 80.
-
-.. code-block:: php
+Varnish runs on if it is not port 80::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 
@@ -26,9 +24,7 @@ Varnish runs on if it is not port 80.
 
 This is sufficient for invalidating absolute URLs. If you also wish to
 invalidate relative paths, supply the hostname (or base URL) where your website
-is available as the second parameter:
-
-.. code-block:: php
+is available as the second parameter::
 
     $varnish = new Varnish($servers, 'my-cool-app.com');
 
@@ -41,9 +37,7 @@ Nginx Client
 
 At minimum, supply an array containing IPs or hostnames of the Nginx servers
 that you want to send invalidation requests to. Make sure to include the port
-Nginx runs on if it is not port 80.
-
-.. code-block:: php
+Nginx runs on if it is not port 80::
 
     use FOS\HttpCache\Invalidation\Nginx;
 
@@ -52,16 +46,12 @@ Nginx runs on if it is not port 80.
 
 This is sufficient for invalidating absolute URLs. If you also wish to
 invalidate relative paths, supply the hostname (or base URL) where your website
-is available as the second parameter:
-
-.. code-block:: php
+is available as the second parameter::
 
     $nginx = new Nginx($servers, 'my-cool-app.com');
 
 If you have configured Nginx to support purge requests at a separate location,
-supply that location to the class as the third parameter:
-
-.. code-block:: php
+supply that location to the class as the third parameter::
 
     $nginx = new Nginx($servers, 'my-cool-app.com', '/purge');
 
@@ -100,9 +90,7 @@ Purge
 If the caching proxy understands :term:`purge` requests,
 its client should implement ``PurgeInterface``. Use the ``purge($url)`` method to
 purge one specific URL. The URL can be either an absolute URL or a relative
-path:
-
-.. code-block:: php
+path::
 
     $client
         ->purge('http://my-app.com/some/path')
@@ -115,9 +103,7 @@ Refresh
 
 If the caching proxy understands :term:`refresh` requests,
 its client should implement ``RefreshInterface``. Use ``refresh()`` to refresh
-one specific URL. The URL can be either an absolute URL or a relative path:
-
-.. code-block:: php
+one specific URL. The URL can be either an absolute URL or a relative path::
 
     $client
         ->refresh('http://my-app.com/some/path')
@@ -126,9 +112,7 @@ one specific URL. The URL can be either an absolute URL or a relative path:
     ;
 
 You can specify HTTP headers as the second argument to ``refresh()``. For
-instance, to only refresh the JSON representation of an URL:
-
-.. code-block:: php
+instance, to only refresh the JSON representation of an URL::
 
     $client
         ->refresh('/some/path', array('Accept' => 'application/json')
@@ -146,31 +130,23 @@ You can invalidate all URLs matching a regular expression by using the
 for the path to invalidate and an optional content type regular expression and
 list of application hostnames.
 
-For instance, to ban all .png files on all application hosts:
-
-.. code-block:: php
+For instance, to ban all .png files on all application hosts::
 
     $client->banPath('.*png$');
 
-To ban all HTML URLs that begin with ``/articles/``:
-
-.. code-block:: php
+To ban all HTML URLs that begin with ``/articles/``::
 
     $client->banPath('/articles/.*', 'text/html');
 
 By default, URLs will be banned on all application hosts. You can limit this by
-specifying a host header:
-
-.. code-block:: php
+specifying a host header::
 
     $client->banPath('*.png$', null, '^www.example.com$');
 
 If you want to go beyond banning combinations of path, content type and hostname,
 use the ``ban(array $headers)`` method. This method allows you to specify any
 combination of headers that should be banned. For instance, when using the
-Varnish client:
-
-.. code-block:: php
+Varnish client::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 

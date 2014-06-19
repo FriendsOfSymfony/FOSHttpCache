@@ -9,9 +9,7 @@ Setup
 -----
 
 Create the cache invalidator by passing a proxy client as
-`adapter <http://en.wikipedia.org/wiki/Adapter_pattern>`_:
-
-.. code-block:: php
+`adapter <http://en.wikipedia.org/wiki/Adapter_pattern>`_::
 
     use FOS\HttpCache\CacheInvalidator;
     use FOS\HttpCache\ProxyClient;
@@ -34,9 +32,7 @@ Invalidating Paths and URLs
     Make sure to :doc:`configure your proxy <proxy-configuration>` for purging
     first.
 
-Invalidate a path:
-
-.. code-block:: php
+Invalidate a path::
 
     $cacheInvalidator->invalidatePath('/users')
         ->flush()
@@ -44,9 +40,7 @@ Invalidate a path:
 
 See below for the :ref:`flush() <flush>` method.
 
-Invalidate a URL:
-
-.. code-block:: php
+Invalidate a URL::
 
     $cacheInvalidator->invalidatePath('http://www.example.com/users')->flush();
 
@@ -62,9 +56,7 @@ Refreshing Paths and URLs
 
     $cacheInvalidator->refreshPath('/users')->flush();
 
-Refresh a URL:
-
-.. code-block:: php
+Refresh a URL::
 
     $cacheInvalidator->refreshPath('http://www.example.com/users')->flush();
 
@@ -86,15 +78,11 @@ You can invalidate all URLs matching a regular expression by using the
 with a regular expression for the content type and/or the application hostname.
 
 For instance, to invalidate all .css files for all hostnames handled by this
-caching proxy:
-
-.. code-block:: php
+caching proxy::
 
     $cacheInvalidator->invalidateRegex('.*css$')->flush();
 
-To invalidate all .png files on host example.com:
-
-.. code-block:: php
+To invalidate all .png files on host example.com::
 
     $cacheInvalidator
         ->invalidateRegex('.*', 'image/png', array('example.com'))
@@ -114,9 +102,7 @@ You can also invalidate the cache based on any headers.
 Cache client implementations should fill up the headers to at least have the
 default headers always present to simplify the cache configuration rules.
 
-To invalidate on a custom header ``X-My-Header``, you would do:
-
-.. code-block:: php
+To invalidate on a custom header ``X-My-Header``, you would do::
 
     $cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'))->flush();
 
@@ -148,9 +134,7 @@ Assume you sent four responses:
 | ``/four``  | ``tag-four, group-b``   |
 +------------+-------------------------+
 
-You can now invalidate some URLs using tags:
-
-.. code-block:: php
+You can now invalidate some URLs using tags::
 
     $cacheInvalidator->invalidateTags(array('group-a', 'tag-four'))->flush();
 
@@ -174,9 +158,7 @@ Flushing
 --------
 
 The CacheInvalidator internally queues the invalidation requests and only sends
-them out to your HTTP proxy when you call ``flush()``:
-
-.. code-block:: php
+them out to your HTTP proxy when you call ``flush()``::
 
     $cacheInvalidator
         ->invalidateRoute(...)
@@ -208,9 +190,7 @@ These exception are of two types:
 * ``\FOS\HttpCache\ProxyResponseException`` when the caching proxy returns an
   error response, such as 403 Forbidden.
 
-So, to catch exceptions:
-
-.. code-block:: php
+So, to catch exceptions::
 
     use FOS\HttpCache\Exception\ExceptionCollection;
 
@@ -233,27 +213,21 @@ Logging errors
 ~~~~~~~~~~~~~~
 
 You can log any exceptions in the following way. First construct a logger that
-implements ``\Psr\Log\LoggerInterface``. For instance, when using Monolog_:
-
-.. code-block:: php
+implements ``\Psr\Log\LoggerInterface``. For instance, when using Monolog_::
 
     use Monolog\Logger;
 
     $monolog = new Logger(...);
     $monolog->pushHandler(...);
 
-Then add the logger as a subscriber to the cache invalidator:
-
-.. code-block:: php
+Then add the logger as a subscriber to the cache invalidator::
 
     use FOS\HttpCache\EventListener\LogSubscriber;
 
     $subscriber = new LogSubscriber($monolog);
     $cacheInvalidator->addSubscriber($subscriber);
 
-Now, if you flush the invalidator, errors will be logged:
-
-.. code-block:: php
+Now, if you flush the invalidator, errors will be logged::
 
     use FOS\HttpCache\Exception\ExceptionCollection;
 

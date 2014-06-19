@@ -51,9 +51,7 @@ Calculating the User Context Hash
 
 The user context hash calculation (step 3 above) is managed by the HashGenerator.
 Because the calculation itself will be different per application, you need to
-implement at least one ContextProvider and register that with the HashGenerator.
-
-.. code-block:: php
+implement at least one ContextProvider and register that with the HashGenerator::
 
     use FOS\HttpCache\UserContext\HashGenerator;
 
@@ -71,9 +69,7 @@ Context Providers
 Each provider is passed the `UserContext <../../../src/UserContext/UserContext.php>`_
 and updates that with parameters which influence the varied response.
 
-A provider that looks at whether the user is authenticated could look like this:
-
-.. code-block:: php
+A provider that looks at whether the user is authenticated could look like this::
 
     use FOS\HttpCache\UserContext\ContextProviderInterface;
     use FOS\HttpCache\UserContext\UserContext;
@@ -99,9 +95,7 @@ Returning the User Context Hash
 -------------------------------
 
 It is up to you to return the user context hash in response to the hash request
-(``/auth.php`` in step 3 above):
-
-.. code-block:: php
+(``/auth.php`` in step 3 above)::
 
     $hash = $hashGenerator->generateHash();
 
@@ -147,9 +141,7 @@ The Original Request
 
 After following the steps above, the following code renders a homepage
 differently depending on whether the user is logged in or not, using the
-*credentials of the particular user*:
-
-.. code-block:: php
+*credentials of the particular user*::
 
     // /index.php file
     header('Cache-Control: max-age=3600');

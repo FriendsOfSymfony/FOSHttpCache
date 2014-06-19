@@ -55,9 +55,7 @@ Compare this library’s configuration to see how the constants are set:
 Overriding Getters
 ~~~~~~~~~~~~~~~~~~
 
-You can override getters in your test class in the following way.
-
-.. code-block:: php
+You can override getters in your test class in the following way::
 
     use FOS\HttpCache\Tests\VarnishTestCase;
 
@@ -80,9 +78,7 @@ Usage
 -----
 
 This example shows how you can test whether the caching headers your
-application sets influence Varnish as you expect them to.
-
-.. code-block:: php
+application sets influence Varnish as you expect them to::
 
     use FOS\HttpCache\Tests\VarnishTestCase;
 
@@ -109,9 +105,7 @@ application sets influence Varnish as you expect them to.
     }
 
 This example shows how you can test whether your application purges content
-correctly:
-
-.. code-block:: php
+correctly::
 
     public function testCachePurge()
     {
