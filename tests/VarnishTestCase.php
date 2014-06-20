@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests;
 
 use FOS\HttpCache\ProxyClient\Varnish;
+use Symfony\Component\Process\Process;
 
 /**
  * A phpunit base class to write functional tests with varnish.
@@ -143,7 +144,8 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     protected function stopVarnish()
     {
         if (file_exists(self::PID)) {
-            exec('kill -9 ' . file_get_contents(self::PID));
+            $process = new Process('kill -9 ' . file_get_contents(self::PID));
+            $process->run(); // Ignore if command fails when Varnish wasn't running
             unlink(self::PID);
             $this->waitUntil('127.0.0.1', $this->getCachingProxyPort(), 2000);
         }
@@ -154,14 +156,20 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
      */
     protected function startVarnish()
     {
-        exec($this->getBinary() .
+        $cmd = $this->getBinary() .
             ' -a 127.0.0.1:' . $this->getCachingProxyPort() .
             ' -T 127.0.0.1:' . $this->getVarnishMgmtPort() .
             ' -f ' . $this->getConfigFile() .
             ' -n ' . $this->getCacheDir() .
             ' -p vcl_dir=' . $this->getConfigDir() .
-            ' -P ' . self::PID
-        );
+            ' -P ' . self::PID;
+
+        $process = new Process($cmd);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
 
         $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
