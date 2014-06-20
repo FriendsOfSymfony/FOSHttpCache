@@ -28,7 +28,8 @@
     "require-dev": {
         "guzzle/plugin-mock": "*",
         "mockery/mockery": "*",
-        "monolog/monolog": "*"
+        "monolog/monolog": "*",
+        "symfony/process": "~2.3"
     },
     "suggest": {
         "monolog/monolog": "For logging issues while invalidating"
