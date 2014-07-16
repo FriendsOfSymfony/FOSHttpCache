@@ -15,6 +15,8 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Exception\MultiTransferException;
+use Guzzle\Http\Exception\RequestException;
 use Guzzle\Plugin\Mock\MockPlugin;
 use Guzzle\Http\Message\Response;
 use Guzzle\Http\Message\Request;
@@ -174,6 +176,56 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
         // Queue must now be empty, so exception above must not be thrown again.
         $varnish->purge('/path')->flush();
+    }
+
+    public function curlExceptionProvider()
+    {
+        $requestException = new RequestException('request');
+        $requestException->setRequest(new Request('GET', '/'));
+
+        $curlException = new CurlException('curl');
+        $curlException->setRequest(new Request('GET', '/'));
+        return array(
+            array($curlException, '\FOS\HttpCache\Exception\ProxyUnreachableException'),
+            array($requestException, '\FOS\HttpCache\Exception\ProxyResponseException'),
+            array(new \InvalidArgumentException('something'), '\InvalidArgumentException'),
+        );
+    }
+
+    /**
+     * @dataProvider curlExceptionProvider
+     *
+     * @param \Exception $exception The exception that curl should throw.
+     * @param string     $type      The returned exception class to be expected.
+     */
+    public function testExceptions(\Exception $exception, $type)
+    {
+        // the guzzle mock plugin does not allow arbitrary exceptions
+        // mockery does not provide all methods of the interface
+        $collection = new MultiTransferException();
+        $collection->setExceptions(array($exception));
+        $client = $this->getMock('\Guzzle\Http\ClientInterface');
+        $client->expects($this->any())
+            ->method('createRequest')
+            ->willReturn(new Request('GET', '/'))
+        ;
+        $client->expects($this->once())
+            ->method('send')
+            ->willThrowException($collection)
+        ;
+
+        $varnish = new Varnish(array('http://127.0.0.1:123'), 'my_hostname.dev', $client);
+
+        $varnish->ban(array());
+        try {
+            $varnish->flush();
+            $this->fail('Should have aborted with an exception');
+        } catch (ExceptionCollection $exceptions) {
+            $this->assertCount(1, $exceptions);
+            $this->assertInstanceOf($type, $exceptions->getFirst());
+        } catch (\Exception $e) {
+            die(get_class($e));
+        }
     }
 
     /**
