@@ -282,7 +282,7 @@ class CacheInvalidator
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
         }
 
-        $headers = array($this->getTagsHeader() => '('.implode('|', $tags).')(,.+)?$');
+        $headers = array($this->getTagsHeader() => '('.implode('|', array_map('preg_quote', $tags)).')(,.+)?$');
         $this->cache->ban($headers);
 
         return $this;
