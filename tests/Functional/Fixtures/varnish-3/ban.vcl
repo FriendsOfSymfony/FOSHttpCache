@@ -31,7 +31,7 @@ sub vcl_fetch {
 
 sub vcl_deliver {
 
-    # Add extra headers if debugging is enabled
+    # Keep ban-lurker headers only if debugging is enabled
     if (!resp.http.x-cache-debug) {
         # Remove ban-lurker friendly custom headers when delivering to client
         unset resp.http.x-url;
