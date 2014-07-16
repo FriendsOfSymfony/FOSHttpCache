@@ -119,7 +119,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     {
         $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
             ->shouldReceive('ban')
-            ->with(array('X-Cache-Tags' => '(post-1|posts)(,.+)?$'))
+            ->with(array('X-Cache-Tags' => '(post\-1|posts)(,.+)?$'))
             ->once()
             ->getMock();
 
@@ -131,7 +131,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     {
         $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
             ->shouldReceive('ban')
-            ->with(array('Custom-Tags' => '(post-1)(,.+)?$'))
+            ->with(array('Custom-Tags' => '(post\-1)(,.+)?$'))
             ->once()
             ->getMock();
 
