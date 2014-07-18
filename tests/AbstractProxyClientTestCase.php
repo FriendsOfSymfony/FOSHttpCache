@@ -32,7 +32,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     const CACHE_HIT  = 'HIT';
 
     /**
-     * A guzzle http client.
+     * A Guzzle HTTP client.
      *
      * @var Client
      */
@@ -65,6 +65,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      *
      * @param string $url
      * @param array  $headers
+     * @param array  $options
      *
      * @return Response
      */
@@ -81,7 +82,10 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     public function getClient()
     {
         if (null === $this->client) {
-            $this->client = new Client('http://' . $this->getHostName() . ':' . $this->getCachingProxyPort());
+            $this->client = new Client(
+                'http://' . $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                array('curl.options' => array(CURLOPT_FORBID_REUSE => true))
+            );
         }
 
         return $this->client;
