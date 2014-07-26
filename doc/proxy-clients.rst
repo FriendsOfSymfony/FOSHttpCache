@@ -28,6 +28,11 @@ is available as the second parameter::
 
     $varnish = new Varnish($servers, 'my-cool-app.com');
 
+Again, if you access your web application on a port other than 80, make sure to
+include that port in the base URL::
+
+    $varnish = new Varnish($servers, 'my-cool-app.com:8080');
+
 .. note::
 
     To use the client, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
