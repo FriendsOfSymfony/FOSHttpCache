@@ -1,3 +1,5 @@
+.. _varnish configuration:
+
 Varnish Configuration
 ---------------------
 

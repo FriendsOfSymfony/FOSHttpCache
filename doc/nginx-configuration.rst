@@ -1,3 +1,5 @@
+.. _nginx configuration:
+
 Nginx Configuration
 -------------------
 
