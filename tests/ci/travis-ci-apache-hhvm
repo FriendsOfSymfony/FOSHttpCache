@@ -17,13 +17,8 @@ Listen 8080
           SetHandler hhvm-php-extension
       </FilesMatch>
 
-      <FilesMatch \.hh$>
-          SetHandler hhvm-hack-extension
-      </FilesMatch>
-
       Alias /hhvm /hhvm
       Action hhvm-php-extension /hhvm virtual
-      Action hhvm-hack-extension /hhvm virtual
 
       FastCgiExternalServer /hhvm -host 127.0.0.1:9000 -pass-header Authorization -idle-timeout 300
   </IfModule>
