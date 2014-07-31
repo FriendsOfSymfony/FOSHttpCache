@@ -19,22 +19,23 @@ class ProxyResponseException extends \RuntimeException implements HttpCacheExcep
     /**
      * @param string     $host          The host name that was contacted.
      * @param string     $statusCode    The status code of the reply.
-     * @param string     $statusMessage The content of the reply.
-     * @param \Exception $previous      The exception from guzzle.
+     * @param string     $statusMessage The error message.
+     * @param string     $details  Further details about the request that caused the error.
+     * @param \Exception $previous      The exception from the HTTP client.
      *
      * @return ProxyUnreachableException
      */
-    public static function proxyResponse($host, $statusCode, $statusMessage, \Exception $previous = null)
+    public static function proxyResponse($host, $statusCode, $statusMessage, $details = '', \Exception $previous = null)
     {
-        return new ProxyResponseException(
-            sprintf(
-                '%s error response "%s" from caching proxy at %s',
-                $statusCode,
-                $statusMessage,
-                $host
-            ),
+        $message = sprintf(
+            '%s error response "%s" from caching proxy at %s',
             $statusCode,
-            $previous
+            $statusMessage,
+            $host
         );
+        if ($details) {
+            $message .= ". $details";
+        }
+        return new ProxyResponseException($message, $statusCode, $previous);
     }
 }

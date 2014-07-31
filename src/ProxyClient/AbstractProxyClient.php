@@ -195,6 +195,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
                 $e = ProxyUnreachableException::proxyUnreachable(
                     $exception->getRequest()->getHost(),
                     $exception->getMessage(),
+                    $exception->getRequest()->getRawHeaders(),
                     $exception
                 );
             } elseif ($exception instanceof RequestException) {
@@ -203,6 +204,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
                     $exception->getRequest()->getHost(),
                     $exception->getCode(),
                     $exception->getMessage(),
+                    $exception->getRequest()->getRawHeaders(),
                     $exception
                 );
             } else {
