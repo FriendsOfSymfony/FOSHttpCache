@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\Tests;
 
+use FOS\HttpCache\Tests\PHPUnit\IsCacheHitConstraint;
+use FOS\HttpCache\Tests\PHPUnit\IsCacheMissConstraint;
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\Response;
 
@@ -20,17 +22,6 @@ use Guzzle\Http\Message\Response;
  */
 abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Name of the debug header varnish is sending to tell if the request was a
-     * hit or miss.
-     *
-     * @var string
-     */
-    const CACHE_HEADER = 'X-Cache';
-
-    const CACHE_MISS = 'MISS';
-    const CACHE_HIT  = 'HIT';
-
     /**
      * A Guzzle HTTP client.
      *
@@ -46,7 +37,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      */
     public function assertMiss(Response $response, $message = null)
     {
-        $this->assertEquals(self::CACHE_MISS, (string) $response->getHeader(self::CACHE_HEADER), $message);
+        self::assertThat($response, self::isCacheMiss(), $message);
     }
 
     /**
@@ -57,7 +48,17 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      */
     public function assertHit(Response $response, $message = null)
     {
-        $this->assertEquals(self::CACHE_HIT, (string) $response->getHeader(self::CACHE_HEADER), $message);
+        self::assertThat($response, self::isCacheHit(), $message);
+    }
+
+    public static function isCacheHit()
+    {
+        return new IsCacheHitConstraint();
+    }
+
+    public static function isCacheMiss()
+    {
+        return new IsCacheMissConstraint();
     }
 
     /**
