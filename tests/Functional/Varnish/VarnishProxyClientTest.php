@@ -13,7 +13,6 @@ namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Tests\VarnishTestCase;
-use Guzzle\Http\Exception\ClientErrorResponseException;
 
 /**
  * @group webserver

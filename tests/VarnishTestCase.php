@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests;
 
 use FOS\HttpCache\ProxyClient\Varnish;
+use FOS\HttpCache\Tests\Functional\Proxy\VarnishProxy;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -46,7 +47,21 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
      */
     protected $varnish;
 
-    const PID = '/tmp/foshttpcache-varnish.pid';
+    protected $proxy;
+
+    protected function getProxy()
+    {
+        if (null === $this->proxy) {
+            $this->proxy = new VarnishProxy($this->getConfigFile());
+            if ($this->getBinary()) {
+                $this->proxy->setBinary($this->getBinary());
+
+            }
+
+        }
+
+        return $this->proxy;
+    }
 
     /**
      * The default implementation looks at the constant VARNISH_FILE.
@@ -60,25 +75,8 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
         if (!defined('VARNISH_FILE')) {
             throw new \Exception('Specify the varnish configuration file path in phpunit.xml or override getConfigFile()');
         }
-        $configFile = VARNISH_FILE;
 
-        if (!file_exists($configFile)) {
-            throw new \Exception('Can not find specified varnish config file: ' . $configFile);
-        }
-
-        return $configFile;
-    }
-
-    /**
-     * Get directory that holds VCL files
-     *
-     * Defaults to the directory that the VCL config file is in.
-     *
-     * @return string
-     */
-    protected function getConfigDir()
-    {
-        return dirname(realpath($this->getConfigFile()));
+        return VARNISH_FILE;
     }
 
     /**
@@ -88,7 +86,7 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
      */
     protected function getBinary()
     {
-        return defined('VARNISH_BINARY') ? VARNISH_BINARY : 'varnishd';
+        return defined('VARNISH_BINARY') ? VARNISH_BINARY : null;
     }
 
     /**
@@ -129,67 +127,6 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     protected function getVarnishVersion()
     {
         return getenv('VARNISH_VERSION') ?: 3;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        $this->stopVarnish();
-    }
-
-    /**
-     * Stop Varnish process if it's running
-     */
-    protected function stopVarnish()
-    {
-        if (file_exists(self::PID)) {
-            $process = new Process('kill -9 ' . file_get_contents(self::PID));
-            $process->run(); // Ignore if command fails when Varnish wasn't running
-            unlink(self::PID);
-            $this->waitUntil('127.0.0.1', $this->getCachingProxyPort(), 2000);
-        }
-    }
-
-    /**
-     * Start Varnish process if it's not yet running
-     */
-    protected function startVarnish()
-    {
-        $builder = new ProcessBuilder(array(
-            $this->getBinary(),
-            '-a', '127.0.0.1:' . $this->getCachingProxyPort(),
-            '-T', '127.0.0.1:' . $this->getVarnishMgmtPort(),
-            '-f', $this->getConfigFile(),
-            '-n', $this->getCacheDir(),
-            '-p', 'vcl_dir=' . $this->getConfigDir(),
-            '-P', self::PID
-        ));
-
-        $process = $builder->getProcess();
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
-
-        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
-    }
-
-    protected function resetProxyDaemon()
-    {
-        $this->clearCache();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function clearCache()
-    {
-        // Clear Varnish cache by restarting
-        $this->stopVarnish();
-        $this->startVarnish();
     }
 
     protected function getVarnish()

@@ -97,7 +97,12 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->resetProxyDaemon();
+        $this->getProxy()->clear();
+    }
+
+    protected function tearDown()
+    {
+        $this->getProxy()->stop();
     }
 
     /**
@@ -116,88 +121,5 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
         return WEB_SERVER_HOSTNAME;
     }
 
-    /**
-     * Wait for caching proxy to be started up and reachable
-     *
-     * @param string $ip
-     * @param int    $port
-     * @param int    $timeout Timeout in milliseconds
-     *
-     * @throws \RuntimeException If proxy is not reachable within timeout
-     */
-    protected function waitFor($ip, $port, $timeout)
-    {
-        if (!$this->wait(
-            $timeout,
-            function () use ($ip, $port) {
-                return true == @fsockopen($ip, $port);
-            }
-        )) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Caching proxy cannot be reached at %s:%s',
-                    $ip,
-                    $port
-                )
-            );
-        }
-    }
-
-    /**
-     * Wait for caching proxy to be started up and reachable
-     *
-     * @param string $ip
-     * @param int    $port
-     * @param int    $timeout Timeout in milliseconds
-     *
-     * @throws \RuntimeException If proxy is not reachable within timeout
-     */
-    protected function waitUntil($ip, $port, $timeout)
-    {
-        if (!$this->wait(
-            $timeout,
-            function () use ($ip, $port) {
-                // This doesn't seem to work
-                return false == @fsockopen($ip, $port);
-            }
-        )) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Caching proxy still up at %s:%s',
-                    $ip,
-                    $port
-                )
-            );
-        }
-    }
-
-    protected function wait($timeout, $callback)
-    {
-        for ($i = 0; $i < $timeout; $i++) {
-            if ($callback()) {
-                return true;
-            }
-
-            usleep(1000);
-        }
-
-        return false;
-    }
-
-    /**
-     * Get port at which the caching proxy is running
-     *
-     * @return int
-     */
-    abstract protected function getCachingProxyPort();
-
-    /**
-     * Ensure the daemon is running and its cache is clear.
-     */
-    abstract protected function resetProxyDaemon();
-
-    /**
-     * Clear the cache
-     */
-    abstract protected function clearCache();
+    abstract protected function getProxy();
 }

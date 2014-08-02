@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests;
 
 use FOS\HttpCache\ProxyClient\Nginx;
+use FOS\HttpCache\Tests\Functional\Proxy\VarnishProxy;
 use Guzzle\Http\Message\Response;
 
 /**
@@ -139,8 +140,14 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     {
         exec($this->getBinary() .
             ' -c ' . $this->getConfigFile() .
-            ' -g "pid ' . self::PID . ';"'
+            ' -g "pid ' . self::PID . ';"',
+            $output,
+            $returnVar
         );
+
+        if (0 !== $returnVar) {
+            self::markTestSkipped(new \Exception());
+        }
 
         $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
     }
@@ -158,4 +165,17 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     {
         exec('rm -rf ' . $this->getCacheDir()."*");
     }
+
+    protected function getProxy()
+    {
+        if (null === $this->proxy) {
+            $this->proxy = new VarnishProxy('bla');
+        }
+
+        return $this->proxy;
+    }
+
+
+
+
 }
