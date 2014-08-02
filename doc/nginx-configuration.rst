@@ -42,12 +42,9 @@ Refresh
 
 If you want to invalidate cached objects by forcing a :term:`refresh`
 you have to use the built-in `proxy_cache_bypass <http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_bypass>`_
-directive.
-
-This directive defines conditions under which the response will not be taken from a cache. This library uses a custom HTTP header 
-named ``X-Refresh``. Add a line like the following one in the right place
-
-section:
+directive. This directive defines conditions under which the response will not
+be taken from a cache. This library uses a custom HTTP header named ``X-Refresh``,
+so add a line like the following to your config:
 
 .. literalinclude:: ../tests/Functional/Fixtures/nginx/fos.conf
     :language: nginx
