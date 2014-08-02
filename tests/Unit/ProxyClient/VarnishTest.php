@@ -45,6 +45,25 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('fos.lo', $headers->get('Host'));
     }
 
+    public function testBanHeaders()
+    {
+        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish->setDefaultBanHeaders(
+            array('A' => 'B')
+        );
+        $varnish->setDefaultBanHeader('Test', '.*');
+        $varnish->ban(array())->flush();
+
+        $requests = $this->getRequests();
+        $this->assertCount(1, $requests);
+        $this->assertEquals('BAN', $requests[0]->getMethod());
+
+        $headers = $requests[0]->getHeaders();
+        $this->assertEquals('.*', $headers->get('Test'));
+        $this->assertEquals('B', $headers->get('A'));
+        $this->assertEquals('fos.lo', $headers->get('Host'));
+    }
+
     public function testBanPath()
     {
         $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
@@ -60,6 +79,17 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('^(fos.lo|fos2.lo)$', $headers->get('X-Host'));
         $this->assertEquals('/articles/.*', $headers->get('X-Url'));
         $this->assertEquals('text/html', $headers->get('X-Content-Type'));
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\InvalidArgumentException
+     */
+    public function testBanPathEmptyHost()
+    {
+        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+
+        $hosts = array();
+        $varnish->banPath('/articles/.*', 'text/html', $hosts);
     }
 
     public function testPurge()

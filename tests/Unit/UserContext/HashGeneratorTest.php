@@ -25,6 +25,14 @@ class HashGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedHash, $hashGenerator->generateHash());
     }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\InvalidArgumentException
+     */
+    public function testConstructorError()
+    {
+        new HashGenerator(array());
+    }
 }
 
 class FooProvider implements ContextProviderInterface

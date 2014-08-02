@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\UserContext;
 
+use FOS\HttpCache\Exception\InvalidArgumentException;
+
 /**
  * Generate a hash for a UserContext by getting all the parameters needed across all registered services
  */
@@ -26,12 +28,12 @@ class HashGenerator
      *
      * @param ContextProviderInterface[] $providers
      *
-     * @throws \InvalidArgumentException If no providers are supplied
+     * @throws InvalidArgumentException If no providers are supplied
      */
     public function __construct(array $providers)
     {
         if (0 === count($providers)) {
-            throw new \InvalidArgumentException('You must supply at least one provider');
+            throw new InvalidArgumentException('You must supply at least one provider');
         }
 
         foreach ($providers as $provider) {
