@@ -67,7 +67,7 @@ supply that location to the class as the third parameter::
 Using the Clients
 -----------------
 
-Each client is an implementation of `ProxyClientInterface <../../../src/ProxyClient/ProxyClientInterface.php>`_.
+Each client is an implementation of :source:`ProxyClientInterface <src/ProxyClient/ProxyClientInterface.php>`.
 All other interfaces, ``PurgeInterface``, ``RefreshInterface`` and ``BanInterface``
 extend this ``ProxyClientInterface``. So each client implements at least one of
 the three :ref:`invalidation methods <invalidation methods>` depending on the

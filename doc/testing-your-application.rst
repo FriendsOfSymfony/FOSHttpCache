@@ -128,5 +128,6 @@ correctly::
     }
 
 
-For more ideas, see this library’s functional tests in ``tests/Funtional/``.
+For more ideas, see this library’s functional tests in the
+:source:`tests/Functional/` directory.
 

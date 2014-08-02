@@ -66,7 +66,7 @@ the current user context.
 Context Providers
 -----------------
 
-Each provider is passed the `UserContext <../../../src/UserContext/UserContext.php>`_
+Each provider is passed the :source:`UserContext <src/UserContext/UserContext.php>`
 and updates that with parameters which influence the varied response.
 
 A provider that looks at whether the user is authenticated could look like this::

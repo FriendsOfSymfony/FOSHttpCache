@@ -24,7 +24,7 @@ Nginx does not support :term:`purge` functionality out of the box but you can ea
 `ngx_cache_purge <https://github.com/FRiCKLE/ngx_cache_purge>`_ module. You just need to compile 
 Nginx from sources adding `ngx_cache_purge` with `--add-module`
 
-You can check the script `install-nginx.sh <../../../tests/install-nginx.sh>`_ to get an idea
+You can check the script :source:`install-nginx.sh <tests/install-nginx.sh>` to get an idea
 about the steps you need to perform.
 
 Then configure Nginx for purge requests:

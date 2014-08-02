@@ -180,7 +180,7 @@ Error handling
 --------------
 
 If an error occurs during ``flush()``, the method throws an
-`ExceptionCollection <../../../src/Exception/ExceptionCollection.php>`_
+:source:`ExceptionCollection <src/Exception/ExceptionCollection.php>`
 that contains an exception for each failed request to the caching proxy.
 
 These exception are of two types:
