@@ -11,8 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional\Varnish;
 
-use FOS\HttpCache\ProxyClient\Varnish;
-use FOS\HttpCache\Tests\VarnishTestCase;
+use FOS\HttpCache\Test\VarnishTestCase;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 
 /**

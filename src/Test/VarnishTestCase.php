@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests;
+namespace FOS\HttpCache\Test;
 
 use FOS\HttpCache\ProxyClient\Varnish;
-use FOS\HttpCache\Tests\Functional\Proxy\VarnishProxy;
+use FOS\HttpCache\Test\Proxy\VarnishProxy;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -45,19 +45,35 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     /**
      * @var Varnish
      */
-    protected $varnish;
+    protected $proxyClient;
 
+    /**
+     * @var VarnishProxy
+     */
     protected $proxy;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getProxy()
     {
         if (null === $this->proxy) {
             $this->proxy = new VarnishProxy($this->getConfigFile());
             if ($this->getBinary()) {
                 $this->proxy->setBinary($this->getBinary());
-
             }
 
+            if ($this->getCachingProxyPort()) {
+                $this->proxy->setPort($this->getCachingProxyPort());
+            }
+
+            if ($this->getVarnishMgmtPort()) {
+                $this->proxy->setManagementPort($this->getVarnishMgmtPort());
+            }
+
+            if ($this->getCacheDir()) {
+                $this->proxy->setCacheDir($this->getCacheDir());
+            }
         }
 
         return $this->proxy;
@@ -80,7 +96,7 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     }
 
     /**
-     * Defaults to "varnishd"
+     * Get Varnish binary
      *
      * @return string
      */
@@ -90,33 +106,33 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
     }
 
     /**
-     * Defaults to 6181, the varnish default.
+     * Get Varnish port
      *
      * @return int
      */
     protected function getCachingProxyPort()
     {
-        return defined('VARNISH_PORT') ? VARNISH_PORT : 6181;
+        return defined('VARNISH_PORT') ? VARNISH_PORT : null;
     }
 
     /**
-     * Defaults to 6182, the varnish default.
+     * Get Varnish management port
      *
      * @return int
      */
     protected function getVarnishMgmtPort()
     {
-        return defined('VARNISH_MGMT_PORT') ? VARNISH_MGMT_PORT : 6182;
+        return defined('VARNISH_MGMT_PORT') ? VARNISH_MGMT_PORT : null;
     }
 
     /**
-     * Defaults to a directory foshttpcache-test in the system tmp directory.
+     * Get Varnish cache directory
      *
      * @return string
      */
     protected function getCacheDir()
     {
-        return defined('VARNISH_CACHE_DIR') ? VARNISH_CACHE_DIR : sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-test';
+        return defined('VARNISH_CACHE_DIR') ? VARNISH_CACHE_DIR : null;
     }
 
     /**
@@ -129,15 +145,20 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
         return getenv('VARNISH_VERSION') ?: 3;
     }
 
-    protected function getVarnish()
+    /**
+     * Get Varnish proxy client
+     *
+     * @return Varnish
+     */
+    protected function getProxyClient()
     {
-        if (null === $this->varnish) {
-            $this->varnish = new Varnish(
-                array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-                $this->getHostName() . ':' . $this->getCachingProxyPort()
+        if (null === $this->proxyClient) {
+            $this->proxyClient = new Varnish(
+                array('http://127.0.0.1:' . $this->getProxy()->getPort()),
+                $this->getHostName() . ':' . $this->getProxy()->getPort()
             );
         }
 
-        return $this->varnish;
+        return $this->proxyClient;
     }
 }

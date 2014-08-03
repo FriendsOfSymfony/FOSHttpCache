@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests;
+namespace FOS\HttpCache\Test;
 
-use FOS\HttpCache\Tests\PHPUnit\IsCacheHitConstraint;
-use FOS\HttpCache\Tests\PHPUnit\IsCacheMissConstraint;
+use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
+use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\Response;
 
@@ -84,7 +84,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     {
         if (null === $this->client) {
             $this->client = new Client(
-                'http://' . $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                'http://' . $this->getHostName() . ':' . $this->getProxy()->getPort(),
                 array('curl.options' => array(CURLOPT_FORBID_REUSE => true))
             );
         }
@@ -93,13 +93,16 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Prepare the proxy daemon.
+     * Start the proxy server and reset any cached content
      */
     protected function setUp()
     {
         $this->getProxy()->clear();
     }
 
+    /**
+     * Stop the proxy server
+     */
     protected function tearDown()
     {
         $this->getProxy()->stop();
@@ -121,5 +124,13 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
         return WEB_SERVER_HOSTNAME;
     }
 
+    /**
+     * @return \FOS\HttpCache\Test\Proxy\ProxyInterface
+     */
     abstract protected function getProxy();
+
+    /**
+     * @return \FOS\HttpCache\ProxyClient\ProxyClientInterface
+     */
+    abstract protected function getProxyClient();
 }

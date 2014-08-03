@@ -11,8 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional;
 
-use FOS\HttpCache\ProxyClient\Nginx;
-use FOS\HttpCache\Tests\NginxTestCase;
+use FOS\HttpCache\Test\NginxTestCase;
 
 /**
  * @group webserver

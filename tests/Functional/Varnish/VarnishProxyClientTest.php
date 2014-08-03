@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\ProxyClient\Varnish;
-use FOS\HttpCache\Tests\VarnishTestCase;
+use FOS\HttpCache\Test\VarnishTestCase;
 
 /**
  * @group webserver
@@ -28,7 +28,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->getVarnish()->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
+        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertMiss($this->getResponse('/json.php'));
@@ -39,10 +39,10 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->getVarnish()->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
+        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->getVarnish()->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
+        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
@@ -54,7 +54,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->getVarnish()->banPath('.*')->flush();
+        $this->getProxyClient()->banPath('.*')->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertMiss($this->getResponse('/json.php'));
     }
@@ -67,7 +67,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->getVarnish()->banPath('.*', 'text/html')->flush();
+        $this->getProxyClient()->banPath('.*', 'text/html')->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/json.php'));
     }
@@ -77,7 +77,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->getVarnish()->purge('/cache.php')->flush();
+        $this->getProxyClient()->purge('/cache.php')->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
@@ -97,14 +97,14 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertHit($this->getResponse('/negotation.php', $html));
 
         $this->getResponse('/negotation.php');
-        $this->getVarnish()->purge('/negotation.php')->flush();
+        $this->getProxyClient()->purge('/negotation.php')->flush();
         $this->assertMiss($this->getResponse('/negotation.php', $json));
         $this->assertMiss($this->getResponse('/negotation.php', $html));
     }
 
     public function testPurgeHost()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getCachingProxyPort()));
+        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getProxy()->getPort()));
 
         $this->getResponse('/cache.php');
 
@@ -118,7 +118,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $this->getVarnish()->refresh('/cache.php')->flush();
+        $this->getProxyClient()->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
@@ -129,7 +129,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $json = array('Accept' => 'application/json');
         $html = array('Accept' => 'text/html');
 
-        $this->getVarnish()->refresh('/negotation.php', $json)->flush();
+        $this->getProxyClient()->refresh('/negotation.php', $json)->flush();
 
         $this->assertHit($this->getResponse('/negotation.php', $json));
         $this->assertMiss($this->getResponse('/negotation.php', $html));

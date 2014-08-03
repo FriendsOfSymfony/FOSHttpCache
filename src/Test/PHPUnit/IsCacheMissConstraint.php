@@ -1,6 +1,6 @@
 <?php
 
-namespace FOS\HttpCache\Tests\PHPUnit;
+namespace FOS\HttpCache\Test\PHPUnit;
 
 class IsCacheMissConstraint extends AbstractCacheConstraint
 {

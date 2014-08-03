@@ -57,7 +57,7 @@ Overriding Getters
 
 You can override getters in your test class in the following way::
 
-    use FOS\HttpCache\Tests\VarnishTestCase;
+    use FOS\HttpCache\Test\VarnishTestCase;
 
     class YourFunctionalTest extends VarnishTestCase
     {
@@ -80,7 +80,7 @@ Usage
 This example shows how you can test whether the caching headers your
 application sets influence Varnish as you expect them to::
 
-    use FOS\HttpCache\Tests\VarnishTestCase;
+    use FOS\HttpCache\Test\VarnishTestCase;
 
     class YourFunctionalTest extends VarnishTestCase
     {

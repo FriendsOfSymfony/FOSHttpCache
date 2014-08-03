@@ -9,10 +9,16 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Functional\Proxy;
+namespace FOS\HttpCache\Test\Proxy;
+
+use Symfony\Component\Process\ProcessBuilder;
 
 abstract class AbstractProxy implements ProxyInterface
 {
+    protected $port;
+    protected $binary;
+    protected $ip = '127.0.0.1';
+
     /**
      * Wait for caching proxy to be started up and reachable
      *
@@ -81,4 +87,82 @@ abstract class AbstractProxy implements ProxyInterface
         return false;
     }
 
+    /**
+     * Run a shell command
+     *
+     * @param string $command
+     * @param array  $arguments
+     *
+     * @throws \RuntimeException If command execution fails
+     */
+    protected function runCommand($command, array $arguments)
+    {
+        $builder = new ProcessBuilder($arguments);
+        $builder->setPrefix($command);
+
+        $process = $builder->getProcess();
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException($process->getErrorOutput());
+        }
+    }
+
+
+    /**
+     * @param int $port
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * Set Varnish binary (defaults to varnishd)
+     *
+     * @param string $binary
+     */
+    public function setBinary($binary)
+    {
+        $this->binary = $binary;
+    }
+
+    /**
+     * Get Varnish binary
+     *
+     * @return string
+     */
+    public function getBinary()
+    {
+        return $this->binary;
+    }
+
+
+    /**
+     * Set IP address (defaults to 127.0.0.1)
+     *
+     * @param string $ip
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+    }
+
+    /**
+     * Get IP address
+     *
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
 }
