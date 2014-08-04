@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sudo apt-get install build-essential libc6 libpcre3 libpcre3-dev libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base
+sudo apt-get install build-essential libc6 libpcre3 libpcre3-dev libpcrecpp0 libssl-dev zlib1g zlib1g-dev lsb-base
 cd /tmp/
 mkdir custom_nginx
 cd custom_nginx
