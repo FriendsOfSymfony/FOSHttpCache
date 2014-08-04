@@ -112,7 +112,7 @@ abstract class VarnishTestCase extends AbstractProxyClientTestCase
      */
     protected function getCachingProxyPort()
     {
-        return defined('VARNISH_PORT') ? VARNISH_PORT : null;
+        return defined('VARNISH_PORT') ? VARNISH_PORT : 6181;
     }
 
     /**

@@ -17,6 +17,7 @@ abstract class AbstractProxy implements ProxyInterface
 {
     protected $port;
     protected $binary;
+    protected $configFile;
     protected $ip = '127.0.0.1';
 
     /**
@@ -164,5 +165,27 @@ abstract class AbstractProxy implements ProxyInterface
     public function getIp()
     {
         return $this->ip;
+    }
+
+    /**
+     * @param string $configFile
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setConfigFile($configFile)
+    {
+        if (!file_exists($configFile)) {
+            throw new \InvalidArgumentException('Cannot find specified Nginx config file: ' . $configFile);
+        }
+
+        $this->configFile = $configFile;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigFile()
+    {
+        return $this->configFile;
     }
 }

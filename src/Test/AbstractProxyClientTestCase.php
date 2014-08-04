@@ -84,7 +84,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     {
         if (null === $this->client) {
             $this->client = new Client(
-                'http://' . $this->getHostName() . ':' . $this->getProxy()->getPort(),
+                'http://' . $this->getHostName() . ':' . $this->getCachingProxyPort(),
                 array('curl.options' => array(CURLOPT_FORBID_REUSE => true))
             );
         }

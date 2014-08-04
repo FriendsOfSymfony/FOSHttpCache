@@ -11,9 +11,6 @@
 
 namespace FOS\HttpCache\Test\Proxy;
 
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
-
 /**
  * {@inheritdoc}
  */
@@ -102,32 +99,6 @@ class VarnishProxy extends AbstractProxy
         }
 
         return $this->configDir;
-    }
-
-    /**
-     * Set VCL file
-     *
-     * @param mixed $configFile
-     * @throws \InvalidArgumentException
-     */
-
-    public function setConfigFile($configFile)
-    {
-        if (!file_exists($configFile)) {
-            throw new \InvalidArgumentException('Cannot find config file: ' . $configFile);
-        }
-
-        $this->configFile = $configFile;
-    }
-
-    /**
-     * Get VCL file
-     *
-     * @return string
-     */
-    public function getConfigFile()
-    {
-        return $this->configFile;
     }
 
     /**

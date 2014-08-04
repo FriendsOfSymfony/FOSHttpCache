@@ -57,7 +57,8 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
             throw new \Exception('Specify the nginx configuration file path in phpunit.xml or override getConfigFile()');
         }
 
-        return NGINX_FILE;
+        // Nginx needs an absolute path
+        return realpath(NGINX_FILE);
     }
 
     /**
@@ -77,7 +78,7 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
      */
     protected function getCachingProxyPort()
     {
-        return defined('NGINX_PORT') ? NGINX_PORT : null;
+        return defined('NGINX_PORT') ? NGINX_PORT : 8088;
     }
 
     /**

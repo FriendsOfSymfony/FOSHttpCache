@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCache package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCache\Test\Proxy;
 
 class NginxProxy extends Abstractproxy
@@ -16,23 +25,23 @@ class NginxProxy extends Abstractproxy
     }
 
     /**
-     * Start the proxy server
+     * {@inheritdoc}
      */
     public function start()
     {
         $this->runCommand(
             $this->getBinary(),
             array(
-                ' -c ' . $this->getConfigFile() .
-                ' -g "pid ' . $this->pid . ';"'
+                '-c', $this->getConfigFile() ,
+                '-g', 'pid ' . $this->pid . ';'
             )
         );
 
-        $this->waitFor('127.0.0.1', $this->getPort(), 2000);
+        $this->waitFor($this->getIp(), $this->getPort(), 2000);
     }
 
     /**
-     * Stop the proxy server
+     * {@inheritdoc}
      */
     public function stop()
     {
@@ -42,38 +51,16 @@ class NginxProxy extends Abstractproxy
     }
 
     /**
-     * Clear all cached content from the proxy server
+     * {@inheritdoc}
      */
     public function clear()
     {
-        $this->runCommand('rm', array('-rf', $this->getCacheDir() . '*'));
+        $this->runCommand('rm', array('-rf', $this->getCacheDir()));
+        $this->start();
     }
 
     /**
-     * @param string $configFile
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function setConfigFile($configFile)
-    {
-        if (!file_exists($configFile)) {
-
-            throw new \InvalidArgumentException('Can not find specified nginx config file: ' . $configFile);
-        }
-
-        $this->configFile = $configFile;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getConfigFile()
-    {
-        return $this->configFile;
-    }
-
-    /**
-     * @param mixed $cacheDir
+     * @param string $cacheDir
      */
     public function setCacheDir($cacheDir)
     {
@@ -81,7 +68,7 @@ class NginxProxy extends Abstractproxy
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCacheDir()
     {
