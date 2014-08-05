@@ -175,7 +175,7 @@ abstract class AbstractProxy implements ProxyInterface
     public function setConfigFile($configFile)
     {
         if (!file_exists($configFile)) {
-            throw new \InvalidArgumentException('Cannot find specified Nginx config file: ' . $configFile);
+            throw new \InvalidArgumentException('Cannot find config file: ' . $configFile);
         }
 
         $this->configFile = $configFile;
