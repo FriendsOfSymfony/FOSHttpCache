@@ -11,8 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional;
 
-use FOS\HttpCache\ProxyClient\Nginx;
-use FOS\HttpCache\Tests\NginxTestCase;
+use FOS\HttpCache\Test\NginxTestCase;
 
 /**
  * @group webserver
@@ -25,7 +24,7 @@ class NginxTest extends NginxTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $nginx = $this->getNginx('/purge');
+        $nginx = $this->getProxyClient('/purge');
 
         $this->markTestSkipped('This does not work yet - Nginx client has to insert the separate location path.');
         $nginx->purge(sprintf('http://%s/cache.php', $this->getHostName()))->flush();
@@ -38,7 +37,7 @@ class NginxTest extends NginxTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $nginx = $this->getNginx('/purge');
+        $nginx = $this->getProxyClient('/purge');
         $nginx->purge('/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
@@ -49,7 +48,7 @@ class NginxTest extends NginxTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $nginx = $this->getNginx();
+        $nginx = $this->getProxyClient();
         $nginx->purge(sprintf('http://%s/cache.php', $this->getHostName()))->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
@@ -60,7 +59,7 @@ class NginxTest extends NginxTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $nginx = $this->getNginx();
+        $nginx = $this->getProxyClient();
         $nginx->purge('/cache.php')->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
@@ -72,7 +71,7 @@ class NginxTest extends NginxTestCase
         $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $nginx = $this->getNginx();
+        $nginx = $this->getProxyClient();
         $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
@@ -85,7 +84,7 @@ class NginxTest extends NginxTestCase
         $response = $this->getResponse('/cache.php');
         $this->assertHit($response);
 
-        $nginx = $this->getNginx();
+        $nginx = $this->getProxyClient();
         $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');

@@ -9,10 +9,10 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests;
+namespace FOS\HttpCache\Test;
 
 use FOS\HttpCache\ProxyClient\Nginx;
-use Guzzle\Http\Message\Response;
+use FOS\HttpCache\Test\Proxy\NginxProxy;
 
 /**
  * A phpunit base class to write functional tests with NGINX.
@@ -35,13 +35,14 @@ use Guzzle\Http\Message\Response;
 abstract class NginxTestCase extends AbstractProxyClientTestCase
 {
     /**
+     * @var NginxProxy
+     */
+    protected $proxy;
+
+    /**
      * @var Nginx
      */
-    protected $nginx;
-
-    const CACHE_EXPIRED = 'EXPIRED';
-
-    const PID = '/tmp/foshttpcache-nginx.pid';
+    protected $proxyClient;
 
     /**
      * The default implementation looks at the constant NGINX_FILE.
@@ -55,15 +56,9 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
         if (!defined('NGINX_FILE')) {
             throw new \Exception('Specify the nginx configuration file path in phpunit.xml or override getConfigFile()');
         }
-        $configFile = NGINX_FILE;
 
-        if (!file_exists($configFile)) {
-            throw new \Exception('Can not find specified nginx config file: ' . $configFile);
-        }
-
-	    $configFile = __DIR__."/../".$configFile;
-
-        return $configFile;
+        // Nginx needs an absolute path
+        return realpath(NGINX_FILE);
     }
 
     /**
@@ -73,7 +68,7 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
      */
     protected function getBinary()
     {
-        return defined('NGINX_BINARY') ? NGINX_BINARY : 'nginx';
+        return defined('NGINX_BINARY') ? NGINX_BINARY : null;
     }
 
     /**
@@ -101,61 +96,44 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getNginx($purgeLocation = false)
+    protected function getProxy()
     {
-        if (null === $this->nginx) {
-            $this->nginx = new Nginx(
+        if (null === $this->proxy) {
+            $this->proxy = new NginxProxy($this->getConfigFile());
+
+            if ($this->getBinary()) {
+                $this->proxy->setBinary($this->getBinary());
+            }
+
+            if ($this->getCacheDir()) {
+                $this->proxy->setCacheDir($this->getCacheDir());
+            }
+
+            if ($this->getCachingProxyPort()) {
+                $this->proxy->setPort($this->getCachingProxyPort());
+            }
+        }
+
+        return $this->proxy;
+    }
+
+    /**
+     * Get proxy client
+     *
+     * @param bool|string $purgeLocation Optional purgeLocation
+     *
+     * @return \FOS\HttpCache\ProxyClient\Nginx
+     */
+    protected function getProxyClient($purgeLocation = false)
+    {
+        if (null === $this->proxyClient) {
+            $this->proxyClient = new Nginx(
                 array('http://127.0.0.1:' . $this->getCachingProxyPort()),
                 $this->getHostName(),
                 $purgeLocation
             );
         }
 
-        return $this->nginx;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        $this->stopNginx();
-    }
-
-    /**
-     * Stop Nginx process if it's running.
-     */
-    protected function stopNginx()
-    {
-        if (file_exists(self::PID)) {
-            exec('kill ' . file_get_contents(self::PID));
-        }
-    }
-
-    /**
-     * Start Nginx process if it's not yet running.
-     */
-    protected function startNginx()
-    {
-        exec($this->getBinary() .
-            ' -c ' . $this->getConfigFile() .
-            ' -g "pid ' . self::PID . ';"'
-        );
-
-        $this->waitFor('127.0.0.1', $this->getCachingProxyPort(), 2000);
-    }
-
-    protected function resetProxyDaemon()
-    {
-        $this->clearCache();
-        $this->startNginx();
-    }
-
-    /**
-     * Clear Nginx cache
-     */
-    protected function clearCache()
-    {
-        exec('rm -rf ' . $this->getCacheDir()."*");
+        return $this->proxyClient;
     }
 }
