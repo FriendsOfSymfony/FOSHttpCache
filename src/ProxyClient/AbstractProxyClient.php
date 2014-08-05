@@ -18,7 +18,7 @@ use FOS\HttpCache\Exception\ProxyUnreachableException;
 use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\MultiTransferException;
+use Guzzle\Common\Exception\ExceptionCollection as GuzzleExceptionCollection;
 use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Message\RequestInterface;
 
@@ -173,7 +173,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
 
         try {
             $this->client->send($allRequests);
-        } catch (MultiTransferException $e) {
+        } catch (GuzzleExceptionCollection $e) {
             $this->handleException($e);
         }
     }
@@ -181,11 +181,11 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     /**
      * Handle request exception
      *
-     * @param MultiTransferException $exceptions
+     * @param GuzzleExceptionCollection $exceptions
      *
      * @throws ExceptionCollection
      */
-    protected function handleException(MultiTransferException $exceptions)
+    protected function handleException(GuzzleExceptionCollection $exceptions)
     {
         $collection = new ExceptionCollection();
 
