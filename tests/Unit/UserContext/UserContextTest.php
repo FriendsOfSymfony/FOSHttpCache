@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\tests\Unit\UserContext;
+namespace FOS\HttpCache\Tests\Unit\UserContext;
 
 use FOS\HttpCache\UserContext\UserContext;
 

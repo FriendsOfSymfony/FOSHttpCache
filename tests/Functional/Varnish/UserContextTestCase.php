@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\tests\Functional\Varnish;
+namespace FOS\HttpCache\Tests\Functional\Varnish;
 
 use FOS\HttpCache\Test\VarnishTestCase;
 use Guzzle\Http\Exception\ClientErrorResponseException;

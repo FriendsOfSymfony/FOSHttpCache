@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\tests\Functional;
+namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Test\VarnishTestCase;
