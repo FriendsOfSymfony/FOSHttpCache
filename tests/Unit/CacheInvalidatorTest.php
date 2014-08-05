@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Unit;
+namespace FOS\HttpCache\tests\Unit;
 
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\EventListener\LogSubscriber;

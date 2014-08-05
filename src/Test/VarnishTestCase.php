@@ -14,7 +14,6 @@ namespace FOS\HttpCache\Test;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Test\Proxy\VarnishProxy;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * A phpunit base class to write functional tests with varnish.

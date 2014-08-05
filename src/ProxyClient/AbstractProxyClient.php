@@ -79,8 +79,8 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      *                       addresses, including port if not port 80.
      *                       E.g. array('127.0.0.1:6081')
      *
-     * @throws InvalidUrlException       If server is invalid or contains URL
-     *                                   parts other than scheme, host, port
+     * @throws InvalidUrlException If server is invalid or contains URL
+     *                             parts other than scheme, host, port
      */
     public function setServers(array $servers)
     {

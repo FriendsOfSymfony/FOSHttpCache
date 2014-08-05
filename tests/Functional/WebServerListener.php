@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Functional;
+namespace FOS\HttpCache\tests\Functional;
 
 /**
  * A PHPUnit test listener that starts and stops the PHP built-in web server

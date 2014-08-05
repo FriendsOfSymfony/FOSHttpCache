@@ -12,13 +12,6 @@
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
-use FOS\HttpCache\ProxyClient\Varnish;
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\Request;
-use \Mockery;
 
 class ExceptionCollectionTest extends \PHPUnit_Framework_TestCase
 {

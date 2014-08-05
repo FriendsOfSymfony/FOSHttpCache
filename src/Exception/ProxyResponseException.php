@@ -20,7 +20,7 @@ class ProxyResponseException extends \RuntimeException implements HttpCacheExcep
      * @param string     $host          The host name that was contacted.
      * @param string     $statusCode    The status code of the reply.
      * @param string     $statusMessage The error message.
-     * @param string     $details  Further details about the request that caused the error.
+     * @param string     $details       Further details about the request that caused the error.
      * @param \Exception $previous      The exception from the HTTP client.
      *
      * @return ProxyUnreachableException
@@ -36,6 +36,7 @@ class ProxyResponseException extends \RuntimeException implements HttpCacheExcep
         if ($details) {
             $message .= ". $details";
         }
+
         return new ProxyResponseException($message, $statusCode, $previous);
     }
 }

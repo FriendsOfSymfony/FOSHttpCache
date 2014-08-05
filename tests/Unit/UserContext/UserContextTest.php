@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Unit\UserContext;
+namespace FOS\HttpCache\tests\Unit\UserContext;
 
 use FOS\HttpCache\UserContext\UserContext;
 
@@ -42,7 +42,7 @@ class UserContextTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($userContext->hasParameter('roles'));
 
         $parameters = array();
-        foreach($userContext as $name => $value) {
+        foreach ($userContext as $name => $value) {
             $parameters[$name] = $value;
         }
         $this->assertEquals(
