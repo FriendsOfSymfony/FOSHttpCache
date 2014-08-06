@@ -44,6 +44,16 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
      */
     protected function matches($other)
     {
+        if (!$other->hasHeader($this->header)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Response has no "%s" header. Configure your caching proxy '
+                    . 'to set the header with cache hit/miss status.',
+                    $this->header
+                )
+            );
+        }
+
         return $this->getValue() === (string) $other->getHeader($this->header);
     }
 
