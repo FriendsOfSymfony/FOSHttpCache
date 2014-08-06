@@ -13,7 +13,7 @@ namespace FOS\HttpCache\Tests\Unit\Test\PHPUnit;
 
 use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
 
-class IsCacheHitConstraintTest extends \PHPUnit_Framework_TestCase
+class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
 {
     /**
      * @var IsCacheHitConstraint
@@ -30,10 +30,23 @@ class IsCacheHitConstraintTest extends \PHPUnit_Framework_TestCase
      */
     public function testMatches()
     {
-        $response = \Mockery::mock('\Guzzle\Http\Message\Response[getHeader]', array(null))
-            ->shouldReceive('getHeader')
-            ->once()
-            ->andReturn('MISS')
+        $response = $this->getResponseMock()
+            ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
+            ->shouldReceive('getHeader')->with('cache-header')->once()->andReturn('MISS')
+            ->getMock();
+
+        $this->constraint->evaluate($response);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Response has no "cache-header" header
+     */
+    public function testMatchesThrowsExceptionIfHeaderIsMissing()
+    {
+        $response = $this->getResponseMock()
+            ->shouldReceive('hasHeader')->with('cache-header')->once()
+            ->andReturn(false)
             ->getMock();
 
         $this->constraint->evaluate($response);
