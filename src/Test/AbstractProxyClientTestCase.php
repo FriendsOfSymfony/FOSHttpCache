@@ -20,7 +20,7 @@ use Guzzle\Http\Message\Response;
  * Abstract caching proxy test case
  *
  */
-abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase implements ProxyTestCaseInterface
 {
     /**
      * A Guzzle HTTP client.
@@ -30,10 +30,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     protected $client;
 
     /**
-     * Assert a cache miss
-     *
-     * @param Response $response
-     * @param string   $message  Test failure message (optional)
+     * {@inheritdoc}
      */
     public function assertMiss(Response $response, $message = null)
     {
@@ -41,10 +38,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Assert a cache hit
-     *
-     * @param Response $response
-     * @param string   $message  Test failure message (optional)
+     * {@inheritdoc}
      */
     public function assertHit(Response $response, $message = null)
     {
@@ -62,13 +56,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Get HTTP response from your application
-     *
-     * @param string $url
-     * @param array  $headers
-     * @param array  $options
-     *
-     * @return Response
+     * {@inheritdoc}
      */
     public function getResponse($url, array $headers = array(), $options = array())
     {
@@ -76,9 +64,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Get HTTP client for your application
-     *
-     * @return Client
+     * {@inheritdoc}
      */
     public function getClient()
     {
