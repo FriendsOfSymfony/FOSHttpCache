@@ -82,15 +82,11 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     }
 
     /**
-     * Get NGINX cache path
+     * Get Nginx cache directory
      */
     protected function getCacheDir()
     {
-        if (!defined('NGINX_CACHE_PATH')) {
-            throw new \Exception('Specify the NGINX_CACHE_PATH in phpunit.xml or override getCacheDir()');
-        }
-
-        return NGINX_CACHE_PATH;
+        return defined('NGINX_CACHE_PATH') ? NGINX_CACHE_PATH : null;
     }
 
     /**
@@ -100,6 +96,7 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     {
         if (null === $this->proxy) {
             $this->proxy = new NginxProxy($this->getConfigFile());
+            $this->proxy->setPort($this->getCachingProxyPort());
 
             if ($this->getBinary()) {
                 $this->proxy->setBinary($this->getBinary());
@@ -107,10 +104,6 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
 
             if ($this->getCacheDir()) {
                 $this->proxy->setCacheDir($this->getCacheDir());
-            }
-
-            if ($this->getCachingProxyPort()) {
-                $this->proxy->setPort($this->getCachingProxyPort());
             }
         }
 
@@ -120,11 +113,11 @@ abstract class NginxTestCase extends AbstractProxyClientTestCase
     /**
      * Get proxy client
      *
-     * @param bool|string $purgeLocation Optional purgeLocation
+     * @param string $purgeLocation Optional purgeLocation
      *
-     * @return \FOS\HttpCache\ProxyClient\Nginx
+     * @return Nginx
      */
-    protected function getProxyClient($purgeLocation = false)
+    protected function getProxyClient($purgeLocation = '')
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Nginx(
