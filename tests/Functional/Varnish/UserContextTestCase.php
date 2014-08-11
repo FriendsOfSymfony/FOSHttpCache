@@ -47,13 +47,17 @@ abstract class UserContextTestCase extends VarnishTestCase
         $this->assertContextCache($cachedResponse2->getHeader('X-HashCache'));
         $this->assertHit($cachedResponse2);
 
-        $headResponse1 = $this->getClient()->head('/user_context.php', array(), array('cookies' => array('foo')))->send();
+        $headResponse1 = $this->getHttpClient()
+            ->head('/user_context.php', array(), array('cookies' => array('foo')))
+            ->send();
 
         $this->assertEquals('foo', $headResponse1->getHeader('X-HashTest'));
         $this->assertContextCache($headResponse1->getHeader('X-HashCache'));
         $this->assertHit($headResponse1);
 
-        $headResponse2 = $this->getClient()->head('/user_context.php', array(), array('cookies' => array('bar')))->send();
+        $headResponse2 = $this->getHttpClient()
+            ->head('/user_context.php', array(), array('cookies' => array('bar')))
+            ->send();
 
         $this->assertEquals('bar', $headResponse2->getHeader('X-HashTest'));
         $this->assertContextCache($headResponse2->getHeader('X-HashCache'));

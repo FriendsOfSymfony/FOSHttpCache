@@ -32,7 +32,7 @@ use FOS\HttpCache\Test\Proxy\NginxProxy;
  * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
  * NGINX_CACHE_PATH   NGINX configuration file (required if not passed to setUp)
  */
-abstract class NginxTestCase extends AbstractProxyClientTestCase
+abstract class NginxTestCase extends ProxyTestCase
 {
     /**
      * @var NginxProxy
