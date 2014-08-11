@@ -31,9 +31,8 @@ class VarnishProxy extends AbstractProxy
      */
     public function __construct($configFile)
     {
-        $this->cacheDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-test';
-
         $this->setConfigFile($configFile);
+        $this->setCacheDir(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-varnish');
     }
 
     /**

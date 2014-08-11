@@ -19,9 +19,15 @@ class NginxProxy extends Abstractproxy
     protected $pid = '/tmp/foshttpcache-nginx.pid';
     protected $cacheDir;
 
+    /**
+     * Constructor
+     *
+     * @param string $configFile Path to Nginx configuration file
+     */
     public function __construct($configFile)
     {
         $this->setConfigFile($configFile);
+        $this->setCacheDir(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-nginx');
     }
 
     /**
