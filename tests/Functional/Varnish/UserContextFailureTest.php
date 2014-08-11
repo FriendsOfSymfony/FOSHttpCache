@@ -78,7 +78,9 @@ class UserContextFailureTest extends VarnishTestCase
         $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
 
         //Second request in head or post
-        $postResponse = $this->getClient()->post('/user_context.php', array(), null, array('cookies' => array('foo')))->send();
+        $postResponse = $this->getHttpClient()
+            ->post('/user_context.php', array(), null, array('cookies' => array('foo')))
+            ->send();
 
         $this->assertEquals('POST', $postResponse->getBody(true));
         $this->assertEquals('MISS', $postResponse->getHeader('X-HashCache'));

@@ -20,14 +20,14 @@ use Guzzle\Http\Message\Response;
  * Abstract caching proxy test case
  *
  */
-abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
+abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
      * A Guzzle HTTP client.
      *
      * @var Client
      */
-    protected $client;
+    protected $httpClient;
 
     /**
      * Assert a cache miss
@@ -72,7 +72,7 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      */
     public function getResponse($url, array $headers = array(), $options = array())
     {
-        return $this->getClient()->get($url, $headers, $options)->send();
+        return $this->getHttpClient()->get($url, $headers, $options)->send();
     }
 
     /**
@@ -80,16 +80,16 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
      *
      * @return Client
      */
-    public function getClient()
+    public function getHttpClient()
     {
-        if (null === $this->client) {
-            $this->client = new Client(
+        if (null === $this->httpClient) {
+            $this->httpClient = new Client(
                 'http://' . $this->getHostName() . ':' . $this->getCachingProxyPort(),
                 array('curl.options' => array(CURLOPT_FORBID_REUSE => true))
             );
         }
 
-        return $this->client;
+        return $this->httpClient;
     }
 
     /**
@@ -125,12 +125,23 @@ abstract class AbstractProxyClientTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Get proxy server
+     *
      * @return \FOS\HttpCache\Test\Proxy\ProxyInterface
      */
     abstract protected function getProxy();
 
     /**
+     * Get proxy client
+     *
      * @return \FOS\HttpCache\ProxyClient\ProxyClientInterface
      */
     abstract protected function getProxyClient();
+
+    /**
+     * Get port that caching proxy listens on
+     *
+     * @return int
+     */
+    abstract protected function getCachingProxyPort();
 }

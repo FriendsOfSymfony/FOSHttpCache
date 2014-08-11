@@ -19,7 +19,7 @@ By having your test classes extend ``VarnishTestCase``, you get:
 * ``$this->varnish`` referring to an instance of this library’s Varnish client
   that is configured to talk to your Varnish server
 * convenience methods for executing HTTP requests to your application:
-  ``$this->getClient()`` and ``$this->getResponse()``
+  ``$this->getHttpClient()`` and ``$this->getResponse()``
 * custom assertions ``assertHit`` and ``assertMiss`` for validating a cache hit/miss.
 
 Configuration
