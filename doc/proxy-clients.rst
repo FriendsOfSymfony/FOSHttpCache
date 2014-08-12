@@ -103,6 +103,21 @@ path::
         ->flush()
     ;
 
+You can specify HTTP headers as the second argument to ``purge()``.
+For instance::
+
+    $client
+        ->purge('/some/path', array('X-Foo' => 'bar')
+        ->flush()
+    ;
+
+Please note that purge will invalidate all variants, so you do not have to
+send any headers that you vary on, such as ``Accept``.
+
+The above allows you to pass headers that are different between purge requests.
+If you want to send headers for all purge requests, such as ``Authorization``,
+use a :ref:`custom Guzzle client <custom Guzzle client>` instead.
+
 Refresh
 ~~~~~~~
 
@@ -163,3 +178,23 @@ Varnish client::
 
 Make sure to add any headers that you want to ban on to your
 :doc:`Varnish configuration <varnish-configuration>`.
+
+.. _custom guzzle client:
+
+Custom Guzzle Client
+--------------------
+
+By default, the proxy clients instantiate a `Guzzle client`_ to communicate
+with the caching proxy. If you need to customize the requests, for example to
+send a basic authentication header, you can inject a custom Guzzle client::
+
+    use FOS\HttpCache\ProxyClient\Varnish;
+    use Guzzle\Http\Client;
+
+    $client = new Client();
+    $client->setDefaultOption('auth', array('username', 'password', 'Digest'));
+
+    $servers = array('10.0.0.1');
+    $varnish = new Varnish($servers, '/baseUrl', $client);
+
+.. _Guzzle client: http://guzzle3.readthedocs.org/
