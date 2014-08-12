@@ -120,9 +120,11 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
                         $self->assertEquals('127.0.0.1', $requests[2]->getHost());
                         $self->assertEquals('8080', $requests[2]->getPort());
                         $self->assertEquals('/url/two', $requests[2]->getPath());
+                        $self->assertEquals('bar', $requests[2]->getHeader('X-Foo'));
 
                         $self->assertEquals('123.123.123.2', $requests[3]->getHost());
                         $self->assertEquals('/url/two', $requests[3]->getPath());
+                        $self->assertEquals('bar', $requests[3]->getHeader('X-Foo'));
 
                         return true;
                     }
@@ -138,7 +140,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $varnish = new Varnish($ips, 'my_hostname.dev', $client);
 
         $varnish->purge('/url/one');
-        $varnish->purge('/url/two');
+        $varnish->purge('/url/two', array('X-Foo' => 'bar'));
 
         $varnish->flush();
     }

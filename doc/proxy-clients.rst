@@ -103,6 +103,17 @@ path::
         ->flush()
     ;
 
+You can specify HTTP headers as the second argument to ``purge()``.
+For instance:
+
+    $client
+        ->purge('/some/path', array('X-Foo' => 'bar')
+        ->flush()
+    ;
+
+Please note that purge will invalidate all variants, so you do not have to
+send any headers that you vary on, such as ``Accept``.
+
 Refresh
 ~~~~~~~
 

@@ -109,9 +109,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     /**
      * {@inheritdoc}
      */
-    public function purge($url)
+    public function purge($url, array $headers = array())
     {
-        $this->queueRequest(self::HTTP_METHOD_PURGE, $url);
+        $this->queueRequest(self::HTTP_METHOD_PURGE, $url, $headers);
 
         return $this;
     }

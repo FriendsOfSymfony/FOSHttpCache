@@ -74,10 +74,10 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     /**
      * {@inheritdoc}
      */
-    public function purge($url)
+    public function purge($url, array $headers = array())
     {
         $purgeUrl = $this->purgeLocation.$url;
-        $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl);
+        $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl, $headers);
 
         return $this;
     }
