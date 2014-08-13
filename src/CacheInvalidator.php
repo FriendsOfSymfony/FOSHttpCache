@@ -166,19 +166,20 @@ class CacheInvalidator
     /**
      * Invalidate a path or URL
      *
-     * @param string $path Path or URL
+     * @param string $path    Path or URL
+     * @param array  $headers HTTP headers (optional)
      *
      * @throws UnsupportedProxyOperationException
      *
      * @return $this
      */
-    public function invalidatePath($path)
+    public function invalidatePath($path, array $headers = array())
     {
         if (!$this->cache instanceof PurgeInterface) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('PURGE');
         }
 
-        $this->cache->purge($path);
+        $this->cache->purge($path, $headers);
 
         return $this;
     }
