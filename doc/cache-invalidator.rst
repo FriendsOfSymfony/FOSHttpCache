@@ -51,6 +51,8 @@ Invalidate a URL with added header(s)::
         array('Cookie' => 'foo=bar; fizz=bang')
     )->flush();
 
+.. include:: includes/custom-headers.rst
+
 Refreshing Paths and URLs
 -------------------------
 
@@ -74,13 +76,7 @@ Refresh a URL with added header(s)::
         array('Cookie' => 'foo=bar; fizz=bang')
     )->flush();
 
-Optionally adding headers with invalidation request
--------------------------------------------------------
-
-.. note::
-    If adding the same headers on every invalidation request it would be preferrable
-    to apply these headers automatically rather than passing them explictly each time.
-    You can use a custom guzzle client to achieve this. See `Custom Guzzle Client` under :doc:`proxy clients <proxy-clients>`.
+.. include:: includes/custom-headers.rst
 
 .. _invalidate regex:
 
