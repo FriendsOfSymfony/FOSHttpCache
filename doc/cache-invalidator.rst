@@ -43,6 +43,15 @@ See below for the :ref:`flush() <flush>` method.
 Invalidate a URL::
 
     $cacheInvalidator->invalidatePath('http://www.example.com/users')->flush();
+    
+Invalidate a URL with added header(s)::
+
+    $cacheInvalidator->invalidatePath(
+        'http://www.example.com/users',
+        array('Cookie' => 'foo=bar; fizz=bang')
+    )->flush();
+
+.. include:: includes/custom-headers.rst
 
 Refreshing Paths and URLs
 -------------------------
@@ -59,6 +68,15 @@ Refreshing Paths and URLs
 Refresh a URL::
 
     $cacheInvalidator->refreshPath('http://www.example.com/users')->flush();
+
+Refresh a URL with added header(s)::
+
+    $cacheInvalidator->refreshPath(
+        'http://www.example.com/users',
+        array('Cookie' => 'foo=bar; fizz=bang')
+    )->flush();
+
+.. include:: includes/custom-headers.rst
 
 .. _invalidate regex:
 

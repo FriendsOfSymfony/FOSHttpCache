@@ -114,9 +114,7 @@ For instance::
 Please note that purge will invalidate all variants, so you do not have to
 send any headers that you vary on, such as ``Accept``.
 
-The above allows you to pass headers that are different between purge requests.
-If you want to send headers for all purge requests, such as ``Authorization``,
-use a :ref:`custom Guzzle client <custom Guzzle client>` instead.
+.. include:: includes/custom-headers.rst
 
 Refresh
 ~~~~~~~
