@@ -225,8 +225,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         } catch (ExceptionCollection $exceptions) {
             $this->assertCount(1, $exceptions);
             $this->assertInstanceOf($type, $exceptions->getFirst());
-        } catch (\Exception $e) {
-            die(get_class($e));
         }
     }
 
