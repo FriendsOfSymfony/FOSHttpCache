@@ -43,6 +43,13 @@ See below for the :ref:`flush() <flush>` method.
 Invalidate a URL::
 
     $cacheInvalidator->invalidatePath('http://www.example.com/users')->flush();
+    
+Invalidate a URL with added header(s)::
+
+    $cacheInvalidator->invalidatePath(
+        'http://www.example.com/users',
+        array('Cookie' => 'foo=bar; fizz=bang')
+    )->flush();
 
 Refreshing Paths and URLs
 -------------------------
@@ -59,6 +66,21 @@ Refreshing Paths and URLs
 Refresh a URL::
 
     $cacheInvalidator->refreshPath('http://www.example.com/users')->flush();
+
+Refresh a URL with added header(s)::
+
+    $cacheInvalidator->refreshPath(
+        'http://www.example.com/users',
+        array('Cookie' => 'foo=bar; fizz=bang')
+    )->flush();
+
+Optionally adding headers with invalidation request
+-------------------------------------------------------
+
+.. note::
+    If adding the same headers on every invalidation request it would be preferrable
+    to apply these headers automatically rather than passing them explictly each time.
+    You can use a custom guzzle client to achieve this. See `Custom Guzzle Client` under :doc:`proxy clients <proxy-clients>`.
 
 .. _invalidate regex:
 
