@@ -136,7 +136,7 @@ Invalidating Tags
 With tags you can group related representations so it becomes easier to
 invalidate them. You will have to make sure your web application adds the
 correct tags on all responses by setting the ``X-Cache-Tags`` header. The
-FOSHttpCacheBundle_ does does this for you when you’re using Symfony.
+FOSHttpCacheBundle_ does this for you when you’re using Symfony.
 
 Assume you sent four responses:
 
