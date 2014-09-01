@@ -130,7 +130,26 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      */
     protected function queueRequest($method, $url, array $headers = array())
     {
-        $this->queue[] = $this->createRequest($method, $url, $headers);
+        $signature = $this->getSignature($method, $url, $headers);
+        if (!isset($this->queue[$signature])) {
+            $this->queue[$signature] = $this->createRequest($method, $url, $headers);
+        }
+    }
+
+    /**
+     * Calculate a unique hash for the request, based on all significant information.
+     *
+     * @param string $method  HTTP method
+     * @param string $url     URL
+     * @param array  $headers HTTP headers
+     *
+     * @return string A hash value for this request.
+     */
+    private function getSignature($method, $url, array $headers)
+    {
+        ksort($headers);
+
+        return md5($method . "\n" . $url . "\n" . var_export($headers, true));
     }
 
     /**
