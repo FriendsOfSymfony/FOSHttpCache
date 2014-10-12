@@ -14,7 +14,7 @@ When we interact with the cache to purge/refresh entries we must send to Nginx a
 the very same values, for the elements used for building the key, as the request that create the entry.
 In this way Nginx can build the correct key and apply the required operation to the entry.
 
-By default Nginx key is build with `$scheme$proxy_host$request_uri`. For a full list of the elements
+By default Nginx key is built with `$scheme$proxy_host$request_uri`. For a full list of the elements
 you can use in the key see `this page from the official documentation <http://nginx.org/en/docs/http/ngx_http_core_module.html#variables>`_
 
 Purge
