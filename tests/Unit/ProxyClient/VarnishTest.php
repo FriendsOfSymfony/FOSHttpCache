@@ -47,6 +47,23 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('fos.lo', $headers->get('Host'));
     }
 
+    public function testBanEverythingNoBaseUrl()
+    {
+        $varnish = new Varnish(array('http://127.0.0.1:123'), null, $this->client);
+        $varnish->ban(array())->flush();
+
+        $requests = $this->getRequests();
+        $this->assertCount(1, $requests);
+        $this->assertEquals('BAN', $requests[0]->getMethod());
+
+        $headers = $requests[0]->getHeaders();
+        $this->assertEquals('.*', $headers->get('X-Host'));
+        $this->assertEquals('.*', $headers->get('X-Url'));
+        $this->assertEquals('.*', $headers->get('X-Content-Type'));
+        // Ensure host header matches the Varnish server one.
+        $this->assertEquals(array('127.0.0.1:123'), $headers->get('Host')->toArray());
+    }
+
     public function testBanHeaders()
     {
         $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
