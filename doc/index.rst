@@ -24,4 +24,4 @@ Contents:
     user-context
 
     testing-your-application
-    testing-the-library
+    contributing
