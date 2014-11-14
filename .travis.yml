@@ -36,6 +36,7 @@ before_script:
   - composer update --dev --prefer-source
   # Install Sphinx
   - sudo apt-get install python-sphinx
+  - sudo pip install -r doc/requirements.txt
 
 script:
   - phpunit --coverage-clover=coverage.clover

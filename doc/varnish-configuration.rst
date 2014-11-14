@@ -16,15 +16,15 @@ to your Varnish configuration. This ACL determines which IPs are allowed to
 issue invalidation requests. Let’s call the ACL `invalidators`. The ACL below
 will be used throughout the Varnish examples on this page.
 
-.. code-block:: c
+.. code-block:: varnish4
 
     # /etc/varnish/your_varnish.vcl
 
     acl invalidators {
-      "localhost";
-      # Add any other IP addresses that your application runs on and that you
-      # want to allow invalidation requests from. For instance:
-      # "192.168.1.0"/24;
+        "localhost";
+        # Add any other IP addresses that your application runs on and that you
+        # want to allow invalidation requests from. For instance:
+        # "192.168.1.0"/24;
     }
 
 .. important::
@@ -40,17 +40,16 @@ To configure Varnish for `handling PURGE requests <https://www.varnish-cache.org
 
 Purge removes a specific URL (including query strings) in all its variants (as specified by the ``Vary`` header).
 
-Varnish 3
-"""""""""
+.. configuration-block::
 
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-3/purge.vcl
-    :language: c
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/purge.vcl
+        :language: varnish4
+        :linenos:
 
-Varnish 4
-"""""""""
-
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-4/purge.vcl
-
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/purge.vcl
+        :language: varnish3
+        :linenos:
+        
 Refresh
 ~~~~~~~
 
@@ -59,30 +58,26 @@ add the following to your Varnish configuration:
 
 Refresh invalidates a specific URL including the query string, but *not* its variants.
 
-Varnish 3 & 4
-"""""""""""""
-
 .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/refresh.vcl
-    :language: c
+    :language: varnish3
+    :linenos:
 
 Ban
 ~~~
 
 To configure Varnish for `handling BAN requests <https://www.varnish-software.com/static/book/Cache_invalidation.html#banning>`_:
 
-Varnish 3
-"""""""""
+.. configuration-block::
 
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-3/ban.vcl
-    :language: c
-    :lines: 1-7, 15-18, 20-
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
+        :language: varnish4
+        :lines: 1-7, 15-18, 20-
+        :linenos:
 
-Varnish 4
-"""""""""
-
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
-    :language: c
-    :lines: 1-7, 15-18, 20-
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/ban.vcl
+        :language: varnish3
+        :lines: 1-7, 15-18, 20-
+        :linenos:
 
 Varnish contains a `ban lurker`_ that crawls the content to eventually throw out banned data even when it’s not requested by any client.
 
@@ -99,22 +94,18 @@ Add the following to your Varnish configuration to enable :ref:`cache tagging <t
 
     The custom ``X-Cache-Tags`` header should match the tagging header
     :ref:`configured in the cache invalidator <custom_tags_header>`.
+    
+.. configuration-block::
+    
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
+        :language: varnish4
+        :emphasize-lines: 8-13
+        :linenos:
 
-Varnish 3
-"""""""""
-
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-3/ban.vcl
-    :language: c
-    :emphasize-lines: 8-13
-    :linenos:
-
-Varnish 4
-"""""""""
-
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
-    :language: c
-    :emphasize-lines: 8-13
-    :linenos:
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/ban.vcl
+        :language: varnish3
+        :emphasize-lines: 8-13
+        :linenos:
 
 .. _varnish user context:
 
@@ -124,19 +115,16 @@ User Context
 To support :doc:`user context hashing <user-context>` you need to add some logic
 to the ``recv`` and the ``deliver`` methods:
 
-Varnish 3
-"""""""""
+.. configuration-block::
 
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
-    :language: c
-    :linenos:
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/user_context.vcl
+        :language: varnish4
+        :lines: 3-
+        :linenos:
 
-Varnish 4
-"""""""""
-
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-4/user_context.vcl
-    :language: c
-    :linenos:
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
+        :language: varnish3
+        :linenos:
 
 .. sidebar:: Caching User Specific Content
 
@@ -185,9 +173,10 @@ not be cached, but multiple hashes would be generated for one and the same user.
 
 To make the hash request cacheable, you must extract a stable user session id.
 You can do this as
-`explained in the varnish documentation <https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies>`_:
+`explained in the Varnish documentation <https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies>`_:
 
-.. code-block:: c
+.. code-block:: varnish4
+    :linenos:
 
     sub vcl_recv {
         # ...
@@ -211,19 +200,17 @@ You can do this as
 Debugging
 ~~~~~~~~~
 
-Varnish 3
-"""""""""
-
 Configure your Varnish to set a debug header that shows whether a cache hit or miss occurred:
 
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-3/debug.vcl
-    :language: c
+.. configuration-block::
 
-Varnish 4
-"""""""""
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/debug.vcl
+        :language: varnish4
+        :linenos:
 
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-4/debug.vcl
-    :language: c
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/debug.vcl
+        :language: varnish3
+        :linenos:
 
 .. _`default VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0#L63
 

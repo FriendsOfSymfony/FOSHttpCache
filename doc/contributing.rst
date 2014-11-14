@@ -1,5 +1,8 @@
+Contributing
+============
+
 Testing the Library
-===================
+-------------------
 
 This chapter describes how to run the tests that are included with this library.
 
@@ -13,7 +16,7 @@ First clone the repository, install the vendors, then run the tests:
     $ phpunit
 
 Unit Tests
-----------
+~~~~~~~~~~
 
 To run the unit tests separately:
 
@@ -22,7 +25,7 @@ To run the unit tests separately:
     $ phpunit tests/Unit
 
 Functional Tests
-----------------
+~~~~~~~~~~~~~~~~
 
 The library also includes functional tests against a Varnish instance. The
 functional test suite by default uses PHP’s built-in web server. If you have
@@ -43,5 +46,24 @@ To run the functional tests:
 
 For more information about testing, see :doc:`/testing-your-application`.
 
+Building the Documentation
+--------------------------
+
+First `install Sphinx`_, then download the requirements: 
+
+.. code-block:: bash
+
+    $ pip install -r doc/requirements.txt
+    
+To build the docs:
+
+.. code-block:: bash
+
+    $ cd doc
+    $ make html
+
 .. _HHVM: http://www.hhvm.com/
 .. _HHVM FastCGI server: https://github.com/facebook/hhvm/wiki/fastcgi
+.. _install Sphinx: http://sphinx-doc.org/latest/install.html
+
+
