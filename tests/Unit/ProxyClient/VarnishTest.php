@@ -368,6 +368,41 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testEliminateDuplicates()
+    {
+        $self = $this;
+        $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
+            ->shouldReceive('send')
+            ->once()
+            ->with(
+                \Mockery::on(
+                    function ($requests) use ($self) {
+                        /** @type Request[] $requests */
+                        $self->assertCount(4, $requests);
+                        foreach ($requests as $request) {
+                            $self->assertEquals('PURGE', $request->getMethod());
+                        }
+
+                        return true;
+                    }
+                )
+            )
+            ->getMock();
+
+        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $client);
+
+        $this->assertEquals(
+            2,
+            $varnish
+                ->purge('/c', array('a' => 'b', 'c' => 'd'))
+                ->purge('/c', array('c' => 'd', 'a' => 'b')) // same request (header order is not significant)
+                ->purge('/c') // different request as headers different
+                ->purge('/c')
+                ->flush()
+        );
+    }
+
+
     protected function setUp()
     {
         $this->mock = new MockPlugin();
