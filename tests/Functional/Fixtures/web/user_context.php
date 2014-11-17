@@ -11,6 +11,16 @@
 
 header('X-Cache-Debug: 1');
 
+if (isset($_GET['accept'])) {
+    if ($_GET['accept'] != $_SERVER['HTTP_ACCEPT']) {
+        header('HTTP/1.1 500 Wrong accept header "' . $_SERVER['HTTP_ACCEPT'] . '", expected "' . $_GET['accept'] . '"');
+        exit;
+    }
+} elseif (isset($_SERVER['HTTP_ACCEPT'])) {
+    header('HTTP/1.1 500 Expected no accept header ' . $_SERVER['HTTP_ACCEPT']);
+    exit;
+}
+
 if ('POST' == strtoupper($_SERVER['REQUEST_METHOD'])) {
     echo "POST";
     exit;
