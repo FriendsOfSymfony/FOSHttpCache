@@ -33,7 +33,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanEverything()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
         $varnish->ban(array())->flush();
 
         $requests = $this->getRequests();
@@ -49,7 +49,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanEverythingNoBaseUrl()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), null, $this->client);
+        $varnish = new Varnish(array('127.0.0.1:123'), null, $this->client);
         $varnish->ban(array())->flush();
 
         $requests = $this->getRequests();
@@ -66,7 +66,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanHeaders()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
         $varnish->setDefaultBanHeaders(
             array('A' => 'B')
         );
@@ -85,7 +85,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanPath()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
 
         $hosts = array('fos.lo', 'fos2.lo');
         $varnish->banPath('/articles/.*', 'text/html', $hosts)->flush();
@@ -105,7 +105,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
      */
     public function testBanPathEmptyHost()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
 
         $hosts = array();
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
@@ -150,8 +150,8 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $ips = array(
-            'http://127.0.0.1:8080',
-            'http://123.123.123.2',
+            '127.0.0.1:8080',
+            '123.123.123.2',
         );
 
         $varnish = new Varnish($ips, 'my_hostname.dev', $client);
@@ -164,7 +164,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testRefresh()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
         $varnish->refresh('/fresh')->flush();
 
         $requests = $this->getRequests();
@@ -181,7 +181,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $client = new Client();
         $client->addSubscriber($mock);
 
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'my_hostname.dev', $client);
+        $varnish = new Varnish(array('127.0.0.1:123'), 'my_hostname.dev', $client);
 
         try {
             $varnish->purge('/paths')->flush();
@@ -226,14 +226,14 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $client = $this->getMock('\Guzzle\Http\ClientInterface');
         $client->expects($this->any())
             ->method('createRequest')
-            ->willReturn(new Request('GET', '/'))
+            ->willReturn(new Request('BAN', '/'))
         ;
         $client->expects($this->once())
             ->method('send')
             ->willThrowException($collection)
         ;
 
-        $varnish = new Varnish(array('http://127.0.0.1:123'), 'my_hostname.dev', $client);
+        $varnish = new Varnish(array('127.0.0.1:123'), 'my_hostname.dev', $client);
 
         $varnish->ban(array());
         try {
@@ -251,7 +251,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingHostExceptionIsThrown()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:123'), null, $this->client);
+        $varnish = new Varnish(array('127.0.0.1:123'), null, $this->client);
         $varnish->purge('/path/without/hostname');
     }
 
