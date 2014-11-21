@@ -52,7 +52,7 @@ div.highlight {
 
 div.highlight pre {
     border: none;
-    color: white;
+    color: white !important;
 }
 
 div.highlight pre span.n, 
@@ -60,7 +60,8 @@ div.highlight pre span.na,
 div.highlight pre span.nb, 
 div.highlight pre span.nc, 
 div.highlight pre span.nf,
-div.highlight pre span.nx {
+div.highlight pre span.nx,
+div.highlight pre span.kn {
     color: white;
 }
 
@@ -82,6 +83,10 @@ div.highlight pre span.sr {
 
 div.highlight pre span.hll {
     background-color: #848484;
+}
+
+div.highlight pre span.hll span.c1 {
+    color: #d8d8d8;
 }
 
 div.highlight pre span.p {
