@@ -27,6 +27,10 @@ abstract class UserContextTestCase extends VarnishTestCase
      */
     abstract protected function assertContextCache($hashCache);
 
+    /**
+     * Sending requests without an Accept: header so none should arrive at the
+     * backend for the actual request.
+     */
     public function testUserContextHash()
     {
         $response1 = $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
@@ -62,6 +66,17 @@ abstract class UserContextTestCase extends VarnishTestCase
         $this->assertEquals('bar', $headResponse2->getHeader('X-HashTest'));
         $this->assertContextCache($headResponse2->getHeader('X-HashCache'));
         $this->assertHit($headResponse2);
+    }
+
+    public function testAcceptHeader()
+    {
+        $response1 = $this->getResponse(
+            '/user_context.php?accept=text/plain',
+            array('Accept' => 'text/plain'),
+            array('cookies' => array('foo'))
+        );
+        $this->assertEquals('foo', $response1->getBody(true));
+
     }
 
     public function testUserContextUnauthorized()
