@@ -183,10 +183,10 @@ abstract class AbstractProxyClient implements ProxyClientInterface
             $headers = $request->getHeaders()->toArray();
             // Force to re-create Host header if empty, as Apache chokes on this. See #128 for discussion.
             if (empty($headers['Host'])) {
-                unset( $headers['Host'] );
+                unset($headers['Host']);
             }
             foreach ($this->servers as $server) {
-                $proxyRequest = $this->client->createRequest(
+                $proxyRequest = $this->createRequest(
                     $request->getMethod(),
                     $server . $request->getResource(),
                     $headers
