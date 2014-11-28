@@ -21,18 +21,15 @@ sub vcl_recv {
         }
         set req.http.accept = "application/vnd.fos.user-context-hash";
 
-        # A little hack for testing all scenarios. Choose one for your application.
-        if ("failure" == req.http.x-cache-hash) {
-            set req.url = "/user_context_hash_failure.php";
-        } elsif (req.http.x-cache-hash) {
-            set req.url = "/user_context_hash_cache.php";
-        } else {
-            set req.url = "/user_context_hash_nocache.php";
-        }
+        # Backup original URL
+        set req.http.x-fos-original-url = req.url;
+        set req.url = "/user_context_hash.php";
+        
+        # For functional tests
+        call user_context_hash_url;
 
         # Force the lookup, the backend must tell not to cache or vary on all
         # headers that are used to build the hash.
-
         return (lookup);
     }
 

@@ -119,11 +119,12 @@ to the ``recv`` and the ``deliver`` methods:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/user_context.vcl
         :language: varnish4
-        :lines: 3-
+        :lines: 3-27, 31-
         :linenos:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
         :language: varnish3
+        :lines: 1-27, 31-
         :linenos:
 
 .. sidebar:: Caching User Specific Content
