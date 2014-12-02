@@ -8,8 +8,9 @@ Varnish. Use this library to send invalidation requests from your application
 to the caching proxy and to test your caching and invalidation setup.
 
 If you use Symfony2, have a look at the FOSHttpCacheBundle_. The bundle
-provides the Invalidator as a service, along with a number of
-Symfony2-specific features to help with caching and caching proxies.
+provides the Invalidator as a service, support for the built-in cache kernel of
+Symfony and a number of Symfony2-specific features to help with caching and
+caching proxies.
 
 Contents:
 
