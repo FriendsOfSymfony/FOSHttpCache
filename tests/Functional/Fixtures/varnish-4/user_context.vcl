@@ -12,6 +12,8 @@ sub vcl_recv {
     }
 
     # Lookup the context hash if there are credentials on the request
+    # Only do this for cacheable requests. Returning a hash lookup discards the request body.
+    # https://www.varnish-cache.org/trac/ticket/652
     if (req.restarts == 0
         && (req.http.cookie || req.http.authorization)
         && (req.method == "GET" || req.method == "HEAD")
