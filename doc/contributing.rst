@@ -27,8 +27,8 @@ To run the unit tests separately:
 Functional Tests
 ~~~~~~~~~~~~~~~~
 
-The library also includes functional tests against a Varnish instance. The
-functional test suite by default uses PHP’s built-in web server. If you have
+The library also includes functional tests against a Varnish and NGINX instance. 
+The functional test suite by default uses PHP’s built-in web server. If you have
 PHP 5.4 or newer, simply run with the default configuration.
 
 If you want to run the tests on PHP 5.3, you need to configure a web server
@@ -43,6 +43,15 @@ To run the functional tests:
 .. code-block:: bash
 
     $ phpunit tests/Functional
+
+Tests are organized in groups: one for each reverse proxy supported. At the moment 
+groups are: `varnish` and  `nginx`. 
+
+To run only the `varnish` functional tests:
+
+.. code-block:: bash
+
+    $ phpunit --group=varnish
 
 For more information about testing, see :doc:`/testing-your-application`.
 

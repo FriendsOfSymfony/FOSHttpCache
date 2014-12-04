@@ -31,7 +31,7 @@ Overview
 
 This library mainly consists of:
 
-* low-level clients for communicating with caching proxies (Varnish and Nginx)
+* low-level clients for communicating with caching proxies (Varnish and NGINX)
 * a cache invalidator that acts as an abstraction layer for the caching proxy
   clients
 * test classes that you can use for integration testing your application
