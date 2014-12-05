@@ -175,7 +175,7 @@ Varnish client::
     ));
 
 Make sure to add any headers that you want to ban on to your
-:doc:`Varnish configuration <varnish-configuration>`.
+:doc:`proxy configuration <proxy-configuration>`.
 
 .. _custom guzzle client:
 

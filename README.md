@@ -23,7 +23,8 @@ Features
 * Send [cache invalidation requests](http://foshttpcache.readthedocs.org/en/latest/cache-invalidator.html)
   with minimal impact on performance.
 * Use the built-in support for [Varnish](http://foshttpcache.readthedocs.org/en/latest/varnish-configuration.html)
-  3 and 4, [Nginx](http://foshttpcache.readthedocs.org/en/latest/nginx-configuration.html)
+  3 and 4, [Nginx](http://foshttpcache.readthedocs.org/en/latest/nginx-configuration.html), the 
+  [Symfony reverse proxy from the http-kernel component](http://foshttpcache.readthedocs.org/en/latest/symfony-cache-configuration.html)
   or easily implement your own caching proxy client.
 * [Test your application](http://foshttpcache.readthedocs.org/en/latest/testing-your-application.html)
   against your Varnish or Nginx setup.

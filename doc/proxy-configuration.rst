@@ -11,3 +11,4 @@ know about the other features of the caching proxy to get everything right.
 
     varnish-configuration
     nginx-configuration
+    symfony-cache-configuration
