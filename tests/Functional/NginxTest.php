@@ -19,19 +19,6 @@ use FOS\HttpCache\Test\NginxTestCase;
  */
 class NginxTest extends NginxTestCase
 {
-    public function testPurgeSeparateLocation()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $nginx = $this->getProxyClient('/purge');
-
-        $this->markTestSkipped('This does not work yet - Nginx client has to insert the separate location path.');
-        $nginx->purge(sprintf('http://%s/cache.php', $this->getHostName()))->flush();
-
-        $this->assertMiss($this->getResponse('/cache.php'));
-    }
-
     public function testPurgeSeparateLocationPath()
     {
         $this->assertMiss($this->getResponse('/cache.php'));
@@ -39,6 +26,18 @@ class NginxTest extends NginxTestCase
 
         $nginx = $this->getProxyClient('/purge');
         $nginx->purge('/cache.php')->flush();
+
+        $this->assertMiss($this->getResponse('/cache.php'));
+    }
+
+    public function testPurgeSeparateLocation()
+    {
+        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertHit($this->getResponse('/cache.php'));
+
+        $nginx = $this->getProxyClient('/purge');
+
+        $nginx->purge(sprintf('http://%s/cache.php', $this->getHostName()))->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
     }
