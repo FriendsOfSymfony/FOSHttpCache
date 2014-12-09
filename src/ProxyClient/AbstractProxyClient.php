@@ -106,6 +106,16 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
+     * Get application base URL
+     *
+     * @return string Your application base url
+     */
+    protected function getBaseUrl()
+    {
+        $this->client->getBaseUrl();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function flush()
@@ -149,7 +159,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     {
         ksort($headers);
 
-        return md5($method . "\n" . $url . "\n" . var_export($headers, true));
+        return md5($method."\n".$url."\n".var_export($headers, true));
     }
 
     /**
@@ -188,7 +198,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
             foreach ($this->servers as $server) {
                 $proxyRequest = $this->createRequest(
                     $request->getMethod(),
-                    $server . $request->getResource(),
+                    $server.$request->getResource(),
                     $headers
                 );
                 $allRequests[] = $proxyRequest;

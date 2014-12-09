@@ -16,7 +16,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use Guzzle\Http\ClientInterface;
 
 /**
- * Nginx HTTP cache invalidator.
+ * NGINX HTTP cache invalidator.
  *
  * @author Simone Fumagalli <simone@iliveinperego.com>
  */
@@ -42,9 +42,9 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
      *                                       E.g. array('127.0.0.1:6081')
      * @param string          $baseUrl       Default application hostname, optionally
      *                                       including base URL, for purge and refresh
-     *                                       requests (optional). This is required if
-     *                                       you purge and refresh paths instead of
-     *                                       absolute URLs.
+     *                                       requests (optional). This is required
+     *                                       if you purge relative URLs and the domain
+     *                                       is not part of your `proxy_cache_key`
      * @param string          $purgeLocation Path that triggers purge (optional).
      * @param ClientInterface $client        HTTP client (optional). If no HTTP client
      *                                       is supplied, a default one will be
@@ -76,7 +76,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
      */
     public function purge($url, array $headers = array())
     {
-        $purgeUrl = $this->purgeLocation.$url;
+        $purgeUrl = $this->buildPurgeUrl($url);
         $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl, $headers);
 
         return $this;
@@ -88,5 +88,30 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     protected function getAllowedSchemes()
     {
         return array('http', 'https');
+    }
+
+    /**
+     * Create the correct URL to purge a resource
+     *
+     * @param string $url URL
+     *
+     * @return string Rewritten URL
+     */
+    private function buildPurgeUrl($url)
+    {
+        if (empty($this->purgeLocation)) {
+            return $url;
+        }
+
+        $urlParts = parse_url($url);
+
+        if (isset($urlParts['host'])) {
+            $pathStartAt = strpos($url, $urlParts['path']);
+            $purgeUrl = substr($url, 0, $pathStartAt).$this->purgeLocation.substr($url, $pathStartAt);
+        } else {
+            $purgeUrl = $this->getBaseUrl().$this->purgeLocation.$url;
+        }
+
+        return $purgeUrl;
     }
 }
