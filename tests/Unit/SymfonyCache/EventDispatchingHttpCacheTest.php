@@ -57,7 +57,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         return $mock;
     }
 
-    public function testCalled()
+    public function testCalledHandle()
     {
         $catch = true;
         $request = Request::create('/foo', 'GET');
@@ -72,60 +72,118 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->will($this->returnValue($response))
         ;
-        $httpCache->handle($request);
 
-        $this->assertEquals(1, $subscriber->hits);
         $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
+        $this->assertEquals(1, $subscriber->handleHits);
     }
 
-    public function testAbort()
+    public function testAbortHandle()
     {
         $catch = true;
         $request = Request::create('/foo', 'GET');
         $response = new Response();
 
         $httpCache = $this->getHttpCachePartialMock(array('lookup'));
-        $subscriber = new TestSubscriber($this, $httpCache, $request, $response);
+        $subscriber = new TestSubscriber($this, $httpCache, $request);
+        $subscriber->handleResponse = $response;
         $httpCache->addSubscriber($subscriber);
         $httpCache
             ->expects($this->never())
             ->method('lookup')
         ;
-        $httpCache->handle($request);
 
-        $this->assertEquals(1, $subscriber->hits);
         $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
+        $this->assertEquals(1, $subscriber->handleHits);
+    }
+
+    public function testCalledInvalidate()
+    {
+        $catch = true;
+        $request = Request::create('/foo', 'GET');
+        $response = new Response('', 500);
+
+        $httpCache = $this->getHttpCachePartialMock(array('pass'));
+        $subscriber = new TestSubscriber($this, $httpCache, $request);
+        $httpCache->addSubscriber($subscriber);
+        $httpCache
+            ->expects($this->any())
+            ->method('pass')
+            ->with($request)
+            ->will($this->returnValue($response))
+        ;
+        $refHttpCache = new \ReflectionObject($httpCache);
+        $method = $refHttpCache->getMethod('invalidate');
+        $method->setAccessible(true);
+
+        $this->assertSame($response, $method->invokeArgs($httpCache, array($request, $catch)));
+        $this->assertEquals(1, $subscriber->invalidateHits);
+    }
+
+    public function testAbortInvalidate()
+    {
+        $catch = true;
+        $request = Request::create('/foo', 'GET');
+        $response = new Response('', 400);
+
+        $httpCache = $this->getHttpCachePartialMock(array('pass'));
+        $subscriber = new TestSubscriber($this, $httpCache, $request);
+        $subscriber->invalidateResponse = $response;
+        $httpCache->addSubscriber($subscriber);
+        $httpCache
+            ->expects($this->never())
+            ->method('pass')
+        ;
+        $refHttpCache = new \ReflectionObject($httpCache);
+        $method = $refHttpCache->getMethod('invalidate');
+        $method->setAccessible(true);
+
+        $this->assertSame($response, $method->invokeArgs($httpCache, array($request, $catch)));
+        $this->assertEquals(1, $subscriber->invalidateHits);
     }
 }
 
 class TestSubscriber implements EventSubscriberInterface
 {
-    public $hits = 0;
+    public $handleHits = 0;
+    public $invalidateHits = 0;
+    public $handleResponse;
+    public $invalidateResponse;
     private $test;
     private $kernel;
     private $request;
-    private $response;
 
-    public function __construct($test, $kernel, $request, $response = null)
+    public function __construct($test, $kernel, $request)
     {
         $this->test = $test;
         $this->kernel = $kernel;
         $this->request = $request;
-        $this->response = $response;
     }
 
     public static function getSubscribedEvents()
     {
-        return array(Events::PRE_HANDLE => 'preHandle');
+        return array(
+            Events::PRE_HANDLE => 'preHandle',
+            Events::PRE_INVALIDATE => 'preInvalidate'
+        );
     }
 
     public function preHandle(CacheEvent $event)
     {
         $this->test->assertSame($this->kernel, $event->getKernel());
         $this->test->assertSame($this->request, $event->getRequest());
-        if ($this->response) {
-            $event->setResponse($this->response);
+        if ($this->handleResponse) {
+            $event->setResponse($this->handleResponse);
         }
-        $this->hits++;
+        $this->handleHits++;
+    }
+
+    public function preInvalidate(CacheEvent $event)
+    {
+        $this->test->assertSame($this->kernel, $event->getKernel());
+        $this->test->assertSame($this->request, $event->getRequest());
+        if ($this->invalidateResponse) {
+            $event->setResponse($this->invalidateResponse);
+        }
+        $this->invalidateHits++;
     }
 }

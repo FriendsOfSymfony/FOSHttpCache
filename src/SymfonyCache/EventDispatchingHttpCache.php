@@ -78,4 +78,32 @@ abstract class EventDispatchingHttpCache extends HttpCache
 
         return parent::handle($request, $type, $catch);
     }
+
+    /**
+     * Made public to allow event subscribers to do refresh operations.
+     *
+     * {@inheritDoc}
+     */
+    public function fetch(Request $request, $catch = false)
+    {
+        return parent::fetch($request, $catch);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Adding the Events::PRE_INVALIDATE event.
+     */
+    protected function invalidate(Request $request, $catch = false)
+    {
+        if ($this->getEventDispatcher()->hasListeners(Events::PRE_INVALIDATE)) {
+            $event = new CacheEvent($this, $request);
+            $this->getEventDispatcher()->dispatch(Events::PRE_INVALIDATE, $event);
+            if ($event->getResponse()) {
+                return $event->getResponse();
+            }
+        }
+
+        return parent::invalidate($request, $catch);
+    }
 }
