@@ -43,8 +43,9 @@ Caching on user context works as follows:
 Proxy Client Configuration
 --------------------------
 
-Currently, user context caching is only supported by Varnish. See the
-:ref:`Varnish Configuration <varnish user context>` on how to prepare Varnish properly.
+Currently, user context caching is only supported by Varnish and by the Symfony
+HttpCache. See the :ref:`Varnish Configuration <varnish user context>` or
+:doc:`Symfony HttpCache Configuration <symfony-cache-configuration>`.
 
 Calculating the User Context Hash
 ---------------------------------

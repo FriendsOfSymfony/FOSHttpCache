@@ -29,7 +29,8 @@
         "guzzle/plugin-mock": "*",
         "mockery/mockery": "*",
         "monolog/monolog": "*",
-        "symfony/process": "~2.3"
+        "symfony/process": "~2.3",
+        "symfony/http-kernel": "~2.3"
     },
     "suggest": {
         "monolog/monolog": "For logging issues while invalidating"
@@ -42,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1.x-dev"
+            "dev-master": "1.2.x-dev"
         }
     }
 }

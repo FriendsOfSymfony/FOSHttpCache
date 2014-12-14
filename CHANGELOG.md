@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.2.0
+-----
+
+* **2014-12-05** Added support for the symfony/http-kernel component reverse proxy HttpCache.
+
 1.1.2
 -----
 
