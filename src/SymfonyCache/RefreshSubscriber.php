@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Refresh handler for the symfony built-in HttpCache.
@@ -43,18 +44,14 @@ class RefreshSubscriber extends AccessControlledSubscriber
      */
     public function __construct(array $options = array())
     {
-        $extra = array_diff(array_keys($options), array('refresh_client_matcher', 'refresh_client_ips'));
-        if (count($extra)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Unsupported refresh configuration option(s) "%s"',
-                implode(', ', $extra)
-            ));
-        }
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(array(
+            'refresh_client_matcher' => null,
+            'refresh_client_ips' => null,
+        ));
+        $options = $resolver->resolve($options);
 
-        parent::__construct(
-            isset($options['refresh_client_matcher']) ? $options['refresh_client_matcher'] : null,
-            isset($options['refresh_client_ips']) ? $options['refresh_client_ips'] : null
-        );
+        parent::__construct($options['refresh_client_matcher'], $options['refresh_client_ips']);
     }
 
     /**

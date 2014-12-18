@@ -120,7 +120,7 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unsupported
+     * @expectedExceptionMessage does not exist
      */
     public function testInvalidConfiguration()
     {

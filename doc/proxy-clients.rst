@@ -90,7 +90,7 @@ Nginx         ✓       ✓
 Symfony Cache ✓       ✓
 ============= ======= ======= =======
 
-.. _proxy-client purge::
+.. _proxy-client purge:
 
 Purge
 ~~~~~
@@ -119,7 +119,8 @@ send any headers that you vary on, such as ``Accept``.
 
 .. include:: includes/custom-headers.rst
 
-.. _proxy-client refresh::
+.. _proxy-client refresh:
+
 Refresh
 ~~~~~~~
 

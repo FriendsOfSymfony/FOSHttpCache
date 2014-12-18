@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * User context handler for the symfony built-in HttpCache.
@@ -57,32 +58,17 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     public function __construct(array $options = array())
     {
-        $extra = array_diff(
-            array_keys($options),
-            array(
-                'anonymous_hash',
-                'user_hash_accept_header',
-                'user_hash_header',
-                'user_hash_uri',
-                'user_hash_method',
-                'session_name_prefix',
-            )
-        );
-        if (count($extra)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Unsupported user context configuration option(s) "%s"',
-                implode(', ', $extra)
-            ));
-        }
-
-        $this->options = $options + array(
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(array(
             'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
             'user_hash_accept_header' => 'application/vnd.fos.user-context-hash',
             'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
             'user_hash_method' => 'GET',
             'session_name_prefix' => 'PHPSESSID',
-        );
+        ));
+
+        $this->options = $resolver->resolve($options);
     }
 
     /**

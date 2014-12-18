@@ -110,6 +110,7 @@ to overwrite the method to make it public.
   **default**: ``null``
 
 .. _symfony-cache user context:
+
 User Context
 ~~~~~~~~~~~~
 

@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Purge handler for the symfony built-in HttpCache.
@@ -48,20 +49,17 @@ class PurgeSubscriber extends AccessControlledSubscriber
      */
     public function __construct(array $options = array())
     {
-        $extra = array_diff(array_keys($options), array('purge_client_matcher', 'purge_client_ips', 'purge_method'));
-        if (count($extra)) {
-            throw new \InvalidArgumentException(sprintf(
-                'Unsupported purge configuration option(s) "%s"',
-                implode(', ', $extra)
-            ));
-        }
+        $resolver = new OptionsResolver();
+        $resolver->setDefined(array('purge_client_matcher', 'purge_client_ips', 'purge_method'));
+        $resolver->setDefaults(array(
+            'purge_client_matcher' => null,
+            'purge_client_ips' => null,
+            'purge_method' => 'PURGE',
+        ));
 
-        parent::__construct(
-            isset($options['purge_client_matcher']) ? $options['purge_client_matcher'] : null,
-            isset($options['purge_client_ips']) ? $options['purge_client_ips'] : null
-        );
+        $this->options = $resolver->resolve($options);
 
-        $this->options['purge_method'] = isset($options['purge_method']) ? $options['purge_method'] : 'PURGE';
+        parent::__construct($this->options['purge_client_matcher'], $this->options['purge_client_ips']);
     }
 
     /**
