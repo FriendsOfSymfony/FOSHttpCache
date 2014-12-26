@@ -30,7 +30,6 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     const HTTP_HEADER_HOST         = 'X-Host';
     const HTTP_HEADER_URL          = 'X-Url';
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
-    const HTTP_HEADER_CACHE        = 'X-Cache-Tags';
 
     /**
      * Map of default headers for ban requests with their default values.
