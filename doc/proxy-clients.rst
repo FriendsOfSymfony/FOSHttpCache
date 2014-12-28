@@ -82,12 +82,15 @@ requests.
 Supported invalidation methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-======== ======= ======= =======
-Client   Purge   Refresh Ban
-======== ======= ======= =======
-Varnish  ✓       ✓       ✓
-Nginx    ✓       ✓
-======== ======= ======= =======
+============= ======= ======= =======
+Client        Purge   Refresh Ban
+============= ======= ======= =======
+Varnish       ✓       ✓       ✓
+Nginx         ✓       ✓
+Symfony Cache ✓       ✓
+============= ======= ======= =======
+
+.. _proxy-client purge:
 
 Purge
 ~~~~~
@@ -115,6 +118,8 @@ Please note that purge will invalidate all variants, so you do not have to
 send any headers that you vary on, such as ``Accept``.
 
 .. include:: includes/custom-headers.rst
+
+.. _proxy-client refresh:
 
 Refresh
 ~~~~~~~

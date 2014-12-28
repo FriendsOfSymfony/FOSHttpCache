@@ -17,12 +17,10 @@ concept is to use event subscribers on the HttpCache class.
 
 .. warning::
 
-    Symfony HttpCache support is currently limited to following features:
+    Symfony HttpCache does not currently provide support for banning.
 
-    * User context
-
-Extending the right HttpCache
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Extending the Correct HttpCache Class
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Instead of extending ``Symfony\Component\HttpKernel\HttpCache\HttpCache``, your
 ``AppCache`` should extend ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``.
@@ -58,6 +56,60 @@ subscribers there. A simple cache will look like this::
             $this->addSubscriber(new UserContextSubscriber());
         }
     }
+
+Purge
+~~~~~
+
+To support :ref:`cache purging <proxy-client purge>`, register the
+``PurgeSubscriber``. If the default settings are right for you, you don't
+need to do anything more.
+
+Purging is only allowed from the same machine by default. To purge data from
+other hosts, provide the IPs of the machines allowed to purge, or provide a
+RequestMatcher that checks for an Authorization header or similar. *Only set
+one of purge_client_ips or purge_client_matcher*.
+
+* **purge_client_ips**: String with IP or array of IPs that are allowed to
+  purge the cache.
+
+  **default**: ``127.0.0.1``
+
+* **purge_client_matcher**: RequestMatcher that only matches requests that are
+  allowed to purge.
+
+  **default**: ``null``
+
+* **purge_method**: HTTP Method used with purge requests.
+
+  **default**: ``PURGE``
+
+Refresh
+~~~~~~~
+
+To support :ref:`cache refresh <proxy-client refresh>`, register the
+``RefreshSubscriber``. You can pass the constructor an option to specify
+what clients are allowed to refresh cache entries. Refreshing is only allowed
+from the same machine by default. To refresh from other hosts, provide the
+IPs of the machines allowed to refresh, or provide a RequestMatcher that
+checks for an Authorization header or similar. *Only set one of
+refresh_client_ips or refresh_client_matcher*.
+
+The refresh subscriber needs to access the ``HttpCache::fetch`` method which
+is protected on the base HttpCache class. The ``EventDispatchingHttpCache``
+exposes the method as public, but if you implement your own kernel, you need
+to overwrite the method to make it public.
+
+* **refresh_client_ips**: String with IP or array of IPs that are allowed to
+  refresh the cache.
+
+  **default**: ``127.0.0.1``
+
+* **refresh_client_matcher**: RequestMatcher that only matches requests that are
+  allowed to refresh.
+
+  **default**: ``null``
+
+.. _symfony-cache user context:
 
 User Context
 ~~~~~~~~~~~~
@@ -102,8 +154,8 @@ constructor:
     Session IDs are indeed used as keys to cache the generated use context hash.
 
     Wrong session name will lead to unexpected results such as having the same
-    user context hash for every users,
-    or not having it cached at all (painful for performance.
+    user context hash for every users, or not having it cached at all, which
+    hurts performance.
 
 Cleaning the Cookie Header
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

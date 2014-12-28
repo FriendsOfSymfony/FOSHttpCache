@@ -176,4 +176,14 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($request->headers->has($options['user_hash_header']));
         $this->assertSame($expectedContextHash, $request->headers->get($options['user_hash_header']));
     }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage does not exist
+     */
+    public function testInvalidConfiguration()
+    {
+        new UserContextSubscriber(array('foo' => 'bar'));
+    }
 }

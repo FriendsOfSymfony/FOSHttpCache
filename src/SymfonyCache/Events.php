@@ -17,4 +17,5 @@ namespace FOS\HttpCache\SymfonyCache;
 final class Events
 {
     const PRE_HANDLE = 'fos_http_cache.pre_handle';
+    const PRE_INVALIDATE = 'fos_http_cache.pre_invalidate';
 }

@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * User context handler for the symfony built-in HttpCache.
@@ -52,17 +53,22 @@ class UserContextSubscriber implements EventSubscriberInterface
      * - session_name_prefix:     Prefix for session cookies. Must match your PHP session configuration.
      *
      * @param array $options Options to overwrite the default options
+     *
+     * @throws \InvalidArgumentException if unknown keys are found in $options
      */
     public function __construct(array $options = array())
     {
-        $this->options = $options + array(
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(array(
             'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
             'user_hash_accept_header' => 'application/vnd.fos.user-context-hash',
             'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
             'user_hash_method' => 'GET',
             'session_name_prefix' => 'PHPSESSID',
-        );
+        ));
+
+        $this->options = $resolver->resolve($options);
     }
 
     /**
