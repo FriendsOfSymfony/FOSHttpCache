@@ -37,4 +37,27 @@ class ExceptionCollectionTest extends \PHPUnit_Framework_TestCase
         }
         $this->assertEquals(array($e1, $e2), $actual);
     }
+
+    public function testMerge()
+    {
+        $collection1 = new ExceptionCollection();
+        $collection2 = new ExceptionCollection();
+
+        $e1 = new \RuntimeException();
+        $collection1->add($e1);
+
+        $e2 = new \RuntimeException('Message');
+        $collection1->add($e2);
+
+        $e3 = new \RuntimeException('Message');
+        $collection2->add($e3);
+
+        $collection1->merge($collection2);
+
+        $actual = array();
+        foreach ($collection1 as $e) {
+            $actual[] = $e;
+        }
+        $this->assertEquals(array($e1, $e2, $e3), $actual);
+    }
 }
