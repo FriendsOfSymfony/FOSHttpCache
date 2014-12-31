@@ -4,7 +4,7 @@ FOSHttpCache
 This is the documentation for the `FOSHttpCache library <https://github.com/FriendsOfSymfony/FOSHttpCache>`_.
 
 This library integrates your PHP applications with HTTP caching proxies such as
-Varnish, Nginx or the Symfony HttpCache class. Use this library to send
+Varnish, NGINX or the Symfony HttpCache class. Use this library to send
 invalidation requests from your application to the caching proxy and to test
 your caching and invalidation setup.
 

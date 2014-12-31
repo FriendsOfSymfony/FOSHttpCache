@@ -49,15 +49,16 @@ abstract class NginxTestCase extends ProxyTestCase
      *
      * @throws \Exception
      *
-     * @return string the path to the nginx server configuration file to use with this test.
+     * @return string the path to the NGINX server configuration file to use with this test.
      */
     protected function getConfigFile()
     {
         if (!defined('NGINX_FILE')) {
-            throw new \Exception('Specify the nginx configuration file path in phpunit.xml or override getConfigFile()');
+            throw new \Exception('Specify the NGINX'
+                    . ' configuration file path in phpunit.xml or override getConfigFile()');
         }
 
-        // Nginx needs an absolute path
+        // NGINX needs an absolute path
         return realpath(NGINX_FILE);
     }
 
@@ -82,7 +83,7 @@ abstract class NginxTestCase extends ProxyTestCase
     }
 
     /**
-     * Get Nginx cache directory
+     * Get NGINX cache directory
      */
     protected function getCacheDir()
     {

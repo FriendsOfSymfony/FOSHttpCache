@@ -1,7 +1,7 @@
 Caching Proxy Clients
 =====================
 
-This library ships with clients for the Varnish and Nginx caching proxy. You
+This library ships with clients for the Varnish and NGINX caching proxy. You
 can use the clients either wrapped by the :doc:`cache invalidator <cache-invalidator>`
 (recommended), or directly for low-level access to invalidation functionality.
 
@@ -37,12 +37,12 @@ include that port in the base URL::
 
     To use the client, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
 
-Nginx Client
+NGINX Client
 ~~~~~~~~~~~~
 
-At minimum, supply an array containing IPs or hostnames of the Nginx servers
+At minimum, supply an array containing IPs or hostnames of the NGINX servers
 that you want to send invalidation requests to. Make sure to include the port
-Nginx runs on if it is not port 80::
+NGINX runs on if it is not port 80::
 
     use FOS\HttpCache\Invalidation\Nginx;
 
@@ -55,14 +55,14 @@ is available as the second parameter::
 
     $nginx = new Nginx($servers, 'my-cool-app.com');
 
-If you have configured Nginx to support purge requests at a separate location,
+If you have configured NGINX to support purge requests at a separate location,
 supply that location to the class as the third parameter::
 
     $nginx = new Nginx($servers, 'my-cool-app.com', '/purge');
 
 .. note::
 
-    To use the client, you need to :doc:`configure Nginx <nginx-configuration>` accordingly.
+    To use the client, you need to :doc:`configure NGINX <nginx-configuration>` accordingly.
 
 Using the Clients
 -----------------
@@ -86,7 +86,7 @@ Supported invalidation methods
 Client        Purge   Refresh Ban
 ============= ======= ======= =======
 Varnish       ✓       ✓       ✓
-Nginx         ✓       ✓
+NGINX         ✓       ✓
 Symfony Cache ✓       ✓
 ============= ======= ======= =======
 

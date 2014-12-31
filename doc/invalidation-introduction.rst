@@ -22,7 +22,7 @@ HTTP Caching Terminology
 
     Caching proxy
         Also `reverse caching proxy <http://en.wikipedia.org/wiki/Reverse_proxy>`_.
-        Examples: Varnish, Nginx.
+        Examples: Varnish, NGINX.
 
     Time to live (TTL)
         Maximum lifetime of some content. Expressed in either an expiry date

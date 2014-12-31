@@ -22,7 +22,7 @@ class NginxProxy extends Abstractproxy
     /**
      * Constructor
      *
-     * @param string $configFile Path to Nginx configuration file
+     * @param string $configFile Path to NGINX configuration file
      */
     public function __construct($configFile)
     {
