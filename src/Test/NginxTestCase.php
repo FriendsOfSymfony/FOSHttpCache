@@ -18,18 +18,23 @@ use FOS\HttpCache\Test\Proxy\NginxProxy;
  * A phpunit base class to write functional tests with NGINX.
  *
  * You can define constants in your phpunit.xml to control how this test behaves.
+ * 
+ * Note that the WEB_SERVER_HOSTNAME must also match with what you have in your
+ * NGINX configuration file.
  *
  * To define constants in the phpunit file, use this syntax:
  * <php>
  *     <const name="NGINX_FILE" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/nginx/fos.conf" />
  * </php>
  *
- * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
- * NGINX_BINARY       Executable for NGINX. This can also be the full path
+ * NGINX_FILE           NGINX configuration file (required if not passed to setUp)
+ * WEB_SERVER_HOSTNAME  hostname where your application can be reached (required)
+ * NGINX_BINARY         Executable for NGINX. This can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default nginx)
- * NGINX_PORT         Port NGINX is listening to (default 8088)
- * NGINX_CACHE_PATH   NGINX cache dir path (required if not passed to setUp)
+ * NGINX_PORT           Port NGINX is listening to (default 8088)
+ * NGINX_CACHE_PATH     directory to use for cache
+ *                      (default /tmp/foshttpcache-nginx)
  */
 abstract class NginxTestCase extends ProxyTestCase
 {

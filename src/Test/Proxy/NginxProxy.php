@@ -15,7 +15,7 @@ class NginxProxy extends Abstractproxy
 {
     protected $binary = 'nginx';
     protected $configFile;
-    protected $port = 8080;
+    protected $port = 8088;
     protected $pid = '/tmp/foshttpcache-nginx.pid';
     protected $cacheDir;
 

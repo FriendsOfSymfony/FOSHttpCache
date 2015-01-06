@@ -17,8 +17,7 @@ use FOS\HttpCache\Test\Proxy\VarnishProxy;
 /**
  * A phpunit base class to write functional tests with varnish.
  *
- * You can define a couple of constants in your phpunit to control how this
- * test behaves.
+ * You can define constants in your phpunit to control how this test behaves.
  *
  * Note that the WEB_SERVER_HOSTNAME must also match with what you have in your
  * .vcl file.
@@ -28,15 +27,15 @@ use FOS\HttpCache\Test\Proxy\VarnishProxy;
  *     <const name="VARNISH_FILE" value="./tests/Functional/Fixtures/varnish-3/fos.vcl" />
  * </php>
  *
+ * VARNISH_FILE         varnish configuration file (required if not passed to setUp)
+ * WEB_SERVER_HOSTNAME  hostname/IP where your application can be reached (required)
  * VARNISH_BINARY       executable for varnish. this can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default varnishd)
  * VARNISH_PORT         test varnish port to use (default 6181)
  * VARNISH_MGMT_PORT    test varnish mgmt port (default 6182)
- * VARNISH_FILE         varnish configuration file (required if not passed to setUp)
  * VARNISH_CACHE_DIR    directory to use for cache
- *                      (default /tmp/foshttpcache-test)
- * WEB_SERVER_HOSTNAME  name of the webserver varnish has to talk to (required)
+ *                      (default /tmp/foshttpcache-varnish)
  */
 abstract class VarnishTestCase extends ProxyTestCase
 {
