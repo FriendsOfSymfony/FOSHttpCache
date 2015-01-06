@@ -22,6 +22,8 @@
         <listener class="\Mockery\Adapter\Phpunit\TestListener" />
         <listener class="\FOS\HttpCache\Tests\Functional\WebServerListener" />
     </listeners>
+    
+    <!-- You probably need to change this settings when you write your own functional test -->
 
     <php>
         <const name="NGINX_FILE" value="./tests/Functional/Fixtures/nginx/fos.conf" />

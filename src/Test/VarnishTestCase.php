@@ -51,33 +51,6 @@ abstract class VarnishTestCase extends ProxyTestCase
     protected $proxy;
 
     /**
-     * {@inheritdoc}
-     */
-    protected function getProxy()
-    {
-        if (null === $this->proxy) {
-            $this->proxy = new VarnishProxy($this->getConfigFile());
-            if ($this->getBinary()) {
-                $this->proxy->setBinary($this->getBinary());
-            }
-
-            if ($this->getCachingProxyPort()) {
-                $this->proxy->setPort($this->getCachingProxyPort());
-            }
-
-            if ($this->getVarnishMgmtPort()) {
-                $this->proxy->setManagementPort($this->getVarnishMgmtPort());
-            }
-
-            if ($this->getCacheDir()) {
-                $this->proxy->setCacheDir($this->getCacheDir());
-            }
-        }
-
-        return $this->proxy;
-    }
-
-    /**
      * The default implementation looks at the constant VARNISH_FILE.
      *
      * @throws \Exception
@@ -141,6 +114,33 @@ abstract class VarnishTestCase extends ProxyTestCase
     protected function getVarnishVersion()
     {
         return getenv('VARNISH_VERSION') ?: 3;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProxy()
+    {
+        if (null === $this->proxy) {
+            $this->proxy = new VarnishProxy($this->getConfigFile());
+            if ($this->getBinary()) {
+                $this->proxy->setBinary($this->getBinary());
+            }
+
+            if ($this->getCachingProxyPort()) {
+                $this->proxy->setPort($this->getCachingProxyPort());
+            }
+
+            if ($this->getVarnishMgmtPort()) {
+                $this->proxy->setManagementPort($this->getVarnishMgmtPort());
+            }
+
+            if ($this->getCacheDir()) {
+                $this->proxy->setCacheDir($this->getCacheDir());
+            }
+        }
+
+        return $this->proxy;
     }
 
     /**

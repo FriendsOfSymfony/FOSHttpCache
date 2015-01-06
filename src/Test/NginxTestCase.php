@@ -17,32 +17,32 @@ use FOS\HttpCache\Test\Proxy\NginxProxy;
 /**
  * A phpunit base class to write functional tests with NGINX.
  *
- * You can define a couple of constants in your phpunit to control how this
- * test behaves.
+ * You can define constants in your phpunit.xml to control how this test behaves.
  *
  * To define constants in the phpunit file, use this syntax:
  * <php>
  *     <const name="NGINX_FILE" value="./tests/FOS/HttpCache/Tests/Functional/Fixtures/nginx/fos.conf" />
  * </php>
  *
+ * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
  * NGINX_BINARY       Executable for NGINX. This can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default nginx)
- * NGINX_PORT         Test NGINX port to use (default 8088)
- * NGINX_FILE         NGINX configuration file (required if not passed to setUp)
- * NGINX_CACHE_PATH   NGINX configuration file (required if not passed to setUp)
+ * NGINX_PORT         Port NGINX is listening to (default 8088)
+ * NGINX_CACHE_PATH   NGINX cache dir path (required if not passed to setUp)
  */
 abstract class NginxTestCase extends ProxyTestCase
 {
-    /**
-     * @var NginxProxy
-     */
-    protected $proxy;
 
     /**
      * @var Nginx
      */
-    protected $proxyClient;
+    protected $proxyClient;    
+    
+    /**
+     * @var NginxProxy
+     */
+    protected $proxy;
 
     /**
      * The default implementation looks at the constant NGINX_FILE.
@@ -69,7 +69,7 @@ abstract class NginxTestCase extends ProxyTestCase
      */
     protected function getBinary()
     {
-        return defined('NGINX_BINARY') ? NGINX_BINARY : null;
+        return defined('NGINX_BINARY') ? NGINX_BINARY : 'nginx';
     }
 
     /**
