@@ -3,42 +3,25 @@
 Testing Your Application
 ========================
 
-This chapter describes how to test your application against a Varnish instance.
+This chapter describes how to test your application against you reverse proxy
+instance.
 
-VarnishTestCase
----------------
+The FOSHttpCache library provides base test case classes to help you write
+functional tests. This may be helpful to test the way your application sets
+caching headers and invalidates cached content.
 
-The FOSHttpCache library provides a base test case to help you write functional
-tests against a Varnish instance. This may be helpful to test the way your
-application sets caching headers and invalidates cached content.
+By having your test classes extend one of the testCase classes, you get:
 
-By having your test classes extend ``VarnishTestCase``, you get:
-
-* independent tests: all previously cached content is removed by restarting
-  Varnish in the test setUp method
-* ``$this->varnish`` referring to an instance of this library’s Varnish client
-  that is configured to talk to your Varnish server
+* independent tests: all previously cached content is removed in the tests
+  ``setUp`` method. The way this is done depends on which reverse proxy you use;
+* an instance of this library’s client that is configured to talk to your
+  reverse proxy server. See reverse proxy specific sections for details;
 * convenience methods for executing HTTP requests to your application:
-  ``$this->getHttpClient()`` and ``$this->getResponse()``
+  ``$this->getHttpClient()`` and ``$this->getResponse()``;
 * custom assertions ``assertHit`` and ``assertMiss`` for validating a cache hit/miss.
 
-Configuration
--------------
-
-By default, the ``VarnishTestCase`` starts and stops a Varnish server for you.
-All you have to do, is to refer the class to your Varnish configuration (VCL)
-file. The recommended way to configure the test case is by setting constants
-in your `phpunit.xml`. Alternatively, you can override the getter methods:
-
-======================= ========================= ============ ==========================================
-Constant                Getter                    Default      Description
-======================= ========================= ============ ==========================================
-``VARNISH_FILE``        ``getConfigFile()``                    your Varnish configuration (VCL) file
-``VARNISH_BINARY``      ``getBinary()``           ``varnishd`` your Varnish binary
-``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``     port Varnish listens on
-``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``     Varnish management port
-``WEB_SERVER_HOSTNAME`` ``getHostName()``                      hostname your application can be reached at
-======================= ========================= ============ ==========================================
+The recommended way to configure the test case is by setting constants
+in your `phpunit.xml`. Alternatively, you can override the getter methods.
 
 Setting Constants
 ~~~~~~~~~~~~~~~~~
@@ -67,12 +50,62 @@ You can override getters in your test class in the following way::
         }
     }
 
+VarnishTestCase
+---------------
+
+Configuration
+'''''''''''''
+
+By default, the ``VarnishTestCase`` starts and stops a Varnish server for you.
+All you have to do is to set your Varnish configuration (VCL) file.
+
+======================= ========================= ================================================== ============================================
+Constant                Getter                    Default                                            Description
+======================= ========================= ================================================== ============================================
+``VARNISH_FILE``        ``getConfigFile()``                                                          your Varnish configuration (VCL) file
+``VARNISH_BINARY``      ``getBinary()``           ``varnishd``                                       your Varnish binary
+``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``                                           port Varnish listens on
+``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``                                           Varnish management port
+``VARNISH_CACHE_DIR``   ``getCacheDir()``         ``sys_get_temp_dir()`` + ``/foshttpcache-varnish`` directory to use for cache
+``VARNISH_VERSION``     ``getVarnishVersion()``   ``3``                                              installed varnish application version
+``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                            hostname your application can be reached at
+======================= ========================= ================================================== ============================================
+
 Enable Assertions
-~~~~~~~~~~~~~~~~~
+'''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you should add a
 :ref:`custom X-Debug header <varnish_debugging>` to responses served
 by your Varnish.
+
+NginxTestCase
+-------------
+
+Configuration
+'''''''''''''
+
+By default, the ``NginxTestCase`` starts and stops NGINX server for you and deletes
+all cached contents. You have to set your NGINX configuration file.
+
+These are all the configurations you can change
+
+======================= ========================= ================================================ ==========================================
+Constant                Getter                    Default                                          Description
+======================= ========================= ================================================ ==========================================
+``NGINX_FILE``          ``getConfigFile()``                                                        your NGINX configuration file
+``NGINX_BINARY``        ``getBinary()``           ``nginx``                                        your NGINX binary
+``NGINX_PORT``          ``getCachingProxyPort()`` ``8088``                                         port NGINX listens on
+``NGINX_CACHE_PATH``    ``getCacheDir()``         ``sys_get_temp_dir()`` + ``/foshttpcache-nginx`` directory to use for cache
+                                                                                                   Must match `proxy_cache_path` directive in
+                                                                                                   your configuration file.
+``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                          hostname your application can be reached at
+======================= ========================= ================================================ ==========================================
+
+Enable Assertions
+'''''''''''''''''
+
+For the `assertHit` and `assertMiss` assertions to work, you should add the HTTP
+header ``X-Cache`` to your responses
 
 Usage
 -----
@@ -127,7 +160,6 @@ correctly::
         $this->assertMiss($this->getResponse($url));
     }
 
-
+Tests for Nginx look the same but extend the NginxTestCase.
 For more ideas, see this library’s functional tests in the
 :source:`tests/Functional/` directory.
-
