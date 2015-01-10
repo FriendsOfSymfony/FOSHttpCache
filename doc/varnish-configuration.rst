@@ -130,9 +130,9 @@ to the ``recv`` and the ``deliver`` methods:
 .. sidebar:: Caching User Specific Content
 
     By default, Varnish does not check for cached data as soon as the request
-    has a ``Cookie`` or ``Authorization`` header, as per the `default VCL`_.
-    For the user context, you make Varnish cache even when there are
-    credentials present.
+    has a ``Cookie`` or ``Authorization`` header, as per the `builtin VCL`_ 
+    (for Varnish 3, see `default VCL`_). For the user context, you make Varnish
+    cache even when there are credentials present.
 
     You need to be very careful when doing this: Your application is
     responsible for properly specifying what may or may not be shared. If a
@@ -213,5 +213,6 @@ Configure your Varnish to set a debug header that shows whether a cache hit or m
         :language: varnish3
         :linenos:
 
-.. _`default VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0#L63
+.. _`builtin VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/builtin.vcl?rev=4.0
+.. _`default VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0
 
