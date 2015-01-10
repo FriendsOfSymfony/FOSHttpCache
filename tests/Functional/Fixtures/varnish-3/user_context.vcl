@@ -16,7 +16,6 @@ sub vcl_recv {
         && (req.http.cookie || req.http.authorization)
         && (req.request == "GET" || req.request == "HEAD")
     ) {
-        set req.http.x-fos-original-url = req.url;
         # Backup accept header, if set
         if (req.http.accept) {
             set req.http.x-fos-original-accept = req.http.accept;
@@ -26,7 +25,7 @@ sub vcl_recv {
         # Backup original URL
         set req.http.x-fos-original-url = req.url;
         set req.url = "/user_context_hash.php";
-        
+
         # For functional tests
         call user_context_hash_url;
 
