@@ -49,7 +49,7 @@ Purge removes a specific URL (including query strings) in all its variants (as s
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/purge.vcl
         :language: varnish3
         :linenos:
-        
+
 Refresh
 ~~~~~~~
 
@@ -94,9 +94,9 @@ Add the following to your Varnish configuration to enable :ref:`cache tagging <t
 
     The custom ``X-Cache-Tags`` header should match the tagging header
     :ref:`configured in the cache invalidator <custom_tags_header>`.
-    
+
 .. configuration-block::
-    
+
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
         :language: varnish4
         :emphasize-lines: 8-13
@@ -119,12 +119,12 @@ to the ``recv`` and the ``deliver`` methods:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/user_context.vcl
         :language: varnish4
-        :lines: 3-27, 31-
+        :lines: 3-29, 33-
         :linenos:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
         :language: varnish3
-        :lines: 1-27, 31-
+        :lines: 1-28, 32-
         :linenos:
 
 .. sidebar:: Caching User Specific Content
