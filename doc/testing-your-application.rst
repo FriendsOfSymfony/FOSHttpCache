@@ -13,11 +13,11 @@ caching headers and invalidates cached content.
 By having your test classes extend one of the testCase classes, you get:
 
 * independent tests: all previously cached content is removed in the tests 
-  ``setUp`` method. The way this is done depend on which reverse proxy you use
+  ``setUp`` method. The way this is done depend on which reverse proxy you use.
 * an instance of this library’s client that is configured to talk to your 
-  reverse proxy server. See reverse proxy specific sections for details
+  reverse proxy server. See reverse proxy specific sections for details.
 * convenience methods for executing HTTP requests to your application:
-  ``$this->getHttpClient()`` and ``$this->getResponse()``
+  ``$this->getHttpClient()`` and ``$this->getResponse()``.
 * custom assertions ``assertHit`` and ``assertMiss`` for validating a cache hit/miss.
 
 The recommended way to configure the test case is by setting constants

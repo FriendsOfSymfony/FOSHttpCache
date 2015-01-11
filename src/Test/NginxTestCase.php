@@ -74,7 +74,7 @@ abstract class NginxTestCase extends ProxyTestCase
      */
     protected function getBinary()
     {
-        return defined('NGINX_BINARY') ? NGINX_BINARY : 'nginx';
+        return defined('NGINX_BINARY') ? NGINX_BINARY : null;
     }
 
     /**
