@@ -51,10 +51,10 @@ You can override getters in your test class in the following way::
     }
 
 VarnishTestCase
--------------
+------------------
 
 Configuration
-'''''''''''''
+''''''''''''''''''
 
 By default, the ``VarnishTestCase`` starts and stops a Varnish server for you.
 All you have to do is to set your Varnish configuration (VCL) file. 
@@ -70,17 +70,17 @@ Constant                Getter                    Default      Description
 ======================= ========================= ============ ==========================================
 
 Enable Assertions
-~~~~~~~~~~~~~~~~~
+''''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you should add a
 :ref:`custom X-Debug header <varnish_debugging>` to responses served
 by your Varnish.
 
 NginxTestCase
--------------
+------------------
 
 Configuration
-'''''''''''''
+''''''''''''''''''
 
 By default, the ``NginxTestCase`` starts and stops NGINX server for you and delete
 all cached contents. You have to set your NGINX configuration file. 
@@ -98,13 +98,13 @@ Constant                Getter                    Default      Description
 ======================= ========================= ============ ==========================================
 
 Enable Assertions
-~~~~~~~~~~~~~~~~~
+''''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you should add the HTTP 
 header ``X-Cache`` to your responses
 
 Usage
------
+------------------
 
 This example shows how you can test whether the caching headers your
 application sets influence Varnish as you expect them to::
@@ -159,4 +159,3 @@ correctly::
 
 For more ideas, see this library’s functional tests in the
 :source:`tests/Functional/` directory.
-
