@@ -94,7 +94,7 @@ Constant                Getter                    Default                       
 ``NGINX_FILE``          ``getConfigFile()``                                      your NGINX configuration file
 ``NGINX_BINARY``        ``getBinary()``           ``nginx``                      your NGINX binary
 ``NGINX_PORT``          ``getCachingProxyPort()`` ``8088``                       port NGINX listens to
-``NGINX_CACHE_PATH``    ``getCacheDir()``         ``/tmp/foshttpcache-nginx``    NGINX cache dir path. Default to `foshttpcache-nginx` 
+``NGINX_CACHE_PATH``    ``getCacheDir()``         ``/tmp/foshttpcache-nginx``    NGINX hostname your application can be reached at
                                                                                  in PHP temporary directory file (sys_get_temp_dir())
                                                                                  Must match `proxy_cache_path` directive in 
                                                                                  your configuration file.
