@@ -13,18 +13,18 @@ caching headers and invalidates cached content.
 By having your test classes extend one of the testCase classes, you get:
 
 * independent tests: all previously cached content is removed in the tests 
-  ``setUp`` method. The way this is done depend on which reverse proxy you use.
+  ``setUp`` method. The way this is done depends on which reverse proxy you use;
 * an instance of this library’s client that is configured to talk to your 
-  reverse proxy server. See reverse proxy specific sections for details.
+  reverse proxy server. See reverse proxy specific sections for details;
 * convenience methods for executing HTTP requests to your application:
-  ``$this->getHttpClient()`` and ``$this->getResponse()``.
+  ``$this->getHttpClient()`` and ``$this->getResponse()``;
 * custom assertions ``assertHit`` and ``assertMiss`` for validating a cache hit/miss.
 
 The recommended way to configure the test case is by setting constants
-in your `phpunit.xml`. Alternatively, you can override the getter methods:
+in your `phpunit.xml`. Alternatively, you can override the getter methods.
 
 Setting Constants
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Compare this library’s configuration to see how the constants are set:
 
@@ -36,7 +36,7 @@ Compare this library’s configuration to see how the constants are set:
     :start-after: <php>
 
 Overriding Getters
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can override getters in your test class in the following way::
 
@@ -51,60 +51,64 @@ You can override getters in your test class in the following way::
     }
 
 VarnishTestCase
-------------------
+------------------------
 
 Configuration
-''''''''''''''''''
+''''''''''''''''''''''''
 
 By default, the ``VarnishTestCase`` starts and stops a Varnish server for you.
 All you have to do is to set your Varnish configuration (VCL) file. 
 
-======================= ========================= ============ ==========================================
-Constant                Getter                    Default      Description
-======================= ========================= ============ ==========================================
-``VARNISH_FILE``        ``getConfigFile()``                    your Varnish configuration (VCL) file
-``VARNISH_BINARY``      ``getBinary()``           ``varnishd`` your Varnish binary
-``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``     port Varnish listens on
-``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``     Varnish management port
-``WEB_SERVER_HOSTNAME`` ``getHostName()``                      hostname your application can be reached at
-======================= ========================= ============ ==========================================
+======================= ========================= ============================== ==========================================
+Constant                Getter                    Default                        Description
+======================= ========================= ============================== ==========================================
+``VARNISH_FILE``        ``getConfigFile()``                                      your Varnish configuration (VCL) file
+``VARNISH_BINARY``      ``getBinary()``           ``varnishd``                   your Varnish binary
+``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``                       port Varnish listens on
+``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``                       Varnish management port
+``VARNISH_CACHE_DIR``   ``getCacheDir()``         ``/tmp/foshttpcache-varnish``  Varnish cache dir
+``WEB_SERVER_HOSTNAME`` ``getHostName()``                                        hostname your application can be reached at
+======================= ========================= ============================== ==========================================
 
 Enable Assertions
-''''''''''''''''''
+''''''''''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you should add a
 :ref:`custom X-Debug header <varnish_debugging>` to responses served
 by your Varnish.
 
 NginxTestCase
-------------------
+------------------------
 
 Configuration
-''''''''''''''''''
+''''''''''''''''''''''''
 
-By default, the ``NginxTestCase`` starts and stops NGINX server for you and delete
+By default, the ``NginxTestCase`` starts and stops NGINX server for you and deletes
 all cached contents. You have to set your NGINX configuration file. 
 
 These are all the configurations you can change
 
-======================= ========================= ============ ==========================================
-Constant                Getter                    Default      Description
-======================= ========================= ============ ==========================================
-``NGINX_FILE``          ``getConfigFile()``                    your NGINX configuration file
-``NGINX_BINARY``        ``getBinary()``           ``nginx``    your NGINX binary
-``NGINX_PORT``          ``getCachingProxyPort()`` ``8088``     port NGINX listens to
-``NGINX_CACHE_PATH``    ``getCacheDir()``                      NGINX cache dir path
-``WEB_SERVER_HOSTNAME`` ``getHostName()``                      hostname your application can be reached at
-======================= ========================= ============ ==========================================
+======================= ========================= ============================== ==========================================
+Constant                Getter                    Default                        Description
+======================= ========================= ============================== ==========================================
+``NGINX_FILE``          ``getConfigFile()``                                      your NGINX configuration file
+``NGINX_BINARY``        ``getBinary()``           ``nginx``                      your NGINX binary
+``NGINX_PORT``          ``getCachingProxyPort()`` ``8088``                       port NGINX listens to
+``NGINX_CACHE_PATH``    ``getCacheDir()``         ``/tmp/foshttpcache-nginx``    NGINX cache dir path. Default to `foshttpcache-nginx` 
+                                                                                 in PHP temporary directory file (sys_get_temp_dir())
+                                                                                 Must match `proxy_cache_path` directive in 
+                                                                                 your configuration file.
+``WEB_SERVER_HOSTNAME`` ``getHostName()``                                        hostname your application can be reached at
+======================= ========================= ============================== ==========================================
 
 Enable Assertions
-''''''''''''''''''
+''''''''''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you should add the HTTP 
 header ``X-Cache`` to your responses
 
 Usage
-------------------
+------------------------
 
 This example shows how you can test whether the caching headers your
 application sets influence Varnish as you expect them to::
