@@ -24,7 +24,7 @@ The recommended way to configure the test case is by setting constants
 in your `phpunit.xml`. Alternatively, you can override the getter methods.
 
 Setting Constants
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 Compare this library’s configuration to see how the constants are set:
 
@@ -36,7 +36,7 @@ Compare this library’s configuration to see how the constants are set:
     :start-after: <php>
 
 Overriding Getters
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
 
 You can override getters in your test class in the following way::
 
@@ -51,10 +51,10 @@ You can override getters in your test class in the following way::
     }
 
 VarnishTestCase
-------------------------
+---------------
 
 Configuration
-''''''''''''''''''''''''
+'''''''''''''
 
 By default, the ``VarnishTestCase`` starts and stops a Varnish server for you.
 All you have to do is to set your Varnish configuration (VCL) file. 
@@ -71,17 +71,17 @@ Constant                Getter                    Default                       
 ======================= ========================= ============================== ==========================================
 
 Enable Assertions
-''''''''''''''''''''''''
+'''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you should add a
 :ref:`custom X-Debug header <varnish_debugging>` to responses served
 by your Varnish.
 
 NginxTestCase
-------------------------
+-------------
 
 Configuration
-''''''''''''''''''''''''
+'''''''''''''
 
 By default, the ``NginxTestCase`` starts and stops NGINX server for you and deletes
 all cached contents. You have to set your NGINX configuration file. 
@@ -102,13 +102,13 @@ Constant                Getter                    Default                       
 ======================= ========================= ============================== ==========================================
 
 Enable Assertions
-''''''''''''''''''''''''
+'''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you should add the HTTP 
 header ``X-Cache`` to your responses
 
 Usage
-------------------------
+-----
 
 This example shows how you can test whether the caching headers your
 application sets influence Varnish as you expect them to::
