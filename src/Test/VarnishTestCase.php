@@ -27,15 +27,15 @@ use FOS\HttpCache\Test\Proxy\VarnishProxy;
  *     <const name="VARNISH_FILE" value="./tests/Functional/Fixtures/varnish-3/fos.vcl" />
  * </php>
  *
- * VARNISH_FILE         varnish configuration file (required if not passed to setUp)
- * WEB_SERVER_HOSTNAME  hostname/IP where your application can be reached (required)
- * VARNISH_BINARY       executable for varnish. this can also be the full path
+ * VARNISH_FILE         Varnish configuration file (required if not passed to setUp)
+ * VARNISH_BINARY       executable for Varnish. this can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default varnishd)
- * VARNISH_PORT         test varnish port to use (default 6181)
- * VARNISH_MGMT_PORT    test varnish mgmt port (default 6182)
+ * VARNISH_PORT         port Varnish listens on (default 6181)
+ * VARNISH_MGMT_PORT    Varnish management port (default 6182)
  * VARNISH_CACHE_DIR    directory to use for cache
- *                      (default /tmp/foshttpcache-varnish)
+ *                      (default sys_get_temp_dir() + 'foshttpcache-varnish')
+ * WEB_SERVER_HOSTNAME  hostname/IP your application can be reached at (required)
  */
 abstract class VarnishTestCase extends ProxyTestCase
 {

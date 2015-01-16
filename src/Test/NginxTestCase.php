@@ -28,13 +28,15 @@ use FOS\HttpCache\Test\Proxy\NginxProxy;
  * </php>
  *
  * NGINX_FILE           NGINX configuration file (required if not passed to setUp)
- * WEB_SERVER_HOSTNAME  hostname where your application can be reached (required)
  * NGINX_BINARY         Executable for NGINX. This can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default nginx)
- * NGINX_PORT           Port NGINX is listening to (default 8088)
+ * NGINX_PORT           Port NGINX listens to (default 8088)
  * NGINX_CACHE_PATH     directory to use for cache
- *                      (default /tmp/foshttpcache-nginx)
+ *                      Must match `proxy_cache_path` directive in 
+                        your configuration file.
+ *                      (default sys_get_temp_dir() + 'foshttpcache-nginx')
+ * WEB_SERVER_HOSTNAME  hostname where your application can be reached (required)
  */
 abstract class NginxTestCase extends ProxyTestCase
 {

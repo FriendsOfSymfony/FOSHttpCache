@@ -59,17 +59,16 @@ Configuration
 By default, the ``VarnishTestCase`` starts and stops a Varnish server for you.
 All you have to do is to set your Varnish configuration (VCL) file. 
 
-======================= ========================= ============================== ==========================================
-Constant                Getter                    Default                        Description
-======================= ========================= ============================== ==========================================
-``VARNISH_FILE``        ``getConfigFile()``                                      your Varnish configuration (VCL) file
-``VARNISH_BINARY``      ``getBinary()``           ``varnishd``                   your Varnish binary
-``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``                       port Varnish listens on
-``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``                       Varnish management port
-``VARNISH_CACHE_DIR``   ``getCacheDir()``         ``/tmp/foshttpcache-varnish``  Varnish cache dir
-``WEB_SERVER_HOSTNAME`` ``getHostName()``                                        hostname your application can be reached at
-======================= ========================= ============================== ==========================================
-
+======================= ========================= ================================================= ============================================
+Constant                Getter                    Default                                           Description
+======================= ========================= ================================================= ============================================
+``VARNISH_FILE``        ``getConfigFile()``                                                         your Varnish configuration (VCL) file
+``VARNISH_BINARY``      ``getBinary()``           ``varnishd``                                      your Varnish binary
+``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``                                          port Varnish listens on
+``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``                                          Varnish management port
+``VARNISH_CACHE_DIR``   ``getCacheDir()``         ``sys_get_temp_dir()`` + ``foshttpcache-varnish`` directory to use for cache
+``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                           hostname your application can be reached at
+======================= ========================= ================================================= ============================================
 Enable Assertions
 '''''''''''''''''
 
@@ -88,19 +87,17 @@ all cached contents. You have to set your NGINX configuration file.
 
 These are all the configurations you can change
 
-======================= ========================= ============================== ==========================================
+======================= ========================= =============================================== ==========================================
 Constant                Getter                    Default                        Description
-======================= ========================= ============================== ==========================================
-``NGINX_FILE``          ``getConfigFile()``                                      your NGINX configuration file
-``NGINX_BINARY``        ``getBinary()``           ``nginx``                      your NGINX binary
-``NGINX_PORT``          ``getCachingProxyPort()`` ``8088``                       port NGINX listens to
-``NGINX_CACHE_PATH``    ``getCacheDir()``         ``/tmp/foshttpcache-nginx``    NGINX hostname your application can be reached at
-                                                                                 in PHP temporary directory file (sys_get_temp_dir())
-                                                                                 Must match `proxy_cache_path` directive in 
-                                                                                 your configuration file.
-``WEB_SERVER_HOSTNAME`` ``getHostName()``                                        hostname your application can be reached at
-======================= ========================= ============================== ==========================================
-
+======================= ========================= =============================================== ==========================================
+``NGINX_FILE``          ``getConfigFile()``                                                       your NGINX configuration file
+``NGINX_BINARY``        ``getBinary()``           ``nginx``                                       your NGINX binary
+``NGINX_PORT``          ``getCachingProxyPort()`` ``8088``                                        port NGINX listens on
+``NGINX_CACHE_PATH``    ``getCacheDir()``         ``sys_get_temp_dir()`` + ``foshttpcache-nginx`` directory to use for cache
+                                                                                                  Must match `proxy_cache_path` directive in 
+                                                                                                  your configuration file.
+``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                         hostname your application can be reached at
+======================= ========================= =============================================== ==========================================
 Enable Assertions
 '''''''''''''''''
 
