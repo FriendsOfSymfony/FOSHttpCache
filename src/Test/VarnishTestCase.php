@@ -17,8 +17,7 @@ use FOS\HttpCache\Test\Proxy\VarnishProxy;
 /**
  * A phpunit base class to write functional tests with varnish.
  *
- * You can define a couple of constants in your phpunit to control how this
- * test behaves.
+ * You can define constants in your phpunit to control how this test behaves.
  *
  * Note that the WEB_SERVER_HOSTNAME must also match with what you have in your
  * .vcl file.
@@ -28,15 +27,16 @@ use FOS\HttpCache\Test\Proxy\VarnishProxy;
  *     <const name="VARNISH_FILE" value="./tests/Functional/Fixtures/varnish-3/fos.vcl" />
  * </php>
  *
- * VARNISH_BINARY       executable for varnish. this can also be the full path
+ * VARNISH_FILE         Varnish configuration file (required if not passed to setUp)
+ * VARNISH_BINARY       executable for Varnish. this can also be the full path
  *                      to the file if the binary is not automatically found
  *                      (default varnishd)
- * VARNISH_PORT         test varnish port to use (default 6181)
- * VARNISH_MGMT_PORT    test varnish mgmt port (default 6182)
- * VARNISH_FILE         varnish configuration file (required if not passed to setUp)
+ * VARNISH_PORT         port Varnish listens on (default 6181)
+ * VARNISH_MGMT_PORT    Varnish management port (default 6182)
  * VARNISH_CACHE_DIR    directory to use for cache
- *                      (default /tmp/foshttpcache-test)
- * WEB_SERVER_HOSTNAME  name of the webserver varnish has to talk to (required)
+ *                      (default sys_get_temp_dir() + '/foshttpcache-varnish')
+ * VARNISH_VERSION      Version of varnish: 3 or 4, defaults to 3.
+ * WEB_SERVER_HOSTNAME  hostname/IP your application can be reached at (required)
  */
 abstract class VarnishTestCase extends ProxyTestCase
 {
@@ -49,33 +49,6 @@ abstract class VarnishTestCase extends ProxyTestCase
      * @var VarnishProxy
      */
     protected $proxy;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getProxy()
-    {
-        if (null === $this->proxy) {
-            $this->proxy = new VarnishProxy($this->getConfigFile());
-            if ($this->getBinary()) {
-                $this->proxy->setBinary($this->getBinary());
-            }
-
-            if ($this->getCachingProxyPort()) {
-                $this->proxy->setPort($this->getCachingProxyPort());
-            }
-
-            if ($this->getVarnishMgmtPort()) {
-                $this->proxy->setManagementPort($this->getVarnishMgmtPort());
-            }
-
-            if ($this->getCacheDir()) {
-                $this->proxy->setCacheDir($this->getCacheDir());
-            }
-        }
-
-        return $this->proxy;
-    }
 
     /**
      * The default implementation looks at the constant VARNISH_FILE.
@@ -141,6 +114,33 @@ abstract class VarnishTestCase extends ProxyTestCase
     protected function getVarnishVersion()
     {
         return getenv('VARNISH_VERSION') ?: 3;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProxy()
+    {
+        if (null === $this->proxy) {
+            $this->proxy = new VarnishProxy($this->getConfigFile());
+            if ($this->getBinary()) {
+                $this->proxy->setBinary($this->getBinary());
+            }
+
+            if ($this->getCachingProxyPort()) {
+                $this->proxy->setPort($this->getCachingProxyPort());
+            }
+
+            if ($this->getVarnishMgmtPort()) {
+                $this->proxy->setManagementPort($this->getVarnishMgmtPort());
+            }
+
+            if ($this->getCacheDir()) {
+                $this->proxy->setCacheDir($this->getCacheDir());
+            }
+        }
+
+        return $this->proxy;
     }
 
     /**
