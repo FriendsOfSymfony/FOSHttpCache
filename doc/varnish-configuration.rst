@@ -130,7 +130,7 @@ to the ``recv`` and the ``deliver`` methods:
 .. sidebar:: Caching User Specific Content
 
     By default, Varnish does not check for cached data as soon as the request
-    has a ``Cookie`` or ``Authorization`` header, as per the `builtin VCL`_ 
+    has a ``Cookie`` or ``Authorization`` header, as per the `builtin VCL`_
     (for Varnish 3, see `default VCL`_). For the user context, you make Varnish
     cache even when there are credentials present.
 
@@ -201,9 +201,9 @@ You can do this as
 Debugging
 ~~~~~~~~~
 
-Configure your Varnish to set a custom header (`X-Cache`) that shows whether a 
+Configure your Varnish to set a custom header (`X-Cache`) that shows whether a
 cache hit or miss occurred. This header will only be set if your application
-sends an `X-Cache-Debug` header.
+sends an `X-Cache-Debug` header:
 
 .. configuration-block::
 
