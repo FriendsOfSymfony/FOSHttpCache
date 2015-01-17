@@ -71,7 +71,7 @@ Enable Assertions
 ~~~~~~~~~~~~~~~~~
 
 For the `assertHit` and `assertMiss` assertions to work, you should add a
-:ref:`custom X-Debug header <varnish_debugging>` to responses served
+:ref:`custom X-Cache header <varnish_debugging>` to responses served
 by your Varnish.
 
 Usage
