@@ -124,13 +124,13 @@ to the ``recv`` and the ``deliver`` methods:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
         :language: varnish3
-        :lines: 1-28, 32-
+        :lines: 1-27, 31-
         :linenos:
 
 .. sidebar:: Caching User Specific Content
 
     By default, Varnish does not check for cached data as soon as the request
-    has a ``Cookie`` or ``Authorization`` header, as per the `builtin VCL`_ 
+    has a ``Cookie`` or ``Authorization`` header, as per the `builtin VCL`_
     (for Varnish 3, see `default VCL`_). For the user context, you make Varnish
     cache even when there are credentials present.
 
