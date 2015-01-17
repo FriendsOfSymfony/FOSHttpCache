@@ -22,7 +22,7 @@
         <listener class="\Mockery\Adapter\Phpunit\TestListener" />
         <listener class="\FOS\HttpCache\Tests\Functional\WebServerListener" />
     </listeners>
-
+    
     <php>
         <const name="NGINX_FILE" value="./tests/Functional/Fixtures/nginx/fos.conf" />
         <const name="WEB_SERVER_HOSTNAME" value="localhost" />
