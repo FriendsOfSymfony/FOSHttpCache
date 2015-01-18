@@ -43,7 +43,7 @@ See below for the :ref:`flush() <flush>` method.
 Invalidate a URL::
 
     $cacheInvalidator->invalidatePath('http://www.example.com/users')->flush();
-    
+
 Invalidate a URL with added header(s)::
 
     $cacheInvalidator->invalidatePath(
@@ -123,52 +123,6 @@ default headers always present to simplify the cache configuration rules.
 To invalidate on a custom header ``X-My-Header``, you would do::
 
     $cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'))->flush();
-
-.. _tags:
-
-Invalidating Tags
------------------
-
-.. note::
-
-    Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first.
-
-With tags you can group related representations so it becomes easier to
-invalidate them. You will have to make sure your web application adds the
-correct tags on all responses by setting the ``X-Cache-Tags`` header. The
-FOSHttpCacheBundle_ does this for you when you’re using Symfony.
-
-Assume you sent four responses:
-
-+------------+-------------------------+
-| Response:  | ``X-Cache-Tags`` header:|
-+============+=========================+
-| ``/one``   | ``tag-one``             |
-+------------+-------------------------+
-| ``/two``   | ``tag-two, group-a``    |
-+------------+-------------------------+
-| ``/three`` | ``tag-three, group-a``  |
-+------------+-------------------------+
-| ``/four``  | ``tag-four, group-b``   |
-+------------+-------------------------+
-
-You can now invalidate some URLs using tags::
-
-    $cacheInvalidator->invalidateTags(array('group-a', 'tag-four'))->flush();
-
-
-This will ban all requests having either the tag ``group-a`` /or/ ``tag-four``.
-In the above example, this will invalidate ``/two``, ``/three`` and ``/four``.
-Only ``/one`` will stay in the cache.
-
-.. _custom_tags_header:
-
-Custom Tags Header
-~~~~~~~~~~~~~~~~~~
-
-Tagging uses a custom HTTP header to identify tags. You can change the default
-header ``X-Cache-Tags`` by calling ``setTagsHeader()``. Make sure to reflect this
-change in your :doc:`caching proxy configuration <proxy-configuration>`.
 
 .. _flush:
 

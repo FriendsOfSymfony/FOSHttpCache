@@ -20,6 +20,7 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\Handler\TagHandler;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -28,6 +29,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Manages HTTP cache invalidation.
  *
  * @author David de Boer <david@driebit.nl>
+ * @author David Buchmann <mail@davidbu.ch>
  */
 class CacheInvalidator
 {
@@ -57,6 +59,11 @@ class CacheInvalidator
     private $eventDispatcher;
 
     /**
+     * @var TagHandler
+     */
+    private $tagHandler;
+
+    /**
      * @var string
      */
     private $tagsHeader = 'X-Cache-Tags';
@@ -69,6 +76,9 @@ class CacheInvalidator
     public function __construct(ProxyClientInterface $cache)
     {
         $this->cache = $cache;
+        if ($cache instanceof BanInterface) {
+            $this->tagHandler = new TagHandler($this, $this->tagsHeader);
+        }
     }
 
     /**
@@ -145,10 +155,14 @@ class CacheInvalidator
      * @param string $tagsHeader
      *
      * @return $this
+     *
+     * @deprecated Use constructor argument to TagHandler instead.
      */
     public function setTagsHeader($tagsHeader)
     {
-        $this->tagsHeader = $tagsHeader;
+        if ($this->tagHandler && $this->tagsHeader !== $tagsHeader) {
+            $this->tagHandler = new TagHandler($this, $tagsHeader);
+        }
 
         return $this;
     }
@@ -157,6 +171,8 @@ class CacheInvalidator
      * Get the HTTP header name that will hold cache tags
      *
      * @return string
+     *
+     * @deprecated Use TagHandler::getTagsHeader instead.
      */
     public function getTagsHeader()
     {
@@ -269,22 +285,21 @@ class CacheInvalidator
      * Invalidate cache entries that contain any of the specified tags in their
      * tag header.
      *
-     * @see BanInterface::ban()
-     *
      * @param array $tags Cache tags
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
      * @return $this
+     *
+     * @deprecated Use TagHandler::invalidateTags instead.
      */
     public function invalidateTags(array $tags)
     {
-        if (!$this->cache instanceof BanInterface) {
+        if (!$this->tagHandler) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
         }
 
-        $headers = array($this->getTagsHeader() => '('.implode('|', array_map('preg_quote', $tags)).')(,.+)?$');
-        $this->cache->ban($headers);
+        $this->tagHandler->invalidateTags($tags);
 
         return $this;
     }
