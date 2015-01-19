@@ -1,3 +1,5 @@
+.. _symfony httpcache configuration:
+
 Symfony HttpCache Configuration
 -------------------------------
 
