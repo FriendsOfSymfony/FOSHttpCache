@@ -26,13 +26,29 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
      *
      * @return $this
      */
-    public function add(\Exception $e)
+    public function add(\Exception $exception)
     {
         if (null == $this->message) {
-            $this->message = $e->getMessage();
+            $this->message = $exception->getMessage();
         }
 
-        $this->exceptions[] = $e;
+        $this->exceptions[] = $exception;
+
+        return $this;
+    }
+
+    /**
+     * Add all exceptions from the given ExceptionCollection to the collection
+     *
+     * @param ExceptionCollection
+     *
+     * @return $this
+     */
+    public function merge(ExceptionCollection $exceptionCollection)
+    {
+        foreach ($exceptionCollection as $exception) {
+            $this->add($exception);
+        }
 
         return $this;
     }
