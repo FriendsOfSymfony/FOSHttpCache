@@ -13,12 +13,12 @@ You can use features of this library with the help of the
 ``EventDispatchingHttpCache`` provided here. The basic concept is to use event
 subscribers on the HttpCache class.
 
-.. note::
+.. warning::
 
     If you are using the full stack Symfony framework, have a look at the
     HttpCache provided by the FOSHttpCacheBundle_ instead.
 
-.. warning::
+.. note::
 
     Symfony HttpCache does not currently provide support for banning.
 
