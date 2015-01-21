@@ -9,8 +9,9 @@ than using Varnish or NGINX, it can still provide considerable performance
 gains over an installation that is not cached at all. It can be useful for
 running an application on shared hosting for instance.
 
-You can use features of this library with the Symfony ``HttpCache``. The basic
-concept is to use event subscribers on the HttpCache class.
+You can use features of this library with the help of the
+``EventDispatchingHttpCache`` provided here. The basic concept is to use event
+subscribers on the HttpCache class.
 
 .. note::
 
