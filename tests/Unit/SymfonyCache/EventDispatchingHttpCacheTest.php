@@ -28,9 +28,9 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
     {
         $mock = $this
             ->getMockBuilder('\FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache')
-             ->setMethods( $mockedMethods )
-             ->disableOriginalConstructor()
-             ->getMock()
+            ->setMethods( $mockedMethods )
+            ->disableOriginalConstructor()
+            ->getMock()
         ;
 
         // Force setting options property since we can't use original constructor.

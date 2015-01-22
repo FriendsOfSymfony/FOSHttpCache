@@ -1,0 +1,65 @@
+<?php
+
+/*
+ * This file is part of the FOSHttpCache package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace FOS\HttpCache\Tests\Unit\Handler;
+
+use FOS\HttpCache\CacheInvalidator;
+use FOS\HttpCache\Handler\TagHandler;
+
+class TagHandlerTest extends \PHPUnit_Framework_TestCase
+{
+    public function testInvalidateTags()
+    {
+        $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
+            ->shouldReceive('invalidate')
+            ->with(array('X-Cache-Tags' => '(post\-1|posts)(,.+)?$'))
+            ->once()
+            ->shouldReceive('supports')
+            ->with(CacheInvalidator::INVALIDATE)
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+
+        $tagHandler = new TagHandler($cacheInvalidator);
+        $tagHandler->invalidateTags(array('post-1', 'posts'));
+    }
+
+    public function testInvalidateTagsCustomHeader()
+    {
+        $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
+            ->shouldReceive('invalidate')
+            ->with(array('Custom-Tags' => '(post\-1)(,.+)?$'))
+            ->once()
+            ->shouldReceive('supports')
+            ->with(CacheInvalidator::INVALIDATE)
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+
+        $tagHandler = new TagHandler($cacheInvalidator, 'Custom-Tags');
+        $tagHandler->invalidateTags(array('post-1'));
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\UnsupportedProxyOperationException
+     */
+    public function testInvalidateUnsupported()
+    {
+        $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
+            ->shouldReceive('supports')
+            ->with(CacheInvalidator::INVALIDATE)
+            ->once()
+            ->andReturn(false)
+            ->getMock();
+
+        new TagHandler($cacheInvalidator);
+    }
+}
