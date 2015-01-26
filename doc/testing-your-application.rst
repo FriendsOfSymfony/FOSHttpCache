@@ -10,7 +10,7 @@ The FOSHttpCache library provides base test case classes to help you write
 functional tests. This may be helpful to test the way your application sets
 caching headers and invalidates cached content.
 
-By having your test classes extend one of the testCase classes, you get:
+By having your test classes extend one of the test case classes, you get:
 
 * independent tests: all previously cached content is removed in the tests
   ``setUp`` method. The way this is done depends on which reverse proxy you use;

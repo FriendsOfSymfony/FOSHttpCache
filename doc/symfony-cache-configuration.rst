@@ -165,7 +165,7 @@ Cleaning the Cookie Header
 
 By default, the UserContextSubscriber only sets the session cookie (according to
 the ``session_name_prefix`` option) in the requests to the backend. If you need
-a different behaviour, overwrite ``UserContextSubscriber::cleanupHashLookupRequest``
+a different behavior, overwrite ``UserContextSubscriber::cleanupHashLookupRequest``
 with your own logic.
 
 .. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy

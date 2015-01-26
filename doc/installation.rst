@@ -37,7 +37,7 @@ This library mainly consists of:
 * test classes that you can use for integration testing your application
   against a caching proxy.
 
-Measures have been taken to minimise the performance impact of sending
+Measures have been taken to minimize the performance impact of sending
 invalidation requests:
 
 * Requests are not sent immediately, but aggregated to be sent in parallel.
