@@ -118,9 +118,10 @@ User Context
 ~~~~~~~~~~~~
 
 To support :doc:`user context hashing <user-context>` you need to register the
-``UserContextSubscriber``. If the default settings are right for you, you don't
-need to do anything more. You can customize a number of options through the
-constructor:
+``UserContextSubscriber``. The user context is then automatically recognized
+based on session cookies or authorization headers. If the default settings are
+right for you, you don't need to do anything more. You can customize a number of
+options through the constructor:
 
 * **anonymous_hash**: Hash used for anonymous user. This is a performance
   optimization to not do a backend request for users that are not logged in.
@@ -159,6 +160,16 @@ constructor:
     Wrong session name will lead to unexpected results such as having the same
     user context hash for every users, or not having it cached at all, which
     hurts performance.
+
+.. note::
+
+    To use authorization headers for user context, you might have to add some server
+    configuration to make these headers available to PHP.
+
+    With Apache, you can do this for example in a ``.htaccess`` file:
+
+        RewriteEngine On
+        RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 Cleaning the Cookie Header
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

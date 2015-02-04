@@ -130,7 +130,10 @@ class UserContextSubscriber implements EventSubscriberInterface
                 $hashLookupRequest->cookies->set($name, $value);
             }
         }
-        $hashLookupRequest->headers->set('Cookie', http_build_query($sessionIds, '', '; '));
+
+        if (count($sessionIds) > 0) {
+            $hashLookupRequest->headers->set('Cookie', http_build_query($sessionIds, '', '; '));
+        }
     }
 
     /**
@@ -180,6 +183,16 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function isAnonymous(Request $request)
     {
+        // You might have to enable rewriting of the Authorization header in your server config or .htaccess:
+        // RewriteEngine On
+        // RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+        if ($request->server->has('AUTHORIZATION') ||
+            $request->server->has('HTTP_AUTHORIZATION') ||
+            $request->server->has('PHP_AUTH_USER')
+        ) {
+            return false;
+        }
+
         foreach ($request->cookies as $name => $value) {
             if ($this->isSessionName($name)) {
                 return false;
