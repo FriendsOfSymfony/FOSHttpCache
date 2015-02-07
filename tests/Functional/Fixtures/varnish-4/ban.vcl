@@ -5,16 +5,16 @@ sub vcl_recv {
             return (synth(405, "Not allowed"));
         }
 
-        if (req.http.x-cache-tags) {
-            ban("obj.http.x-host ~ " + req.http.x-host
-                + " && obj.http.x-url ~ " + req.http.x-url
-                + " && obj.http.content-type ~ " + req.http.x-content-type
-                + " && obj.http.x-cache-tags ~ " + req.http.x-cache-tags
+        if (req.http.X-Cache-Tags) {
+            ban("obj.http.X-Host ~ " + req.http.X-Host
+                + " && obj.http.X-Url ~ " + req.http.X-Url
+                + " && obj.http.content-type ~ " + req.http.X-Content-Type
+                + " && obj.http.X-Cache-Tags ~ " + req.http.X-Cache-Tags
             );
         } else {
-            ban("obj.http.x-host ~ " + req.http.x-host
-                + " && obj.http.x-url ~ " + req.http.x-url
-                + " && obj.http.content-type ~ " + req.http.x-content-type
+            ban("obj.http.X-Host ~ " + req.http.X-Host
+                + " && obj.http.X-Url ~ " + req.http.X-Url
+                + " && obj.http.content-type ~ " + req.http.X-Content-Type
             );
         }
 
@@ -25,15 +25,15 @@ sub vcl_recv {
 sub vcl_backend_response {
 
     # Set ban-lurker friendly custom headers
-    set beresp.http.x-url = bereq.url;
-    set beresp.http.x-host = bereq.http.host;
+    set beresp.http.X-Url = bereq.url;
+    set beresp.http.X-Host = bereq.http.host;
 }
 
 sub vcl_deliver {
     # Keep ban-lurker headers only if debugging is enabled
-    if (!resp.http.x-cache-debug) {
+    if (!resp.http.X-Cache-Debug) {
         # Remove ban-lurker friendly custom headers when delivering to client
-        unset resp.http.x-url;
-        unset resp.http.x-host;
+        unset resp.http.X-Url;
+        unset resp.http.X-Host;
     }
 }

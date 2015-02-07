@@ -11,7 +11,7 @@ sub vcl_recv {
         && (req.http.cookie || req.http.authorization)
         && (req.request == "GET" || req.request == "HEAD")
     ) {
-        set req.http.x-cache-hash = "failure";
+        set req.http.X-Cache-Hash = "failure";
     }
 }
 

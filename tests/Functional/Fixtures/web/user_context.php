@@ -32,7 +32,7 @@ if (!isset($_COOKIE[0]) || ($_COOKIE[0] != "foo" && $_COOKIE[0] != "bar")) {
 }
 
 header('Cache-Control: max-age=3600');
-header('Vary: x-user-context-hash');
+header('Vary: X-User-Context-Hash');
 
 if ($_COOKIE[0] == "foo") {
     header('X-HashTest: foo');

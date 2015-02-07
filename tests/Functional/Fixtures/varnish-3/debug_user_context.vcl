@@ -12,9 +12,9 @@ sub vcl_deliver {
 
 sub user_context_hash_url {
     # A little hack for testing all scenarios
-    if ("failure" == req.http.x-cache-hash) {
+    if ("failure" == req.http.X-Cache-Hash) {
         set req.url = "/user_context_hash_failure.php";
-    } elsif (req.http.x-cache-hash) {
+    } elsif (req.http.X-Cache-Hash) {
         set req.url = "/user_context_hash_cache.php";
     } else {
         set req.url = "/user_context_hash_nocache.php";
