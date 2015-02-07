@@ -118,6 +118,11 @@ class CacheInvalidator
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
+        if ($this->eventDispatcher) {
+            // if you want to set a custom event dispatcher, do so right after instantiating
+            // the invalidator.
+            throw new \Exception('You may not change the event dispatcher once it is set.');
+        }
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -141,6 +146,8 @@ class CacheInvalidator
      * @param EventSubscriberInterface $subscriber
      *
      * @return $this
+     *
+     * @deprecated Use getEventDispatcher()->addSubscriber($subscriber) instead.
      */
     public function addSubscriber(EventSubscriberInterface $subscriber)
     {
