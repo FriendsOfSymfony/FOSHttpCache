@@ -153,7 +153,7 @@ You can invalidate all URLs matching a regular expression by using the
 for the path to invalidate and an optional content type regular expression and
 list of application hostnames.
 
-For instance, to ban all .png files on all application hosts::
+For instance, to ban all ``.png`` files on all application hosts::
 
     $client->banPath('.*png$');
 

@@ -100,7 +100,7 @@ caching proxy::
 
     $cacheInvalidator->invalidateRegex('.*css$')->flush();
 
-To invalidate all .png files on host example.com::
+To invalidate all ``.png`` files on host example.com::
 
     $cacheInvalidator
         ->invalidateRegex('.*', 'image/png', array('example.com'))
