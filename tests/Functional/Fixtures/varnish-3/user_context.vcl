@@ -24,7 +24,7 @@ sub vcl_recv {
 
         # Backup original URL
         set req.http.X-Fos-Original-Url = req.url;
-        set req.url = "/user_context_hash.php";
+        set req.url = "/_fos_user_context_hash";
 
         # For functional tests
         call user_context_hash_url;
