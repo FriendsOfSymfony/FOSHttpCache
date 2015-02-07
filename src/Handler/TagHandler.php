@@ -33,6 +33,11 @@ class TagHandler
     private $tagsHeader;
 
     /**
+     * @var array
+     */
+    private $tags = array();
+
+    /**
      * Constructor
      *
      * @param CacheInvalidator $invalidator The invalidator instance.
@@ -50,6 +55,40 @@ class TagHandler
     }
 
     /**
+     * Get the HTTP header name that will hold cache tags.
+     *
+     * @return string
+     */
+    public function getTagsHeaderName()
+    {
+        return $this->tagsHeader;
+    }
+
+    /**
+     * Get the value for the HTTP tag header.
+     *
+     * This concatenates all tags and ensures correct encoding.
+     *
+     * @return string
+     */
+    public function getTagsHeaderValue()
+    {
+        return implode(',', array_unique($this->escapeTags($this->tags)));
+    }
+
+    /**
+     * Add tags to be sent.
+     *
+     * This must be called before any response is sent to the client.
+     *
+     * @param array $tags List of tags to add.
+     */
+    public function addTags(array $tags)
+    {
+        $this->tags = array_merge($this->tags, $tags);
+    }
+
+    /**
      * Invalidate cache entries that contain any of the specified tags in their
      * tag header.
      *
@@ -59,10 +98,26 @@ class TagHandler
      */
     public function invalidateTags(array $tags)
     {
-        $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $tags)));
+        $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $this->escapeTags($tags))));
         $headers = array($this->tagsHeader => $tagExpression);
         $this->invalidator->invalidate($headers);
 
         return $this;
+    }
+
+    /**
+     * Make sure that the tags are valid.
+     *
+     * @param array $tags The tags to escape.
+     *
+     * @return array Sane tags.
+     */
+    protected function escapeTags(array $tags)
+    {
+        array_walk($tags, function (&$tag) {
+            $tag = str_replace(array(',', "\n"), array('_', '_'), $tag);
+        });
+
+        return $tags;
     }
 }

@@ -9,9 +9,15 @@ to simplify common operations.
 Tag Handler
 -----------
 
-The tag handler helps you to invalidate all cache entries that where marked
-with a specified tag. It works only with a ``CacheInvalidator`` that supports
-``CacheInvalidator::INVALIDATE``.
+.. versionadded:: 1.3
+
+    The tag handler was added in FOSHttpCache 1.3. If you are using an older
+    version of the library and can not update, you need to use
+    ``CacheInvalidator::invalidateTags``.
+
+The tag handler helps you to mark responses with tags that you can later use to
+invalidate all cache entries with that tag. Tag invalidation works only with a
+``CacheInvalidator`` that supports ``CacheInvalidator::INVALIDATE``.
 
 Setup
 ~~~~~
@@ -34,8 +40,22 @@ Usage
 
 With tags you can group related representations so it becomes easier to
 invalidate them. You will have to make sure your web application adds the
-correct tags on all responses by setting the ``X-Cache-Tags`` header. The
-FOSHttpCacheBundle_ does this for you when you’re using Symfony.
+correct tags on all responses. You can add tags to the handler using::
+
+    $tagHandler->addTags(array('tag-two', 'group-a'));
+
+Before any content is sent out, you need to send the tag header_::
+
+    header(sprintf('%s: %s),
+        $tagHandler->getTagsHeaderName(),
+        $tagHandler->getTagsHeaderValue()
+    );
+
+.. tip::
+
+    If you are using Symfony with the FOSHttpCacheBundle_, the tag header is
+    set automatically. You also have `additional methods of defining tags`_ with
+    annotations and on URL patterns.
 
 Assume you sent four responses:
 
@@ -74,3 +94,6 @@ header ``X-Cache-Tags`` in the constructor::
 
 Make sure to reflect this change in your
 :doc:`caching proxy configuration <proxy-configuration>`.
+
+.. _header: http://php.net/header
+.. _additional methods of defining tags: http://foshttpcachebundle.readthedocs.org/en/latest/features/tagging.html
