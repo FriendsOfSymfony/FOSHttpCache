@@ -14,3 +14,4 @@ symfony
 whitelisted
 paywall
 paywalls
+github
