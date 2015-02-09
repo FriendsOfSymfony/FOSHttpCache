@@ -47,7 +47,7 @@ class UserContextFailureTest extends VarnishTestCase
             $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
         } catch (ClientErrorResponseException $e) {
             $this->assertEquals(400, $e->getResponse()->getStatusCode());
-            $this->assertFalse($e->getResponse()->hasHeader('x-user-context-hash'));
+            $this->assertFalse($e->getResponse()->hasHeader('X-User-Context-Hash'));
         }
     }
 
@@ -59,7 +59,7 @@ class UserContextFailureTest extends VarnishTestCase
         try {
             $response = $this->getResponse(
                 '/user_context_hash_nocache.php',
-                array('x-user-context-hash' => 'miam'),
+                array('X-User-Context-Hash' => 'miam'),
                 array('cookies' => array('miam'))
             );
 

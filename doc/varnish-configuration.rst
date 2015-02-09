@@ -147,7 +147,7 @@ request with :ref:`a proper user hash <return context hash>`.
 
 .. note::
 
-    We do not use ``x-original-url`` here, as the header will be sent to the
+    We do not use ``X-Original-Url`` here, as the header will be sent to the
     backend and some applications look at this header, which would lead to
     problems. For example, the Microsoft IIS rewriting module uses this header
     and Symfony2 has to look into that header to support IIS.
@@ -201,7 +201,7 @@ You can do this as
 Debugging
 ~~~~~~~~~
 
-Configure your Varnish to set a custom header (`X-Cache`) that shows whether a 
+Configure your Varnish to set a custom header (`X-Cache`) that shows whether a
 cache hit or miss occurred. This header will only be set if your application
 sends an `X-Cache-Debug` header.
 

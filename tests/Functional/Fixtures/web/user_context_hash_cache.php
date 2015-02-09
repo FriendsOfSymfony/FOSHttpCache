@@ -15,7 +15,7 @@ header('X-Cache-Debug: 1');
 // and creates an X-User-Context-Hash based on parameters in the request.
 // In this case it's based on Cookie.
 if ('application/vnd.fos.user-context-hash' == strtolower($_SERVER['HTTP_ACCEPT'])) {
-    header(sprintf('x-user-context-hash: %s', $_COOKIE[0]));
+    header(sprintf('X-User-Context-Hash: %s', $_COOKIE[0]));
     header('Content-Type: application/vnd.fos.user-context-hash');
     header('Cache-Control: max-age=3600');
     header('Vary: cookie, authorization');

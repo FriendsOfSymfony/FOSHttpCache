@@ -5,7 +5,7 @@ sub vcl_recv {
     # Prevent tampering attacks on the hash mechanism
     if (req.restarts == 0
         && (req.http.accept ~ "application/vnd.fos.user-context-hash"
-            || req.http.x-user-context-hash
+            || req.http.X-User-Context-Hash
         )
     ) {
         return (synth(400));
@@ -20,14 +20,14 @@ sub vcl_recv {
     ) {
         # Backup accept header, if set
         if (req.http.accept) {
-            set req.http.x-fos-original-accept = req.http.accept;
+            set req.http.X-Fos-Original-Accept = req.http.accept;
         }
         set req.http.accept = "application/vnd.fos.user-context-hash";
 
         # Backup original URL
-        set req.http.x-fos-original-url = req.url;
+        set req.http.X-Fos-Original-Url = req.url;
         set req.url = "/user_context_hash.php";
-        
+
         # For functional tests
         call user_context_hash_url;
 
@@ -40,11 +40,11 @@ sub vcl_recv {
     if (req.restarts > 0
         && req.http.accept == "application/vnd.fos.user-context-hash"
     ) {
-        set req.url = req.http.x-fos-original-url;
-        unset req.http.x-fos-original-url;
-        if (req.http.x-fos-original-accept) {
-            set req.http.accept = req.http.x-fos-original-accept;
-            unset req.http.x-fos-original-accept;
+        set req.url = req.http.X-Fos-Original-Url;
+        unset req.http.X-Fos-Original-Url;
+        if (req.http.X-Fos-Original-Accept) {
+            set req.http.accept = req.http.X-Fos-Original-Accept;
+            unset req.http.X-Fos-Original-Accept;
         } else {
             # If accept header was not set in original request, remove the header here.
             unset req.http.accept;
@@ -71,7 +71,7 @@ sub vcl_deliver {
     if (req.restarts == 0
         && resp.http.content-type ~ "application/vnd.fos.user-context-hash"
     ) {
-        set req.http.x-user-context-hash = resp.http.x-user-context-hash;
+        set req.http.X-User-Context-Hash = resp.http.X-User-Context-Hash;
 
         return (restart);
     }
@@ -80,12 +80,12 @@ sub vcl_deliver {
 
     # Remove the vary on context user hash, this is nothing public. Keep all
     # other vary headers.
-    set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *x-user-context-hash *", "");
+    set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *X-User-Context-Hash *", "");
     set resp.http.Vary = regsub(resp.http.Vary, "^, *", "");
     if (resp.http.Vary == "") {
         unset resp.http.Vary;
     }
 
     # Sanity check to prevent ever exposing the hash to a client.
-    unset resp.http.x-user-context-hash;
+    unset resp.http.X-User-Context-Hash;
 }
