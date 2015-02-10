@@ -74,7 +74,7 @@ Constant                Getter                    Default                       
 Enable Assertions
 '''''''''''''''''
 
-For the `assertHit` and `assertMiss` assertions to work, you should add a
+For the `assertHit` and `assertMiss` assertions to work, you need to add a
 :ref:`custom X-Cache header <varnish_debugging>` to responses served
 by your Varnish.
 
@@ -104,8 +104,9 @@ Constant                Getter                    Default                       
 Enable Assertions
 '''''''''''''''''
 
-For the `assertHit` and `assertMiss` assertions to work, you should add the HTTP
-header ``X-Cache`` to your responses
+For the `assertHit` and `assertMiss` assertions to work, you need to add a
+:ref:`custom X-Cache header <nginx_debugging>` to responses served
+by your Nginx.
 
 Usage
 -----

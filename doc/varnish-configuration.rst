@@ -203,7 +203,7 @@ Debugging
 
 Configure your Varnish to set a custom header (`X-Cache`) that shows whether a
 cache hit or miss occurred. This header will only be set if your application
-sends an `X-Cache-Debug` header.
+sends an `X-Cache-Debug` header:
 
 .. configuration-block::
 
