@@ -209,7 +209,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             ->with('critical', '403 error response "Forbidden" from caching proxy at http://127.0.0.1', array('exception' => $responseException))
             ->getMock();
 
-        $cacheInvalidator->addSubscriber(new LogSubscriber($logger));
+        $cacheInvalidator->getEventDispatcher()->addSubscriber(new LogSubscriber($logger));
 
         $cacheInvalidator
             ->flush()

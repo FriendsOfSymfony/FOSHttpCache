@@ -197,7 +197,7 @@ Then add the logger as a subscriber to the cache invalidator::
     use FOS\HttpCache\EventListener\LogSubscriber;
 
     $subscriber = new LogSubscriber($monolog);
-    $cacheInvalidator->addSubscriber($subscriber);
+    $cacheInvalidator->getEventDispatcher()->addSubscriber($subscriber);
 
 Now, if you flush the invalidator, errors will be logged::
 
