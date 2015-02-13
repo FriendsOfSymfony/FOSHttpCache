@@ -1,11 +1,15 @@
 Changelog
 =========
 
-* **2015-02-11** It is no longer possible to change the event dispatcher of the
-  CacheInvalidator once its instantiated. If you need a custom dispatcher, set it
-  right after creating the invalidator instance. Deprecated CacheInvalidator::addSubscriber
-  in favor of either using the event dispatcher instance you inject or do
-  getEventDispatcher()->addSubscriber($subscriber)
+1.3.0
+-----
+
+* Added [TagHandler](http://foshttpcache.readthedocs.org/en/latest/invalidation-handlers.html#tag-handler).
+* It is no longer possible to change the event dispatcher of the
+  CacheInvalidator once its instantiated. If you need a custom dispatcher, set 
+  it right after creating the invalidator instance. 
+* Deprecated `CacheInvalidator::addSubscriber` in favor of either using the event 
+  dispatcher instance you inject or doing `getEventDispatcher()->addSubscriber($subscriber)`.
 
 1.2.0
 -----
