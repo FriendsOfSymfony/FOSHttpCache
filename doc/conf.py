@@ -132,6 +132,7 @@ html_static_path = ['_static']
 def setup(app):
     app.add_javascript('tabs.js')
     app.add_stylesheet('tabs.css')
+    app.add_stylesheet('fos.css')
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.

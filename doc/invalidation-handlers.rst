@@ -10,7 +10,6 @@ Tag Handler
 -----------
 
 .. versionadded:: 1.3
-
     The tag handler was added in FOSHttpCache 1.3. If you are using an older
     version of the library and can not update, you need to use
     ``CacheInvalidator::invalidateTags``.
