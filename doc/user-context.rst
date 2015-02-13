@@ -27,7 +27,7 @@ Caching on user context works as follows:
 2. The :term:`caching proxy`  receives the request. It sends a request
    (the *hash request*) with a special accept header
    (``application/vnd.fos.user-context-hash``) to a specific URL,
-   e.g., ``/user_context_hash.php``.
+   e.g., ``/_fos_user_context_hash``.
 3. The :term:`application` receives the hash request. The application knows the
    client’s user context (roles, permissions, etc.) and generates a hash based
    on that information. The application then returns a response containing that
@@ -96,7 +96,9 @@ Returning the User Context Hash
 -------------------------------
 
 It is up to you to return the user context hash in response to the hash request
-(``/user_context_hash.php`` in step 3 above)::
+(``/_fos_user_context_hash`` in step 3 above)::
+
+    // <web-root>/_fos_user_context_hash/index.php
 
     $hash = $hashGenerator->generateHash();
 
