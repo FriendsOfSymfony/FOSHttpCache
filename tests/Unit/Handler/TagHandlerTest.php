@@ -45,7 +45,24 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $tagHandler = new TagHandler($cacheInvalidator, 'Custom-Tags');
+        $this->assertEquals('Custom-Tags', $tagHandler->getTagsHeaderName());
         $tagHandler->invalidateTags(array('post-1'));
+    }
+
+    public function testEscapingTags()
+    {
+        $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
+            ->shouldReceive('invalidate')
+            ->with(array('X-Cache-Tags' => '(post_test)(,.+)?$'))
+            ->once()
+            ->shouldReceive('supports')
+            ->with(CacheInvalidator::INVALIDATE)
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+
+        $tagHandler = new TagHandler($cacheInvalidator);
+        $tagHandler->invalidateTags(array('post,test'));
     }
 
     /**
@@ -61,5 +78,19 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         new TagHandler($cacheInvalidator);
+    }
+
+    public function testTagResponse()
+    {
+        $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
+            ->shouldReceive('supports')
+            ->with(CacheInvalidator::INVALIDATE)
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+
+        $tagHandler = new TagHandler($cacheInvalidator);
+        $tagHandler->addTags(array('post-1', 'test,post'));
+        $this->assertEquals('post-1,test_post', $tagHandler->getTagsHeaderValue());
     }
 }

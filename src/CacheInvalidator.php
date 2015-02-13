@@ -167,7 +167,7 @@ class CacheInvalidator
      */
     public function setTagsHeader($tagsHeader)
     {
-        if ($this->tagHandler && $this->tagsHeader !== $tagsHeader) {
+        if ($this->tagHandler && $this->tagHandler->getTagsHeaderName() !== $tagsHeader) {
             $this->tagHandler = new TagHandler($this, $tagsHeader);
         }
 
@@ -179,11 +179,11 @@ class CacheInvalidator
      *
      * @return string
      *
-     * @deprecated Use TagHandler::getTagsHeader instead.
+     * @deprecated Use TagHandler::getTagsHeaderName instead.
      */
     public function getTagsHeader()
     {
-        return $this->tagsHeader;
+        return $this->tagHandler ? $this->tagHandler->getTagsHeaderName() : $this->tagsHeader;
     }
 
     /**
