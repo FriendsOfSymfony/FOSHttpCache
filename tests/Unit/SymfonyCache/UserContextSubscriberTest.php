@@ -160,6 +160,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
                     $request->getMethod();
                     $request->getPathInfo();
                     $that->assertEquals($hashRequest, $request);
+                    $that->assertCount(2, $request->cookies->all());
 
                     return true;
                 }),
@@ -177,6 +178,54 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedContextHash, $request->headers->get($options['user_hash_header']));
     }
 
+    /**
+     * @dataProvider provideConfigOptions
+     */
+    public function testUserHashUserWithAuthorizationHeader($arg, $options)
+    {
+        $userContextSubscriber = new UserContextSubscriber($arg);
+
+        // The foo cookie should not be available in the eventual hash request anymore
+        $request = Request::create('/foo', 'GET', array(), array('foo' => 'bar'), array(), array('HTTP_AUTHORIZATION' => 'foo'));
+
+        $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], array(), array(), array(), $request->server->all());
+        $hashRequest->attributes->set('internalRequest', true);
+        $hashRequest->headers->set('Accept', $options['user_hash_accept_header']);
+
+        // Ensure request properties have been filled up.
+        $hashRequest->getPathInfo();
+        $hashRequest->getMethod();
+
+        $expectedContextHash = 'my_generated_hash';
+        $hashResponse = new Response();
+        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash );
+
+        $that = $this;
+        $this->kernel
+            ->expects($this->once())
+            ->method('handle')
+            ->with(
+                $this->callback(function (Request $request) use ($that, $hashRequest) {
+                    // we need to call some methods to get the internal fields initialized
+                    $request->getMethod();
+                    $request->getPathInfo();
+                    $that->assertEquals($hashRequest, $request);
+                    $that->assertCount(0, $request->cookies->all());
+
+                    return true;
+                })
+            )
+            ->will($this->returnValue($hashResponse));
+
+        $event = new CacheEvent($this->kernel, $request);
+
+        $userContextSubscriber->preHandle($event);
+        $response = $event->getResponse();
+
+        $this->assertNull($response);
+        $this->assertTrue($request->headers->has($options['user_hash_header']));
+        $this->assertSame($expectedContextHash, $request->headers->get($options['user_hash_header']));
+    }
 
     /**
      * @expectedException \InvalidArgumentException
