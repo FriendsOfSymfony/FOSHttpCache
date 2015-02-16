@@ -132,9 +132,6 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $cookieString = "PHPSESSID=$sessionId1; foo=bar; PHPSESSIDsdiuhsdf4535d4f=$sessionId2";
         $request = Request::create('/foo', 'GET', array(), $cookies, array(), array('Cookie' => $cookieString));
 
-        // Add a cookie which should not be available in the eventual hash request anymore
-        $request->cookies->set('foo', 'bar');
-
         $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], array(), array(), array(), $request->server->all());
         $hashRequest->attributes->set('internalRequest', true);
         $hashRequest->headers->set('Accept', $options['user_hash_accept_header']);
@@ -188,10 +185,8 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $userContextSubscriber = new UserContextSubscriber($arg);
 
-        $request = Request::create('/foo', 'GET', array(), array(), array(), array('HTTP_AUTHORIZATION' => 'foo'));
-
-        // Add a cookie which should not be available in the eventual hash request anymore
-        $request->cookies->set('foo', 'bar');
+        // The foo cookie should not be available in the eventual hash request anymore
+        $request = Request::create('/foo', 'GET', array(), array('foo' => 'bar'), array(), array('HTTP_AUTHORIZATION' => 'foo'));
 
         $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], array(), array(), array(), $request->server->all());
         $hashRequest->attributes->set('internalRequest', true);
