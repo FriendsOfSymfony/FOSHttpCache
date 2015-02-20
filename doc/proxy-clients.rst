@@ -1,14 +1,70 @@
 Caching Proxy Clients
 =====================
 
-This library ships with clients for the Varnish, NGINX and Symfony built-in caching proxies. You
-can use the clients either wrapped by the :doc:`cache invalidator <cache-invalidator>`
-(recommended), or directly for low-level access to invalidation functionality.
+This library ships with clients for the Varnish and NGINX caching servers and
+the Symfony built-in HTTP cache. You can use the clients either wrapped by the
+:doc:`cache invalidator <cache-invalidator>` (recommended), or directly for
+low-level access to invalidation functionality. Which client you need depends on
+which caching solution you use.
 
 .. _client setup:
 
 Setup
 -----
+
+HTTP Adapter Installation
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Because the clients send invalidation requests over HTTP, an `HTTP adapter`_
+must be installed. Which one you need depends on the HTTP client library that
+you use in your project. For instance, if you use Guzzle 6 in your project,
+install the appropriate adapter:
+
+.. code-block:: bash
+
+    $ composer require php-http/guzzle6-adapter
+
+You also need a `PSR-7 message implementation`_. If you use Guzzle 6, Guzzle’s
+implementation is already included. If you use another client, install one of
+the implementations. Recommended:
+
+.. code-block:: bash
+
+    $ composer require guzzlehttp/psr7
+
+Alternatively:
+
+.. code-block:: bash
+
+    $ composer require zendframework/zend-diactoros
+
+.. _HTTP adapter configuration:
+
+HTTP Adapter Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, the proxy client will find the adapter that you have installed
+through Composer. But you can also pass the adapter explicitly. This is most
+useful when you have created a HTTP client with custom options or middleware
+(such as logging)::
+
+    use GuzzleHttp\Client;
+
+    $config = [
+        // For instance, custom middlewares
+    ];
+    $yourHttpClient = new Client($config);
+
+Take your client and create a HTTP adapter from it::
+
+    use Http\Adapter\Guzzle6HttpAdapter;
+
+    $adapter = new Guzzle6HttpAdapter($client);
+
+Then pass that adapter to the caching proxy client::
+
+    $proxyClient = new Varnish($servers, '/baseUrl', $adapter);
+    // Varnish as example, but also possible for NGINX and Symfony
 
 Varnish Client
 ~~~~~~~~~~~~~~
@@ -56,9 +112,13 @@ is available as the second parameter::
     $nginx = new Nginx($servers, 'my-cool-app.com');
 
 If you have configured NGINX to support purge requests at a separate location,
-supply that location to the class as the third parameter::
+call `setPurgeLocation()`::
 
-    $nginx = new Nginx($servers, 'my-cool-app.com', '/purge');
+    use FOS\HttpCache\ProxyClient\Nginx;
+
+    $nginx = new Nginx($servers, $baseUri);
+    $nginx->setPurgeLocation('/purge');
+
 
 .. note::
 
@@ -205,25 +265,5 @@ Varnish client::
 Make sure to add any headers that you want to ban on to your
 :doc:`proxy configuration <proxy-configuration>`.
 
-.. _custom guzzle client:
-
-Custom Guzzle Client
---------------------
-
-By default, the proxy clients instantiate a `Guzzle client`_ to communicate
-with the caching proxy. If you need to customize the requests, for example to
-send a basic authentication header, you can inject a custom Guzzle client::
-
-    use FOS\HttpCache\ProxyClient\Varnish;
-    use Guzzle\Http\Client;
-
-    $client = new Client();
-    $client->setDefaultOption('auth', array('username', 'password', 'Digest'));
-
-    $servers = array('10.0.0.1');
-    $varnish = new Varnish($servers, '/baseUrl', $client);
-
-The Symfony client accepts a guzzle client as the 3rd parameter as well, NGINX
-accepts it as 4th parameter.
-
-.. _Guzzle client: http://guzzle3.readthedocs.org/
+.. _HTTP Adapter: http://php-http.readthedocs.org/en/latest/
+.. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation

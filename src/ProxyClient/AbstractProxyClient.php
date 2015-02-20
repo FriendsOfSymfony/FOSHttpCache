@@ -12,107 +12,57 @@
 namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
-use FOS\HttpCache\Exception\InvalidUrlException;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
-use Guzzle\Http\Client;
-use Guzzle\Http\ClientInterface;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Common\Exception\ExceptionCollection as GuzzleExceptionCollection;
-use Guzzle\Http\Exception\RequestException;
-use Guzzle\Http\Message\RequestInterface;
+use FOS\HttpCache\ProxyClient\Request\InvalidationRequest;
+use FOS\HttpCache\ProxyClient\Request\RequestQueue;
+use Http\Adapter\Exception\MultiHttpAdapterException;
+use Http\Adapter\HttpAdapter;
+use Http\Discovery\HttpAdapterDiscovery;
+use Psr\Http\Message\ResponseInterface;
 
 /**
- * Guzzle-based abstract caching proxy client
+ * Abstract caching proxy client
  *
  * @author David de Boer <david@driebit.nl>
  */
 abstract class AbstractProxyClient implements ProxyClientInterface
 {
     /**
-     * IP addresses/hostnames of all caching proxy servers
-     *
-     * @var array
-     */
-    private $servers;
-
-    /**
      * HTTP client
      *
-     * @var ClientInterface
+     * @var HttpAdapter
      */
-    private $client;
+    private $httpAdapter;
 
     /**
      * Request queue
      *
-     * @var array|RequestInterface[]
+     * @var RequestQueue
      */
-    private $queue;
+    protected $queue;
 
     /**
      * Constructor
      *
-     * @param array           $servers Caching proxy server hostnames or IP addresses,
-     *                                 including port if not port 80.
-     *                                 E.g. array('127.0.0.1:6081')
-     * @param string          $baseUrl Default application hostname, optionally
+     * @param array $servers           Caching proxy server hostnames or IP
+     *                                 addresses, including port if not port 80.
+     *                                 E.g. ['127.0.0.1:6081']
+     * @param string      $baseUri     Default application hostname, optionally
      *                                 including base URL, for purge and refresh
      *                                 requests (optional). This is required if
      *                                 you purge and refresh paths instead of
      *                                 absolute URLs.
-     * @param ClientInterface $client  HTTP client (optional). If no HTTP client
-     *                                 is supplied, a default one will be
-     *                                 created.
+     * @param HttpAdapter $httpAdapter If no HTTP adapter is supplied, a default
+     *                                 one will be created.
      */
-    public function __construct(array $servers, $baseUrl = null, ClientInterface $client = null)
-    {
-        $this->client = $client ?: new Client();
-        $this->setServers($servers);
-        $this->setBaseUrl($baseUrl);
-    }
-
-    /**
-     * Set caching proxy servers
-     *
-     * @param array $servers Caching proxy proxy server hostnames or IP
-     *                       addresses, including port if not port 80.
-     *                       E.g. array('127.0.0.1:6081')
-     *
-     * @throws InvalidUrlException If server is invalid or contains URL
-     *                             parts other than scheme, host, port
-     */
-    public function setServers(array $servers)
-    {
-        $this->servers = array();
-        foreach ($servers as $server) {
-            $this->servers[] = $this->filterUrl($server, array('scheme', 'host', 'port'));
-        }
-    }
-
-    /**
-     * Set application hostname, optionally including a base URL, for purge and
-     * refresh requests
-     *
-     * @param string $url Your application’s base URL or hostname
-     */
-    public function setBaseUrl($url)
-    {
-        if ($url) {
-            $url = $this->filterUrl($url);
-        }
-
-        $this->client->setBaseUrl($url);
-    }
-
-    /**
-     * Get application base URL
-     *
-     * @return string Your application base url
-     */
-    protected function getBaseUrl()
-    {
-        $this->client->getBaseUrl();
+    public function __construct(
+        array $servers,
+        $baseUri = null,
+        HttpAdapter $httpAdapter = null
+    ) {
+        $this->httpAdapter = $httpAdapter ?: HttpAdapterDiscovery::find();
+        $this->initQueue($servers, $baseUri);
     }
 
     /**
@@ -120,196 +70,84 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      */
     public function flush()
     {
-        $queue = $this->queue;
-        if (0 === count($queue)) {
+        if (0 === $this->queue->count()) {
             return 0;
         }
 
-        $this->queue = array();
-        $this->sendRequests($queue);
+        $queue = clone $this->queue;
+        $this->queue->clear();
+
+        try {
+            $responses = $this->httpAdapter->sendRequests($queue->all());
+        } catch (MultiHttpAdapterException $e) {
+            // Handle all networking errors: php-http only throws an exception
+            // if no response is available.
+            $collection = new ExceptionCollection();
+            foreach ($e->getExceptions() as $exception) {
+                // php-http only throws an exception if no response is available
+                if (!$exception->getResponse()) {
+                    // Assume networking error if no response was returned.
+                    $collection->add(
+                        ProxyUnreachableException::proxyUnreachable($exception)
+                    );
+                }
+            }
+
+            foreach ($this->handleErrorResponses($e->getResponses()) as $exception) {
+                $collection->add($exception);
+            }
+
+            throw $collection;
+        }
+
+        $exceptions = $this->handleErrorResponses($responses);
+        if (count($exceptions) > 0) {
+            throw new ExceptionCollection($exceptions);
+        }
 
         return count($queue);
     }
 
     /**
-     * Add a request to the queue
+     * Add invalidation reqest to the queue
      *
      * @param string $method  HTTP method
-     * @param string $url     URL
+     * @param string $url     HTTP URL
      * @param array  $headers HTTP headers
      */
-    protected function queueRequest($method, $url, array $headers = array())
+    protected function queueRequest($method, $url, array $headers = [])
     {
-        $signature = $this->getSignature($method, $url, $headers);
-        if (!isset($this->queue[$signature])) {
-            $this->queue[$signature] = $this->createRequest($method, $url, $headers);
-        }
+        $this->queue->add(new InvalidationRequest($method, $url, $headers));
     }
 
     /**
-     * Calculate a unique hash for the request, based on all significant information.
+     * Initialize the request queue
      *
-     * @param string $method  HTTP method
-     * @param string $url     URL
-     * @param array  $headers HTTP headers
-     *
-     * @return string A hash value for this request.
+     * @param array  $servers
+     * @param string $baseUri
      */
-    private function getSignature($method, $url, array $headers)
+    protected function initQueue(array $servers, $baseUri)
     {
-        ksort($headers);
-
-        return md5($method."\n".$url."\n".var_export($headers, true));
+        $this->queue = new RequestQueue($servers, $baseUri);
     }
 
     /**
-     * Create request
+     * @param ResponseInterface[] $responses
      *
-     * @param string $method  HTTP method
-     * @param string $url     URL
-     * @param array  $headers HTTP headers
-     *
-     * @return RequestInterface
+     * @return ProxyResponseException[]
      */
-    protected function createRequest($method, $url, array $headers = array())
+    private function handleErrorResponses(array $responses)
     {
-        return $this->client->createRequest($method, $url, $headers);
-    }
+        $exceptions = [];
 
-    /**
-     * Sends all requests to each caching proxy server
-     *
-     * Requests are sent in parallel to minimise impact on performance.
-     *
-     * @param RequestInterface[] $requests Requests
-     *
-     * @throws ExceptionCollection
-     */
-    private function sendRequests(array $requests)
-    {
-        $allRequests = array();
-
-        foreach ($requests as $request) {
-            $headers = $request->getHeaders()->toArray();
-            // Force to re-create Host header if empty, as Apache chokes on this. See #128 for discussion.
-            if (empty($headers['Host'])) {
-                unset($headers['Host']);
-            }
-            foreach ($this->servers as $server) {
-                $proxyRequest = $this->createRequest(
-                    $request->getMethod(),
-                    $server.$request->getResource(),
-                    $headers
-                );
-                $allRequests[] = $proxyRequest;
+        foreach ($responses as $response) {
+            if ($response->getStatusCode() >= 400
+                && $response->getStatusCode() < 600
+            ) {
+                $exceptions[] = ProxyResponseException::proxyResponse($response);
             }
         }
 
-        try {
-            $this->client->send($allRequests);
-        } catch (GuzzleExceptionCollection $e) {
-            $this->handleException($e);
-        }
+        return $exceptions;
     }
-
-    /**
-     * Handle request exception
-     *
-     * @param GuzzleExceptionCollection $exceptions
-     *
-     * @throws ExceptionCollection
-     */
-    protected function handleException(GuzzleExceptionCollection $exceptions)
-    {
-        $collection = new ExceptionCollection();
-
-        foreach ($exceptions as $exception) {
-            if ($exception instanceof CurlException) {
-                // Caching proxy unreachable
-                $e = ProxyUnreachableException::proxyUnreachable(
-                    $exception->getRequest()->getHost(),
-                    $exception->getMessage(),
-                    $exception->getRequest()->getRawHeaders(),
-                    $exception
-                );
-            } elseif ($exception instanceof RequestException) {
-                // Other error
-                $e = ProxyResponseException::proxyResponse(
-                    $exception->getRequest()->getHost(),
-                    $exception->getCode(),
-                    $exception->getMessage(),
-                    $exception->getRequest()->getRawHeaders(),
-                    $exception
-                );
-            } else {
-                // Unexpected exception type
-                $e = $exception;
-            }
-
-            $collection->add($e);
-        }
-
-        throw $collection;
-    }
-
-    /**
-     * Filter a URL
-     *
-     * Prefix the URL with "http://" if it has no scheme, then check the URL
-     * for validity. You can specify what parts of the URL are allowed.
-     *
-     * @param string   $url
-     * @param string[] $allowedParts Array of allowed URL parts (optional)
-     *
-     * @throws InvalidUrlException If URL is invalid, the scheme is not http or
-     *                             contains parts that are not expected.
-     *
-     * @return string The URL (with default scheme if there was no scheme)
-     */
-    protected function filterUrl($url, array $allowedParts = array())
-    {
-        // parse_url doesn’t work properly when no scheme is supplied, so
-        // prefix URL with HTTP scheme if necessary.
-        if (false === strpos($url, '://')) {
-            $url = sprintf('%s://%s', $this->getDefaultScheme(), $url);
-        }
-
-        if (!$parts = parse_url($url)) {
-            throw InvalidUrlException::invalidUrl($url);
-        }
-        if (empty($parts['scheme'])) {
-            throw InvalidUrlException::invalidUrl($url, 'empty scheme');
-        }
-
-        if (!in_array(strtolower($parts['scheme']), $this->getAllowedSchemes())) {
-            throw InvalidUrlException::invalidUrlScheme($url, $parts['scheme'], $this->getAllowedSchemes());
-        }
-
-        if (count($allowedParts) > 0) {
-            $diff = array_diff(array_keys($parts), $allowedParts);
-            if (count($diff) > 0) {
-                throw InvalidUrlException::invalidUrlParts($url, $allowedParts);
-            }
-        }
-
-        return $url;
-    }
-
-    /**
-     * Get default scheme
-     *
-     * @return string
-     */
-    protected function getDefaultScheme()
-    {
-        return 'http';
-    }
-
-    /**
-     * Get schemes allowed by caching proxy
-     *
-     * @return string[] Array of schemes allowed by caching proxy, e.g. 'http'
-     *                  or 'https'
-     */
-    abstract protected function getAllowedSchemes();
 }

@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\Exception;
 
+use Http\Adapter\Exception\HttpAdapterException;
+
 /**
  * Thrown when a request to the reverse caching proxy fails to establish a
  * connection.
@@ -18,28 +20,22 @@ namespace FOS\HttpCache\Exception;
 class ProxyUnreachableException extends \RuntimeException implements HttpCacheExceptionInterface
 {
     /**
-     * @param string     $host     The host name that was contacted.
-     * @param string     $message  The error message from the HTTP client.
-     * @param string     $details  Further details about the request that caused the error.
-     * @param \Exception $previous The exception from the HTTP client.
+     * @param HttpAdapterException $adapterException
      *
      * @return ProxyUnreachableException
      */
-    public static function proxyUnreachable($host, $message, $details = '', \Exception $previous = null)
+    public static function proxyUnreachable(HttpAdapterException $adapterException)
     {
         $message = sprintf(
             'Request to caching proxy at %s failed with message "%s"',
-            $host,
-            $message
+            $adapterException->getRequest()->getHeaderLine('Host'),
+            $adapterException->getMessage()
         );
-        if ($details) {
-            $message .= ". $details";
-        }
-
+        
         return new ProxyUnreachableException(
             $message,
             0,
-            $previous
+            $adapterException
         );
     }
 }

@@ -6,9 +6,10 @@ abstract class AbstractCacheConstraintTest extends \PHPUnit_Framework_TestCase
 {
     protected function getResponseMock()
     {
-        return \Mockery::mock(
-            '\Guzzle\Http\Message\Response[hasHeader,getHeader]',
-            array(null)
+        $mock = \Mockery::mock(
+            '\Psr\Http\Message\ResponseInterface[hasHeader,getHeaderLine,getStatusCode]'
         );
+
+        return $mock;
     }
 }

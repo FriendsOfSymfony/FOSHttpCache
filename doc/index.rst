@@ -3,6 +3,11 @@ FOSHttpCache
 
 This is the documentation for the `FOSHttpCache library <https://github.com/FriendsOfSymfony/FOSHttpCache>`_.
 
+.. note::
+
+    This documentation is for the (upcoming) 2.0 of the library. For the stable
+    1.* version, please refer to the `stable documentation`_.
+
 This library integrates your PHP applications with HTTP caching proxies such as
 Varnish, NGINX or the Symfony HttpCache class. Use this library to send
 invalidation requests from your application to the caching proxy and to test
@@ -28,3 +33,5 @@ Contents:
 
     testing-your-application
     contributing
+
+.. _stable documentation: http://foshttpcache.readthedocs.org/en/stable/

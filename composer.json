@@ -21,14 +21,19 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "guzzle/guzzle": "~3.8",
+        "php": ">=5.4.8",
         "symfony/event-dispatcher": "~2.3",
-        "symfony/options-resolver": "~2.3"
+        "symfony/options-resolver": "~2.3",
+        "psr/http-message-implementation": "~1.0",
+        "php-http/adapter-implementation": "^0.1.0",
+        "php-http/discovery": "^0.1.1",
+        "php-http/message-decorator": "^0.1.0"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.1",
         "monolog/monolog": "~1.0",
+        "php-http/guzzle6-adapter": "^0.1.0",
+        "guzzlehttp/psr7": "^1.0",
         "symfony/process": "~2.3",
         "symfony/http-kernel": "~2.3"
     },
@@ -47,7 +52,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }

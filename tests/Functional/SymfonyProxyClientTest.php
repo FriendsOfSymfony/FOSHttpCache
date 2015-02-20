@@ -36,11 +36,11 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
         $response = $this->getResponse('/symfony.php/negotiation', $json);
         $this->assertMiss($response);
-        $this->assertEquals('application/json', $response->getContentType());
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
         $this->assertHit($this->getResponse('/symfony.php/negotiation', $json));
 
         $response = $this->getResponse('/symfony.php/negotiation', $html);
-        $this->assertContains('text/html', $response->getContentType());
+        $this->assertContains('text/html', $response->getHeaderLine('Content-Type'));
         $this->assertMiss($response);
         $this->assertHit($this->getResponse('/symfony.php/negotiation', $html));
 
@@ -69,7 +69,11 @@ class SymfonyProxyClientTest extends SymfonyTestCase
         $this->getProxyClient()->refresh('/symfony.php/cache')->flush();
         usleep(100);
         $refreshed = $this->getResponse('/symfony.php/cache');
-        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+
+        $originalTimestamp = (float)(string) $response->getBody();
+        $refreshedTimestamp = (float)(string) $refreshed->getBody();
+        
+        $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
     }
 
     public function testRefreshContentType()

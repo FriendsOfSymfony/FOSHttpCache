@@ -88,11 +88,11 @@ class VarnishProxyClientTest extends VarnishTestCase
 
         $response = $this->getResponse('/negotation.php', $json);
         $this->assertMiss($response);
-        $this->assertEquals('application/json', $response->getContentType());
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
         $this->assertHit($this->getResponse('/negotation.php', $json));
 
         $response = $this->getResponse('/negotation.php', $html);
-        $this->assertContains('text/html', $response->getContentType());
+        $this->assertContains('text/html', $response->getHeaderLine('Content-Type'));
         $this->assertMiss($response);
         $this->assertHit($this->getResponse('/negotation.php', $html));
 
@@ -121,7 +121,11 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->getProxyClient()->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
-        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+
+        $originalTimestamp = (float)(string) $response->getBody();
+        $refreshedTimestamp = (float)(string) $refreshed->getBody();
+
+        $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
     }
 
     public function testRefreshContentType()
