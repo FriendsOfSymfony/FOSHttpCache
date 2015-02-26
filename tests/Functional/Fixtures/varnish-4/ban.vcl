@@ -35,5 +35,6 @@ sub vcl_deliver {
         # Remove ban-lurker friendly custom headers when delivering to client
         unset resp.http.X-Url;
         unset resp.http.X-Host;
+        unset resp.http.X-Cache-Tags;
     }
 }
