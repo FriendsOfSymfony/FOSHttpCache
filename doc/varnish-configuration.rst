@@ -99,12 +99,12 @@ Add the following to your Varnish configuration to enable :ref:`cache tagging <t
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
         :language: varnish4
-        :emphasize-lines: 8-13
+        :emphasize-lines: 8-13,39
         :linenos:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/ban.vcl
         :language: varnish3
-        :emphasize-lines: 8-13
+        :emphasize-lines: 8-13,39
         :linenos:
 
 .. _varnish user context:
