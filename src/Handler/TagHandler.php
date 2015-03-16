@@ -82,10 +82,14 @@ class TagHandler
      * This must be called before any response is sent to the client.
      *
      * @param array $tags List of tags to add.
+     *
+     * @return $this
      */
     public function addTags(array $tags)
     {
         $this->tags = array_merge($this->tags, $tags);
+
+        return $this;
     }
 
     /**

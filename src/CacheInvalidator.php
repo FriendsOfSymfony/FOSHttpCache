@@ -59,6 +59,8 @@ class CacheInvalidator
     private $eventDispatcher;
 
     /**
+     * @deprecated This reference is only for BC and will be removed in version 2.0.
+     *
      * @var TagHandler
      */
     private $tagHandler;
@@ -115,6 +117,8 @@ class CacheInvalidator
      * @param EventDispatcherInterface $eventDispatcher
      *
      * @return $this
+     *
+     * @throws \Exception When trying to override the event dispatcher.
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
