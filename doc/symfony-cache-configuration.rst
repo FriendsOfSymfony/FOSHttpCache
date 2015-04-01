@@ -168,7 +168,8 @@ options through the constructor:
 
     With Apache, you can do this for example in a ``.htaccess`` file:
 
-        RewriteEngine On
+        RewriteEngine On 
+    
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 Cleaning the Cookie Header
