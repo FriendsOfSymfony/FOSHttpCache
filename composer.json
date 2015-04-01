@@ -22,7 +22,7 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "guzzle/http": "3.*",
+        "guzzle/guzzle": "~3.0",
         "symfony/event-dispatcher": "~2.3",
         "symfony/options-resolver": "~2.3"
     },
