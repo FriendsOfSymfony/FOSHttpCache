@@ -166,9 +166,9 @@ options through the constructor:
     To use authorization headers for user context, you might have to add some server
     configuration to make these headers available to PHP.
 
-    With Apache, you can do this for example in a ``.htaccess`` file:
+    With Apache, you can do this for example in a ``.htaccess`` file::
 
-        RewriteEngine On
+        RewriteEngine On 
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 Cleaning the Cookie Header
