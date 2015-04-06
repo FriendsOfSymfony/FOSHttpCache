@@ -68,6 +68,29 @@ abstract class UserContextTestCase extends VarnishTestCase
         $this->assertHit($headResponse2);
     }
 
+    /**
+     * Making sure that non-authenticated and authenticated cache are not mixed up.
+     */
+    public function testUserContextNoAuth()
+    {
+        $response1 = $this->getResponse('/user_context_anon.php');
+        $this->assertEquals('anonymous', $response1->getBody(true));
+        $this->assertEquals('MISS', $response1->getHeader('X-HashCache'));
+
+        $response1 = $this->getResponse('/user_context_anon.php', array(), array('cookies' => array('foo')));
+        $this->assertEquals('foo', $response1->getBody(true));
+        $this->assertEquals('MISS', $response1->getHeader('X-HashCache'));
+
+        $cachedResponse1 = $this->getResponse('/user_context_anon.php');
+        $this->assertEquals('anonymous', $cachedResponse1->getBody(true));
+        $this->assertHit($cachedResponse1);
+
+        $cachedResponse1 = $this->getResponse('/user_context_anon.php', array(), array('cookies' => array('foo')));
+        $this->assertEquals('foo', $cachedResponse1->getBody(true));
+        $this->assertContextCache($cachedResponse1->getHeader('X-HashCache'));
+        $this->assertHit($cachedResponse1);
+    }
+
     public function testAcceptHeader()
     {
         $response1 = $this->getResponse(
