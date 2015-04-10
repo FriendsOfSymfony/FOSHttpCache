@@ -4,7 +4,7 @@ Varnish Configuration
 ---------------------
 
 Below you will find detailed Varnish configuration recommendations for the
-features provided by this library. The examples are tested with Varnish
+features provided by this library. These examples have been tested with Varnish
 versions 3 and 4.
 
 Basic Varnish Configuration
