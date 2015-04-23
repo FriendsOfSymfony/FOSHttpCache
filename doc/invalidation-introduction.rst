@@ -122,10 +122,16 @@ all methods, please refer to proxy specific documentation for the details.
         client requests the URL, data is fetched from the application, stored in
         the caching proxy, and returned to the client.
 
+        A purge removes all *variants* of the cached content, as per the ``Vary``
+        header.
+
     Refresh
-        Refresh updates the cached content immediately. The content is not deleted 
-        from the cache, like in purge, but is replaced with a new version fetched
-        from the application. 
+        Fetch the requested page from the backend immediately, even if there would
+        normally be a cache hit. The content is not just deleted  from the cache,
+        but is replaced with a new version fetched from the application.
+
+        As fetching is done with the parameters of the refresh request, other
+        variants of the same content will not be touched.
 
     Ban
         Unlike purge, ban does not remove the content from the cache
