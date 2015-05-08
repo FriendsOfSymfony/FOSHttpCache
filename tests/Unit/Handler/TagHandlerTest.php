@@ -90,7 +90,9 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $tagHandler = new TagHandler($cacheInvalidator);
+        $this->assertFalse($tagHandler->hasTags());
         $tagHandler->addTags(array('post-1', 'test,post'));
+        $this->assertTrue($tagHandler->hasTags());
         $this->assertEquals('post-1,test_post', $tagHandler->getTagsHeaderValue());
     }
 }
