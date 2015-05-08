@@ -77,9 +77,19 @@ class TagHandler
     }
 
     /**
-     * Add tags to be sent.
+     * Check whether the tag handler has any tags to set on the response.
      *
-     * This must be called before any response is sent to the client.
+     * @return bool True if this handler will set at least one tag.
+     */
+    public function hasTags()
+    {
+        return 0 < count($this->tags);
+    }
+
+    /**
+     * Add tags to be set on the response.
+     *
+     * This must be called before any HTTP response is sent to the client.
      *
      * @param array $tags List of tags to add.
      *
