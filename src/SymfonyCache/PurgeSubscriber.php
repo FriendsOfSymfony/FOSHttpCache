@@ -50,7 +50,12 @@ class PurgeSubscriber extends AccessControlledSubscriber
     public function __construct(array $options = array())
     {
         $resolver = new OptionsResolver();
-        $resolver->setDefined(array('purge_client_matcher', 'purge_client_ips', 'purge_method'));
+        if (method_exists($resolver, 'setDefined')) {
+            // this was only added in symfony 2.6
+            $resolver->setDefined(array('purge_client_matcher', 'purge_client_ips', 'purge_method'));
+        } else {
+            $resolver->setOptional(array('purge_client_matcher', 'purge_client_ips', 'purge_method'));
+        }
         $resolver->setDefaults(array(
             'purge_client_matcher' => null,
             'purge_client_ips' => null,

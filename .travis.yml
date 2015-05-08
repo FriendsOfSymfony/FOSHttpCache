@@ -6,14 +6,17 @@ php:
   - 5.5
   - 5.6
   - hhvm
+  - 7
 
 env:
-  - VARNISH_VERSION=3.0
+  - VARNISH_VERSION=4.0
 
 matrix:
   include:
     - php: 5.5
-      env: VARNISH_VERSION=4.0
+      env: VARNISH_VERSION=3.0
+    - php: 5.3
+      env: SYMFONY_VERSION=2.3.* VARNISH_VERSION=4.0 COMPOSER_FLAGS="--prefer-lowest"
 
 branches:
   only:
@@ -22,21 +25,19 @@ branches:
     - '/^\d+\.\d+$/'
 
 before_script:
+  # Install deps
+  - composer update $COMPOSER_FLAGS --dev --prefer-source --no-interaction
   # Install Varnish
   - curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add -
   - echo "deb http://repo.varnish-cache.org/ubuntu/ precise varnish-${VARNISH_VERSION}" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get update -qq
-  - sudo apt-get install -qq varnish
+  - sudo apt-get install -qq varnish python-sphinx enchant
+  - sudo pip install -r doc/requirements.txt
   # Install NGINX
   - sh ./tests/install-nginx.sh
   # Starting webserver
   - sh -c "if [ '$TRAVIS_PHP_VERSION' = '5.3' ]; then ./tests/ci/install-apache.sh; fi"
   - sh -c "if [ '$TRAVIS_PHP_VERSION' = 'hhvm' ]; then ./tests/ci/install-apache-hhvm.sh; fi"
-  # Install deps
-  - composer update --dev --prefer-source
-  # Install Sphinx and enchant
-  - sudo apt-get install python-sphinx enchant
-  - sudo pip install -r doc/requirements.txt
 
 script:
   - phpunit --coverage-clover=coverage.clover
