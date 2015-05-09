@@ -256,6 +256,7 @@ texinfo_documents = [
 
 rst_epilog = """
 .. _FOSHttpCacheBundle: https://github.com/FriendsOfSymfony/FOSHttpCacheBundle
+.. _GitHub: https://github.com/FriendsOfSymfony/FOSHttpCache
 """
 
 extlinks = {'source': ('https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/%s', '') }
