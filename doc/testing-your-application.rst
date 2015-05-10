@@ -3,7 +3,7 @@
 Testing Your Application
 ========================
 
-This chapter describes how to test your application against you reverse proxy
+This chapter describes how to test your application against your reverse proxy
 instance.
 
 The FOSHttpCache library provides base test case classes to help you write
