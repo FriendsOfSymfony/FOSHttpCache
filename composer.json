@@ -22,14 +22,13 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "guzzle/guzzle": "~3.0",
+        "guzzle/guzzle": "~3.8",
         "symfony/event-dispatcher": "~2.3",
         "symfony/options-resolver": "~2.3"
     },
     "require-dev": {
-        "guzzle/plugin-mock": "*",
-        "mockery/mockery": "*",
-        "monolog/monolog": "*",
+        "mockery/mockery": "~0.9.1",
+        "monolog/monolog": "~1.0",
         "symfony/process": "~2.3",
         "symfony/http-kernel": "~2.3"
     },
