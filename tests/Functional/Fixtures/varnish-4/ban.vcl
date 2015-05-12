@@ -30,6 +30,7 @@ sub vcl_backend_response {
 }
 
 sub vcl_deliver {
+
     # Keep ban-lurker headers only if debugging is enabled
     if (!resp.http.X-Cache-Debug) {
         # Remove ban-lurker friendly custom headers when delivering to client
