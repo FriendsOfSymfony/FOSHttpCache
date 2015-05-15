@@ -30,7 +30,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * {@inheritdoc}
  */
-abstract class EventDispatchingHttpCache extends HttpCache
+abstract class EventDispatchingHttpCache extends HttpCache implements CacheInvalidationInterface
 {
     /**
      * @var EventDispatcherInterface
