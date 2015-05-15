@@ -51,7 +51,6 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
         parent::__construct($servers, $baseUrl, $client);
 
         $resolver = new OptionsResolver();
-        $resolver->setDefined(array('purge_method'));
         $resolver->setDefaults(array(
             'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
         ));
