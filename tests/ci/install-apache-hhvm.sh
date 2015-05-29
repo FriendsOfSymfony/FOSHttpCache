@@ -11,3 +11,7 @@ sudo service apache2 restart
 
 # Run HHVM
 hhvm -m daemon -vServer.Type=fastcgi -vServer.Port=9000 -vServer.FixPathInfo=true
+
+curl -v http://localhost:8080/symfony.php/cache
+sleep 5
+curl -v http://localhost:8080/symfony.php/cache
