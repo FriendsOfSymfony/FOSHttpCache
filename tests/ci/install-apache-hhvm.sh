@@ -12,10 +12,11 @@ sudo service apache2 restart
 # Run HHVM
 hhvm -m daemon -vServer.Type=fastcgi -vServer.Port=9000 -vServer.FixPathInfo=true
 
-curl -v http://localhost:8080/symfony.php/cache
 sleep 5
+curl -v http://localhost:8080/cache.php
 curl -v http://localhost:8080/symfony.php/cache
+echo hhvm log
 sudo cat /var/log/hhvm/error.log
+echo apache log
 sudo cat /var/log/apache2/error.log
 sudo cat /var/log/apache2/other_vhosts_access.log
-sudo ls /var/log/apache2
