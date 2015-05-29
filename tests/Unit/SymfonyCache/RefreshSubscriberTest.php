@@ -27,7 +27,7 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->kernel = $this->getMock('FOS\HttpCache\Tests\Unit\SymfonyCache\TestHttpCache');
+        $this->kernel = $this->getMock('FOS\HttpCache\SymfonyCache\CacheInvalidationInterface');
     }
 
     public function testRefreshAllowed()
@@ -125,21 +125,5 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testInvalidConfiguration()
     {
         new RefreshSubscriber(array('purge_client_ip' => '1.2.3.4'));
-    }
-}
-
-class TestHttpCache extends HttpCache
-{
-    public function __construct()
-    {}
-
-    /**
-     * Made public to allow event subscribers to do refresh operations.
-     *
-     * {@inheritDoc}
-     */
-    public function fetch(Request $request, $catch = false)
-    {
-        return parent::fetch($request, $catch);
     }
 }

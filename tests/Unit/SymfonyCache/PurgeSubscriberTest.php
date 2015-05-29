@@ -27,7 +27,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->kernel = $this
-            ->getMockBuilder('Symfony\Component\HttpKernel\HttpCache\HttpCache')
+            ->getMockBuilder('FOS\HttpCache\SymfonyCache\CacheInvalidationInterface')
             ->disableOriginalConstructor()
             ->getMock()
         ;

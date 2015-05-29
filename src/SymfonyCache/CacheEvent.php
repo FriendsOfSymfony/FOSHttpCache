@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 class CacheEvent extends Event
 {
     /**
-     * @var HttpCache
+     * @var CacheInvalidationInterface
      */
     private $kernel;
 
@@ -39,11 +39,17 @@ class CacheEvent extends Event
     private $response;
 
     /**
-     * @param HttpCache $kernel  The kernel raising with this event.
-     * @param Request   $request The request being processed.
+     * Make sure your $kernel implements CacheInvalidationInterface. Creating the event with other
+     * HttpCache classes is deprecated and will no longer be supported in version 2 of this library.
+     *
+     * @param CacheInvalidationInterface|HttpCache $kernel  The kernel raising with this event.
+     * @param Request                              $request The request being processed.
      */
-    public function __construct(HttpCache $kernel, Request $request)
+    public function __construct($kernel, Request $request)
     {
+        if (!($kernel instanceof CacheInvalidationInterface || $kernel instanceof HttpCache)) {
+            throw new \InvalidArgumentException('Expected a CacheInvalidationInterface or HttpCache');
+        }
         $this->kernel = $kernel;
         $this->request = $request;
     }
@@ -51,7 +57,7 @@ class CacheEvent extends Event
     /**
      * Get the cache kernel that raised this event.
      *
-     * @return HttpCache
+     * @return CacheInvalidationInterface
      */
     public function getKernel()
     {

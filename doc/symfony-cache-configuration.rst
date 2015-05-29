@@ -32,9 +32,9 @@ Instead of extending ``Symfony\Component\HttpKernel\HttpCache\HttpCache``, your
 
     If your class already needs to extend a different class, simply copy the
     event handling code from the EventDispatchingHttpCache into your
-    ``AppCache`` class. The drawback is that you need to manually check whether
-    you need to adjust your ``AppCache`` each time you update the FOSHttpCache
-    library.
+    ``AppCache`` class and make it implement ``CacheInvalidationInterface``.
+    The drawback is that you need to manually check whether you need to adjust
+    your ``AppCache`` each time you update the FOSHttpCache library.
 
 Now that you have an event dispatching kernel, you can make it register the
 subscribers you need. While you could do that from your bootstrap code, this is
@@ -168,7 +168,7 @@ options through the constructor:
 
     With Apache, you can do this for example in a ``.htaccess`` file::
 
-        RewriteEngine On 
+        RewriteEngine On
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 Cleaning the Cookie Header
