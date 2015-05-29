@@ -42,8 +42,6 @@ not the recommended way. You would need to adjust every place you instantiate
 the cache. Instead, overwrite the constructor of AppCache and register the
 subscribers there. A simple cache will look like this::
 
-    require_once __DIR__.'/AppKernel.php';
-
     use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
     use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
 
@@ -57,6 +55,8 @@ subscribers there. A simple cache will look like this::
             parent::__construct($kernel, $cacheDir);
 
             $this->addSubscriber(new UserContextSubscriber());
+            $this->addSubscriber(new PurgeSubscriber());
+            $this->addSubscriber(new RefreshSubscriber());
         }
     }
 
