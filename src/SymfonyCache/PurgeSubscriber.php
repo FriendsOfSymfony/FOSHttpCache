@@ -27,6 +27,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PurgeSubscriber extends AccessControlledSubscriber
 {
+    const DEFAULT_PURGE_METHOD = 'PURGE';
+
     /**
      * The options configured in the constructor argument or default values.
      *
@@ -59,7 +61,7 @@ class PurgeSubscriber extends AccessControlledSubscriber
         $resolver->setDefaults(array(
             'purge_client_matcher' => null,
             'purge_client_ips' => null,
-            'purge_method' => 'PURGE',
+            'purge_method' => static::DEFAULT_PURGE_METHOD,
         ));
 
         $this->options = $resolver->resolve($options);

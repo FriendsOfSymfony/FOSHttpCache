@@ -1,7 +1,7 @@
 Caching Proxy Clients
 =====================
 
-This library ships with clients for the Varnish and NGINX caching proxy. You
+This library ships with clients for the Varnish, NGINX and Symfony built-in caching proxies. You
 can use the clients either wrapped by the :doc:`cache invalidator <cache-invalidator>`
 (recommended), or directly for low-level access to invalidation functionality.
 
@@ -35,16 +35,16 @@ include that port in the base URL::
 
 .. note::
 
-    To use the client, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
+    To make invalidation work, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
 
 NGINX Client
 ~~~~~~~~~~~~
 
 At minimum, supply an array containing IPs or hostnames of the NGINX servers
 that you want to send invalidation requests to. Make sure to include the port
-NGINX runs on if it is not port 80::
+NGINX runs on if it is not the default::
 
-    use FOS\HttpCache\Invalidation\Nginx;
+    use FOS\HttpCache\ProxyClient\Nginx;
 
     $servers = array('10.0.0.1', '10.0.0.2:8088'); // Port 80 assumed for 10.0.0.1
     $nginx = new Nginx($servers);
@@ -63,6 +63,29 @@ supply that location to the class as the third parameter::
 .. note::
 
     To use the client, you need to :doc:`configure NGINX <nginx-configuration>` accordingly.
+
+Symfony Client
+~~~~~~~~~~~~~~
+
+At minimum, supply an array containing IPs or hostnames of your web servers
+running Symfony. Provide the direct access to the web server without any other
+proxies that might block invalidation requests. Make sure to include the port
+the web server runs on if it is not the default::
+
+    use FOS\HttpCache\ProxyClient\Symfony;
+
+    $servers = array('10.0.0.1', '10.0.0.2:8088'); // Port 80 assumed for 10.0.0.1
+    $client = new Symfony($servers);
+
+This is sufficient for invalidating absolute URLs. If you also wish to
+invalidate relative paths, supply the hostname (or base URL) where your website
+is available as the second parameter::
+
+    $client = new Symfony($servers, 'my-cool-app.com');
+
+.. note::
+
+    To make invalidation work, you need to :doc:`use the EventDispatchingHttpCache <symfony-cache-configuration>`.
 
 Using the Clients
 -----------------
@@ -199,5 +222,8 @@ send a basic authentication header, you can inject a custom Guzzle client::
 
     $servers = array('10.0.0.1');
     $varnish = new Varnish($servers, '/baseUrl', $client);
+
+The Symfony client accepts a guzzle client as the 3rd parameter as well, NGINX
+accepts it as 4th parameter.
 
 .. _Guzzle client: http://guzzle3.readthedocs.org/

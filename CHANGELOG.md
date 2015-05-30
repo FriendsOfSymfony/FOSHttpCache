@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.3.3
+-----
+
+* **2015-05-08** Added a client for the Symfony built-in HttpCache
+
 1.3.0
 -----
 
