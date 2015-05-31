@@ -4,13 +4,18 @@ namespace FOS\HttpCache\Tests\Functional\Fixtures\Symfony;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class AppKernel extends HttpKernel
+/**
+ * A simplistic kernel that is actually the whole application.
+ */
+class AppKernel implements HttpKernelInterface
 {
-    public function __construct() {}
-
+    /**
+     * This simplistic kernel handles the request immediately inline.
+     *
+     * {@inheritDoc}
+     */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
         switch ($request->getPathInfo()) {
