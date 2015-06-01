@@ -57,7 +57,14 @@ Configuration
 '''''''''''''
 
 By default, the ``VarnishTestCase`` starts and stops a Varnish server for you.
-All you have to do is to set your Varnish configuration (VCL) file.
+Make sure ``symfony/process`` is available in your project:
+
+.. code-block:: bash
+
+    $ composer require symfony/process
+
+Then set your Varnish configuration (VCL) file. All available configuration
+parameters are shown below.
 
 ======================= ========================= ================================================== ============================================
 Constant                Getter                    Default                                            Description
@@ -84,10 +91,16 @@ NginxTestCase
 Configuration
 '''''''''''''
 
-By default, the ``NginxTestCase`` starts and stops NGINX server for you and deletes
-all cached contents. You have to set your NGINX configuration file.
+By default, the ``NginxTestCase`` starts and stops the NGINX server for you and 
+deletes all cached contents. Make sure ``symfony/process`` is available in your 
+project:
 
-These are all the configurations you can change
+.. code-block:: bash
+
+    $ composer require symfony/process
+
+You have to set your NGINX configuration file. All available configuration
+parameters are shown below.
 
 ======================= ========================= ================================================ ==========================================
 Constant                Getter                    Default                                          Description
