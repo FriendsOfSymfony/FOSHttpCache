@@ -17,6 +17,8 @@ Create the cache invalidator by passing a proxy client as
     $client = new ProxyClient\Varnish(...);
     // or
     $client = new ProxyClient\Nginx(...);
+    // or
+    $client = new ProxyClient\Symfony(...);
 
     $cacheInvalidator = new CacheInvalidator($client);
 
