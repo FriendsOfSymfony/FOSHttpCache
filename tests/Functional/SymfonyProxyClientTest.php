@@ -20,20 +20,6 @@ use FOS\HttpCache\Test\SymfonyTestCase;
  */
 class SymfonyProxyClientTest extends SymfonyTestCase
 {
-    public function setUp()
-    {
-        /*
-         * We did not figure out how to run this test with hhvm. Help welcome!
-         * On travis, connection is closed after the headers are sent without providing
-         * anything in either the hhvm or apache log.
-         */
-        if (defined('HHVM_VERSION')) {
-            $this->markTestSkipped('Test not working with hhvm as backend server');
-        }
-
-        parent::setUp();
-    }
-
     public function testPurge()
     {
         $this->assertMiss($this->getResponse('/symfony.php/cache'));
