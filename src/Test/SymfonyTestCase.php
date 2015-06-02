@@ -23,12 +23,13 @@ use FOS\HttpCache\Test\Proxy\SymfonyProxy;
  *
  * To define constants in the phpunit file, use this syntax:
  * <php>
- *     <const name="WEB_SERVER_PORT" value="/tmp/foo" />
+ *     <const name="WEB_SERVER_PORT" value="8080" />
  * </php>
  *
- * WEB_SERVER_PORT   port the PHP webserver listens on (default 8080)
+ * WEB_SERVER_PORT     port the PHP webserver listens on (required)
+ * WEB_SERVER_HOSTNAME hostname where your application can be reached (required)
  *
- * Note that the SymfonyProxy also defines a SYMFONY_CACHE_DIR constant.
+ * Note that the SymfonyProxy also uses a SYMFONY_CACHE_DIR constant.
  */
 abstract class SymfonyTestCase extends ProxyTestCase
 {
