@@ -1,10 +1,26 @@
 Changelog
 =========
 
-1.3.3
+See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
+
+1.4.0
 -----
 
-* **2015-05-08** Added a client for the Symfony built-in HttpCache
+* Added symfony/http-kernel [HttpCache client](http://foshttpcache.readthedocs.org/en/latest/proxy-clients.html#symfony-client).
+* Added [SymfonyTestCase](http://foshttpcache.readthedocs.org/en/latest/testing-your-application.html#symfonytestcase). 
+* Removed unneeded files from dist packages.
+
+1.3.2
+-----
+
+* Added `TagHandler->hasTags()` method.
+
+1.3.1
+-----
+
+* Added authentication support to user context subscribe.
+* Fixed usage of deprecated Guzzle subtree splits. 
+* Fixed exposed cache tags.
 
 1.3.0
 -----
@@ -19,10 +35,10 @@ Changelog
 1.2.0
 -----
 
-* **2014-12-05** Added support for the symfony/http-kernel component reverse proxy HttpCache.
+* Added support for the symfony/http-kernel component reverse proxy HttpCache.
 
 1.1.2
 -----
 
-* **2014-11-17** Fixed documentation for user context varnish configuration to also work when
+* Fixed documentation for user context varnish configuration to also work when
   client omits the `Accept` HTTP header.
