@@ -37,7 +37,11 @@
     },
     "autoload": {
         "psr-4": {
-            "FOS\\HttpCache\\": "src/",
+            "FOS\\HttpCache\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "FOS\\HttpCache\\Tests\\": "tests/"
         }
     },
