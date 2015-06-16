@@ -98,8 +98,10 @@ Make sure ``symfony/process`` is available in your project:
 
     $ composer require symfony/process
 
-Then set your Varnish configuration (VCL) file. All available configuration
-parameters are shown below.
+Then set your Varnish configuration (VCL) file. Configuration is handled either
+by overwriting the getter or by defining a PHP constant. You can set the
+constants in your ``phpunit.xml`` or in the bootstrap file. Available
+configuration parameters are:
 
 ======================= ========================= ================================================== ===========================================
 Constant                Getter                    Default                                            Description
@@ -109,9 +111,21 @@ Constant                Getter                    Default                       
 ``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``                                           port Varnish listens on
 ``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``                                           Varnish management port
 ``VARNISH_CACHE_DIR``   ``getCacheDir()``         ``sys_get_temp_dir()`` + ``/foshttpcache-varnish`` directory to use for cache
-``VARNISH_VERSION``     ``getVarnishVersion()``   ``4``                                              installed varnish application version
 ``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                            hostname your application can be reached at
 ======================= ========================= ================================================== ===========================================
+
+The Varnish version is controlled by an environment variable (in case you want
+to test both Varnish 3 and 4 on a continuous integration system). See the
+``.travis.yml`` of the FOSHttpCache git repository for an example.
+
+==================== ========================= ======= ===========================================
+Environment Variable Getter                    Default Description
+==================== ========================= ======= ===========================================
+``VARNISH_VERSION``  ``getVarnishVersion()``   ``4``   version of varnish application that is used
+==================== ========================= ======= ===========================================
+
+See ``tests/bootstrap.php`` for an example how this repository uses the version
+information to set the right ``VARNISH_FILE`` constant.
 
 Enable Assertions
 '''''''''''''''''

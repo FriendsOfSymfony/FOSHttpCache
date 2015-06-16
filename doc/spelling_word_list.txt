@@ -20,3 +20,4 @@ github
 vcl
 fos
 Vcl
+inline
