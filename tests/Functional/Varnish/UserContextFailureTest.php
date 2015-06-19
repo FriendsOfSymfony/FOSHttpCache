@@ -90,10 +90,10 @@ class UserContextFailureTest extends VarnishTestCase
     protected function getConfigFile()
     {
         switch ($this->getVarnishVersion()) {
-            case '4.0':
-                return sprintf('./tests/Functional/Fixtures/varnish-4/user_context_%s.vcl', $this->mode);
-            default:
+            case 3:
                 return sprintf('./tests/Functional/Fixtures/varnish-3/user_context_%s.vcl', $this->mode);
+            default:
+                return sprintf('./tests/Functional/Fixtures/varnish-4/user_context_%s.vcl', $this->mode);
         }
     }
 }
