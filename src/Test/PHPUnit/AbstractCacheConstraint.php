@@ -54,7 +54,7 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
             );
         }
 
-        return $this->getValue() === (string) $other->getHeader($this->header);
+        return $this->getValue() === (string) $other->getHeaderLine($this->header);
     }
 
     /**
@@ -62,6 +62,10 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
      */
     protected function failureDescription($other)
     {
-        return (string) $other . ' ' . $this->toString();
+        return sprintf(
+            'response (with status code %s) %s',
+            $other->getStatusCode(),
+            $this->toString()
+        );
     }
 }

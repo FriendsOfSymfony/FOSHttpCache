@@ -13,8 +13,13 @@ namespace FOS\HttpCache\Test;
 
 use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
 use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
-use Guzzle\Http\Client;
-use Guzzle\Http\Message\Response;
+use Http\Adapter\HttpAdapter;
+use Http\Discovery\HttpAdapterDiscovery;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\UriFactoryDiscovery;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * Abstract caching proxy test case
@@ -23,19 +28,19 @@ use Guzzle\Http\Message\Response;
 abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
 {
     /**
-     * A Guzzle HTTP client.
+     * HTTP adapter for requests to the application
      *
-     * @var Client
+     * @var HttpAdapter
      */
-    protected $httpClient;
+    protected $httpAdapter;
 
     /**
      * Assert a cache miss
      *
-     * @param Response $response
-     * @param string   $message  Test failure message (optional)
+     * @param ResponseInterface $response
+     * @param string            $message  Test failure message (optional)
      */
-    public function assertMiss(Response $response, $message = null)
+    public function assertMiss(ResponseInterface $response, $message = null)
     {
         self::assertThat($response, self::isCacheMiss(), $message);
     }
@@ -43,10 +48,10 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Assert a cache hit
      *
-     * @param Response $response
-     * @param string   $message  Test failure message (optional)
+     * @param ResponseInterface $response
+     * @param string            $message  Test failure message (optional)
      */
-    public function assertHit(Response $response, $message = null)
+    public function assertHit(ResponseInterface $response, $message = null)
     {
         self::assertThat($response, self::isCacheHit(), $message);
     }
@@ -64,32 +69,34 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Get HTTP response from your application
      *
-     * @param string $url
-     * @param array  $headers
-     * @param array  $options
+     * @param string $uri     HTTP URI
+     * @param array  $headers HTTP headers
+     * @param string $method  HTTP method
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function getResponse($url, array $headers = array(), $options = array())
+    public function getResponse($uri, array $headers = [], $method = 'GET')
     {
-        return $this->getHttpClient()->get($url, $headers, $options)->send();
+        // Close connections to make sure invalidation (PURGE/BAN) requests will
+        // not interfere with content (GET) requests.
+        $headers['Connection'] = 'Close';
+        $request = $this->createRequest($method, $uri, $headers);
+
+        return $this->getHttpAdapter()->sendRequest($request);
     }
 
     /**
-     * Get HTTP client for your application
+     * Get HTTP adapter for your application
      *
-     * @return Client
+     * @return HttpAdapter
      */
-    public function getHttpClient()
+    protected function getHttpAdapter()
     {
-        if (null === $this->httpClient) {
-            $this->httpClient = new Client(
-                'http://' . $this->getHostName() . ':' . $this->getCachingProxyPort(),
-                array('curl.options' => array(CURLOPT_FORBID_REUSE => true))
-            );
+        if ($this->httpAdapter === null) {
+            $this->httpAdapter = HttpAdapterDiscovery::find();
         }
 
-        return $this->httpClient;
+        return $this->httpAdapter;
     }
 
     /**
@@ -122,6 +129,52 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
         }
 
         return WEB_SERVER_HOSTNAME;
+    }
+
+    /**
+     * Create a request
+     *
+     * @param string $method
+     * @param string $uri
+     * @param array  $headers
+     *
+     * @return RequestInterface
+     * @throws \Exception
+     */
+    protected function createRequest($method, $uri, $headers)
+    {
+        $uri = $this->createUri($uri);
+        if ($uri->getHost() === '') {
+            // Add base URI host
+            $uri = $uri->withHost($this->getHostName());
+        }
+
+        if (!$uri->getPort()) {
+            $uri = $uri->withPort($this->getCachingProxyPort());
+        }
+
+        if ($uri->getScheme() === '') {
+            $uri = $uri->withScheme('http');
+        }
+
+        return MessageFactoryDiscovery::find()->createRequest(
+            $method,
+            $uri,
+            '1.1',
+            $headers
+        );
+    }
+
+    /**
+     * Create PSR-7 URI object from URI string
+     *
+     * @param string $uriString
+     *
+     * @return UriInterface
+     */
+    protected function createUri($uriString)
+    {
+        return UriFactoryDiscovery::find()->createUri($uriString);
     }
 
     /**

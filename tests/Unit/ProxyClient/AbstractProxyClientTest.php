@@ -13,13 +13,10 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Varnish;
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\MultiTransferException;
-use Guzzle\Http\Exception\RequestException;
-use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\Request;
+use FOS\HttpCache\Test\HttpClient\MockHttpAdapter;
+use Http\Adapter\Exception\HttpAdapterException;
+use Http\Discovery\MessageFactoryDiscovery;
+use Psr\Http\Message\RequestInterface;
 use \Mockery;
 
 /**
@@ -28,81 +25,83 @@ use \Mockery;
 class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MockPlugin
+     * @var MockHttpAdapter
      */
-    private $mock;
-
     private $client;
 
-    public function testUnreachableException()
-    {
-        $mock = new MockPlugin();
-        $mock->addException(new CurlException('connect to host'));
-
-        $client = new Client();
-        $client->addSubscriber($mock);
-
-        $varnish = new Varnish(array('127.0.0.1:123'), 'my_hostname.dev', $client);
-
-        try {
-            $varnish->purge('/paths')->flush();
-        } catch (ExceptionCollection $exceptions) {
-            $this->assertCount(1, $exceptions);
-            $this->assertInstanceOf('\FOS\HttpCache\Exception\ProxyUnreachableException', $exceptions->getFirst());
-        }
-
-        $mock->clearQueue();
-        $mock->addResponse(new Response(200));
-
-        // Queue must now be empty, so exception above must not be thrown again.
-        $varnish->purge('/path')->flush();
-    }
-
-    public function curlExceptionProvider()
-    {
-        $requestException = new RequestException('request');
-        $requestException->setRequest(new Request('GET', '/'));
-
-        $curlException = new CurlException('curl');
-        $curlException->setRequest(new Request('GET', '/'));
-        return array(
-            array($curlException, '\FOS\HttpCache\Exception\ProxyUnreachableException'),
-            array($requestException, '\FOS\HttpCache\Exception\ProxyResponseException'),
-            array(new \InvalidArgumentException('something'), '\InvalidArgumentException'),
-        );
-    }
-
     /**
-     * @dataProvider curlExceptionProvider
+     * @dataProvider exceptionProvider
      *
-     * @param \Exception $exception The exception that curl should throw.
+     * @param \Exception $exception Exception thrown by HTTP adapter.
      * @param string     $type      The returned exception class to be expected.
+     * @param string     $message   Optional exception message to match against.
      */
-    public function testExceptions(\Exception $exception, $type)
+    public function testExceptions(\Exception $exception, $type, $message = null)
     {
-        // the guzzle mock plugin does not allow arbitrary exceptions
-        // mockery does not provide all methods of the interface
-        $collection = new MultiTransferException();
-        $collection->setExceptions(array($exception));
-        $client = $this->getMock('\Guzzle\Http\ClientInterface');
-        $client->expects($this->any())
-            ->method('createRequest')
-            ->willReturn(new Request('BAN', '/'))
-        ;
-        $client->expects($this->once())
-            ->method('send')
-            ->willThrowException($collection)
-        ;
+        $this->client->setException($exception);
+        $varnish = new Varnish(['127.0.0.1:123'], 'my_hostname.dev', $this->client);
 
-        $varnish = new Varnish(array('127.0.0.1:123'), 'my_hostname.dev', $client);
+        $varnish->purge('/');
 
-        $varnish->ban(array());
         try {
             $varnish->flush();
             $this->fail('Should have aborted with an exception');
         } catch (ExceptionCollection $exceptions) {
             $this->assertCount(1, $exceptions);
             $this->assertInstanceOf($type, $exceptions->getFirst());
+            if ($message) {
+                $this->assertContains(
+                    $message,
+                    $exceptions->getFirst()->getMessage()
+                );
+            }
+        }
+
+        $this->client->clear();
+
+        // Queue must now be empty, so exception above must not be thrown again.
+        $varnish->purge('/path')->flush();
+    }
+
+    public function exceptionProvider()
+    {
+        // Timeout exception (without response)
+        $request = \Mockery::mock('\Psr\Http\Message\RequestInterface')
+            ->shouldReceive('getHeaderLine')
+            ->with('Host')
+            ->andReturn('bla.com')
+            ->getMock()
+        ;
+        $unreachableException = new HttpAdapterException();
+        $unreachableException->setRequest($request);
+
+        return [
+            [
+                $unreachableException,
+                '\FOS\HttpCache\Exception\ProxyUnreachableException',
+                'bla.com'
+            ]
+        ];
+    }
+
+    public function testErrorResponsesAreConvertedToExceptions()
+    {
+        $response = MessageFactoryDiscovery::find()->createResponse(
+            405,
+            'Not allowed'
+        );
+        $this->client->addResponse($response);
+
+        $varnish = new Varnish(['127.0.0.1:123'], 'my_hostname.dev', $this->client);
+        try {
+            $varnish->purge('/')->flush();
+            $this->fail('Should have aborted with an exception');
+        } catch (ExceptionCollection $exceptions) {
+            $this->assertCount(1, $exceptions);
+            $this->assertEquals(
+                '405 error response "Not allowed" from caching proxy',
+                $exceptions->getFirst()->getMessage()
+            );
         }
     }
 
@@ -112,41 +111,33 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingHostExceptionIsThrown()
     {
-        $varnish = new Varnish(array('127.0.0.1:123'), null, $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], null, $this->client);
         $varnish->purge('/path/without/hostname');
     }
 
     public function testSetBasePathWithHost()
     {
-        $varnish = new Varnish(array('127.0.0.1'), 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1'], 'fos.lo', $this->client);
         $varnish->purge('/path')->flush();
         $requests = $this->getRequests();
-        $this->assertEquals('fos.lo', $requests[0]->getHeader('Host'));
+        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
     }
 
     public function testSetBasePathWithPath()
     {
-        $varnish = new Varnish(array('127.0.0.1'), 'http://fos.lo/my/path', $this->client);
+        $varnish = new Varnish(['127.0.0.1'], 'http://fos.lo/my/path', $this->client);
         $varnish->purge('append')->flush();
         $requests = $this->getRequests();
-        $this->assertEquals('fos.lo', $requests[0]->getHeader('Host'));
-        $this->assertEquals('http://127.0.0.1/my/path/append', $requests[0]->getUrl());
-    }
-
-    /**
-     * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
-     */
-    public function testSetBasePathThrowsInvalidUrlSchemeException()
-    {
-        new Varnish(array('127.0.0.1'), 'https://fos.lo/my/path');
+        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
+        $this->assertEquals('http://127.0.0.1/my/path/append', (string) $requests[0]->getUri());
     }
 
     public function testSetServersDefaultSchemeIsAdded()
     {
-        $varnish = new Varnish(array('127.0.0.1'), 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1'], 'fos.lo', $this->client);
         $varnish->purge('/some/path')->flush();
         $requests = $this->getRequests();
-        $this->assertEquals('http://127.0.0.1/some/path', $requests[0]->getUrl());
+        $this->assertEquals('http://127.0.0.1/some/path', $requests[0]->getUri());
     }
 
     /**
@@ -155,7 +146,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetServersThrowsInvalidUrlException()
     {
-        new Varnish(array('http:///this is no url'));
+        new Varnish(['http:///this is no url']);
     }
 
     /**
@@ -164,16 +155,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetServersThrowsWeirdInvalidUrlException()
     {
-        new Varnish(array('this ://is no url'));
-    }
-
-    /**
-     * @expectedException \FOS\HttpCache\Exception\InvalidUrlException
-     * @expectedExceptionMessage Host "https://127.0.0.1" with scheme "https" is invalid
-     */
-    public function testSetServersThrowsInvalidUrlSchemeException()
-    {
-        new Varnish(array('https://127.0.0.1'));
+        new Varnish(['this ://is no url']);
     }
 
     /**
@@ -182,43 +164,39 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetServersThrowsInvalidServerException()
     {
-        new Varnish(array('http://127.0.0.1:80/some/weird/path'));
+        new Varnish(['http://127.0.0.1:80/some/weird/path']);
     }
 
     public function testFlushEmpty()
     {
-        $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
-            ->shouldReceive('send')
-            ->never()
-            ->getMock()
-        ;
-
-        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $client);
+        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $this->client);
         $this->assertEquals(0, $varnish->flush());
+
+        $this->assertCount(0, $this->client->getRequests());
     }
 
     public function testFlushCountSuccess()
     {
-        $self = $this;
-        $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
-            ->shouldReceive('send')
+        $httpAdapter = \Mockery::mock('\Http\Adapter\HttpAdapter')
+            ->shouldReceive('sendRequests')
             ->once()
             ->with(
                 \Mockery::on(
-                    function ($requests) use ($self) {
-                        /** @type Request[] $requests */
-                        $self->assertCount(4, $requests);
+                    function ($requests) {
+                        /** @type RequestInterface[] $requests */
+                        $this->assertCount(4, $requests);
                         foreach ($requests as $request) {
-                            $self->assertEquals('PURGE', $request->getMethod());
+                            $this->assertEquals('PURGE', $request->getMethod());
                         }
 
                         return true;
                     }
                 )
             )
+            ->andReturn([])
             ->getMock();
 
-        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $client);
+        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], 'fos.lo', $httpAdapter);
 
         $this->assertEquals(
             2,
@@ -231,23 +209,23 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     public function testEliminateDuplicates()
     {
-        $self = $this;
-        $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
-            ->shouldReceive('send')
+        $client = \Mockery::mock('\Http\Adapter\HttpAdapter')
+            ->shouldReceive('sendRequests')
             ->once()
             ->with(
                 \Mockery::on(
-                    function ($requests) use ($self) {
-                        /** @type Request[] $requests */
-                        $self->assertCount(4, $requests);
+                    function ($requests) {
+                        /** @type RequestInterface[] $requests */
+                        $this->assertCount(4, $requests);
                         foreach ($requests as $request) {
-                            $self->assertEquals('PURGE', $request->getMethod());
+                            $this->assertEquals('PURGE', $request->getMethod());
                         }
 
                         return true;
                     }
                 )
             )
+            ->andReturn([])
             ->getMock();
 
         $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $client);
@@ -263,20 +241,16 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
     protected function setUp()
     {
-        $this->mock = new MockPlugin();
-        $this->mock->addResponse(new Response(200));
-        $this->client = new Client();
-        $this->client->addSubscriber($this->mock);
+        $this->client = new MockHttpAdapter();
     }
 
     /**
-     * @return array|Request[]
+     * @return array|RequestInterface[]
      */
     protected function getRequests()
     {
-        return $this->mock->getReceivedRequests();
+        return $this->client->getRequests();
     }
 }

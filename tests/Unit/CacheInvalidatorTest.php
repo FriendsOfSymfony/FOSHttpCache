@@ -18,6 +18,7 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Varnish;
+use Http\Adapter\Exception\HttpAdapterException;
 use \Mockery;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -184,8 +185,19 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProxyClientExceptionsAreLogged()
     {
-        $unreachableException = ProxyUnreachableException::proxyUnreachable('http://127.0.0.1', 'Couldn\'t connect to host');
-        $responseException    = ProxyResponseException::proxyResponse('http://127.0.0.1', 403, 'Forbidden');
+        $failedRequest = \Mockery::mock('\Psr\Http\Message\RequestInterface')
+            ->shouldReceive('getHeaderLine')->with('Host')->andReturn('127.0.0.1')
+            ->getMock();
+        $adapterException = new HttpAdapterException('Couldn\'t connect to host');
+        $adapterException->setRequest($failedRequest);
+
+        $unreachableException = ProxyUnreachableException::proxyUnreachable($adapterException);
+
+        $response = \Mockery::mock('\Psr\Http\Message\ResponseInterface')
+            ->shouldReceive('getStatusCode')->andReturn(403)
+            ->shouldReceive('getReasonPhrase')->andReturn('Forbidden')
+            ->getMock();
+        $responseException = ProxyResponseException::proxyResponse($response);
 
         $exceptions = new ExceptionCollection();
         $exceptions->add($unreachableException)->add($responseException);
@@ -200,13 +212,15 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('log')->once()
             ->with(
                 'critical',
-                'Request to caching proxy at http://127.0.0.1 failed with message "Couldn\'t connect to host"',
-                array(
-                    'exception' => $unreachableException
-                )
+                'Request to caching proxy at 127.0.0.1 failed with message "Couldn\'t connect to host"',
+                ['exception' => $unreachableException]
             )
             ->shouldReceive('log')->once()
-            ->with('critical', '403 error response "Forbidden" from caching proxy at http://127.0.0.1', array('exception' => $responseException))
+            ->with(
+                'critical',
+                '403 error response "Forbidden" from caching proxy',
+                ['exception' => $responseException]
+            )
             ->getMock();
 
         $cacheInvalidator->getEventDispatcher()->addSubscriber(new LogSubscriber($logger));

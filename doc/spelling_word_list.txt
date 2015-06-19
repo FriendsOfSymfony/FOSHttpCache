@@ -8,6 +8,8 @@ hostnames
 http
 invalidator
 localhost
+middleware
+middlewares
 nginx
 roundtrip
 symfony

@@ -129,9 +129,10 @@ abstract class NginxTestCase extends ProxyTestCase
         if (null === $this->proxyClient) {
             $this->proxyClient = new Nginx(
                 array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-                $this->getHostName(),
-                $purgeLocation
+                $this->getHostName()
             );
+
+            $this->proxyClient->setPurgeLocation($purgeLocation);
         }
 
         return $this->proxyClient;

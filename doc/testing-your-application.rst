@@ -16,7 +16,7 @@ By having your test classes extend one of the test case classes, you get:
 * an instance of this library’s client that is configured to talk to your
   reverse proxy server. See reverse proxy specific sections for details;
 * convenience methods for executing HTTP requests to your application:
-  ``$this->getHttpClient()`` and ``$this->getResponse()``;
+  ``$this->getHttpAdapter()`` and ``$this->getResponse()``;
 * custom assertions ``assertHit`` and ``assertMiss`` for validating a cache
   hit/miss.
 

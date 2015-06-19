@@ -12,8 +12,6 @@
 namespace FOS\HttpCache\Tests\Functional\Varnish;
 
 use FOS\HttpCache\Test\VarnishTestCase;
-use Guzzle\Http\Exception\ClientErrorResponseException;
-use Guzzle\Http\Exception\ServerErrorResponseException;
 
 /**
  * Test edge conditions and attacks.
@@ -37,18 +35,15 @@ class UserContextFailureTest extends VarnishTestCase
      */
     public function testUserContextNoExposeHash()
     {
-        try {
-            $response = $this->getResponse(
-                '/user_context_hash_nocache.php',
-                array('accept' => 'application/vnd.fos.user-context-hash'),
-                array('cookies' => array('miam'))
-            );
-
-            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
-        } catch (ClientErrorResponseException $e) {
-            $this->assertEquals(400, $e->getResponse()->getStatusCode());
-            $this->assertFalse($e->getResponse()->hasHeader('X-User-Context-Hash'));
-        }
+        $response = $this->getResponse(
+            '/user_context_hash_nocache.php',
+            [
+                'Accept' => 'application/vnd.fos.user-context-hash',
+                'Cookie' => ['0=miam'],
+            ]
+        );
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertFalse($response->hasHeader('X-User-Context-Hash'));
     }
 
     /**
@@ -56,17 +51,14 @@ class UserContextFailureTest extends VarnishTestCase
      */
     public function testUserContextNoForgedHash()
     {
-        try {
-            $response = $this->getResponse(
-                '/user_context_hash_nocache.php',
-                array('X-User-Context-Hash' => 'miam'),
-                array('cookies' => array('miam'))
-            );
-
-            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
-        } catch (ClientErrorResponseException $e) {
-            $this->assertEquals(400, $e->getResponse()->getStatusCode());
-        }
+        $response = $this->getResponse(
+            '/user_context_hash_nocache.php',
+            [
+                'X-User-Context-Hash' => 'miam',
+                'Cookie' => ['0=miam'],
+            ]
+        );
+        $this->assertEquals(400, $response->getStatusCode());
     }
 
     /**
@@ -74,28 +66,25 @@ class UserContextFailureTest extends VarnishTestCase
      */
     public function testUserContextNotUsed()
     {
-        //First request in get
-        $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
+        // First request in GET
+        $this->getResponse('/user_context.php', ['Cookie' => '0=foo']);
 
-        //Second request in head or post
-        $postResponse = $this->getHttpClient()
-            ->post('/user_context.php', array(), null, array('cookies' => array('foo')))
-            ->send();
+        // Second request in HEAD or POST
+        $postResponse = $this->getResponse(
+            '/user_context.php',
+            ['Cookie' => '0=foo'],
+            'POST'
+        );
 
-        $this->assertEquals('POST', $postResponse->getBody(true));
-        $this->assertEquals('MISS', $postResponse->getHeader('X-HashCache'));
+        $this->assertEquals('POST', $postResponse->getBody());
+        $this->assertEquals('MISS', $postResponse->getHeaderLine('X-HashCache'));
         $this->assertMiss($postResponse);
     }
 
     public function testHashRequestFailure()
     {
-        try {
-            $response = $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
-
-            $this->fail("Request should have failed with a 500 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
-        } catch (ServerErrorResponseException $e) {
-            $this->assertEquals(503, $e->getResponse()->getStatusCode());
-        }
+        $response = $this->getResponse('/user_context.php', ['Cookie' => '0=foo']);
+        $this->assertEquals(503, $response->getStatusCode());
     }
 
     protected function getConfigFile()
