@@ -80,7 +80,7 @@ Constant                Getter                    Default                       
 ``VARNISH_PORT``        ``getCachingProxyPort()`` ``6181``                                           port Varnish listens on
 ``VARNISH_MGMT_PORT``   ``getVarnishMgmtPort()``  ``6182``                                           Varnish management port
 ``VARNISH_CACHE_DIR``   ``getCacheDir()``         ``sys_get_temp_dir()`` + ``/foshttpcache-varnish`` directory to use for cache
-``VARNISH_VERSION``     ``getVarnishVersion()``   ``3``                                              installed varnish application version
+``VARNISH_VERSION``     ``getVarnishVersion()``   ``4``                                              installed varnish application version
 ``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                            hostname your application can be reached at
 ======================= ========================= ================================================== ===========================================
 

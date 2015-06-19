@@ -11,6 +11,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   calling `setPurgeLocation()`.
 * In ProxyTestCase, `getHttpClient()` has been replaced with `getHttpAdapter()`;
   added HTTP method parameter to `getResponse()`.
+* Changed default Varnish version to 4.
 
 1.4.0
 -----
