@@ -62,7 +62,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     /**
      * {@inheritdoc}
      */
-    public function purge($url, array $headers = array())
+    public function purge($url, array $headers = [])
     {
         $this->queueRequest($this->options['purge_method'], $url, $headers);
 
@@ -72,9 +72,9 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     /**
      * {@inheritdoc}
      */
-    public function refresh($url, array $headers = array())
+    public function refresh($url, array $headers = [])
     {
-        $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
+        $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;

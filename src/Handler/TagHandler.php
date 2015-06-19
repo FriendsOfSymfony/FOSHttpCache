@@ -35,7 +35,7 @@ class TagHandler
     /**
      * @var array
      */
-    private $tags = array();
+    private $tags = [];
 
     /**
      * Constructor
@@ -113,7 +113,7 @@ class TagHandler
     public function invalidateTags(array $tags)
     {
         $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $this->escapeTags($tags))));
-        $headers = array($this->tagsHeader => $tagExpression);
+        $headers = [$this->tagsHeader => $tagExpression];
         $this->invalidator->invalidate($headers);
 
         return $this;
@@ -129,7 +129,7 @@ class TagHandler
     protected function escapeTags(array $tags)
     {
         array_walk($tags, function (&$tag) {
-            $tag = str_replace(array(',', "\n"), array('_', '_'), $tag);
+            $tag = str_replace([',', "\n"], ['_', '_'], $tag);
         });
 
         return $tags;

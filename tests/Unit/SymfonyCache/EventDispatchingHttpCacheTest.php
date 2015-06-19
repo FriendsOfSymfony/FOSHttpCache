@@ -37,7 +37,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $options = array(
             'debug' => false,
             'default_ttl' => 0,
-            'private_headers' => array( 'Authorization', 'Cookie' ),
+            'private_headers' => [ 'Authorization', 'Cookie' ],
             'allow_reload' => false,
             'allow_revalidate' => false,
             'stale_while_revalidate' => 2,
@@ -63,7 +63,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo', 'GET');
         $response = new Response();
 
-        $httpCache = $this->getHttpCachePartialMock(array('lookup'));
+        $httpCache = $this->getHttpCachePartialMock(['lookup']);
         $subscriber = new TestSubscriber($this, $httpCache, $request);
         $httpCache->addSubscriber($subscriber);
         $httpCache
@@ -83,7 +83,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo', 'GET');
         $response = new Response();
 
-        $httpCache = $this->getHttpCachePartialMock(array('lookup'));
+        $httpCache = $this->getHttpCachePartialMock(['lookup']);
         $subscriber = new TestSubscriber($this, $httpCache, $request);
         $subscriber->handleResponse = $response;
         $httpCache->addSubscriber($subscriber);
@@ -102,7 +102,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo', 'GET');
         $response = new Response('', 500);
 
-        $httpCache = $this->getHttpCachePartialMock(array('pass'));
+        $httpCache = $this->getHttpCachePartialMock(['pass']);
         $subscriber = new TestSubscriber($this, $httpCache, $request);
         $httpCache->addSubscriber($subscriber);
         $httpCache
@@ -115,7 +115,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $method = $refHttpCache->getMethod('invalidate');
         $method->setAccessible(true);
 
-        $this->assertSame($response, $method->invokeArgs($httpCache, array($request, $catch)));
+        $this->assertSame($response, $method->invokeArgs($httpCache, [$request, $catch]));
         $this->assertEquals(1, $subscriber->invalidateHits);
     }
 
@@ -125,7 +125,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/foo', 'GET');
         $response = new Response('', 400);
 
-        $httpCache = $this->getHttpCachePartialMock(array('pass'));
+        $httpCache = $this->getHttpCachePartialMock(['pass']);
         $subscriber = new TestSubscriber($this, $httpCache, $request);
         $subscriber->invalidateResponse = $response;
         $httpCache->addSubscriber($subscriber);
@@ -137,7 +137,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $method = $refHttpCache->getMethod('invalidate');
         $method->setAccessible(true);
 
-        $this->assertSame($response, $method->invokeArgs($httpCache, array($request, $catch)));
+        $this->assertSame($response, $method->invokeArgs($httpCache, [$request, $catch]));
         $this->assertEquals(1, $subscriber->invalidateHits);
     }
 }

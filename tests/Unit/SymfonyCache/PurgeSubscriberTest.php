@@ -90,7 +90,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
         ;
 
         $matcher = new RequestMatcher('/forbidden');
-        $purgeSubscriber = new PurgeSubscriber(array('purge_client_matcher' => $matcher));
+        $purgeSubscriber = new PurgeSubscriber(['purge_client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($this->kernel, $request);
 
@@ -107,7 +107,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('getStore')
         ;
 
-        $purgeSubscriber = new PurgeSubscriber(array('purge_client_ips' => '1.2.3.4'));
+        $purgeSubscriber = new PurgeSubscriber(['purge_client_ips' => '1.2.3.4']);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($this->kernel, $request);
 
@@ -148,6 +148,6 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidConfiguration()
     {
-        new PurgeSubscriber(array('purge_client_ip' => '1.2.3.4'));
+        new PurgeSubscriber(['purge_client_ip' => '1.2.3.4']);
     }
 }

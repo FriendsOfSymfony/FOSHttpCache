@@ -20,7 +20,7 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
             ->shouldReceive('invalidate')
-            ->with(array('X-Cache-Tags' => '(post\-1|posts)(,.+)?$'))
+            ->with(['X-Cache-Tags' => '(post\-1|posts)(,.+)?$'])
             ->once()
             ->shouldReceive('supports')
             ->with(CacheInvalidator::INVALIDATE)
@@ -29,14 +29,14 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $tagHandler = new TagHandler($cacheInvalidator);
-        $tagHandler->invalidateTags(array('post-1', 'posts'));
+        $tagHandler->invalidateTags(['post-1', 'posts']);
     }
 
     public function testInvalidateTagsCustomHeader()
     {
         $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
             ->shouldReceive('invalidate')
-            ->with(array('Custom-Tags' => '(post\-1)(,.+)?$'))
+            ->with(['Custom-Tags' => '(post\-1)(,.+)?$'])
             ->once()
             ->shouldReceive('supports')
             ->with(CacheInvalidator::INVALIDATE)
@@ -46,14 +46,14 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
 
         $tagHandler = new TagHandler($cacheInvalidator, 'Custom-Tags');
         $this->assertEquals('Custom-Tags', $tagHandler->getTagsHeaderName());
-        $tagHandler->invalidateTags(array('post-1'));
+        $tagHandler->invalidateTags(['post-1']);
     }
 
     public function testEscapingTags()
     {
         $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
             ->shouldReceive('invalidate')
-            ->with(array('X-Cache-Tags' => '(post_test)(,.+)?$'))
+            ->with(['X-Cache-Tags' => '(post_test)(,.+)?$'])
             ->once()
             ->shouldReceive('supports')
             ->with(CacheInvalidator::INVALIDATE)
@@ -62,7 +62,7 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $tagHandler = new TagHandler($cacheInvalidator);
-        $tagHandler->invalidateTags(array('post,test'));
+        $tagHandler->invalidateTags(['post,test']);
     }
 
     /**
@@ -91,7 +91,7 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
 
         $tagHandler = new TagHandler($cacheInvalidator);
         $this->assertFalse($tagHandler->hasTags());
-        $tagHandler->addTags(array('post-1', 'test,post'));
+        $tagHandler->addTags(['post-1', 'test,post']);
         $this->assertTrue($tagHandler->hasTags());
         $this->assertEquals('post-1,test_post', $tagHandler->getTagsHeaderValue());
     }

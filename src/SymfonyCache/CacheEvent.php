@@ -39,17 +39,13 @@ class CacheEvent extends Event
     private $response;
 
     /**
-     * Make sure your $kernel implements CacheInvalidationInterface. Creating the event with other
-     * HttpCache classes is deprecated and will no longer be supported in version 2 of this library.
+     * Make sure your $kernel implements CacheInvalidationInterface
      *
-     * @param CacheInvalidationInterface|HttpCache $kernel  The kernel raising with this event.
+     * @param CacheInvalidationInterface$kernel  The kernel raising with this event.
      * @param Request                              $request The request being processed.
      */
-    public function __construct($kernel, Request $request)
+    public function __construct(CacheInvalidationInterface $kernel, Request $request)
     {
-        if (!($kernel instanceof CacheInvalidationInterface || $kernel instanceof HttpCache)) {
-            throw new \InvalidArgumentException('Expected a CacheInvalidationInterface or HttpCache');
-        }
         $this->kernel = $kernel;
         $this->request = $request;
     }

@@ -31,8 +31,8 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
     public function testPurgeContentType()
     {
-        $json = array('Accept' => 'application/json');
-        $html = array('Accept' => 'text/html');
+        $json = ['Accept' => 'application/json'];
+        $html = ['Accept' => 'text/html'];
 
         $response = $this->getResponse('/symfony.php/negotiation', $json);
         $this->assertMiss($response);
@@ -52,7 +52,7 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
     public function testPurgeHost()
     {
-        $symfony = new Symfony(array('http://127.0.0.1:' . $this->getCachingProxyPort()), null, null, array('purge_method' => 'NOTIFY'));
+        $symfony = new Symfony(['http://127.0.0.1:' . $this->getCachingProxyPort()], null, null, ['purge_method' => 'NOTIFY']);
 
         $this->getResponse('/symfony.php/cache');
 
@@ -72,14 +72,14 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
         $originalTimestamp = (float)(string) $response->getBody();
         $refreshedTimestamp = (float)(string) $refreshed->getBody();
-        
+
         $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
     }
 
     public function testRefreshContentType()
     {
-        $json = array('Accept' => 'application/json');
-        $html = array('Accept' => 'text/html');
+        $json = ['Accept' => 'application/json'];
+        $html = ['Accept' => 'text/html'];
 
         $this->getProxyClient()->refresh('/symfony.php/negotiation', $json)->flush();
 

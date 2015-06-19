@@ -34,7 +34,7 @@ class PurgeSubscriber extends AccessControlledSubscriber
      *
      * @var array
      */
-    private $options = array();
+    private $options = [];
 
     /**
      * When creating this subscriber, you can configure a number of options.
@@ -49,14 +49,14 @@ class PurgeSubscriber extends AccessControlledSubscriber
      *
      * @throws \InvalidArgumentException if unknown keys are found in $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $resolver = new OptionsResolver();
         if (method_exists($resolver, 'setDefined')) {
             // this was only added in symfony 2.6
-            $resolver->setDefined(array('purge_client_matcher', 'purge_client_ips', 'purge_method'));
+            $resolver->setDefined(['purge_client_matcher', 'purge_client_ips', 'purge_method']);
         } else {
-            $resolver->setOptional(array('purge_client_matcher', 'purge_client_ips', 'purge_method'));
+            $resolver->setOptional(['purge_client_matcher', 'purge_client_ips', 'purge_method']);
         }
         $resolver->setDefaults(array(
             'purge_client_matcher' => null,

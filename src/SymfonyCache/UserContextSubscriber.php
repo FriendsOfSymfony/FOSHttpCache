@@ -56,7 +56,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      *
      * @throws \InvalidArgumentException if unknown keys are found in $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults(array(
@@ -123,7 +123,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     protected function cleanupHashLookupRequest(Request $hashLookupRequest, Request $originalRequest)
     {
-        $sessionIds = array();
+        $sessionIds = [];
         foreach ($originalRequest->cookies as $name => $value) {
             if ($this->isSessionName($name)) {
                 $sessionIds[$name] = $value;
@@ -223,7 +223,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function generateHashLookupRequest(Request $request)
     {
-        $hashLookupRequest = Request::create($this->options['user_hash_uri'], $this->options['user_hash_method'], array(), array(), array(), $request->server->all());
+        $hashLookupRequest = Request::create($this->options['user_hash_uri'], $this->options['user_hash_method'], [], [], [], $request->server->all());
         $hashLookupRequest->attributes->set('internalRequest', true);
         $hashLookupRequest->headers->set('Accept', $this->options['user_hash_accept_header']);
         $this->cleanupHashLookupRequest($hashLookupRequest, $request);
