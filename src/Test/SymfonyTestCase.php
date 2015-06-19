@@ -84,10 +84,10 @@ abstract class SymfonyTestCase extends ProxyTestCase
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Symfony(
-                array('http://127.0.0.1:' . $this->getCachingProxyPort()),
+                ['http://127.0.0.1:' . $this->getCachingProxyPort()],
                 $this->getHostName() . ':' . $this->getCachingProxyPort(),
                 null,
-                array('purge_method' => 'NOTIFY')
+                ['purge_method' => 'NOTIFY']
             );
         }
 

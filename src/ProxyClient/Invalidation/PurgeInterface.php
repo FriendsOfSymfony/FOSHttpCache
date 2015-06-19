@@ -36,5 +36,5 @@ interface PurgeInterface extends ProxyClientInterface
      *
      * @return $this
      */
-    public function purge($url, array $headers = array());
+    public function purge($url, array $headers = []);
 }

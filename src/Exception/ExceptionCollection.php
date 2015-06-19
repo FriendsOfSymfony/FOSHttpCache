@@ -17,9 +17,9 @@ namespace FOS\HttpCache\Exception;
  */
 class ExceptionCollection extends \Exception implements \IteratorAggregate, \Countable, HttpCacheExceptionInterface
 {
-    private $exceptions = array();
-    
-    public function __construct(array $exceptions = array())
+    private $exceptions = [];
+
+    public function __construct(array $exceptions = [])
     {
         foreach ($exceptions as $exception) {
             $this->add($exception);

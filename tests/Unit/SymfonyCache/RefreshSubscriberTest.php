@@ -56,7 +56,7 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
         ;
 
         $matcher = new RequestMatcher('/forbidden');
-        $refreshSubscriber = new RefreshSubscriber(array('refresh_client_matcher' => $matcher));
+        $refreshSubscriber = new RefreshSubscriber(['refresh_client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo');
         $request->headers->addCacheControlDirective('no-cache');
         $event = new CacheEvent($this->kernel, $request);
@@ -72,7 +72,7 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('fetch')
         ;
 
-        $refreshSubscriber = new RefreshSubscriber(array('refresh_client_ips' => '1.2.3.4'));
+        $refreshSubscriber = new RefreshSubscriber(['refresh_client_ips' => '1.2.3.4']);
         $request = Request::create('http://example.com/foo');
         $request->headers->addCacheControlDirective('no-cache');
         $event = new CacheEvent($this->kernel, $request);
@@ -124,6 +124,6 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidConfiguration()
     {
-        new RefreshSubscriber(array('purge_client_ip' => '1.2.3.4'));
+        new RefreshSubscriber(['purge_client_ip' => '1.2.3.4']);
     }
 }

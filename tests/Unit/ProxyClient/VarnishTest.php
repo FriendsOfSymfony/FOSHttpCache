@@ -24,8 +24,8 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanEverything()
     {
-        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
-        $varnish->ban(array())->flush();
+        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish->ban([])->flush();
 
         $requests = $this->getRequests();
         $this->assertCount(1, $requests);
@@ -39,8 +39,8 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanEverythingNoBaseUrl()
     {
-        $varnish = new Varnish(array('127.0.0.1:123'), null, $this->client);
-        $varnish->ban(array())->flush();
+        $varnish = new Varnish(['127.0.0.1:123'], null, $this->client);
+        $varnish->ban([])->flush();
 
         $requests = $this->getRequests();
         $this->assertCount(1, $requests);
@@ -49,19 +49,19 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Host'));
         $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Url'));
         $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Content-Type'));
-        
+
         // Ensure host header matches the Varnish server one.
         $this->assertEquals('http://127.0.0.1:123/', $requests[0]->getUri());
     }
 
     public function testBanHeaders()
     {
-        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
         $varnish->setDefaultBanHeaders(
-            array('A' => 'B')
+            ['A' => 'B']
         );
         $varnish->setDefaultBanHeader('Test', '.*');
-        $varnish->ban(array())->flush();
+        $varnish->ban([])->flush();
 
         $requests = $this->getRequests();
         $this->assertCount(1, $requests);
@@ -74,9 +74,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanPath()
     {
-        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
 
-        $hosts = array('fos.lo', 'fos2.lo');
+        $hosts = ['fos.lo', 'fos2.lo'];
         $varnish->banPath('/articles/.*', 'text/html', $hosts)->flush();
 
         $requests = $this->getRequests();
@@ -93,9 +93,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
      */
     public function testBanPathEmptyHost()
     {
-        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
 
-        $hosts = array();
+        $hosts = [];
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
     }
 
@@ -105,18 +105,18 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $varnish = new Varnish($ips, 'my_hostname.dev', $this->client);
 
         $count = $varnish->purge('/url/one')
-            ->purge('/url/two', array('X-Foo' => 'bar'))
+            ->purge('/url/two', ['X-Foo' => 'bar'])
             ->flush()
         ;
         $this->assertEquals(2, $count);
-        
+
         $requests = $this->getRequests();
         $this->assertCount(4, $requests);
         foreach ($requests as $request) {
             $this->assertEquals('PURGE', $request->getMethod());
             $this->assertEquals('my_hostname.dev', $request->getHeaderLine('Host'));
         }
-    
+
         $this->assertEquals('http://127.0.0.1:8080/url/one', $requests[0]->getUri());
         $this->assertEquals('http://123.123.123.2/url/one', $requests[1]->getUri());
         $this->assertEquals('http://127.0.0.1:8080/url/two', $requests[2]->getUri());
@@ -127,7 +127,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testRefresh()
     {
-        $varnish = new Varnish(array('127.0.0.1:123'), 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
         $varnish->refresh('/fresh')->flush();
 
         $requests = $this->getRequests();

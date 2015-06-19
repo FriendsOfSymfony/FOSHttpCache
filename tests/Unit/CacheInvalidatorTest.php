@@ -17,6 +17,7 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
+use FOS\HttpCache\Handler\TagHandler;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Adapter\Exception\HttpAdapterException;
 use \Mockery;
@@ -26,7 +27,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 {
     public function testSupportsTrue()
     {
-        $proxyClient = new Varnish(array('localhost'));
+        $proxyClient = new Varnish(['localhost']);
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
 
@@ -61,8 +62,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     public function testInvalidatePath()
     {
         $purge = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface')
-            ->shouldReceive('purge')->once()->with('/my/route', array())
-            ->shouldReceive('purge')->once()->with('/my/route', array('X-Test-Header' => 'xyz'))
+            ->shouldReceive('purge')->once()->with('/my/route', [])
+            ->shouldReceive('purge')->once()->with('/my/route', ['X-Test-Header' => 'xyz'])
             ->shouldReceive('flush')->once()
             ->getMock();
 
@@ -70,14 +71,14 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
         $cacheInvalidator
             ->invalidatePath('/my/route')
-            ->invalidatePath('/my/route', array('X-Test-Header' => 'xyz'))
+            ->invalidatePath('/my/route', ['X-Test-Header' => 'xyz'])
             ->flush()
         ;
     }
 
     public function testRefreshPath()
     {
-        $headers = array('X' => 'Y');
+        $headers = ['X' => 'Y'];
         $refresh = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface')
             ->shouldReceive('refresh')->once()->with('/my/route', $headers)
             ->shouldReceive('flush')->never()
@@ -111,37 +112,12 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     {
         $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
             ->shouldReceive('banPath')
-            ->with('/a', 'b', array('example.com'))
+            ->with('/a', 'b', ['example.com'])
             ->once()
             ->getMock();
 
         $cacheInvalidator = new CacheInvalidator($ban);
-        $cacheInvalidator->invalidateRegex('/a', 'b', array('example.com'));
-    }
-
-    public function testInvalidateTags()
-    {
-        $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
-            ->shouldReceive('ban')
-            ->with(array('X-Cache-Tags' => '(post\-1|posts)(,.+)?$'))
-            ->once()
-            ->getMock();
-
-        $cacheInvalidator = new CacheInvalidator($ban);
-        $cacheInvalidator->invalidateTags(array('post-1', 'posts'));
-    }
-
-    public function testInvalidateTagsCustomHeader()
-    {
-        $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
-            ->shouldReceive('ban')
-            ->with(array('Custom-Tags' => '(post\-1)(,.+)?$'))
-            ->once()
-            ->getMock();
-
-        $cacheInvalidator = new CacheInvalidator($ban);
-        $cacheInvalidator->setTagsHeader('Custom-Tags');
-        $cacheInvalidator->invalidateTags(array('post-1'));
+        $cacheInvalidator->invalidateRegex('/a', 'b', ['example.com']);
     }
 
     public function testMethodException()
@@ -161,19 +137,13 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             // success
         }
         try {
-            $cacheInvalidator->invalidate(array());
+            $cacheInvalidator->invalidate([]);
             $this->fail('Expected exception');
         } catch (UnsupportedProxyOperationException $e) {
             // success
         }
         try {
             $cacheInvalidator->invalidateRegex('/');
-            $this->fail('Expected exception');
-        } catch (UnsupportedProxyOperationException $e) {
-            // success
-        }
-        try {
-            $cacheInvalidator->invalidateTags(array());
             $this->fail('Expected exception');
         } catch (UnsupportedProxyOperationException $e) {
             // success
@@ -232,7 +202,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testEventDispatcher()
     {
-        $proxyClient = new Varnish(array('localhost'));
+        $proxyClient = new Varnish(['localhost']);
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
         $eventDispatcher = new EventDispatcher();

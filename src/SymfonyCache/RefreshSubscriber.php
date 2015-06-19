@@ -42,7 +42,7 @@ class RefreshSubscriber extends AccessControlledSubscriber
      *
      * @throws \InvalidArgumentException if unknown keys are found in $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults(array(

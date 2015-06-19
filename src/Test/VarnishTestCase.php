@@ -152,7 +152,7 @@ abstract class VarnishTestCase extends ProxyTestCase
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Varnish(
-                array('http://127.0.0.1:' . $this->getProxy()->getPort()),
+                ['http://127.0.0.1:' . $this->getProxy()->getPort()],
                 $this->getHostName() . ':' . $this->getProxy()->getPort()
             );
         }

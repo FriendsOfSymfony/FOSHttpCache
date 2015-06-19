@@ -33,7 +33,7 @@ class UserContextTest extends \PHPUnit_Framework_TestCase
 
         $userContext->addParameter('authenticated', true);
         $userContext->setParameters(array(
-            'roles' => array('ROLE_USER'),
+            'roles' => ['ROLE_USER'],
             'foo' => 'bar'
         ));
 
@@ -41,12 +41,12 @@ class UserContextTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($userContext->hasParameter('foo'));
         $this->assertTrue($userContext->hasParameter('roles'));
 
-        $parameters = array();
+        $parameters = [];
         foreach ($userContext as $name => $value) {
             $parameters[$name] = $value;
         }
         $this->assertEquals(
-            array('roles' => array('ROLE_USER'), 'foo' => 'bar'),
+            ['roles' => array('ROLE_USER'), 'foo' => 'bar'],
             $parameters
         );
     }

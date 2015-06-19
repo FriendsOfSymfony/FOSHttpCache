@@ -19,9 +19,9 @@ class HashGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerateHash()
     {
-        $hashGenerator = new HashGenerator(array(new FooProvider()));
+        $hashGenerator = new HashGenerator([new FooProvider()]);
 
-        $expectedHash = hash('sha256', serialize(array('foo' => 'bar')));
+        $expectedHash = hash('sha256', serialize(['foo' => 'bar']));
 
         $this->assertEquals($expectedHash, $hashGenerator->generateHash());
     }
@@ -31,7 +31,7 @@ class HashGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorError()
     {
-        new HashGenerator(array());
+        new HashGenerator([]);
     }
 }
 

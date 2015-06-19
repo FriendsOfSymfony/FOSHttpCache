@@ -28,23 +28,8 @@ class CacheInvalidatorTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/tags.php'));
         $this->assertHit($this->getResponse('/tags.php'));
 
-        $tagHandler->invalidateTags(array('tag1'));
+        $tagHandler->invalidateTags(['tag1']);
         $cacheInvalidator->flush();
-
-        $this->assertMiss($this->getResponse('/tags.php'));
-    }
-
-    /**
-     * Test the deprecated CacheInvalidator::invalidateTags method.
-     */
-    public function testInvalidateTagsBC()
-    {
-        $cacheInvalidator = new CacheInvalidator($this->getProxyClient());
-
-        $this->assertMiss($this->getResponse('/tags.php'));
-        $this->assertHit($this->getResponse('/tags.php'));
-
-        $cacheInvalidator->invalidateTags(array('tag1'))->flush();
 
         $this->assertMiss($this->getResponse('/tags.php'));
     }

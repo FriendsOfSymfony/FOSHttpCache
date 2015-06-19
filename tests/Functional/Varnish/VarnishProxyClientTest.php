@@ -28,7 +28,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
+        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_URL => '.*'])->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertMiss($this->getResponse('/json.php'));
@@ -39,10 +39,10 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
+        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'])->flush();
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
+        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => $this->getHostname()])->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
@@ -83,8 +83,8 @@ class VarnishProxyClientTest extends VarnishTestCase
 
     public function testPurgeContentType()
     {
-        $json = array('Accept' => 'application/json');
-        $html = array('Accept' => 'text/html');
+        $json = ['Accept' => 'application/json'];
+        $html = ['Accept' => 'text/html'];
 
         $response = $this->getResponse('/negotation.php', $json);
         $this->assertMiss($response);
@@ -104,7 +104,7 @@ class VarnishProxyClientTest extends VarnishTestCase
 
     public function testPurgeHost()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getProxy()->getPort()));
+        $varnish = new Varnish(['http://127.0.0.1:' . $this->getProxy()->getPort()]);
 
         $this->getResponse('/cache.php');
 
@@ -130,8 +130,8 @@ class VarnishProxyClientTest extends VarnishTestCase
 
     public function testRefreshContentType()
     {
-        $json = array('Accept' => 'application/json');
-        $html = array('Accept' => 'text/html');
+        $json = ['Accept' => 'application/json'];
+        $html = ['Accept' => 'text/html'];
 
         $this->getProxyClient()->refresh('/negotation.php', $json)->flush();
 

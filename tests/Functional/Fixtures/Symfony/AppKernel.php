@@ -21,12 +21,12 @@ class AppKernel implements HttpKernelInterface
         switch ($request->getPathInfo()) {
             case '/cache':
                 $response = new Response(microtime(true));
-                $response->setCache(array('max_age' => 3600, 'public' => true));
+                $response->setCache(['max_age' => 3600, 'public' => true]);
 
                 return $response;
             case '/negotiation':
                 $response = new Response(microtime(true));
-                $response->setCache(array('max_age' => 3600, 'public' => true));
+                $response->setCache(['max_age' => 3600, 'public' => true]);
                 $response->headers->set('Content-Type', $_SERVER['HTTP_ACCEPT']);
                 $response->setVary('Accept');
 

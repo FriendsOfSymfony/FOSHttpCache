@@ -37,18 +37,18 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
         $varnish = new Varnish($ips, 'my_hostname.dev', $this->client);
 
         $count = $varnish->purge('/url/one')
-            ->purge('/url/two', array('X-Foo' => 'bar'))
+            ->purge('/url/two', ['X-Foo' => 'bar'])
             ->flush()
         ;
         $this->assertEquals(2, $count);
-        
+
         $requests = $this->getRequests();
         $this->assertCount(4, $requests);
         foreach ($requests as $request) {
             $this->assertEquals('PURGE', $request->getMethod());
             $this->assertEquals('my_hostname.dev', $request->getHeaderLine('Host'));
         }
-    
+
         $this->assertEquals('http://127.0.0.1:8080/url/one', $requests[0]->getUri());
         $this->assertEquals('http://123.123.123.2/url/one', $requests[1]->getUri());
         $this->assertEquals('http://127.0.0.1:8080/url/two', $requests[2]->getUri());
@@ -59,7 +59,7 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
 
     public function testRefresh()
     {
-        $symfony = new Symfony(array('127.0.0.1:123'), 'fos.lo', $this->client);
+        $symfony = new Symfony(['127.0.0.1:123'], 'fos.lo', $this->client);
         $symfony->refresh('/fresh')->flush();
 
         $requests = $this->getRequests();
@@ -72,7 +72,7 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
     {
         $this->client = new MockHttpAdapter();
     }
-    
+
     /**
      * @return array|RequestInterface[]
      */

@@ -169,7 +169,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     public function testFlushEmpty()
     {
-        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], 'fos.lo', $this->client);
         $this->assertEquals(0, $varnish->flush());
 
         $this->assertCount(0, $this->client->getRequests());
@@ -228,13 +228,13 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
             ->andReturn([])
             ->getMock();
 
-        $varnish = new Varnish(array('127.0.0.1', '127.0.0.2'), 'fos.lo', $client);
+        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], 'fos.lo', $client);
 
         $this->assertEquals(
             2,
             $varnish
-                ->purge('/c', array('a' => 'b', 'c' => 'd'))
-                ->purge('/c', array('c' => 'd', 'a' => 'b')) // same request (header order is not significant)
+                ->purge('/c', ['a' => 'b', 'c' => 'd'])
+                ->purge('/c', ['c' => 'd', 'a' => 'b']) // same request (header order is not significant)
                 ->purge('/c') // different request as headers different
                 ->purge('/c')
                 ->flush()

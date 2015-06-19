@@ -21,7 +21,7 @@ class HashGenerator
     /**
      * @var ContextProviderInterface[]
      */
-    private $providers = array();
+    private $providers = [];
 
     /**
      * Constructor
