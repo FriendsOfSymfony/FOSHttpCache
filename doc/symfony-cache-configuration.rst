@@ -196,4 +196,34 @@ but you can customize that in the subscriber constructor::
 
 The custom header is removed before sending the response to the client.
 
+.. _symfony-cache x-debugging:
+
+Debugging
+~~~~~~~~~
+
+For the ``assertHit`` and ``assertMiss`` assertions to work, you need to add
+debug information in your AppCache. Create the cache kernel with the option
+``'debug' => true`` and add the following to your ``AppCache``::
+
+    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
+    {
+        $response = parent::handle($request, $type, $catch);
+
+        if ($response->headers->has('X-Symfony-Cache')) {
+            if (false !== strpos($response->headers->get('X-Symfony-Cache'), 'miss')) {
+                $state = 'MISS';
+            } elseif (false !== strpos($response->headers->get('X-Symfony-Cache'), 'fresh')) {
+                $state = 'HIT';
+            } else {
+                $state = 'UNDETERMINED';
+            }
+            $response->headers->set('X-Cache', $state);
+        }
+
+        return $response;
+    }
+
+The ``UNDETERMINED`` state should never happen. If it does, it means that your
+HttpCache is not correctly set into debug mode.
+
 .. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
