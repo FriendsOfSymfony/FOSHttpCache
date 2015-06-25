@@ -20,6 +20,6 @@ use Psr\Http\Message\UriInterface;
  */
 abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
 {
-    use AppClient;
+    use HttpCaller;
     use CacheAssertions;
 }

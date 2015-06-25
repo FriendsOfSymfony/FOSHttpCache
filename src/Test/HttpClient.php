@@ -20,16 +20,36 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * Provides a HTTP client for getting responses from your application
+ * Provides a very simple way to fetch HTTP responses, auto-creating a client.
  */
-trait AppClient
+class HttpClient
 {
     /**
      * HTTP adapter for requests to the application
      *
      * @var HttpAdapter
      */
-    protected $httpAdapter;
+    private $httpAdapter;
+
+    /**
+     * @var string
+     */
+    private $hostname;
+
+    /**
+     * @var string
+     */
+    private $port;
+
+    /**
+     * @param string $hostname Default hostname if not specified in the URL
+     * @param string $port     Default port if not specified in the URL
+     */
+    public function __construct($hostname, $port)
+    {
+        $this->hostname = $hostname;
+        $this->port = $port;
+    }
 
     /**
      * Get HTTP response from your application
@@ -40,7 +60,7 @@ trait AppClient
      *
      * @return ResponseInterface
      */
-    public function getResponse($uri, array $headers = [], $method = 'GET')
+    public function getResponse($uri, array $headers, $method)
     {
         // Close connections to make sure invalidation (PURGE/BAN) requests will
         // not interfere with content (GET) requests.
@@ -79,11 +99,11 @@ trait AppClient
         $uri = $this->createUri($uri);
         if ($uri->getHost() === '') {
             // Add base URI host
-            $uri = $uri->withHost($this->getHostName());
+            $uri = $uri->withHost($this->hostname);
         }
 
         if (!$uri->getPort()) {
-            $uri = $uri->withPort($this->getCachingProxyPort());
+            $uri = $uri->withPort($this->port);
         }
 
         if ($uri->getScheme() === '') {
@@ -109,6 +129,4 @@ trait AppClient
     {
         return UriFactoryDiscovery::find()->createUri($uriString);
     }
-
-    abstract protected function getHostName();
 }
