@@ -93,10 +93,10 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidate()
     {
-        $headers = array(
+        $headers = [
             'X-Header' => '^value.*$',
             'Other-Header' => '^a|b|c$',
-        );
+        ];
 
         $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
             ->shouldReceive('ban')

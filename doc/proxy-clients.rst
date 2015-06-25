@@ -75,7 +75,7 @@ Varnish runs on if it is not port 80::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 
-    $servers = array('10.0.0.1', '10.0.0.2:6081'); // Port 80 assumed for 10.0.0.1
+    $servers = ['10.0.0.1', '10.0.0.2:6081']; // Port 80 assumed for 10.0.0.1
     $varnish = new Varnish($servers);
 
 This is sufficient for invalidating absolute URLs. If you also wish to
@@ -102,7 +102,7 @@ NGINX runs on if it is not the default::
 
     use FOS\HttpCache\ProxyClient\Nginx;
 
-    $servers = array('10.0.0.1', '10.0.0.2:8088'); // Port 80 assumed for 10.0.0.1
+    $servers = ['10.0.0.1', '10.0.0.2:8088']; // Port 80 assumed for 10.0.0.1
     $nginx = new Nginx($servers);
 
 This is sufficient for invalidating absolute URLs. If you also wish to
@@ -134,7 +134,7 @@ the web server runs on if it is not the default::
 
     use FOS\HttpCache\ProxyClient\Symfony;
 
-    $servers = array('10.0.0.1', '10.0.0.2:8088'); // Port 80 assumed for 10.0.0.1
+    $servers = ['10.0.0.1', '10.0.0.2:8088']; // Port 80 assumed for 10.0.0.1
     $client = new Symfony($servers);
 
 This is sufficient for invalidating absolute URLs. If you also wish to
@@ -193,7 +193,7 @@ You can specify HTTP headers as the second argument to ``purge()``.
 For instance::
 
     $client
-        ->purge('/some/path', array('X-Foo' => 'bar')
+        ->purge('/some/path', ['X-Foo' => 'bar'])
         ->flush()
     ;
 
@@ -221,7 +221,7 @@ You can specify HTTP headers as the second argument to ``refresh()``. For
 instance, to only refresh the JSON representation of an URL::
 
     $client
-        ->refresh('/some/path', array('Accept' => 'application/json')
+        ->refresh('/some/path', ['Accept' => 'application/json'])
         ->flush()
     ;
 
@@ -256,11 +256,11 @@ Varnish client::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 
-    $varnish->ban(array(
+    $varnish->ban([
         Varnish::HTTP_HEADER_URL   => '.*\.png$',
         Varnish::HTTP_HEADER_HOST  => '.*example\.com',
         Varnish::HTTP_HEADER_CACHE => 'my-tag',
-    ));
+    ]);
 
 Make sure to add any headers that you want to ban on to your
 :doc:`proxy configuration <proxy-configuration>`.

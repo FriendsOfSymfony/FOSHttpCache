@@ -46,17 +46,17 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $prop->setAccessible(true);
         $options = $prop->getValue($subscriber);
 
-        $custom = array(
+        $custom = [
             'user_hash_uri' => '/test-uri',
             'user_hash_header' => 'test/header',
             'user_hash_accept_header' => 'test accept',
             'anonymous_hash' => 'test hash',
-        );;
+        ];
 
-        return array(
+        return [
             [[], $options],
             [$custom, $custom + $options]
-        );
+        ];
     }
 
     /**
@@ -124,11 +124,11 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $catch = true;
         $sessionId1 = 'my_session_id';
         $sessionId2 = 'another_session_id';
-        $cookies = array(
+        $cookies = [
             'PHPSESSID' => $sessionId1,
             'PHPSESSIDsdiuhsdf4535d4f' => $sessionId2,
-            'foo' => 'bar'
-        );
+            'foo' => 'bar',
+        ];
         $cookieString = "PHPSESSID=$sessionId1; foo=bar; PHPSESSIDsdiuhsdf4535d4f=$sessionId2";
         $request = Request::create('/foo', 'GET', [], $cookies, [], ['Cookie' => $cookieString]);
 

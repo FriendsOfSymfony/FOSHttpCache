@@ -50,7 +50,7 @@ Invalidate a URL with added header(s)::
 
     $cacheInvalidator->invalidatePath(
         'http://www.example.com/users',
-        array('Cookie' => 'foo=bar; fizz=bang')
+        ['Cookie' => 'foo=bar; fizz=bang']
     )->flush();
 
 .. include:: includes/custom-headers.rst
@@ -75,7 +75,7 @@ Refresh a URL with added header(s)::
 
     $cacheInvalidator->refreshPath(
         'http://www.example.com/users',
-        array('Cookie' => 'foo=bar; fizz=bang')
+        ['Cookie' => 'foo=bar; fizz=bang']
     )->flush();
 
 .. include:: includes/custom-headers.rst
@@ -105,7 +105,7 @@ caching proxy::
 To invalidate all ``.png`` files on host example.com::
 
     $cacheInvalidator
-        ->invalidateRegex('.*', 'image/png', array('example.com'))
+        ->invalidateRegex('.*', 'image/png', ['example.com'])
         ->flush()
     ;
 
@@ -124,7 +124,7 @@ default headers always present to simplify the cache configuration rules.
 
 To invalidate on a custom header ``X-My-Header``, you would do::
 
-    $cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'))->flush();
+    $cacheInvalidator->invalidate(['X-My-Header' => 'my-value'])->flush();
 
 .. _flush:
 

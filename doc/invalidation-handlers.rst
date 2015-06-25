@@ -36,7 +36,7 @@ With tags you can group related representations so it becomes easier to
 invalidate them. You will have to make sure your web application adds the
 correct tags on all responses. You can add tags to the handler using::
 
-    $tagHandler->addTags(array('tag-two', 'group-a'));
+    $tagHandler->addTags(['tag-two', 'group-a']);
 
 Before any content is sent out, you need to send the tag header_::
 
@@ -67,7 +67,7 @@ Assume you sent four responses:
 
 You can now invalidate some URLs using tags::
 
-    $tagHandler->invalidateTags(array('group-a', 'tag-four'));
+    $tagHandler->invalidateTags(['group-a', 'tag-four']);
 
 This will ban all requests having either the tag ``group-a`` /or/ ``tag-four``.
 In the above example, this will invalidate ``/two``, ``/three`` and ``/four``.
