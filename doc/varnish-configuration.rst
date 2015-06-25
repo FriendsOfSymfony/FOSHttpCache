@@ -40,14 +40,19 @@ To configure Varnish for `handling PURGE requests <https://www.varnish-cache.org
 
 Purge removes a specific URL (including query strings) in all its variants (as specified by the ``Vary`` header).
 
+.. code-block::
+    include "path-to-config/varnish-version/fos_purge.vcl"
+
 .. configuration-block::
 
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/purge.vcl
+    .. literalinclude:: tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
+        :lines: 17,19,21-22
         :linenos:
 
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/purge.vcl
+    .. literalinclude:: tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
+        :lines: 17,19-20,25-32
         :linenos:
 
 Refresh
@@ -58,25 +63,39 @@ add the following to your Varnish configuration:
 
 Refresh invalidates a specific URL including the query string, but *not* its variants.
 
-.. literalinclude:: ../tests/Functional/Fixtures/varnish-3/refresh.vcl
-    :language: varnish3
-    :linenos:
+.. code-block::
+    include "path-to-config/varnish-version/fos_refresh.vcl"
+
+.. configuration-block::
+
+    .. literalinclude:: tests/Functional/Fixtures/varnish-4/fos.vcl
+        :language: varnish4
+        :lines: 17,20-22
+        :linenos:
+
+    .. literalinclude:: tests/Functional/Fixtures/varnish-3/fos.vcl
+        :language: varnish3
+        :lines: 15,18-20
+        :linenos:
 
 Ban
 ~~~
 
 To configure Varnish for `handling BAN requests <https://www.varnish-software.com/static/book/Cache_invalidation.html#banning>`_:
 
+.. code-block::
+    include "path-to-config/varnish-version/fos_ban.vcl"
+
 .. configuration-block::
 
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
+    .. literalinclude:: tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
-        :lines: 1-7, 15-18, 20-
+        :lines: 17-18,21-29
         :linenos:
 
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/ban.vcl
+    .. literalinclude:: tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
-        :lines: 1-7, 15-18, 20-
+        :lines: 15-16,19-23,33-35
         :linenos:
 
 Varnish contains a `ban lurker`_ that crawls the content to eventually throw out banned data even when it’s not requested by any client.
@@ -88,23 +107,22 @@ Varnish contains a `ban lurker`_ that crawls the content to eventually throw out
 Tagging
 ~~~~~~~
 
-Add the following to your Varnish configuration to enable :ref:`cache tagging <tags>`.
+If you have included fos_ban.vcl, tagging will be automatically enabled using ``X-Cache-Tags`` header :ref:`cache tagging <tags>`.
 
 .. note::
-
-    The custom ``X-Cache-Tags`` header should match the tagging header
-    :ref:`configured in the cache invalidator <custom_tags_header>`.
+    If you want to use different tag from ``X-Cache-Tags`` as defined in fos_ban.vcl,
+    the header should match the tagging header :ref:`configured in the cache invalidator <custom_tags_header>`.
 
 .. configuration-block::
 
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/ban.vcl
+    .. literalinclude:: ../config/varnish-4/fos_ban.vcl
         :language: varnish4
-        :emphasize-lines: 8-13,39
+        :emphasize-lines: 8-13,40-41
         :linenos:
 
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/ban.vcl
+    .. literalinclude:: ../config/varnish-3/fos_ban.vcl
         :language: varnish3
-        :emphasize-lines: 8-13,39
+        :emphasize-lines: 8-13,40-41
         :linenos:
 
 .. _varnish user context:
