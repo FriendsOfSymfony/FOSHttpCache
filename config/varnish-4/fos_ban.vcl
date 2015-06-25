@@ -1,4 +1,4 @@
-sub vcl_recv {
+sub fos_ban_recv {
 
     if (req.method == "BAN") {
         if (!client.ip ~ invalidators) {
@@ -22,20 +22,22 @@ sub vcl_recv {
     }
 }
 
-sub vcl_backend_response {
+sub fos_ban_backend_response {
 
     # Set ban-lurker friendly custom headers
     set beresp.http.X-Url = bereq.url;
     set beresp.http.X-Host = bereq.http.host;
 }
 
-sub vcl_deliver {
+sub fos_ban_deliver {
 
     # Keep ban-lurker headers only if debugging is enabled
     if (!resp.http.X-Cache-Debug) {
         # Remove ban-lurker friendly custom headers when delivering to client
         unset resp.http.X-Url;
         unset resp.http.X-Host;
+
+        # Unset the tagged cache headers
         unset resp.http.X-Cache-Tags;
     }
 }
