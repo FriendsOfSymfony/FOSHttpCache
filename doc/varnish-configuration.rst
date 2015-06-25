@@ -45,12 +45,12 @@ Purge removes a specific URL (including query strings) in all its variants (as s
 
 .. configuration-block::
 
-    .. literalinclude:: tests/Functional/Fixtures/varnish-4/fos.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
         :lines: 17,19,21-22
         :linenos:
 
-    .. literalinclude:: tests/Functional/Fixtures/varnish-3/fos.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
         :lines: 17,19-20,25-32
         :linenos:
@@ -68,12 +68,12 @@ Refresh invalidates a specific URL including the query string, but *not* its var
 
 .. configuration-block::
 
-    .. literalinclude:: tests/Functional/Fixtures/varnish-4/fos.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
         :lines: 17,20-22
         :linenos:
 
-    .. literalinclude:: tests/Functional/Fixtures/varnish-3/fos.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
         :lines: 15,18-20
         :linenos:
@@ -88,12 +88,12 @@ To configure Varnish for `handling BAN requests <https://www.varnish-software.co
 
 .. configuration-block::
 
-    .. literalinclude:: tests/Functional/Fixtures/varnish-4/fos.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
         :lines: 17-18,21-29
         :linenos:
 
-    .. literalinclude:: tests/Functional/Fixtures/varnish-3/fos.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
         :lines: 15-16,19-23,33-35
         :linenos:
