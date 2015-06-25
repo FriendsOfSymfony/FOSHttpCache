@@ -67,11 +67,16 @@ Assume you sent four responses:
 
 You can now invalidate some URLs using tags::
 
-    $tagHandler->invalidateTags(array('group-a', 'tag-four'))->flush();
+    $tagHandler->invalidateTags(array('group-a', 'tag-four'));
 
 This will ban all requests having either the tag ``group-a`` /or/ ``tag-four``.
 In the above example, this will invalidate ``/two``, ``/three`` and ``/four``.
 Only ``/one`` will stay in the cache.
+
+.. note::
+
+    Don't forget to :ref:`flush <flush>` these invalidation changes to the proxy
+    from the ``CacheInvalidator`` object towards the end of your application.
 
 .. _custom_tags_header:
 
