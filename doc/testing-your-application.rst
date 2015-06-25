@@ -23,11 +23,40 @@ By having your test classes extend one of the test case classes, you get:
 The recommended way to configure the test case is by setting constants
 in your ``phpunit.xml``. Alternatively, you can override the getter methods.
 
+Web Server
+~~~~~~~~~~
+
 You will need to run a web server to provide the PHP application you want to
-test. The test cases only handle running the caching proxy. With PHP 5.4 or
-newer, the easiest is to use the PHP built in web server. See the
-``WebServerListener`` class in ``tests/Functional`` and how it is registered in
-``phpunit.xml.dist``.
+test. The test cases only handle running the caching proxy. It’s easiest to
+use PHP’s built in web server. Include the WebServerListener in your
+``phpunit.xml``:
+
+.. literalinclude:: ../phpunit.xml.dist
+    :prepend:
+        <?xml version="1.0" encoding="UTF-8"?>
+        <phpunit ...>
+            <listeners>
+    :language: xml
+    :start-after: <listeners>
+    :end-before: </listeners>
+    :append:
+            </listeners>
+        </phpunit>
+
+Then set the ``webserver`` group on your test to start PHP’s web server before
+it runs::
+
+    class YourTest extends \PHPUnit_Framework_TestCase
+    {
+        /**
+         * @group webserver
+         */
+        public function testYourApp()
+        {
+            // The web server will be started before this test code runs and
+            // shut down again after it finishes.
+        }
+    }
 
 Setting Constants
 ~~~~~~~~~~~~~~~~~
