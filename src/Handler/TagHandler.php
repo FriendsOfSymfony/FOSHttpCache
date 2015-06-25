@@ -106,6 +106,11 @@ class TagHandler
      * Invalidate cache entries that contain any of the specified tags in their
      * tag header.
      *
+     * The cache manager is told to invalidate all content with the specified
+     * tags. The invalidaton requests are sent to the caching proxy on kernel
+     * termination (both for web requests and command runs). To immediately
+     * send the invalidation request, call the CacheManager::flush() method.
+     *
      * @param array $tags Cache tags
      *
      * @return $this
