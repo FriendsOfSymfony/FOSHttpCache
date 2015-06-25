@@ -1,4 +1,6 @@
-sub vcl_recv {
+vcl 4.0;
+
+sub fos_user_context_recv {
 
     # Prevent tampering attacks on the hash mechanism
     if (req.restarts == 0
@@ -6,7 +8,7 @@ sub vcl_recv {
             || req.http.X-User-Context-Hash
         )
     ) {
-        error 400;
+        return (synth(400));
     }
 
     # Lookup the context hash if there are credentials on the request
@@ -14,7 +16,7 @@ sub vcl_recv {
     # https://www.varnish-cache.org/trac/ticket/652
     if (req.restarts == 0
         && (req.http.cookie || req.http.authorization)
-        && (req.request == "GET" || req.request == "HEAD")
+        && (req.method == "GET" || req.method == "HEAD")
     ) {
         # Backup accept header, if set
         if (req.http.accept) {
@@ -31,7 +33,7 @@ sub vcl_recv {
 
         # Force the lookup, the backend must tell not to cache or vary on all
         # headers that are used to build the hash.
-        return (lookup);
+        return (hash);
     }
 
     # Rebuild the original request which now has the hash.
@@ -51,25 +53,23 @@ sub vcl_recv {
         # Force the lookup, the backend must tell not to cache or vary on the
         # user hash to properly separate cached data.
 
-        return (lookup);
+        return (hash);
     }
 }
 
-sub vcl_fetch {
-    if (req.restarts == 0
-        && req.http.accept ~ "application/vnd.fos.user-context-hash"
+sub fos_user_context_backend_response {
+    if (bereq.http.accept ~ "application/vnd.fos.user-context-hash"
         && beresp.status >= 500
     ) {
-        error 503 "Hash error";
+        return (abandon);
     }
 }
 
-sub vcl_deliver {
+sub fos_user_context_deliver {
     # On receiving the hash response, copy the hash header to the original
     # request and restart.
     if (req.restarts == 0
         && resp.http.content-type ~ "application/vnd.fos.user-context-hash"
-        && resp.status == 200
     ) {
         set req.http.X-User-Context-Hash = resp.http.X-User-Context-Hash;
 
@@ -83,9 +83,9 @@ sub vcl_deliver {
     set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *X-User-Context-Hash *", "");
     set resp.http.Vary = regsub(resp.http.Vary, "^, *", "");
     if (resp.http.Vary == "") {
-        remove resp.http.Vary;
+        unset resp.http.Vary;
     }
 
     # Sanity check to prevent ever exposing the hash to a client.
-    remove resp.http.X-User-Context-Hash;
+    unset resp.http.X-User-Context-Hash;
 }
