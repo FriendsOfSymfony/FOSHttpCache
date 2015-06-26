@@ -1,4 +1,4 @@
-sub vcl_deliver {
+sub fos_debug_deliver {
     # Add extra headers if debugging is enabled
     if (resp.http.X-Cache-Debug) {
         if (obj.hits > 0) {

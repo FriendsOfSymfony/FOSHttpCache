@@ -1,6 +1,6 @@
 vcl 4.0;
 
-include "debug.vcl";
+include "../../../../config/varnish-4/fos_debug.vcl";
 include "../../../../config/varnish-4/fos_refresh.vcl";
 include "../../../../config/varnish-4/fos_purge.vcl";
 include "../../../../config/varnish-4/fos_ban.vcl";
@@ -25,5 +25,6 @@ sub vcl_backend_response {
 }
 
 sub vcl_deliver {
+    call fos_debug_deliver;
     call fos_ban_deliver;
 }

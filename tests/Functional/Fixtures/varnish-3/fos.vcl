@@ -1,5 +1,5 @@
+include "../../../../config/varnish-3/fos_debug.vcl";
 include "../../../../config/varnish-3/fos_refresh.vcl";
-include "debug.vcl";
 include "../../../../config/varnish-3/fos_purge.vcl";
 include "../../../../config/varnish-3/fos_ban.vcl";
 
@@ -31,5 +31,6 @@ sub vcl_miss {
 }
 
 sub vcl_deliver {
+    call fos_debug_deliver;
     call fos_ban_deliver;
 }

@@ -1,5 +1,3 @@
-vcl 4.0;
-
 sub fos_user_context_recv {
 
     # Prevent tampering attacks on the hash mechanism
