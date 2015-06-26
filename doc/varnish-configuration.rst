@@ -33,6 +33,19 @@ will be used throughout the Varnish examples on this page.
     trigger invalidation are whitelisted here. Otherwise, lost cache invalidation
     requests will lead to lots of confusion.
 
+Includable Vcl Subroutines
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to ease configuration we provide a set of vcl subroutines in the /config directory.
+These can be directly included into ``your_varnish.vcl`` and the needed subroutines called
+from the respective vcl_* subroutines.
+
+.. important::
+    When including one of the provided vcl you need to call all the defined subroutines
+    or your configuration will not be valid.
+
+    See the respective sections below on how to configure usage of each of the provided vcl's.
+
 Purge
 ~~~~~
 
@@ -40,20 +53,21 @@ To configure Varnish for `handling PURGE requests <https://www.varnish-cache.org
 
 Purge removes a specific URL (including query strings) in all its variants (as specified by the ``Vary`` header).
 
-.. code-block::
-    include "path-to-config/varnish-version/fos_purge.vcl"
+Subroutines are provided in ``config/varnis-version/fos_purge.vcl``.
+
+To enable support add the following to ``your_varnish.vcl``:
+
+.. code-block:: varnish3
+
+    include "path-to-config/varnish-[version]/fos_purge.vcl";
 
 .. configuration-block::
-
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
         :lines: 17,19,21-22
-        :linenos:
-
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
-        :lines: 17,19-20,25-32
-        :linenos:
+        :lines: 15,17,19-20,25-32
 
 Refresh
 ~~~~~~~
@@ -63,40 +77,44 @@ add the following to your Varnish configuration:
 
 Refresh invalidates a specific URL including the query string, but *not* its variants.
 
-.. code-block::
-    include "path-to-config/varnish-version/fos_refresh.vcl"
+Subroutines are provived in ``fos_refresh.vcl``
+
+To enable support add the following to ``your_varnish.vcl``:
+
+.. code-block:: varnish3
+
+    include "path-to-config/varnish-[version]/fos_refresh.vcl";
 
 .. configuration-block::
-
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
         :lines: 17,20-22
-        :linenos:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
         :lines: 15,18-20
-        :linenos:
 
 Ban
 ~~~
 
 To configure Varnish for `handling BAN requests <https://www.varnish-software.com/static/book/Cache_invalidation.html#banning>`_:
 
-.. code-block::
-    include "path-to-config/varnish-version/fos_ban.vcl"
+Subroutines are provived in ``fos_ban.vcl``
+
+To enable support add the following to ``your_varnish.vcl``:
+
+.. code-block:: varnish3
+
+    include "path-to-config/varnish-[version]/fos_ban.vcl";
 
 .. configuration-block::
-
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/fos.vcl
         :language: varnish4
         :lines: 17-18,21-29
-        :linenos:
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/fos.vcl
         :language: varnish3
-        :lines: 15-16,19-23,33-35
-        :linenos:
+        :lines: 15-16,19-24,33-35
 
 Varnish contains a `ban lurker`_ that crawls the content to eventually throw out banned data even when it’s not requested by any client.
 
@@ -107,11 +125,11 @@ Varnish contains a `ban lurker`_ that crawls the content to eventually throw out
 Tagging
 ~~~~~~~
 
-If you have included fos_ban.vcl, tagging will be automatically enabled using ``X-Cache-Tags`` header :ref:`cache tagging <tags>`.
+If you have included fos_ban.vcl, tagging will be automatically enabled using a ``X-Cache-Tags`` header :ref:`cache tagging <tags>`.
 
 .. note::
-    If you want to use different tag from ``X-Cache-Tags`` as defined in fos_ban.vcl,
-    the header should match the tagging header :ref:`configured in the cache invalidator <custom_tags_header>`.
+    If you need to use a different tag for the headers than the default ``X-Cache-Tags`` used in ``fos_ban.vcl``,
+    you need to write your own VCL code and change the tagging header :ref:`configured in the cache invalidator <custom_tags_header>`.
 
 .. configuration-block::
 
@@ -133,17 +151,22 @@ User Context
 To support :doc:`user context hashing <user-context>` you need to add some logic
 to the ``recv`` and the ``deliver`` methods:
 
-.. configuration-block::
+Subroutines are provived in ``fos_user_context.vcl``.
 
+To enable support add the following to ``your_varnish.vcl``:
+
+.. code-block:: varnish3
+
+    include "path-to-config/varnish-[version]/fos_user_context.vcl";
+
+.. configuration-block::
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/user_context.vcl
         :language: varnish4
-        :lines: 3-29, 33-
-        :linenos:
+        :lines: 3-
 
     .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
         :language: varnish3
-        :lines: 1-27, 31-
-        :linenos:
+        :lines: 3-
 
 .. sidebar:: Caching User Specific Content
 
@@ -223,15 +246,22 @@ Configure your Varnish to set a custom header (`X-Cache`) that shows whether a
 cache hit or miss occurred. This header will only be set if your application
 sends an `X-Cache-Debug` header:
 
+Subroutines are provived in ``fos_debug.vcl``.
+
+To enable support add the following to ``your_varnish.vcl``:
+
+.. code-block:: varnish3
+
+    include "path-to-config/varnish-[version]/fos_debug.vcl";
+
 .. configuration-block::
-
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/debug.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-4/user_context.vcl
         :language: varnish4
-        :linenos:
+        :lines: 12,13,15
 
-    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/debug.vcl
+    .. literalinclude:: ../tests/Functional/Fixtures/varnish-3/user_context.vcl
         :language: varnish3
-        :linenos:
+        :lines: 12,13,15
 
 .. _`builtin VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/builtin.vcl?rev=4.0
 .. _`default VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0
