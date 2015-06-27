@@ -151,7 +151,8 @@ class UserContextSubscriber implements EventSubscriberInterface
     /**
      * Returns the user context hash for $request.
      *
-     * @param Request $request
+     * @param HttpKernelInterface $kernel
+     * @param Request             $request
      *
      * @return string
      */
