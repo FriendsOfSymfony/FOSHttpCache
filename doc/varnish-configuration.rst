@@ -36,7 +36,7 @@ will be used throughout the Varnish examples on this page.
 Provided Vcl Subroutines
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to ease configuration we provide a set of vcl subroutines in the /config directory.
+In order to ease configuration we provide a set of vcl subroutines in the config directory.
 These can be directly included into ``your_varnish.vcl`` and the needed subroutines called
 from the respective vcl_* subroutines.
 
