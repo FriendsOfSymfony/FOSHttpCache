@@ -37,10 +37,10 @@ class NginxProxy extends Abstractproxy
     {
         $this->runCommand(
             $this->getBinary(),
-            array(
-                '-c', $this->getConfigFile() ,
-                '-g', 'pid ' . $this->pid . ';'
-            )
+            [
+                '-c', $this->getConfigFile(),
+                '-g', 'pid ' . $this->pid . ';',
+            ]
         );
 
         $this->waitFor($this->getIp(), $this->getPort(), 2000);

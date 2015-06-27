@@ -58,11 +58,11 @@ class PurgeSubscriber extends AccessControlledSubscriber
         } else {
             $resolver->setOptional(['purge_client_matcher', 'purge_client_ips', 'purge_method']);
         }
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'purge_client_matcher' => null,
             'purge_client_ips' => null,
             'purge_method' => static::DEFAULT_PURGE_METHOD,
-        ));
+        ]);
 
         $this->options = $resolver->resolve($options);
 
@@ -74,9 +74,9 @@ class PurgeSubscriber extends AccessControlledSubscriber
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::PRE_INVALIDATE => 'handlePurge',
-        );
+        ];
     }
 
     /**

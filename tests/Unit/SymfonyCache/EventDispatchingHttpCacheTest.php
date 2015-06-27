@@ -34,7 +34,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         ;
 
         // Force setting options property since we can't use original constructor.
-        $options = array(
+        $options = [
             'debug' => false,
             'default_ttl' => 0,
             'private_headers' => [ 'Authorization', 'Cookie' ],
@@ -42,7 +42,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
             'allow_revalidate' => false,
             'stale_while_revalidate' => 2,
             'stale_if_error' => 60,
-        );
+        ];
 
         $refHttpCache = new \ReflectionClass('Symfony\Component\HttpKernel\HttpCache\HttpCache');
         // Workaround for Symfony 2.3 where $options property is not defined.
@@ -161,10 +161,10 @@ class TestSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::PRE_HANDLE => 'preHandle',
-            Events::PRE_INVALIDATE => 'preInvalidate'
-        );
+            Events::PRE_INVALIDATE => 'preInvalidate',
+        ];
     }
 
     public function preHandle(CacheEvent $event)

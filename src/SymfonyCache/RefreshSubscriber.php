@@ -45,10 +45,10 @@ class RefreshSubscriber extends AccessControlledSubscriber
     public function __construct(array $options = [])
     {
         $resolver = new OptionsResolver();
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'refresh_client_matcher' => null,
             'refresh_client_ips' => null,
-        ));
+        ]);
         $options = $resolver->resolve($options);
 
         parent::__construct($options['refresh_client_matcher'], $options['refresh_client_ips']);
@@ -59,9 +59,9 @@ class RefreshSubscriber extends AccessControlledSubscriber
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::PRE_HANDLE => 'handleRefresh',
-        );
+        ];
     }
 
     /**

@@ -131,10 +131,10 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('isRequestAllowed')
         ;
 
-        $purgeSubscriber = new PurgeSubscriber(array(
+        $purgeSubscriber = new PurgeSubscriber([
             'purge_client_matcher' => $matcher,
             'purge_method' => 'FOO',
-        ));
+        ]);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($this->kernel, $request);
 

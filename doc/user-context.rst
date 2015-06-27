@@ -56,10 +56,10 @@ implement at least one ContextProvider and register that with the HashGenerator:
 
     use FOS\HttpCache\UserContext\HashGenerator;
 
-    $hashGenerator = new HashGenerator(array(
+    $hashGenerator = new HashGenerator([
         new IsAuthenticatedProvider(),
         new RoleProvider(),
-    ));
+    ]);
 
 Once all providers are registered, call ``generateHash()`` to get the hash for
 the current user context.

@@ -42,14 +42,14 @@ class VarnishProxy extends AbstractProxy
     {
         $this->runCommand(
             $this->getBinary(),
-            array(
+            [
                 '-a', $this->ip . ':' . $this->getPort(),
                 '-T', $this->ip . ':' . $this->getManagementPort(),
                 '-f', $this->getConfigFile(),
                 '-n', $this->getCacheDir(),
                 '-p', 'vcl_dir=' . $this->getConfigDir(),
-                '-P', $this->pid
-            )
+                '-P', $this->pid,
+            ]
         );
 
         $this->waitFor($this->ip, $this->getPort(), 2000);
