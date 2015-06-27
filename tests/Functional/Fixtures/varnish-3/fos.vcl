@@ -1,7 +1,7 @@
-include "../../../../config/varnish-3/fos_debug.vcl";
-include "../../../../config/varnish-3/fos_refresh.vcl";
-include "../../../../config/varnish-3/fos_purge.vcl";
-include "../../../../config/varnish-3/fos_ban.vcl";
+include "../../../../resources/config/varnish-3/fos_debug.vcl";
+include "../../../../resources/config/varnish-3/fos_refresh.vcl";
+include "../../../../resources/config/varnish-3/fos_purge.vcl";
+include "../../../../resources/config/varnish-3/fos_ban.vcl";
 
 backend default {
     .host = "127.0.0.1";

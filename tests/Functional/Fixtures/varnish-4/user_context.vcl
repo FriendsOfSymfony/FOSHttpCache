@@ -1,5 +1,5 @@
-include "../../../../config/varnish-4/fos_user_context.vcl";
-include "../../../../config/varnish-4/fos_debug.vcl";
+include "../../../../resources/config/varnish-4/fos_user_context.vcl";
+include "../../../../resources/config/varnish-4/fos_debug.vcl";
 
 sub vcl_recv {
     call fos_user_context_recv;

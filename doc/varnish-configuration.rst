@@ -36,7 +36,7 @@ will be used throughout the Varnish examples on this page.
 Provided Vcl Subroutines
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to ease configuration we provide a set of vcl subroutines in the config directory.
+In order to ease configuration we provide a set of vcl subroutines in the resources/config directory.
 These can be directly included into ``your_varnish.vcl`` and the needed subroutines called
 from the respective vcl_* subroutines.
 
@@ -53,7 +53,7 @@ To configure Varnish for `handling PURGE requests <https://www.varnish-cache.org
 
 Purge removes a specific URL (including query strings) in all its variants (as specified by the ``Vary`` header).
 
-Subroutines are provided in ``config/varnis-version/fos_purge.vcl``.
+Subroutines are provided in ``resources/config/varnis-[version]/fos_purge.vcl``.
 
 To enable support add the following to ``your_varnish.vcl``:
 
@@ -133,12 +133,12 @@ If you have included fos_ban.vcl, tagging will be automatically enabled using a 
 
 .. configuration-block::
 
-    .. literalinclude:: ../config/varnish-4/fos_ban.vcl
+    .. literalinclude:: ../resources/config/varnish-4/fos_ban.vcl
         :language: varnish4
         :emphasize-lines: 8-13,40-41
         :linenos:
 
-    .. literalinclude:: ../config/varnish-3/fos_ban.vcl
+    .. literalinclude:: ../resources/config/varnish-3/fos_ban.vcl
         :language: varnish3
         :emphasize-lines: 8-13,40-41
         :linenos:
