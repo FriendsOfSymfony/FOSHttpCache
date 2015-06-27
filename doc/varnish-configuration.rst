@@ -33,8 +33,8 @@ will be used throughout the Varnish examples on this page.
     trigger invalidation are whitelisted here. Otherwise, lost cache invalidation
     requests will lead to lots of confusion.
 
-Includable Vcl Subroutines
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Provided Vcl Subroutines
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to ease configuration we provide a set of vcl subroutines in the /config directory.
 These can be directly included into ``your_varnish.vcl`` and the needed subroutines called
@@ -77,7 +77,7 @@ add the following to your Varnish configuration:
 
 Refresh invalidates a specific URL including the query string, but *not* its variants.
 
-Subroutines are provived in ``fos_refresh.vcl``
+Subroutines are provided in ``fos_refresh.vcl``
 
 To enable support add the following to ``your_varnish.vcl``:
 
@@ -99,7 +99,7 @@ Ban
 
 To configure Varnish for `handling BAN requests <https://www.varnish-software.com/static/book/Cache_invalidation.html#banning>`_:
 
-Subroutines are provived in ``fos_ban.vcl``
+Subroutines are provided in ``fos_ban.vcl``
 
 To enable support add the following to ``your_varnish.vcl``:
 
@@ -151,7 +151,7 @@ User Context
 To support :doc:`user context hashing <user-context>` you need to add some logic
 to the ``recv`` and the ``deliver`` methods:
 
-Subroutines are provived in ``fos_user_context.vcl``.
+Subroutines are provided in ``fos_user_context.vcl``.
 
 To enable support add the following to ``your_varnish.vcl``:
 
@@ -246,7 +246,7 @@ Configure your Varnish to set a custom header (`X-Cache`) that shows whether a
 cache hit or miss occurred. This header will only be set if your application
 sends an `X-Cache-Debug` header:
 
-Subroutines are provived in ``fos_debug.vcl``.
+Subroutines are provided in ``fos_debug.vcl``.
 
 To enable support add the following to ``your_varnish.vcl``:
 
