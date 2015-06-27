@@ -1,4 +1,3 @@
-include "debug.vcl";
 include "debug_user_context.vcl";
 
 backend default {
