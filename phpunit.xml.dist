@@ -15,12 +15,13 @@
     <filter>
         <whitelist>
             <directory>./src</directory>
+            <directory>./tests</directory>
         </whitelist>
     </filter>
 
     <listeners>
         <listener class="\Mockery\Adapter\Phpunit\TestListener" />
-        <listener class="\FOS\HttpCache\Tests\Functional\WebServerListener" />
+        <listener class="\FOS\HttpCache\Test\WebServerListener" />
     </listeners>
 
     <php>
