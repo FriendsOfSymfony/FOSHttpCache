@@ -53,7 +53,7 @@ To configure Varnish for `handling PURGE requests <https://www.varnish-cache.org
 
 Purge removes a specific URL (including query strings) in all its variants (as specified by the ``Vary`` header).
 
-Subroutines are provided in ``resources/config/varnis-[version]/fos_purge.vcl``.
+Subroutines are provided in ``resources/config/varnish-[version]/fos_purge.vcl``.
 
 To enable support add the following to ``your_varnish.vcl``:
 
