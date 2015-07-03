@@ -75,8 +75,8 @@ Only ``/one`` will stay in the cache.
 
 .. note::
 
-    Don't forget to :ref:`flush <flush>` these invalidation changes to the proxy
-    from the ``CacheInvalidator`` object towards the end of your application.
+    Don't forget to call :ref:`flush <flush>` on the ``CacheInvalidator`` to commit the invalidations
+    to the caching proxy.
 
 .. _custom_tags_header:
 
