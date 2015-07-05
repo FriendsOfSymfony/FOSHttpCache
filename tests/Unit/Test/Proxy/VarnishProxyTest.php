@@ -42,6 +42,7 @@ class VarnishProxyTest extends \PHPUnit_Framework_TestCase
                 '-f', 'config.vcl',
                 '-n', '/tmp/cache/dir',
                 '-p', 'vcl_dir=/my/varnish/dir',
+                '-S', realpath('./tests/Functional/Fixtures/secret'),
                 '-P', '/tmp/foshttpcache-varnish.pid',
             ],
             $proxy->arguments
