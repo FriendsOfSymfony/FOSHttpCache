@@ -87,6 +87,16 @@ sub fos_user_context_deliver {
 
     # If we get here, this is a real response that gets sent to the client.
 
+    # Remove cache ttl directives.
+    # Subsequent Reverse proxies and clients from this point forward cannot Vary
+    # on user context hash and should not attempt to cache
+    if (resp.http.X-Cache-Debug) {
+        # For debug purposes, adds previous ttl to the response headers
+        set resp.http.X-Original-Cache-Control = resp.http.Cache-Control;
+    }
+
+    set resp.http.Cache-Control = "max-age=0, s-max-age=0, private";
+
     # Remove the vary on context user hash, this is nothing public. Keep all
     # other vary headers.
     set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *X-User-Context-Hash *", "");
