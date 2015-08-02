@@ -9,60 +9,100 @@ than using Varnish or NGINX, it can still provide considerable performance
 gains over an installation that is not cached at all. It can be useful for
 running an application on shared hosting for instance.
 
-You can use features of this library with the help of the
-``EventDispatchingHttpCache`` provided here. The basic concept is to use event
-subscribers on the HttpCache class.
-
-.. warning::
-
-    If you are using the full stack Symfony framework, have a look at the
-    HttpCache provided by the FOSHttpCacheBundle_ instead.
+You can use features of this library with the help of event listeners that act
+on events of the ``HttpCache``. The Symfony ``HttpCache`` does not have an
+event system, for this you need to use the trait ``EventDispatchingHttpCache``
+provided by this library. The event listeners handle the requests from the
+:doc:`proxy-clients`.
 
 .. note::
 
-    Symfony HttpCache does not currently provide support for banning.
+    Symfony ``HttpCache`` does not currently provide support for banning.
 
-Extending the Correct HttpCache Class
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using the trait
+~~~~~~~~~~~~~~~
 
-Instead of extending ``Symfony\Component\HttpKernel\HttpCache\HttpCache``, your
-``AppCache`` should extend ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``.
+.. note::
 
-.. tip::
+    The trait is available since version 2.0.0. Version 1.* of this library
+    instead provided a base ``HttpCache`` class to extend.
 
-    If your class already needs to extend a different class, simply copy the
-    event handling code from the EventDispatchingHttpCache into your
-    ``AppCache`` class and make it implement ``CacheInvalidationInterface``.
-    The drawback is that you need to manually check whether you need to adjust
-    your ``AppCache`` each time you update the FOSHttpCache library.
+Your ``AppCache`` needs to implement ``CacheInvalidationInterface`` and use the
+trait ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``::
+
+    use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+    use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
+    use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+
+    class AppCache extends HttpCache implements CacheInvalidationInterface
+    {
+        use EventDispatchingHttpCache;
+
+        /**
+         * Made public to allow event subscribers to do refresh operations.
+         *
+         * {@inheritDoc}
+         */
+        public function fetch(Request $request, $catch = false)
+        {
+            return parent::fetch($request, $catch);
+        }
+    }
+
+The trait is adding events before and/or after kernel methods to let the
+listeners interfere. If you need to overwrite core ``HttpCache`` functionality
+in your kernel, one option is to provide your own event listeners. If you need
+to implement functionality directly on the methods, be careful to always call
+the trait methods rather than going directly to the parent, or events will not
+be triggered anymore. You might also need to copy a method from the trait and
+add your own logic between the events to not be too early or too late for the
+event.
+
+When starting to extend your ``AppCache``, it is recommended to use the
+``EventDispatchingHttpCacheTestCase`` to run tests with your kernel to be sure
+all events are triggered as expected.
+
+Cache event listeners
+~~~~~~~~~~~~~~~~~~~~~
 
 Now that you have an event dispatching kernel, you can make it register the
-subscribers you need. While you could do that from your bootstrap code, this is
+listeners you need. While you could do that from your bootstrap code, this is
 not the recommended way. You would need to adjust every place you instantiate
-the cache. Instead, overwrite the constructor of AppCache and register the
-subscribers there. A simple cache will look like this::
+the cache. Instead, overwrite the constructor of your ``AppCache`` and register
+the listeners you need there::
 
-    use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
+    use FOS\HttpCache\SymfonyCache\DebugListener();
+    use FOS\HttpCache\SymfonyCache\CustomTtlListener();
     use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
     use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
     use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
-    use FOS\HttpCache\SymfonyCache\CustomTtlListener();
 
-    class AppCache extends EventDispatchingHttpCache
-    {
-        /**
-         * Overwrite constructor to register event subscribers for FOSHttpCache.
-         */
-        public function __construct(HttpKernelInterface $kernel, $cacheDir = null)
-        {
-            parent::__construct($kernel, $cacheDir);
+    // ...
 
-            $this->addSubscriber(new PurgeSubscriber());
-            $this->addSubscriber(new RefreshSubscriber());
-            $this->addSubscriber(new UserContextSubscriber());
-            $this->addSubscriber(new CustomTtlListener());
+    /**
+     * Overwrite constructor to register event subscribers for FOSHttpCache.
+     */
+    public function __construct(
+        HttpKernelInterface $kernel,
+        StoreInterface $store,
+        SurrogateInterface $surrogate = null,
+        array $options = array()
+    ) {
+        parent::__construct($kernel, $store, $surrogate, $options);
+
+        $this->addSubscriber(new CustomTtlListener());
+        $this->addSubscriber(new PurgeSubscriber());
+        $this->addSubscriber(new RefreshSubscriber());
+        $this->addSubscriber(new UserContextSubscriber());
+        if (isset($options['debug']) && $options['debug']) {
+            $this->addSubscriber(new DebugListener());
         }
     }
+
+The event listeners can be tweaked by passing options to the constructor. The
+Symfony configuration system does not work here because things in the cache
+happen before the configuration is loaded.
 
 Purge
 ~~~~~
@@ -204,28 +244,11 @@ Debugging
 ~~~~~~~~~
 
 For the ``assertHit`` and ``assertMiss`` assertions to work, you need to add
-debug information in your AppCache. Create the cache kernel with the option
-``'debug' => true`` and add the following to your ``AppCache``::
+debug information in your AppCache. When running the tests, create the cache
+kernel with the option ``'debug' => true`` and add the ``DebugListener``.
 
-    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
-    {
-        $response = parent::handle($request, $type, $catch);
-
-        if ($response->headers->has('X-Symfony-Cache')) {
-            if (false !== strpos($response->headers->get('X-Symfony-Cache'), 'miss')) {
-                $state = 'MISS';
-            } elseif (false !== strpos($response->headers->get('X-Symfony-Cache'), 'fresh')) {
-                $state = 'HIT';
-            } else {
-                $state = 'UNDETERMINED';
-            }
-            $response->headers->set('X-Cache', $state);
-        }
-
-        return $response;
-    }
-
-The ``UNDETERMINED`` state should never happen. If it does, it means that your
-HttpCache is not correctly set into debug mode.
+The ``UNDETERMINED`` state should never happen. If it does, it means that
+something went really wrong in the kernel. Have a look at ``X-Symfony-Cache``
+and at the HTML body of the response.
 
 .. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy

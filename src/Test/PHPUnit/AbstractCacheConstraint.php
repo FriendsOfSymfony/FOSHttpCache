@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\Test\PHPUnit;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Abstract cache constraint
  */
@@ -41,17 +43,25 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
 
     /**
      * {@inheritdoc}
+     *
+     * @param Response $other The guzzle response object
      */
     protected function matches($other)
     {
+        if (!$other instanceof ResponseInterface) {
+            throw new \RuntimeException(sprintf('Expected a GuzzleHttp\Psr7\Response but got %s', get_class($other)));
+        }
         if (!$other->hasHeader($this->header)) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Response has no "%s" header. Configure your caching proxy '
-                    . 'to set the header with cache hit/miss status.',
-                    $this->header
-                )
+            $message = sprintf(
+                'Response has no "%s" header. Configure your caching proxy '
+                . 'to set the header with cache hit/miss status.',
+                $this->header
             );
+            if (200 !== $other->getStatusCode()) {
+                $message .= sprintf("\nStatus code of response is %s.", $other->getStatusCode());
+            }
+
+            throw new \RuntimeException($message);
         }
 
         return $this->getValue() === (string) $other->getHeaderLine($this->header);

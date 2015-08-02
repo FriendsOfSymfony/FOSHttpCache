@@ -47,8 +47,8 @@ class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
     public function testMatchesThrowsExceptionIfHeaderIsMissing()
     {
         $response = $this->getResponseMock()
-            ->shouldReceive('hasHeader')->with('cache-header')->once()
-            ->andReturn(false)
+            ->shouldReceive('hasHeader')->with('cache-header')->once()->andReturn(false)
+            ->shouldReceive('getStatusCode')->andReturn(200)
             ->getMock();
 
         $this->constraint->evaluate($response);

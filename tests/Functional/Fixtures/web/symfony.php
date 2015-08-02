@@ -1,8 +1,5 @@
 <?php
 
-use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
-use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
 use FOS\HttpCache\Test\Proxy\SymfonyProxy;
 use FOS\HttpCache\Tests\Functional\Fixtures\Symfony\AppCache;
 use FOS\HttpCache\Tests\Functional\Fixtures\Symfony\AppKernel;
@@ -15,9 +12,6 @@ $symfonyProxy = new SymfonyProxy();
 
 $kernel = new AppKernel();
 $kernel = new AppCache($kernel, new Store($symfonyProxy->getCacheDir()), null, ['debug' => true]);
-$kernel->addSubscriber(new PurgeSubscriber(['purge_method' => 'NOTIFY']));
-$kernel->addSubscriber(new RefreshSubscriber());
-$kernel->addSubscriber(new UserContextSubscriber());
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

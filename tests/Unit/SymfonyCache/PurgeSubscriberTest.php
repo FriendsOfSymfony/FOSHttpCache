@@ -12,15 +12,15 @@
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
+use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
 class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var HttpCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInvalidationInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $kernel;
 
