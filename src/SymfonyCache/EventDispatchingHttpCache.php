@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -64,7 +65,7 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
     /**
      * {@inheritDoc}
      *
-     * Adding the Events::PRE_HANDLE event.
+     * Adding the Events::PRE_HANDLE and Events::POST_HANDLE events.
      */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
@@ -72,11 +73,48 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
             $event = new CacheEvent($this, $request);
             $this->getEventDispatcher()->dispatch(Events::PRE_HANDLE, $event);
             if ($event->getResponse()) {
-                return $event->getResponse();
+                return $this->dispatchPostHandle($request, $event->getResponse());
             }
         }
 
-        return parent::handle($request, $type, $catch);
+        $response = parent::handle($request, $type, $catch);
+
+        return $this->dispatchPostHandle($request, $response);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Trigger event to alter response before storing it in the cache.
+     */
+    protected function store(Request $request, Response $response)
+    {
+        if ($this->getEventDispatcher()->hasListeners(Events::PRE_STORE)) {
+            $event = new CacheEvent($this, $request, $response);
+            $this->getEventDispatcher()->dispatch(Events::PRE_STORE, $event);
+            $response = $event->getResponse();
+        }
+
+        parent::store($request, $response);
+    }
+
+    /**
+     * Dispatch the POST_HANDLE event if needed.
+     *
+     * @param Request  $request
+     * @param Response $response
+     *
+     * @return Response The response to return which might be altered by a POST_HANDLE listener.
+     */
+    private function dispatchPostHandle(Request $request, Response $response)
+    {
+        if ($this->getEventDispatcher()->hasListeners(Events::POST_HANDLE)) {
+            $event = new CacheEvent($this, $request, $response);
+            $this->getEventDispatcher()->dispatch(Events::POST_HANDLE, $event);
+            $response = $event->getResponse();
+        }
+
+        return $response;
     }
 
     /**

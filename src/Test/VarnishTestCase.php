@@ -35,8 +35,13 @@ use FOS\HttpCache\Test\Proxy\VarnishProxy;
  * VARNISH_MGMT_PORT    Varnish management port (default 6182)
  * VARNISH_CACHE_DIR    directory to use for cache
  *                      (default sys_get_temp_dir() + '/foshttpcache-varnish')
- * VARNISH_VERSION      Version of varnish: 3 or 4, defaults to 4.
  * WEB_SERVER_HOSTNAME  hostname/IP your application can be reached at (required)
+ *
+ * If you want to test with Varnish 3, you need to define an environment
+ * variable with the varnish version:
+ * <php>
+ *     <env name="VARNISH_VERSION" value="3" />
+ * </php>
  */
 abstract class VarnishTestCase extends ProxyTestCase
 {
@@ -113,7 +118,7 @@ abstract class VarnishTestCase extends ProxyTestCase
      */
     protected function getVarnishVersion()
     {
-        return getenv('VARNISH_VERSION') ?: 4;
+        return getenv('VARNISH_VERSION') ?: '4.0';
     }
 
     /**

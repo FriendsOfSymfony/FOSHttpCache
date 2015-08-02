@@ -43,7 +43,10 @@ the cache. Instead, overwrite the constructor of AppCache and register the
 subscribers there. A simple cache will look like this::
 
     use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
+    use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
+    use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
     use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
+    use FOS\HttpCache\SymfonyCache\CustomTtlListener();
 
     class AppCache extends EventDispatchingHttpCache
     {
@@ -54,9 +57,10 @@ subscribers there. A simple cache will look like this::
         {
             parent::__construct($kernel, $cacheDir);
 
-            $this->addSubscriber(new UserContextSubscriber());
             $this->addSubscriber(new PurgeSubscriber());
             $this->addSubscriber(new RefreshSubscriber());
+            $this->addSubscriber(new UserContextSubscriber());
+            $this->addSubscriber(new CustomTtlListener());
         }
     }
 
@@ -178,5 +182,18 @@ By default, the UserContextSubscriber only sets the session cookie (according to
 the ``session_name_prefix`` option) in the requests to the backend. If you need
 a different behavior, overwrite ``UserContextSubscriber::cleanupHashLookupRequest``
 with your own logic.
+
+Custom TTL
+~~~~~~~~~~
+
+.. include:: includes/custom-ttl.rst
+
+The ``CustomTtlSubscriber`` looks at a specific header to determine the TTL,
+preferring that over ``s-maxage``. The default header is ``X-Reverse-Proxy-TTL``
+but you can customize that in the subscriber constructor::
+
+    new CustomTtlSubscriber('My-TTL-Header');
+
+The custom header is removed before sending the response to the client.
 
 .. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
