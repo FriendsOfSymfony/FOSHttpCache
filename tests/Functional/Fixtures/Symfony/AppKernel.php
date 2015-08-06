@@ -27,7 +27,7 @@ class AppKernel implements HttpKernelInterface
             case '/negotiation':
                 $response = new Response(microtime(true));
                 $response->setCache(['max_age' => 3600, 'public' => true]);
-                $response->headers->set('Content-Type', $_SERVER['HTTP_ACCEPT']);
+                $response->headers->set('Content-Type', $request->headers->get('Accept'));
                 $response->setVary('Accept');
 
                 return $response;
