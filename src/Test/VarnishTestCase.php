@@ -14,7 +14,7 @@ namespace FOS\HttpCache\Test;
 /**
  * Abstract test that contains traits necessary for running tests against Varnish
  */
-abstract class VarnishTestCase
+abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
 {
     use CacheAssertions;
     use HttpCaller;

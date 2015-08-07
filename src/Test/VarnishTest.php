@@ -136,7 +136,7 @@ trait VarnishTest
      */
     protected function getVarnishVersion()
     {
-        return getenv('VARNISH_VERSION') ?: 4;
+        return getenv('VARNISH_VERSION') ?: '4.0';
     }
 
     /**

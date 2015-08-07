@@ -11,8 +11,8 @@ rules that it defines.
 The FOSHttpCache library provides traits and base test classes to help you write
 functional tests. Using the traits, you can extend your own (or your
 framework’s) base test classes. For convenience, you can also extend the
-FOSHttpCache base test classes, as they include a sensible set of traits by
-default.
+FOSHttpCache base test class suitable for your caching proxy, which includes
+a sensible set of traits.
 
 By using the traits, you get:
 
@@ -185,8 +185,8 @@ integrated.
 ======================= ========================= ================================================ ===========================================
 Constant                Getter                    Default                                          Description
 ======================= ========================= ================================================ ===========================================
-``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                          hostname your application can be reached at
-``WEB_SERVER_PORT``     ``getConfigFile()``                                                        The port on which the web server runs
+``WEB_SERVER_HOSTNAME`` ``getHostName()``                                                          Hostname your application can be reached at
+``WEB_SERVER_PORT``     ``getCachingProxyPort()``                                                  The port on which the web server runs
 ``SYMFONY_CACHE_DIR``   ``getCacheDir()``         ``sys_get_temp_dir()`` + ``/foshttpcache-nginx`` directory to use for cache
                                                                                                    Must match the configuration of your
                                                                                                    HttpCache and must be writable by the user
@@ -204,6 +204,8 @@ proxy::
 
     class YourTest extends \PHPUnit_Framework_TestCase
     {
+        use HttpCaller;
+
         public function testCachingHeaders()
         {
             // Get some response from your application
@@ -213,6 +215,10 @@ proxy::
             $response = $this->getResponse('/path', ['Accept' => 'text/json'], 'PUT');
         }
     }
+
+This trait requires the methods ``getHostName()`` and ``getCachingProxyPort()``
+to exist. When using one of the caching proxy traits, these will be provided by
+the trait, otherwise you have to implement them.
 
 CacheAssertions Trait
 ~~~~~~~~~~~~~~~~~~~~~

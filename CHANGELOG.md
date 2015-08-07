@@ -12,6 +12,10 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * In ProxyTestCase, `getHttpClient()` has been replaced with `getHttpAdapter()`;
   added HTTP method parameter to `getResponse()`.
 * Changed default Varnish version to 4.
+* Added support and documentation for setting a custom TTL specifically for the
+  caching proxy.
+* Refactored the proxy client test system into traits. Removed ProxyTestCase,
+  use the traits `CacheAssertions` and `HttpCaller` instead.
 
 1.4.0
 -----
