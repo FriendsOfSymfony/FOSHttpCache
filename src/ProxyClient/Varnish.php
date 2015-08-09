@@ -16,6 +16,7 @@ use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
 use FOS\HttpCache\ProxyClient\Request\InvalidationRequest;
 use FOS\HttpCache\ProxyClient\Request\RequestQueue;
 use Http\Adapter\HttpAdapter;
@@ -25,7 +26,7 @@ use Http\Adapter\HttpAdapter;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface
+class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface, TagsInterface
 {
     const HTTP_METHOD_BAN          = 'BAN';
     const HTTP_METHOD_PURGE        = 'PURGE';
@@ -53,15 +54,22 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     private $baseUriSet;
 
     /**
+     * @var string
+     */
+    private $tagsHeader;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct(
         array $servers,
         $baseUri = null,
-        HttpAdapter $httpAdapter = null
+        HttpAdapter $httpAdapter = null,
+        $tagsHeader = 'X-Cache-Tags'
     ) {
         parent::__construct($servers, $baseUri, $httpAdapter);
         $this->baseUriSet = $baseUri !== null;
+        $this->tagsHeader = $tagsHeader;
     }
 
     /**
@@ -84,6 +92,34 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     public function setDefaultBanHeader($name, $value)
     {
         $this->defaultBanHeaders[$name] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invalidateTags(array $tags)
+    {
+        $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $this->escapeTags($tags))));
+
+        return $this->ban([$this->tagsHeader => $tagExpression]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTagsHeaderValue(array $tags)
+    {
+        return implode(',', array_unique($this->escapeTags($tags)));
+    }
+
+    /**
+     * Get the HTTP header name that will hold cache tags.
+     *
+     * @return string
+     */
+    public function getTagsHeaderName()
+    {
+        return $this->tagsHeader;
     }
 
     /**

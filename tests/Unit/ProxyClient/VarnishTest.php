@@ -13,6 +13,7 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Test\HttpClient\MockHttpAdapter;
+use Psr\Http\Message\RequestInterface;
 use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
@@ -97,6 +98,43 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
         $hosts = [];
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
+    }
+
+    public function testTagsHeaders()
+    {
+        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish->setDefaultBanHeaders(
+            ['A' => 'B']
+        );
+        $varnish->setDefaultBanHeader('Test', '.*');
+        $varnish->invalidateTags(['post-1', 'post-type-3'])->flush();
+
+        $requests = $this->getRequests();
+
+        $this->assertCount(1, $requests);
+        $this->assertEquals('BAN', $requests[0]->getMethod());
+
+        $this->assertEquals('(post\-1|post\-type\-3)(,.+)?$', $requests[0]->getHeaderLine('X-Cache-Tags'));
+        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
+
+        // That default BANs is taken into account also for tags as they are powered by BAN in this client.
+        $this->assertEquals('.*', $requests[0]->getHeaderLine('Test'));
+        $this->assertEquals('B', $requests[0]->getHeaderLine('A'));
+    }
+
+
+    public function testTagsHeadersEscapingAndCustomHeader()
+    {
+        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client, 'X-Tags-TRex');
+        $varnish->invalidateTags(['post-1', 'post,type-3'])->flush();
+
+        $requests = $this->getRequests();
+
+        $this->assertCount(1, $requests);
+        $this->assertEquals('BAN', $requests[0]->getMethod());
+
+        $this->assertEquals('(post\-1|post_type\-3)(,.+)?$', $requests[0]->getHeaderLine('X-Tags-TRex'));
+        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
     }
 
     public function testPurge()

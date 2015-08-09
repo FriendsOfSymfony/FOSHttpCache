@@ -12,7 +12,6 @@
 namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\CacheInvalidator;
-use FOS\HttpCache\Handler\TagHandler;
 use FOS\HttpCache\Test\VarnishTestCase;
 
 /**
@@ -23,12 +22,11 @@ class CacheInvalidatorTest extends VarnishTestCase
     public function testInvalidateTags()
     {
         $cacheInvalidator = new CacheInvalidator($this->getProxyClient());
-        $tagHandler = new TagHandler($cacheInvalidator);
 
         $this->assertMiss($this->getResponse('/tags.php'));
         $this->assertHit($this->getResponse('/tags.php'));
 
-        $tagHandler->invalidateTags(['tag1']);
+        $cacheInvalidator->invalidateTags(['tag1']);
         $cacheInvalidator->flush();
 
         $this->assertMiss($this->getResponse('/tags.php'));
