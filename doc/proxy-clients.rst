@@ -66,6 +66,8 @@ Then pass that adapter to the caching proxy client::
     $proxyClient = new Varnish($servers, '/baseUrl', $adapter);
     // Varnish as example, but also possible for NGINX and Symfony
 
+.. _varnish client:
+
 Varnish Client
 ~~~~~~~~~~~~~~
 
