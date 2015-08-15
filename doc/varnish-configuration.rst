@@ -310,6 +310,8 @@ To make the hash request cacheable, you must extract a stable user session id
     If your application’s user authentication is based on a cookie other than
     PHPSESSID, change ``PHPSESSID`` to your cookie name.
 
+.. _varnish_customttl:
+
 Custom TTL
 ~~~~~~~~~~
 

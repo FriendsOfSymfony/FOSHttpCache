@@ -183,6 +183,8 @@ the ``session_name_prefix`` option) in the requests to the backend. If you need
 a different behavior, overwrite ``UserContextSubscriber::cleanupHashLookupRequest``
 with your own logic.
 
+.. _symfonycache_customttl:
+
 Custom TTL
 ~~~~~~~~~~
 
