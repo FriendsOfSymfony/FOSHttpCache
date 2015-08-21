@@ -9,7 +9,7 @@ Composer_:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache:~2.0
+    $ composer require friendsofsymfony/http-cache
 
 Note that the library needs a ``psr/http-message-implementation`` and
 ``php-http/adapter-implementation``. If your project does not contain one,
@@ -19,15 +19,17 @@ When on PHP 5.5+, use the following line instead:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache:~2.0 guzzlehttp/psr7:^1.0 php-http/guzzle6-adapter:^0.1.0
+    $ composer require friendsofsymfony/http-cache guzzlehttp/psr7:^1.0 php-http/guzzle6-adapter:^0.1.0
 
 On PHP 5.4, the ``php-http/guzzle5-adapter:^0.1.0`` works fine.
 
 .. note::
 
-    This library follows `Semantic Versioning`_. Because constraint ``~2.0``
-    will only increment the minor and patch numbers, it will not introduce BC
-    breaks.
+    This library follows `Semantic Versioning`_.  Except for major versions, we
+    aim to not introduce BC breaks in new releases. You should still test your
+    application after upgrading though. What is a bug fix for somebody could
+    break something for others when they where (probably unawares) relying on
+    that bug.
 
 Configuration
 -------------
