@@ -13,10 +13,21 @@ information), rather than individually.
 
 .. caution::
 
-    Whenever you share caches, make sure to not output any individual content
+    Whenever you share caches, make sure to **not output any individual content**
     like the user name. If you have individual parts of a page, you can load
-    those parts over AJAX requests or look into ESI_. Both approaches integrate
-    with the concepts presented in this chapter.
+    those parts over AJAX requests or look into ESI_ and make the ESI sub
+    response vary on the cookie or completely non-cached. Both approaches
+    integrate with the concepts presented in this chapter.
+
+    You do **not want intermediary proxies to cache responses** that depend on the
+    context. If the client will not see a difference when his context changes
+    (e.g. is  removed from or added to groups on server side), you also do not
+    want the clients to cache pages. Because ``VARY`` is used for the control
+    of the caching proxy, it is not available to control clients. Often, the
+    best solution is to mark your pages as private with a max-age of 0 and use
+    the *custom TTL* mechanism (see the documentation for
+    :ref:`Varnish <varnish_customttl>` or the
+    :ref:`Symfony HttpCache <symfonycache_customttl>`).
 
 Overview
 --------
@@ -39,6 +50,11 @@ Caching on user context works as follows:
    application specifies so by setting a ``Vary: X-User-Context-Hash`` header.
    The appropriate user role dependent representation of ``/foo.php`` will
    then be returned to the client.
+
+After this happened the first time, the hash can be cached by Varnish for this
+client, moving step 2-4 into the cache. After the page is in cache, subsequent
+requests from clients that got the same hash can be served from the cache as
+well.
 
 Proxy Client Configuration
 --------------------------
