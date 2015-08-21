@@ -6,7 +6,9 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.0.0 (unreleased)
 ------------------
 
-* Replace hard coupling on Guzzle HTTP client with HTTP adapter.
+* Replace hard coupling on Guzzle HTTP client with HTTP adapter. You now need
+  to explicitly specify the adapter you want, see [installation instructions]
+  (http://foshttpcache.readthedocs.org/en/stable/installation.html)
 * The NGINX purge location is no longer passed as constructor argument but by
   calling `setPurgeLocation()`.
 * In ProxyTestCase, `getHttpClient()` has been replaced with `getHttpAdapter()`;
