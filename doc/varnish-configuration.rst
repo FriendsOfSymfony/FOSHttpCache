@@ -202,7 +202,9 @@ User Context
 
 Feature: :doc:`user context hashing <user-context>`
 
-Subroutines are provided in ``resources/config/varnish-[version]/fos_user_context.vcl``.
+The ``fos_user_context.vcl`` needs the ``user_context_hash_url`` subroutine that sets a URL to the request lookup URL. The default URL is ``/_fos_user_context_hash`` and you can simply include ``resources/config/varnish-[version]/fos_user_context_url.vcl`` in your configuration to provide this. If you need a different URL, include a custom file implementing the ``user_context_hash_url`` subroutine. 
+
+
 To enable support add the following to ``your_varnish.vcl``:
 
 
@@ -211,6 +213,7 @@ To enable support add the following to ``your_varnish.vcl``:
     .. code-block:: varnish4
 
         include "path-to-config/varnish-4/fos_user_context.vcl";
+        include "path-to-config/varnish-4/fos_user_context_url.vcl";
 
         sub vcl_recv {
             call fos_user_context_recv;
@@ -227,6 +230,7 @@ To enable support add the following to ``your_varnish.vcl``:
     .. code-block:: varnish3
 
         include "path-to-config/varnish-3/fos_user_context.vcl";
+        include "path-to-config/varnish-4/fos_user_context_url.vcl";
 
         sub vcl_recv {
             call fos_user_context_recv;

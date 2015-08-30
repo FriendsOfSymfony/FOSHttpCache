@@ -33,9 +33,7 @@ sub fos_user_context_recv {
 
         # Backup original URL
         set req.http.X-Fos-Original-Url = req.url;
-        set req.url = "/_fos_user_context_hash";
-
-        # For functional tests
+        
         call user_context_hash_url;
 
         # Force the lookup, the backend must tell not to cache or vary on all
