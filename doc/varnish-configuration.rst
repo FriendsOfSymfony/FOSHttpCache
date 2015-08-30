@@ -361,10 +361,18 @@ To enable support add the following to ``your_varnish.vcl``:
     .. code-block:: varnish4
 
         include "path-to-config/varnish-4/fos_debug.vcl";
+        
+        sub vcl_deliver {
+            call fos_debug_deliver;
+        }
 
     .. code-block:: varnish3
 
         include "path-to-config/varnish-3/fos_debug.vcl";
+        
+        sub vcl_deliver {
+            call fos_debug_deliver;
+        }
 
 .. _ACL: https://www.varnish-cache.org/docs/4.0/users-guide/vcl-example-acls.html
 .. _ACL for Varnish 3: https://www.varnish-cache.org/docs/3.0/tutorial/vcl.html#example-3-acls
