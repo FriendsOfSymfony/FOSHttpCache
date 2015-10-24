@@ -11,27 +11,36 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
- * Base class for enhanced Symfony reverse proxy based on the symfony component.
+ * Trait for enhanced Symfony reverse proxy based on the symfony kernel component.
  *
- * <b>When using FOSHttpCacheBundle, look at FOS\HttpCacheBundle\HttpCache instead.</b>
+ * Your kernel needs to implement CacheInvalidatorInterface and redeclare the
+ * fetch method as public. (The latter is needed because the trait declaring it
+ * public does not satisfy the interface for whatever reason. See also
+ * http://stackoverflow.com/questions/31877844/php-trait-exposing-a-method-and-interfaces )
  *
- * This kernel supports event subscribers that can act on the events defined in
- * FOS\HttpCache\SymfonyCache\Events and may alter the request flow.
+ * CacheInvalidator kernels support event subscribers that can act on the
+ * events defined in FOS\HttpCache\SymfonyCache\Events and may alter the
+ * request flow.
+ *
+ * If your kernel overwrites any of the methods defined in this trait, make
+ * sure to also call the trait method. You might get into issues with the order
+ * of events, in which case you will need to copy event triggering into your
+ * kernel.
  *
  * @author Jérôme Vieilledent <lolautruche@gmail.com> (courtesy of eZ Systems AS)
+ * @author David Buchmann <mail@davidbu.ch>
  *
  * {@inheritdoc}
  */
-abstract class EventDispatchingHttpCache extends HttpCache implements CacheInvalidationInterface
+trait EventDispatchingHttpCache
 {
     /**
      * @var EventDispatcherInterface
@@ -69,17 +78,13 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
      */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
-        if ($this->getEventDispatcher()->hasListeners(Events::PRE_HANDLE)) {
-            $event = new CacheEvent($this, $request);
-            $this->getEventDispatcher()->dispatch(Events::PRE_HANDLE, $event);
-            if ($event->getResponse()) {
-                return $this->dispatchPostHandle($request, $event->getResponse());
-            }
+        if ($response = $this->dispatch(Events::PRE_HANDLE, $request)) {
+            return $this->dispatch(Events::POST_HANDLE, $request, $response);
         }
 
         $response = parent::handle($request, $type, $catch);
 
-        return $this->dispatchPostHandle($request, $response);
+        return $this->dispatch(Events::POST_HANDLE, $request, $response);
     }
 
     /**
@@ -89,42 +94,9 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
      */
     protected function store(Request $request, Response $response)
     {
-        if ($this->getEventDispatcher()->hasListeners(Events::PRE_STORE)) {
-            $event = new CacheEvent($this, $request, $response);
-            $this->getEventDispatcher()->dispatch(Events::PRE_STORE, $event);
-            $response = $event->getResponse();
-        }
+        $response = $this->dispatch(Events::PRE_STORE, $request, $response);
 
         parent::store($request, $response);
-    }
-
-    /**
-     * Dispatch the POST_HANDLE event if needed.
-     *
-     * @param Request  $request
-     * @param Response $response
-     *
-     * @return Response The response to return which might be altered by a POST_HANDLE listener.
-     */
-    private function dispatchPostHandle(Request $request, Response $response)
-    {
-        if ($this->getEventDispatcher()->hasListeners(Events::POST_HANDLE)) {
-            $event = new CacheEvent($this, $request, $response);
-            $this->getEventDispatcher()->dispatch(Events::POST_HANDLE, $event);
-            $response = $event->getResponse();
-        }
-
-        return $response;
-    }
-
-    /**
-     * Made public to allow event subscribers to do refresh operations.
-     *
-     * {@inheritDoc}
-     */
-    public function fetch(Request $request, $catch = false)
-    {
-        return parent::fetch($request, $catch);
     }
 
     /**
@@ -134,14 +106,30 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
      */
     protected function invalidate(Request $request, $catch = false)
     {
-        if ($this->getEventDispatcher()->hasListeners(Events::PRE_INVALIDATE)) {
-            $event = new CacheEvent($this, $request);
-            $this->getEventDispatcher()->dispatch(Events::PRE_INVALIDATE, $event);
-            if ($event->getResponse()) {
-                return $event->getResponse();
-            }
+        if ($response = $this->dispatch(Events::PRE_INVALIDATE, $request)) {
+            return $response;
         }
 
         return parent::invalidate($request, $catch);
+    }
+
+    /**
+     * Dispatch an event if needed.
+     *
+     * @param string        $name     Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
+     * @param Request       $request
+     * @param Response|null $response If already available
+     *
+     * @return Response The response to return, which might be provided/altered by a listener.
+     */
+    protected function dispatch($name, Request $request, Response $response = null)
+    {
+        if ($this->getEventDispatcher()->hasListeners($name)) {
+            $event = new CacheEvent($this, $request, $response);
+            $this->getEventDispatcher()->dispatch($name, $event);
+            $response = $event->getResponse();
+        }
+
+        return $response;
     }
 }
