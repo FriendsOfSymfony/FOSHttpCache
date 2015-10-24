@@ -20,7 +20,7 @@ Listen 8080
       Alias /hhvm /hhvm
       Action hhvm-php-extension /hhvm virtual
 
-      FastCgiExternalServer /hhvm -host 127.0.0.1:9000 -pass-header Authorization -idle-timeout 300
+      FastCgiExternalServer /hhvm -host 127.0.0.1:9090 -pass-header Authorization -idle-timeout 300
   </IfModule>
 
 </VirtualHost>

@@ -52,3 +52,7 @@ after_script:
 after_failure:
   - cat /tmp/fos_nginx_error.log
   - cat /tmp/fos_nginx_access.log
+  - cat /tmp/hhvm.log
+  - sudo cat /var/log/apache2/error.log
+  - sudo cat /var/log/apache2/access.log
+  - sudo cat /var/log/apache2/other_vhosts_access.log
