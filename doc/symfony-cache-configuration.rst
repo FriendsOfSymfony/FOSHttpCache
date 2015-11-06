@@ -63,6 +63,18 @@ When starting to extend your ``AppCache``, it is recommended to use the
 ``EventDispatchingHttpCacheTestCase`` to run tests with your kernel to be sure
 all events are triggered as expected.
 
+.. note::
+
+    If you use ``HttpKernel::loadClassCache`` from the console, you will need
+    to add ``class_exists('FOS\\HttpCache\\SymfonyCache\\CacheEvent');`` right
+    after the inclusion of ``bootstrap.php.cache`` in ``app/console``. For web
+    requests, this is done automatically by the trait. If you miss to do so,
+    you will get the following error:
+
+    .. code-block:: bash
+
+        Fatal error: Cannot redeclare class Symfony\Component\EventDispatcher\Event in app/cache/dev/classes.php on line ...
+
 Cache event listeners
 ~~~~~~~~~~~~~~~~~~~~~
 

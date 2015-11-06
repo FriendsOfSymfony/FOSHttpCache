@@ -78,6 +78,9 @@ trait EventDispatchingHttpCache
      */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
+        // trigger loading the CacheEvent to avoid fatal error when HttpKernel::loadClassCache is used.
+        class_exists('FOS\\HttpCache\\SymfonyCache\\CacheEvent');
+
         if ($response = $this->dispatch(Events::PRE_HANDLE, $request)) {
             return $this->dispatch(Events::POST_HANDLE, $request, $response);
         }
