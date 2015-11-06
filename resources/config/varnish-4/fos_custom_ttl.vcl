@@ -26,7 +26,7 @@ sub fos_custom_ttl_backend_response {
          * startup command.
          */
         C{
-            char *ttl;
+            const char *ttl;
             const struct gethdr_s hdr = { HDR_BERESP, "\024X-Reverse-Proxy-TTL:" };
             ttl = VRT_GetHdr(ctx, &hdr);
             VRT_l_beresp_ttl(ctx, atoi(ttl));
