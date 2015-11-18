@@ -91,6 +91,15 @@ include that port in the base URL::
 
     $varnish = new Varnish($servers, 'my-cool-app.com:8080');
 
+.. _varnish_custom_tags_header:
+
+Another optional parameter available on Varnish client is ``tagsHeader``, which allows you to
+change the default HTTP header used for tagging, ``X-Cache-Tags``::
+
+    $varnish = new Varnish($servers, 'example.com', $adapter, 'X-Custom-Tags-Header');
+
+ Make sure to reflect this change in your :doc:`caching proxy configuration <proxy-configuration>`.
+
 .. note::
 
     To make invalidation work, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
@@ -267,5 +276,6 @@ Varnish client::
 Make sure to add any headers that you want to ban on to your
 :doc:`proxy configuration <proxy-configuration>`.
 
+.. _header: http://php.net/header
 .. _HTTP Adapter: http://php-http.readthedocs.org/en/latest/
 .. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation
