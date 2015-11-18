@@ -150,4 +150,23 @@ abstract class AbstractProxyClient implements ProxyClientInterface
 
         return $exceptions;
     }
+
+    /**
+     * Make sure that the tags are valid.
+     *
+     * Reusable function for proxy clients.
+     * Escapes `,` and `\n` (newline) characters.
+     *
+     * @param array $tags The tags to escape.
+     *
+     * @return array Sane tags.
+     */
+    protected function escapeTags(array $tags)
+    {
+        array_walk($tags, function (&$tag) {
+            $tag = str_replace([',', "\n"], ['_', '_'], $tag);
+        });
+
+        return $tags;
+    }
 }

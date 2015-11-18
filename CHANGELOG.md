@@ -18,6 +18,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   caching proxy.
 * Refactored the proxy client test system into traits. Removed ProxyTestCase,
   use the traits `CacheAssertions` and `HttpCaller` instead.
+* Abstracting tags by adding new `TagsInterface` for ProxyClients, as part of that also:
+  BC break: Moved tag invalidation to `CacheInvalidator`, and rename TagHandler to ResponseTagger.
 
 1.4.0
 -----

@@ -180,7 +180,7 @@ using an ``X-Cache-Tags`` header.
 If you need to use a different tag for the headers than the default
 ``X-Cache-Tags`` used in ``fos_ban.vcl``, you will have to write your own VCL
 code for tag invalidation and change the tagging header
-:ref:`configured in the cache invalidator <custom_tags_header>`. Your custom
+:ref:`configured in the cache invalidator <varnish_custom_tags_header>`. Your custom
 VCL will look like this:
 
 .. configuration-block::

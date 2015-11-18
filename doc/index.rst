@@ -28,7 +28,7 @@ Contents:
     proxy-configuration
     proxy-clients
     cache-invalidator
-    invalidation-handlers
+    response-tagging
     user-context
 
     testing-your-application

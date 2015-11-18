@@ -17,7 +17,6 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
-use FOS\HttpCache\Handler\TagHandler;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Adapter\Exception\HttpAdapterException;
 use \Mockery;
@@ -34,6 +33,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::PATH));
         $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::REFRESH));
         $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::INVALIDATE));
+        $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::TAGS));
     }
 
     public function testSupportsFalse()
@@ -45,6 +45,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::PATH));
         $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::REFRESH));
         $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::INVALIDATE));
+        $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::TAGS));
     }
 
     /**
@@ -108,6 +109,23 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         $cacheInvalidator->invalidate($headers);
     }
 
+    public function testInvalidateTags()
+    {
+        $tags = [
+            'post-8',
+            'post-type-2'
+        ];
+
+        $tagHandler = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\TagsInterface')
+            ->shouldReceive('invalidateTags')
+            ->with($tags)
+            ->once()
+            ->getMock();
+
+        $cacheInvalidator = new CacheInvalidator($tagHandler);
+        $cacheInvalidator->invalidateTags($tags);
+    }
+
     public function testInvalidateRegex()
     {
         $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
@@ -144,6 +162,12 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         }
         try {
             $cacheInvalidator->invalidateRegex('/');
+            $this->fail('Expected exception');
+        } catch (UnsupportedProxyOperationException $e) {
+            // success
+        }
+        try {
+            $cacheInvalidator->invalidateTags([]);
             $this->fail('Expected exception');
         } catch (UnsupportedProxyOperationException $e) {
             // success

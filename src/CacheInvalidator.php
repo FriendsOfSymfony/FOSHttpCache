@@ -17,18 +17,19 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Manages HTTP cache invalidation.
  *
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
+ * @author André Rømcke <ar@ez.no>
  */
 class CacheInvalidator
 {
@@ -46,6 +47,11 @@ class CacheInvalidator
      * Value to check support of invalidate operation.
      */
     const INVALIDATE = 'invalidate';
+
+    /**
+     * Value to check support of invalidateTags operation.
+     */
+    const TAGS = 'tags';
 
     /**
      * @var ProxyClientInterface
@@ -90,6 +96,8 @@ class CacheInvalidator
                 return $this->cache instanceof RefreshInterface;
             case self::INVALIDATE:
                 return $this->cache instanceof BanInterface;
+            case self::TAGS:
+                return $this->cache instanceof TagsInterface;
             default:
                 throw new InvalidArgumentException('Unknown operation ' . $operation);
         }
@@ -193,6 +201,27 @@ class CacheInvalidator
         }
 
         $this->cache->ban($headers);
+
+        return $this;
+    }
+
+    /**
+     * Remove/Expire cache objects based on cache tags
+     *
+     * @see TagsInterface::tags()
+     *
+     * @param array $tags Tags that should be removed/expired from the cache
+     *
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support Tags invalidation
+     *
+     * @return $this
+     */
+    public function invalidateTags(array $tags)
+    {
+        if (!$this->cache instanceof TagsInterface) {
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('Tags');
+        }
+        $this->cache->invalidateTags($tags);
 
         return $this;
     }

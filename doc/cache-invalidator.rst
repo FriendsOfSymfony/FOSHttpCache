@@ -82,6 +82,32 @@ Refresh a URL with added header(s)::
 
 .. _invalidate regex:
 
+
+Invalidating by Tags
+--------------------
+
+.. note::
+
+    Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first,
+    in the case of Varnish this is powered by banning.
+
+When you are using :doc:`response tagging <response-tagging>`, you can invalidate
+all responses that where tagged with a specific label.
+
+Invalidate a tag::
+
+    $cacheInvalidator->invalidateTags(['blog-post-44'])->flush();
+
+See below for the :ref:`flush() <flush>` method.
+
+Invalidate several tags::
+
+    $cacheInvalidator
+        ->invalidateTags(['type-65', 'location-3'])
+        ->flush()
+    ;
+
+
 Invalidating With a Regular Expression
 --------------------------------------
 
