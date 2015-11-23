@@ -29,13 +29,11 @@ interface TagsInterface extends ProxyClientInterface
     public function invalidateTags(array $tags);
 
     /**
-     * Get the value for the HTTP tag header.
-     *
-     * This concatenates all tags and ensures correct encoding.
+     * Get escaped tags
      *
      * @param array $tags
      *
-     * @return string
+     * @return array
      */
     public function getTagsHeaderValue(array $tags);
 
