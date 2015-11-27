@@ -37,11 +37,6 @@ class TagSubscriber implements EventSubscriberInterface
     const HEADER_CONTENT_DIGEST = 'X-Content-Digest';
 
     /**
-     * @var array
-     */
-    private $options = array();
-
-    /**
      * @var ManagerInterface
      */
     private $tagManager;
@@ -76,7 +71,7 @@ class TagSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ($this->options['tag_invalidate_method'] !== $request->getMethod()) {
+        if (self::METHOD_INVALIDATE!== $request->getMethod()) {
             return;
         }
 
@@ -95,7 +90,7 @@ class TagSubscriber implements EventSubscriberInterface
     {
         $response = $event->getResponse();
 
-        if (false === $response->headers->has($this->options['tags_header'])) {
+        if (false === $response->headers->has(self::HEADER_TAGS)) {
             return;
         }
 
@@ -115,15 +110,15 @@ class TagSubscriber implements EventSubscriberInterface
 
     private function handleTags(Response $response)
     {
-        if (!$response->headers->has($this->options['content_digest_header'])) {
+        if (!$response->headers->has(self::HEADER_CONTENT_DIGEST)) {
             throw new \RuntimeException(sprintf(
                 'Could not find content digest in the header: "%s". Got headers: "%s"',
-                $this->options['content_digest_header'],
+                self::HEADER_CONTENT_DIGEST,
                 implode('", "', array_keys($response->headers->all()))
             ));
         }
 
-        $contentDigest = $response->headers->get($this->options['content_digest_header']);
+        $contentDigest = $response->headers->get(self::HEADER_CONTENT_DIGEST);
         $tags = $this->getTagsFromHeaders($response->headers);
 
         foreach ($tags as $tag) {
@@ -133,14 +128,14 @@ class TagSubscriber implements EventSubscriberInterface
 
     private function getTagsFromHeaders(HeaderBag $headers)
     {
-        if (!$headers->has($this->options['tags_header'])) {
+        if (!$headers->has(self::HEADER_TAGS)) {
             throw new \RuntimeException(sprintf(
                 'Could not find header "%s"',
-                $this->options['tags_header']
+                self::HEADER_TAGS
             ));
         }
 
-        $tagsRaw = $headers->get($this->options['tags_header']);
+        $tagsRaw = $headers->get(self::HEADER_TAGS);
         $tags = json_decode($tagsRaw, true);
 
         if (null === $tags) {
