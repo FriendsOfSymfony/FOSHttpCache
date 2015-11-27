@@ -1,0 +1,155 @@
+<?php
+
+namespace FOS\HttpCache\SymfonyCache;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use FOS\HttpCache\SymfonyCache\Tag\ManagerInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\HeaderBag;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ * Adds tag invalidation capabilities to the Symfony HTTP cache
+ *
+ * @author Daniel Leech <daniel@dantleech.com>
+ * 
+ * {@inheritdoc}
+ */
+class TagSubscriber implements EventSubscriberInterface
+{
+    /**
+     * HTTP method to use for remote tag invalidation.
+     */
+    const METHOD_INVALIDATE = 'INVALIDATE';
+    
+    /**
+     * Name for HTTP header containing the tags (for both invalidation and
+     * initial tagging).
+     */
+    const HEADER_TAGS = 'X-TaggedCache-Tags';
+
+    /**
+     * Header which should contain the content digest produced by the Symfony
+     * HTTP cache.
+     */
+    const HEADER_CONTENT_DIGEST = 'X-Content-Digest';
+
+    /**
+     * @var array
+     */
+    private $options = array();
+
+    /**
+     * @var ManagerInterface
+     */
+    private $tagManager;
+
+    /**
+     * @param ManagerInterface $tagManager
+     * @param mixed $options
+     */
+    public function __construct(ManagerInterface $tagManager)
+    {
+        $this->tagManager = $tagManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            Events::PRE_HANDLE => 'preHandle',
+            Events::POST_HANDLE => 'postHandle',
+        ];
+    }
+
+    /**
+     * Check to see if the request is an invalidation request, if so
+     * handle the invalidation.
+     *
+     * @param CacheEvent $event
+     */
+    public function preHandle(CacheEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ($this->options['tag_invalidate_method'] !== $request->getMethod()) {
+            return;
+        }
+
+        $event->setResponse(
+            $this->handleInvalidate($request)
+        );
+    }
+
+    /**
+     * Check to see if the response contains tags which should be associated
+     * with the cached page.
+     *
+     * @param CacheEvent
+     */
+    public function postHandle(CacheEvent $event)
+    {
+        $response = $event->getResponse();
+
+        if (false === $response->headers->has($this->options['tags_header'])) {
+            return;
+        }
+
+        $this->handleTags($response);
+    }
+
+    private function handleInvalidate(Request $request)
+    {
+        $tags = $this->getTagsFromHeaders($request->headers);
+        $nbCacheEntries = $this->tagManager->invalidateTags($tags);
+
+        return new JsonResponse(array(
+            'Status' => 'PURGED',
+            'NbCacheEntries' => $nbCacheEntries
+        ));
+    }
+
+    private function handleTags(Response $response)
+    {
+        if (!$response->headers->has($this->options['content_digest_header'])) {
+            throw new \RuntimeException(sprintf(
+                'Could not find content digest in the header: "%s". Got headers: "%s"',
+                $this->options['content_digest_header'],
+                implode('", "', array_keys($response->headers->all()))
+            ));
+        }
+
+        $contentDigest = $response->headers->get($this->options['content_digest_header']);
+        $tags = $this->getTagsFromHeaders($response->headers);
+
+        foreach ($tags as $tag) {
+            $this->tagManager->createTag($tag, $contentDigest);
+        }
+    }
+
+    private function getTagsFromHeaders(HeaderBag $headers)
+    {
+        if (!$headers->has($this->options['tags_header'])) {
+            throw new \RuntimeException(sprintf(
+                'Could not find header "%s"',
+                $this->options['tags_header']
+            ));
+        }
+
+        $tagsRaw = $headers->get($this->options['tags_header']);
+        $tags = json_decode($tagsRaw, true);
+
+        if (null === $tags) {
+            throw new \RuntimeException(sprintf(
+                'Could not JSON decode tags header with value "%s"',
+                $tagsRaw
+            ));
+        }
+
+        return $tags;
+    }
+}
