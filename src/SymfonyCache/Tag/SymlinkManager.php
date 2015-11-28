@@ -11,11 +11,11 @@ class SymlinkManager implements ManagerInterface
     private $filesystem;
     private $baseTagPath;
 
-    public function __construct(Store $store, $baseTagPath)
+    public function __construct(Store $store, $baseTagPath, Filesystem $filesystem = null)
     {
         $this->store = $store;
         $this->baseTagPath = $baseTagPath;
-        $this->filesystem = new Filesystem();
+        $this->filesystem = $filesystem ?: new Filesystem();
     }
 
     /**
@@ -82,12 +82,18 @@ class SymlinkManager implements ManagerInterface
         $symlinkOrig = $this->store->getPath($contentDigest);
 
         if (file_exists($symlinkDest)) {
+            // if the tag already exists and refers to the same file, nothing to do.
+            if (realpath($symlinkDest) === $symlinkOrig) {
+                return $symlinkDest;
+            }
+
+            // otherwise, and this should not happen, just remove the link.
             $this->filesystem->remove($symlinkDest);
         }
 
-        // test symlink dest no exist
-
         $this->filesystem->symlink($symlinkOrig, $symlinkDest);
+
+        return $symlinkDest;
     }
 
     private function getTagPath($tag)
