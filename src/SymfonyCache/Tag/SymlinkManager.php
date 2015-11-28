@@ -85,6 +85,8 @@ class SymlinkManager implements ManagerInterface
             $this->filesystem->remove($symlinkDest);
         }
 
+        // test symlink dest no exist
+
         $this->filesystem->symlink($symlinkOrig, $symlinkDest);
     }
 
