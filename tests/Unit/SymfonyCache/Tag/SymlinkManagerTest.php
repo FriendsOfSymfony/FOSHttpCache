@@ -13,13 +13,48 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
      */
     private $manager;
 
+    /**
+     * @var Store
+     */
+    private $store;
+
+    /**
+     * @var string
+     */
     private $cachePath;
 
+    /**
+     * @var Filesystem
+     */
     private $filesystem;
+
+    /**
+     * @var string
+     */
+    private $http1Path;
+
+    /**
+     * @var string
+     */
+    private $http2Path;
+
+    /**
+     * @var string
+     */
+    private $http3Path;
+
+    /**
+     * @var string
+     */
+    private $tagsPath;
+
+    /**
+     * @var string
+     */
+    private $httpPath;
 
     public function setUp()
     {
-
         $this->cachePath = __DIR__ . '/cache';
         $this->tagsPath = $this->cachePath . '/tags';
         $this->httpPath = $this->cachePath . '/http';
