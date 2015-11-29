@@ -19,7 +19,10 @@ class SymlinkManager implements ManagerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Return the concrete cache paths for the given tag.
+     *
+     * @param string $tag
+     * @return string[]
      */
     public function getPathsForTag($tag)
     {

@@ -7,13 +7,6 @@ class NullManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPathsForTag($tag)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function invalidateTags(array $tags)
     {
     }
