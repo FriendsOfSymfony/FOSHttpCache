@@ -4,3 +4,4 @@ phpunit.xml
 doc/_build/
 puli.json
 .puli/
+tests/Unit/SymfonyCache/Tag/cache

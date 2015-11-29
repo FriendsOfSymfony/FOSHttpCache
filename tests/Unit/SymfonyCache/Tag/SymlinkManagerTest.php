@@ -178,4 +178,20 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFileNotExists($sym2Path);
         $this->assertFileNotExists($real2Path);
     }
+
+    /**
+     * It should invalidate tags with dead references.
+     */
+    public function testInvalidateTagDeadReferences()
+    {
+        $digest1 = '1234abcd';
+        $this->store->getPath($digest1)->willReturn($this->http1Path);
+
+        $symlinkPath = $this->manager->createTag('one', $digest1);
+
+        // we have a dead link
+        unlink($this->http1Path);
+        $this->assertEquals(readlink($symlinkPath), $this->http1Path);
+        $this->manager->invalidateTags(['one']);
+    }
 }
