@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\HttpCache\Store;
 use Symfony\Component\Filesystem\Filesystem;
 use FOS\HttpCache\SymfonyCache\Tag\SymlinkManager;
 
+
 class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -78,8 +79,8 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
             );
         }
 
-        $this->store = $this->prophesize('Symfony\Component\HttpKernel\HttpCache\Store');
-        $this->manager = new SymlinkManager($this->store->reveal(), $this->tagsPath);
+        $this->store = \Mockery::mock('Symfony\Component\HttpKernel\HttpCache\Store');
+        $this->manager = new SymlinkManager($this->store, $this->tagsPath);
     }
 
     /**
@@ -92,7 +93,10 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
         $digest = '1234abcd';
         $tag = 'hello';
         $expectedLinkPath = $this->tagsPath . '/' . $tag . '/' . $digest;
-        $this->store->getPath($digest)->willReturn($this->http1Path);
+        $this->store->shouldReceive('getPath')
+            ->withArgs([$digest])
+            ->andReturn($this->http1Path);
+
         $this->manager->createTag($tag, $digest);
 
         $this->assertFileExists($this->tagsPath . '/' . $tag);
@@ -110,7 +114,9 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
     public function testReplaceReferenceSameDest()
     {
         $digest = '1234abcd';
-        $this->store->getPath($digest)->willReturn($this->http1Path);
+        $this->store->shouldReceive('getPath')
+            ->withArgs([$digest])
+            ->andReturn($this->http1Path);
 
         $this->manager->createTag('hello', $digest);
         $this->assertFileExists($this->tagsPath . '/hello');
@@ -127,7 +133,9 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
     {
         $digest = '1234abcd';
         $expectedLinkPath = $this->tagsPath . '/hello/' . $digest;
-        $this->store->getPath($digest)->willReturn($this->http1Path);
+        $this->store->shouldReceive('getPath')
+            ->withArgs([$digest])
+            ->andReturn($this->http1Path);
         $this->filesystem->mkdir($this->tagsPath . '/hello');
         $this->filesystem->symlink($this->http2Path, $this->tagsPath . '/hello/' . $digest);
 
@@ -150,9 +158,15 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
         $digest1 = '1234abcd';
         $digest2 = 'abcd1234';
         $digest3 = 'a1b2c3d4';
-        $this->store->getPath($digest1)->willReturn($this->http1Path);
-        $this->store->getPath($digest2)->willReturn($this->http2Path);
-        $this->store->getPath($digest3)->willReturn($this->http3Path);
+        $this->store->shouldReceive('getPath')
+            ->withArgs([$digest1])
+            ->andReturn($this->http1Path);
+        $this->store->shouldReceive('getPath')
+            ->withArgs([$digest2])
+            ->andReturn($this->http2Path);
+        $this->store->shouldReceive('getPath')
+            ->withArgs([$digest3])
+            ->andReturn($this->http3Path);
 
         $sym1Path = $this->manager->createTag('one', $digest1);
         $sym2Path = $this->manager->createTag('two', $digest2);
@@ -184,10 +198,12 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidateTagDeadReferences()
     {
-        $digest1 = '1234abcd';
-        $this->store->getPath($digest1)->willReturn($this->http1Path);
+        $digest = '1234abcd';
+        $this->store->shouldReceive('getPath')
+            ->withArgs([$digest])
+            ->andReturn($this->http1Path);
 
-        $symlinkPath = $this->manager->createTag('one', $digest1);
+        $symlinkPath = $this->manager->createTag('one', $digest);
 
         // we have a dead link
         unlink($this->http1Path);

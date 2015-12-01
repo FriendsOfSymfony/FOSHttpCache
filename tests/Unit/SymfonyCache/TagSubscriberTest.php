@@ -21,8 +21,8 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tagManager = $this->prophesize('FOS\HttpCache\SymfonyCache\Tag\ManagerInterface');
-        $this->event = $this->prophesize('FOS\HttpCache\SymfonyCache\CacheEvent');
+        $this->tagManager = \Mockery::mock('FOS\HttpCache\SymfonyCache\Tag\ManagerInterface');
+        $this->event = \Mockery::mock('FOS\HttpCache\SymfonyCache\CacheEvent');
     }
 
     /**
@@ -31,10 +31,10 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testNoInvalidate()
     {
         $request = Request::create('/url');
-        $this->event->getRequest()->willReturn($request);
-        $this->event->setResponse(Argument::any())->shouldNotBeCalled();
+        $this->event->shouldReceive('getRequest')->andReturn($request);
+        $this->event->shouldReceive('setResponse')->never();
         $this->createSubscriber(array())->preHandle(
-            $this->event->reveal()
+            $this->event
         );
     }
 
@@ -46,11 +46,14 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $request = Request::create('/url', 'INVALIDATE');
         $request->headers->set('X-TaggedCache-Tags', json_encode(['one', 'two']));
-        $this->event->getRequest()->willReturn($request);
-        $this->tagManager->invalidateTags(['one', 'two'])->shouldBeCalled();
-        $this->event->setResponse(Argument::any())->shouldBeCalled();
+        $this->event->shouldReceive('getRequest')->andReturn($request);
+        $this->tagManager->shouldReceive('invalidateTags')
+            ->withArgs([['one', 'two']])
+            ->andReturn('asd');
+        $this->event->shouldReceive('setResponse');
+
         $this->createSubscriber(array())->preHandle(
-            $this->event->reveal()
+            $this->event
         );
     }
 
@@ -64,9 +67,9 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testInvalidateNoTagsHeader()
     {
         $request = Request::create('/url', 'INVALIDATE');
-        $this->event->getRequest()->willReturn($request);
+        $this->event->shouldReceive('getRequest')->andReturn($request);
         $this->createSubscriber(array())->preHandle(
-            $this->event->reveal()
+            $this->event
         );
     }
 
@@ -81,9 +84,9 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $request = Request::create('/url', 'INVALIDATE');
         $request->headers->set('X-TaggedCache-Tags', 'one,two');
-        $this->event->getRequest()->willReturn($request);
+        $this->event->shouldReceive('getRequest')->andReturn($request);
         $this->createSubscriber(array())->preHandle(
-            $this->event->reveal()
+            $this->event
         );
     }
 
@@ -94,9 +97,9 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $response = Response::create('', 200, array());
 
-        $this->event->getResponse()->willReturn($response);
+        $this->event->shouldReceive('getResponse')->andReturn($response);
         $this->createSubscriber(array())->postHandle(
-            $this->event->reveal()
+            $this->event
         );
     }
 
@@ -111,12 +114,12 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
             'X-TaggedCache-Tags' => json_encode(['one', 'two'])
         ]);
 
-        $this->event->getResponse()->willReturn($response);
+        $this->event->shouldReceive('getResponse')->andReturn($response);
 
         $this->tagManager->createTag('one', '1234')->shouldBeCalled();
         $this->tagManager->createTag('two', '1234')->shouldBeCalled();
         $this->createSubscriber(array())->postHandle(
-            $this->event->reveal()
+            $this->event
         );
     }
 
@@ -132,14 +135,14 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
             'X-TaggedCache-Tags' => json_encode(['one', 'two'])
         ]);
 
-        $this->event->getResponse()->willReturn($response);
+        $this->event->shouldReceive('getResponse')->andReturn($response);
         $this->createSubscriber(array())->postHandle(
-            $this->event->reveal()
+            $this->event
         );
     }
 
     private function createSubscriber($options)
     {
-        return new TagSubscriber($this->tagManager->reveal(), $options);
+        return new TagSubscriber($this->tagManager, $options);
     }
 }
