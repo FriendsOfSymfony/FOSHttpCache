@@ -16,6 +16,7 @@ use Http\Mock\Client;
 use \Mockery;
 use Psr\Http\Message\RequestInterface;
 use FOS\HttpCache\SymfonyCache\TagSubscriber;
+use FOS\HttpCache\ProxyClient\Request\InvalidationRequest;
 
 class SymfonyTest extends \PHPUnit_Framework_TestCase
 {
@@ -86,6 +87,30 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
             'tags_invalidator' => $invalidator
         ]);
         $symfony->invalidateTags(['one']);
+    }
+
+    /**
+     * It should queue an invalidation request if the tag invalidator returns one.
+     */
+    public function testInvalidateTagsRequest()
+    {
+        $invalidationRequest = new InvalidationRequest('INVALIDATE', '/foo');
+        $invalidator = \Mockery::mock('FOS\HttpCache\SymfonyCache\Tag\InvalidatorInterface')
+            ->shouldReceive('invalidateTags')
+            ->withArgs([['one']])
+            ->andReturn($invalidationRequest)
+            ->mock();
+
+        $symfony = new Symfony(['127.0.0.1:123'], 'fos.lo', $this->client, [
+            'tags_invalidator' => $invalidator
+        ]);
+        $symfony->invalidateTags(['one'])->flush();
+
+        $requests = $this->client->getRequests();
+        $this->assertCount(1, $requests);
+        $request = $requests[0];
+        $this->assertEquals('INVALIDATE', $request->getMethod());
+        $this->assertEquals('/foo', $request->getUri()->getPath());
     }
 
     /**

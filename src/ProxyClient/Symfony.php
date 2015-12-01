@@ -33,6 +33,7 @@ use FOS\HttpCache\SymfonyCache\Tag\NullManager;
 class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInterface, TagsInterface
 {
     const HTTP_METHOD_REFRESH = 'GET';
+    const HTTP_METHOD_INVALIDATE = 'INVALIDATE';
 
     /**
      * The options configured in the constructor argument or default values.
@@ -103,7 +104,13 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     public function invalidateTags(array $tags)
     {
-        $this->options['tags_invalidator']->invalidateTags($tags);
+        $invalidationRequest = $this->options['tags_invalidator']->invalidateTags($tags);
+
+        if (null !== $invalidationRequest) {
+            $this->queue->add($invalidationRequest);
+        }
+
+        return $this;
     }
 
     /**

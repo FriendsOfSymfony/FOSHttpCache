@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\HttpCache\ProxyClient\Symfony;
 
 /**
  * Adds tag invalidation capabilities to the Symfony HTTP cache
@@ -19,11 +20,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TagSubscriber implements EventSubscriberInterface
 {
-    /**
-     * HTTP method to use for remote tag invalidation.
-     */
-    const METHOD_INVALIDATE = 'INVALIDATE';
-    
     /**
      * Name for HTTP header containing the tags (for both invalidation and
      * initial tagging).
@@ -71,7 +67,7 @@ class TagSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (self::METHOD_INVALIDATE!== $request->getMethod()) {
+        if (Symfony::HTTP_METHOD_INVALIDATE!== $request->getMethod()) {
             return;
         }
 
