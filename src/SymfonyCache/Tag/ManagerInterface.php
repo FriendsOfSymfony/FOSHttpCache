@@ -9,17 +9,8 @@ namespace FOS\HttpCache\SymfonyCache\Tag;
  * entries with tags and invalidating cache entries associated with a given
  * tag.
  */
-interface ManagerInterface
+interface ManagerInterface extends InvalidatorInterface
 {
-    /**
-     * Invlaidate the given tags and return the
-     * number of cache entries that have been invalidated.
-     *
-     * @param string[]
-     * @return integer
-     */
-    public function invalidateTags(array $tags);
-
     /**
      * Create a new tag for the given content digest.
      *

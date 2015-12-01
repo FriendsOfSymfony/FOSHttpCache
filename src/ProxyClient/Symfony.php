@@ -15,6 +15,11 @@ use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
 use Http\Message\MessageFactory;
+use Http\Adapter\HttpAdapter;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\SymfonyCache\TagSubscriber;
+use FOS\HttpCache\SymfonyCache\Tag\NullManager;
 
 /**
  * Symfony HttpCache invalidator.
@@ -25,9 +30,42 @@ use Http\Message\MessageFactory;
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInterface
+class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInterface, TagsInterface
 {
     const HTTP_METHOD_REFRESH = 'GET';
+
+    /**
+     * The options configured in the constructor argument or default values.
+     *
+     * @var array
+     */
+    private $options;
+
+    /**
+     * {@inheritDoc}
+     *
+     * When creating the client, you can configure options:
+     *
+     * - purge_method:         HTTP method that identifies purge requests.
+     *
+     * @param array $options The purge_method that should be used.
+     */
+    public function __construct(
+        array $servers,
+        $baseUrl = null,
+        HttpAdapter $httpAdapter = null,
+        $options = []
+    ) {
+        parent::__construct($servers, $baseUrl, $httpAdapter);
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
+            'tags_invalidator' => new NullManager()
+        ]);
+
+        $this->options = $resolver->resolve($options);
+    }
 
     /**
      * {@inheritdoc}
@@ -58,5 +96,29 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
         ]);
 
         return $resolver;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function invalidateTags(array $tags)
+    {
+        $this->options['tags_invalidator']->invalidateTags($tags);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTagsHeaderValue(array $tags)
+    {
+        return json_encode($tags);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTagsHeaderName()
+    {
+        return TagSubscriber::HEADER_TAGS;
     }
 }
