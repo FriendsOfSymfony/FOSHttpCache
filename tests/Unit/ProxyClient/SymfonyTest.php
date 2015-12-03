@@ -11,17 +11,8 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Symfony;
-use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Test\HttpClient\MockHttpAdapter;
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\MultiTransferException;
-use Guzzle\Http\Exception\RequestException;
-use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\Request;
 use \Mockery;
 
 class SymfonyTest extends \PHPUnit_Framework_TestCase
@@ -34,9 +25,9 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
     public function testPurge()
     {
         $ips = ['127.0.0.1:8080', '123.123.123.2'];
-        $varnish = new Varnish($ips, 'my_hostname.dev', $this->client);
+        $symfony = new Symfony($ips, 'my_hostname.dev', $this->client);
 
-        $count = $varnish->purge('/url/one')
+        $count = $symfony->purge('/url/one')
             ->purge('/url/two', ['X-Foo' => 'bar'])
             ->flush()
         ;
