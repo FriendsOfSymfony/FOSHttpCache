@@ -1,4 +1,3 @@
-include "debug.vcl";
 include "debug_user_context.vcl";
 
 backend default {
@@ -13,6 +12,7 @@ sub vcl_recv {
     ) {
         set req.http.X-Cache-Hash = "failure";
     }
+
 }
 
 include "user_context.vcl";

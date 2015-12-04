@@ -9,6 +9,7 @@ Testing the Library
 -------------------
 
 This chapter describes how to run the tests that are included with this library.
+Make sure that you have PHPUnit 4.0 or higher installed.
 
 First clone the repository, install the vendors, then run the tests:
 

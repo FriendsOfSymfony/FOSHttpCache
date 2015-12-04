@@ -28,7 +28,7 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/json.php'));
         $this->assertHit($this->getResponse('/json.php'));
 
-        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_URL => '.*'))->flush();
+        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_URL => '.*'])->flush();
 
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertMiss($this->getResponse('/json.php'));
@@ -39,10 +39,10 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->assertMiss($this->getResponse('/cache.php'));
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'))->flush();
+        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'])->flush();
         $this->assertHit($this->getResponse('/cache.php'));
 
-        $this->getProxyClient()->ban(array(Varnish::HTTP_HEADER_HOST => $this->getHostname()))->flush();
+        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => $this->getHostname()])->flush();
         $this->assertMiss($this->getResponse('/cache.php'));
     }
 
@@ -83,16 +83,16 @@ class VarnishProxyClientTest extends VarnishTestCase
 
     public function testPurgeContentType()
     {
-        $json = array('Accept' => 'application/json');
-        $html = array('Accept' => 'text/html');
+        $json = ['Accept' => 'application/json'];
+        $html = ['Accept' => 'text/html'];
 
         $response = $this->getResponse('/negotation.php', $json);
         $this->assertMiss($response);
-        $this->assertEquals('application/json', $response->getContentType());
+        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
         $this->assertHit($this->getResponse('/negotation.php', $json));
 
         $response = $this->getResponse('/negotation.php', $html);
-        $this->assertContains('text/html', $response->getContentType());
+        $this->assertContains('text/html', $response->getHeaderLine('Content-Type'));
         $this->assertMiss($response);
         $this->assertHit($this->getResponse('/negotation.php', $html));
 
@@ -104,7 +104,7 @@ class VarnishProxyClientTest extends VarnishTestCase
 
     public function testPurgeHost()
     {
-        $varnish = new Varnish(array('http://127.0.0.1:' . $this->getProxy()->getPort()));
+        $varnish = new Varnish(['http://127.0.0.1:' . $this->getProxy()->getPort()]);
 
         $this->getResponse('/cache.php');
 
@@ -121,13 +121,17 @@ class VarnishProxyClientTest extends VarnishTestCase
         $this->getProxyClient()->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
-        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+
+        $originalTimestamp = (float)(string) $response->getBody();
+        $refreshedTimestamp = (float)(string) $refreshed->getBody();
+
+        $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
     }
 
     public function testRefreshContentType()
     {
-        $json = array('Accept' => 'application/json');
-        $html = array('Accept' => 'text/html');
+        $json = ['Accept' => 'application/json'];
+        $html = ['Accept' => 'text/html'];
 
         $this->getProxyClient()->refresh('/negotation.php', $json)->flush();
 

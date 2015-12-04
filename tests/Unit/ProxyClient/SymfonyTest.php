@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\ProxyClient\Varnish;
+use FOS\HttpCache\Test\HttpClient\MockHttpAdapter;
 use Guzzle\Http\Client;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\MultiTransferException;
@@ -26,87 +27,57 @@ use \Mockery;
 class SymfonyTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MockPlugin
+     * @var MockHttpAdapter
      */
-    private $mock;
-
-    private $client;
+    protected $client;
 
     public function testPurge()
     {
-        $self = $this; // For PHP 5.3
-        $client = \Mockery::mock('\Guzzle\Http\Client[send]', array('', null))
-            ->shouldReceive('send')
-            ->once()
-            ->with(
-                \Mockery::on(
-                    function ($requests) use ($self) {
-                        /** @type Request[] $requests */
-                        $self->assertCount(4, $requests);
-                        foreach ($requests as $request) {
-                            $self->assertEquals('PURGE', $request->getMethod());
-                            $self->assertEquals('my_hostname.dev', $request->getHeaders()->get('host'));
-                        }
+        $ips = ['127.0.0.1:8080', '123.123.123.2'];
+        $varnish = new Varnish($ips, 'my_hostname.dev', $this->client);
 
-                        $self->assertEquals('127.0.0.1', $requests[0]->getHost());
-                        $self->assertEquals('8080', $requests[0]->getPort());
-                        $self->assertEquals('/url/one', $requests[0]->getPath());
+        $count = $varnish->purge('/url/one')
+            ->purge('/url/two', ['X-Foo' => 'bar'])
+            ->flush()
+        ;
+        $this->assertEquals(2, $count);
 
-                        $self->assertEquals('123.123.123.2', $requests[1]->getHost());
-                        $self->assertEquals('/url/one', $requests[1]->getPath());
+        $requests = $this->getRequests();
+        $this->assertCount(4, $requests);
+        foreach ($requests as $request) {
+            $this->assertEquals('PURGE', $request->getMethod());
+            $this->assertEquals('my_hostname.dev', $request->getHeaderLine('Host'));
+        }
 
-                        $self->assertEquals('127.0.0.1', $requests[2]->getHost());
-                        $self->assertEquals('8080', $requests[2]->getPort());
-                        $self->assertEquals('/url/two', $requests[2]->getPath());
-                        $self->assertEquals('bar', $requests[2]->getHeader('X-Foo'));
-
-                        $self->assertEquals('123.123.123.2', $requests[3]->getHost());
-                        $self->assertEquals('/url/two', $requests[3]->getPath());
-                        $self->assertEquals('bar', $requests[3]->getHeader('X-Foo'));
-
-                        return true;
-                    }
-                )
-            )
-            ->getMock();
-
-        $ips = array(
-            '127.0.0.1:8080',
-            '123.123.123.2',
-        );
-
-        $symfony = new Symfony($ips, 'my_hostname.dev', $client);
-
-        $symfony->purge('/url/one');
-        $symfony->purge('/url/two', array('X-Foo' => 'bar'));
-
-        $symfony->flush();
+        $this->assertEquals('http://127.0.0.1:8080/url/one', $requests[0]->getUri());
+        $this->assertEquals('http://123.123.123.2/url/one', $requests[1]->getUri());
+        $this->assertEquals('http://127.0.0.1:8080/url/two', $requests[2]->getUri());
+        $this->assertEquals('bar', $requests[2]->getHeaderLine('X-Foo'));
+        $this->assertEquals('http://123.123.123.2/url/two', $requests[3]->getUri());
+        $this->assertEquals('bar', $requests[3]->getHeaderLine('X-Foo'));
     }
 
     public function testRefresh()
     {
-        $symfony = new Symfony(array('127.0.0.1:123'), 'fos.lo', $this->client);
+        $symfony = new Symfony(['127.0.0.1:123'], 'fos.lo', $this->client);
         $symfony->refresh('/fresh')->flush();
 
         $requests = $this->getRequests();
         $this->assertCount(1, $requests);
         $this->assertEquals('GET', $requests[0]->getMethod());
-        $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUrl());
+        $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUri());
     }
 
     protected function setUp()
     {
-        $this->mock = new MockPlugin();
-        $this->mock->addResponse(new Response(200));
-        $this->client = new Client();
-        $this->client->addSubscriber($this->mock);
+        $this->client = new MockHttpAdapter();
     }
 
     /**
-     * @return array|Request[]
+     * @return array|RequestInterface[]
      */
     protected function getRequests()
     {
-        return $this->mock->getReceivedRequests();
+        return $this->client->getRequests();
     }
 }

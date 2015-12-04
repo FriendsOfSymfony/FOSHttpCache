@@ -13,7 +13,7 @@ namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
 
 use FOS\HttpCache\Test\Proxy\VarnishProxy;
 
-class VarnishTestCaseTest extends \PHPUnit_Framework_TestCase
+class VarnishProxyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
@@ -36,14 +36,14 @@ class VarnishTestCaseTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('/usr/sbin/varnishd', $proxy->command);
         $this->assertEquals(
-            array(
+            [
                 '-a', '192.168.0.1:6181',
                 '-T', '192.168.0.1:1331',
                 '-f', 'config.vcl',
                 '-n', '/tmp/cache/dir',
                 '-p', 'vcl_dir=/my/varnish/dir',
                 '-P', '/tmp/foshttpcache-varnish.pid',
-            ),
+            ],
             $proxy->arguments
         );
     }

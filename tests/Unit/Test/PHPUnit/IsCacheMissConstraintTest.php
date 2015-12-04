@@ -27,13 +27,14 @@ class IsCacheMissConstraintTest extends AbstractCacheConstraintTest
 
     /**
      * @expectedException \PHPUnit_Framework_ExpectationFailedException
+     * @expectedExceptionMessage Failed asserting that response (with status code 200) is a cache miss
      */
     public function testMatches()
     {
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
-            ->shouldReceive('getHeader')->with('cache-header')->once()
-            ->andReturn('HIT')
+            ->shouldReceive('getHeaderLine')->with('cache-header')->once()->andReturn('HIT')
+            ->shouldReceive('getStatusCode')->andReturn(200)
             ->getMock();
 
         $this->constraint->evaluate($response);

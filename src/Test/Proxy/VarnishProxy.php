@@ -23,6 +23,7 @@ class VarnishProxy extends AbstractProxy
     protected $configFile;
     protected $configDir;
     protected $cacheDir;
+    protected $allowInlineC = false;
 
     /**
      * Constructor
@@ -40,17 +41,21 @@ class VarnishProxy extends AbstractProxy
      */
     public function start()
     {
-        $this->runCommand(
-            $this->getBinary(),
-            array(
-                '-a', $this->ip . ':' . $this->getPort(),
-                '-T', $this->ip . ':' . $this->getManagementPort(),
-                '-f', $this->getConfigFile(),
-                '-n', $this->getCacheDir(),
-                '-p', 'vcl_dir=' . $this->getConfigDir(),
-                '-P', $this->pid
-            )
-        );
+        $args = [
+            '-a', $this->ip . ':' . $this->getPort(),
+            '-T', $this->ip . ':' . $this->getManagementPort(),
+            '-f', $this->getConfigFile(),
+            '-n', $this->getCacheDir(),
+            '-p', 'vcl_dir=' . $this->getConfigDir(),
+
+            '-P', $this->pid,
+        ];
+        if ($this->getAllowInlineC()) {
+            $args[] = '-p';
+            $args[] = 'vcc_allow_inline_c=on';
+        }
+
+        $this->runCommand($this->getBinary(), $args);
 
         $this->waitFor($this->ip, $this->getPort(), 2000);
     }
@@ -62,7 +67,7 @@ class VarnishProxy extends AbstractProxy
     {
         if (file_exists($this->pid)) {
             try {
-                $this->runCommand('kill', array('-9', file_get_contents($this->pid)));
+                $this->runCommand('kill', ['-9', file_get_contents($this->pid)]);
             } catch (\RuntimeException $e) {
                 // Ignore if command fails when Varnish wasn't running
             }
@@ -138,5 +143,25 @@ class VarnishProxy extends AbstractProxy
     public function getCacheDir()
     {
         return $this->cacheDir;
+    }
+
+    /**
+     * Whether the inline C flag should be set.
+     *
+     * @return boolean
+     */
+    public function getAllowInlineC()
+    {
+        return $this->allowInlineC;
+    }
+
+    /**
+     * Set whether the inline c flag should be on or off
+     *
+     * @param boolean $allowInlineC True for on, false for off
+     */
+    public function setAllowInlineC($allowInlineC)
+    {
+        $this->allowInlineC = (boolean) $allowInlineC;
     }
 }

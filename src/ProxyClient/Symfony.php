@@ -11,13 +11,10 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\Exception\InvalidArgumentException;
-use FOS\HttpCache\Exception\MissingHostException;
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use Guzzle\Http\ClientInterface;
+use Http\Adapter\HttpAdapter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -46,14 +43,18 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      *
      * @param array $options The purge_method that should be used.
      */
-    public function __construct(array $servers, $baseUrl = null, ClientInterface $client = null, array $options = array())
-    {
-        parent::__construct($servers, $baseUrl, $client);
+    public function __construct(
+        array $servers,
+        $baseUrl = null,
+        HttpAdapter $httpAdapter = null,
+        $options = []
+    ) {
+        parent::__construct($servers, $baseUrl, $httpAdapter);
 
         $resolver = new OptionsResolver();
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
-        ));
+        ]);
 
         $this->options = $resolver->resolve($options);
     }
@@ -61,7 +62,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     /**
      * {@inheritdoc}
      */
-    public function purge($url, array $headers = array())
+    public function purge($url, array $headers = [])
     {
         $this->queueRequest($this->options['purge_method'], $url, $headers);
 
@@ -71,19 +72,11 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     /**
      * {@inheritdoc}
      */
-    public function refresh($url, array $headers = array())
+    public function refresh($url, array $headers = [])
     {
-        $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
+        $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAllowedSchemes()
-    {
-        return array('http', 'https');
     }
 }

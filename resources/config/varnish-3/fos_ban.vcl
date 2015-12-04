@@ -1,8 +1,17 @@
-sub vcl_recv {
+/*
+ * This file is part of the FOSHttpCache package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-    if (req.method == "BAN") {
+sub fos_ban_recv {
+
+    if (req.request == "BAN") {
         if (!client.ip ~ invalidators) {
-            return (synth(405, "Not allowed"));
+            error 405 "Not allowed.";
         }
 
         if (req.http.X-Cache-Tags) {
@@ -18,24 +27,26 @@ sub vcl_recv {
             );
         }
 
-        return (synth(200, "Banned"));
+        error 200 "Banned";
     }
 }
 
-sub vcl_backend_response {
+sub fos_ban_fetch {
 
     # Set ban-lurker friendly custom headers
-    set beresp.http.X-Url = bereq.url;
-    set beresp.http.X-Host = bereq.http.host;
+    set beresp.http.X-Url = req.url;
+    set beresp.http.X-Host = req.http.host;
 }
 
-sub vcl_deliver {
+sub fos_ban_deliver {
 
     # Keep ban-lurker headers only if debugging is enabled
     if (!resp.http.X-Cache-Debug) {
         # Remove ban-lurker friendly custom headers when delivering to client
         unset resp.http.X-Url;
         unset resp.http.X-Host;
+
+        # Unset the tagged cache headers
         unset resp.http.X-Cache-Tags;
     }
 }

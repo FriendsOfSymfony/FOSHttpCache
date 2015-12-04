@@ -20,7 +20,7 @@ namespace FOS\HttpCache\UserContext;
  */
 class UserContext implements \IteratorAggregate
 {
-    private $parameters = array();
+    private $parameters = [];
 
     /**
      * Set a parameter for this context

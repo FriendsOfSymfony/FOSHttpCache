@@ -74,7 +74,10 @@ class NginxTest extends NginxTestCase
         $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
-        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+        $this->assertGreaterThan(
+            (float)(string) $response->getBody(),
+            (float)(string) $refreshed->getBody()
+        );
     }
 
     public function testRefreshPath()
@@ -87,6 +90,10 @@ class NginxTest extends NginxTestCase
         $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
-        $this->assertGreaterThan((float) $response->getBody(true), (float) $refreshed->getBody(true));
+        
+        $this->assertGreaterThan(
+            (float)(string) $response->getBody(),
+            (float)(string) $refreshed->getBody()
+        );
     }
 }

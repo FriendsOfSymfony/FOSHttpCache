@@ -12,15 +12,15 @@
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
+use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
 use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
 class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var HttpCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInvalidationInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $kernel;
 
@@ -46,17 +46,17 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $prop->setAccessible(true);
         $options = $prop->getValue($subscriber);
 
-        $custom = array(
+        $custom = [
             'user_hash_uri' => '/test-uri',
             'user_hash_header' => 'test/header',
             'user_hash_accept_header' => 'test accept',
             'anonymous_hash' => 'test hash',
-        );;
+        ];
 
-        return array(
-            array(array(), $options),
-            array($custom, $custom + $options)
-        );
+        return [
+            [[], $options],
+            [$custom, $custom + $options]
+        ];
     }
 
     /**
@@ -124,15 +124,15 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $catch = true;
         $sessionId1 = 'my_session_id';
         $sessionId2 = 'another_session_id';
-        $cookies = array(
+        $cookies = [
             'PHPSESSID' => $sessionId1,
             'PHPSESSIDsdiuhsdf4535d4f' => $sessionId2,
-            'foo' => 'bar'
-        );
+            'foo' => 'bar',
+        ];
         $cookieString = "PHPSESSID=$sessionId1; foo=bar; PHPSESSIDsdiuhsdf4535d4f=$sessionId2";
-        $request = Request::create('/foo', 'GET', array(), $cookies, array(), array('Cookie' => $cookieString));
+        $request = Request::create('/foo', 'GET', [], $cookies, [], ['Cookie' => $cookieString]);
 
-        $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], array(), array(), array(), $request->server->all());
+        $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], [], [], [], $request->server->all());
         $hashRequest->attributes->set('internalRequest', true);
         $hashRequest->headers->set('Accept', $options['user_hash_accept_header']);
         $hashRequest->headers->set('Cookie', "PHPSESSID=$sessionId1; PHPSESSIDsdiuhsdf4535d4f=$sessionId2");
@@ -146,7 +146,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
         /** @var \Symfony\Component\HttpFoundation\Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
         $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
-            ->setMethods(array('prepare'))
+            ->setMethods(['prepare'])
             ->getMock();
         $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash );
 
@@ -186,9 +186,9 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $userContextSubscriber = new UserContextSubscriber($arg);
 
         // The foo cookie should not be available in the eventual hash request anymore
-        $request = Request::create('/foo', 'GET', array(), array('foo' => 'bar'), array(), array('HTTP_AUTHORIZATION' => 'foo'));
+        $request = Request::create('/foo', 'GET', [], ['foo' => 'bar'], [], ['HTTP_AUTHORIZATION' => 'foo']);
 
-        $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], array(), array(), array(), $request->server->all());
+        $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], [], [], [], $request->server->all());
         $hashRequest->attributes->set('internalRequest', true);
         $hashRequest->headers->set('Accept', $options['user_hash_accept_header']);
 
@@ -233,6 +233,6 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidConfiguration()
     {
-        new UserContextSubscriber(array('foo' => 'bar'));
+        new UserContextSubscriber(['foo' => 'bar']);
     }
 }

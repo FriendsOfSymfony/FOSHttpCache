@@ -16,13 +16,17 @@ use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\ProxyClient\Request\InvalidationRequest;
+use FOS\HttpCache\ProxyClient\Request\RequestQueue;
+use Http\Adapter\HttpAdapter;
 
 /**
  * Varnish HTTP cache invalidator.
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface
+class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface, TagsInterface
 {
     const HTTP_METHOD_BAN          = 'BAN';
     const HTTP_METHOD_PURGE        = 'PURGE';
@@ -36,11 +40,37 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      *
      * @var array
      */
-    private $defaultBanHeaders = array(
+    private $defaultBanHeaders = [
         self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
-    );
+    ];
+
+    /**
+     * Has a base URI been set?
+     *
+     * @var bool
+     */
+    private $baseUriSet;
+
+    /**
+     * @var string
+     */
+    private $tagsHeader;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(
+        array $servers,
+        $baseUri = null,
+        HttpAdapter $httpAdapter = null,
+        $tagsHeader = 'X-Cache-Tags'
+    ) {
+        parent::__construct($servers, $baseUri, $httpAdapter);
+        $this->baseUriSet = $baseUri !== null;
+        $this->tagsHeader = $tagsHeader;
+    }
 
     /**
      * Set the default headers that get merged with the provided headers in self::ban().
@@ -62,6 +92,34 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     public function setDefaultBanHeader($name, $value)
     {
         $this->defaultBanHeaders[$name] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invalidateTags(array $tags)
+    {
+        $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $this->escapeTags($tags))));
+
+        return $this->ban([$this->tagsHeader => $tagExpression]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTagsHeaderValue(array $tags)
+    {
+        return implode(',', array_unique($this->escapeTags($tags)));
+    }
+
+    /**
+     * Get the HTTP header name that will hold cache tags.
+     *
+     * @return string
+     */
+    public function getTagsHeaderName()
+    {
+        return $this->tagsHeader;
     }
 
     /**
@@ -91,9 +149,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
             $hosts = '^('.join('|', $hosts).')$';
         }
 
-        $headers = array(
+        $headers = [
             self::HTTP_HEADER_URL => $path,
-        );
+        ];
 
         if ($contentType) {
             $headers[self::HTTP_HEADER_CONTENT_TYPE] = $contentType;
@@ -108,7 +166,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     /**
      * {@inheritdoc}
      */
-    public function purge($url, array $headers = array())
+    public function purge($url, array $headers = [])
     {
         $this->queueRequest(self::HTTP_METHOD_PURGE, $url, $headers);
 
@@ -118,9 +176,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     /**
      * {@inheritdoc}
      */
-    public function refresh($url, array $headers = array())
+    public function refresh($url, array $headers = [])
     {
-        $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
+        $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
@@ -133,26 +191,17 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      *                              refresh and no base URL is set
      *
      */
-    protected function createRequest($method, $url, array $headers = array())
+    protected function queueRequest($method, $url, array $headers = [])
     {
-        $request = parent::createRequest($method, $url, $headers);
+        $request = new InvalidationRequest($method, $url, $headers);
 
-        // For purge and refresh, add a host header to the request if it hasn't
-        // been set
         if (self::HTTP_METHOD_BAN !== $method
-            && '' == $request->getHeader('Host')
+            && !$this->baseUriSet
+            && !$request->getHeaderLine('Host')
         ) {
             throw MissingHostException::missingHost($url);
         }
 
-        return $request;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAllowedSchemes()
-    {
-        return array('http');
+        parent::queueRequest($method, $url, $headers);
     }
 }

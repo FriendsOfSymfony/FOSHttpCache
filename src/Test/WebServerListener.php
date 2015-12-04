@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Functional;
+namespace FOS\HttpCache\Test;
 
 /**
  * A PHPUnit test listener that starts and stops the PHP built-in web server
@@ -41,7 +41,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
     {
         // Only run on PHP >= 5.4 as PHP below that and HHVM don't have a
         // built-in web server
-        if (defined('HHVM_VERSION') || version_compare(PHP_VERSION, '5.4.0', '<')) {
+        if (defined('HHVM_VERSION')) {
             return;
         }
 
@@ -153,17 +153,6 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
             }
 
             usleep(1000);
-        }
-
-        $client = new \Guzzle\Http\Client();
-        $url = sprintf('http://%s:%d/cache.php', $this->getHostName(), $this->getPort());
-        for (; $i < $timeout; $i++) {
-            try {
-                if ($client->get($url)->send()->isSuccessful()) {
-                    return;
-                }
-            } catch (\Exception $e) {
-            }
         }
 
         throw new \RuntimeException(
