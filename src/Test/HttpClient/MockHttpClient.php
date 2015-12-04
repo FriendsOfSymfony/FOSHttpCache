@@ -2,22 +2,24 @@
 
 namespace FOS\HttpCache\Test\HttpClient;
 
-use Http\Adapter\Exception\MultiHttpAdapterException;
-use Http\Adapter\HttpAdapter;
-use GuzzleHttp\Psr7\Response;
+use Http\Client\HttpAsyncClient;
+use Http\Client\HttpClient;
+use Http\Client\Tools\HttpAsyncClientEmulator;
 use Http\Discovery\MessageFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * HTTP adapter mock
+ * HTTP client mock
  *
  * This mock is most useful in tests. It does not send requests but stores them
  * for later retrieval. Additionally, you can set an exception to test
  * exception handling.
  */
-class MockHttpAdapter implements HttpAdapter
+class MockHttpClient implements HttpClient, HttpAsyncClient
 {
+    use HttpAsyncClientEmulator;
+
     private $requests = [];
     private $responses = [];
     private $exception;
@@ -41,29 +43,6 @@ class MockHttpAdapter implements HttpAdapter
 
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendRequests(array $requests, array $options = [])
-    {
-        $responses = [];
-        $exceptions = new MultiHttpAdapterException();
-
-        foreach ($requests as $request) {
-            try {
-                $responses[] = $this->sendRequest($request);
-            } catch (\Exception $e) {
-                $exceptions->addException($e);
-            }
-        }
-
-        if ($exceptions->hasExceptions()) {
-            throw $exceptions;
-        }
-
-        return $responses;
-    }
-
     public function setException(\Exception $exception)
     {
         $this->exception = $exception;
@@ -72,16 +51,6 @@ class MockHttpAdapter implements HttpAdapter
     public function addResponse(ResponseInterface $response)
     {
         $this->responses[] = $response;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return string The name.
-     */
-    public function getName()
-    {
-        return 'mock';
     }
 
     public function getRequests()

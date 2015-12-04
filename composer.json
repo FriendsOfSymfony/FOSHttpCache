@@ -20,22 +20,20 @@
             "homepage": "https://github.com/friendsofsymfony/FOSHttpCache/contributors"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.4.8",
-        "symfony/event-dispatcher": "^2.3||^3.0",
-        "symfony/options-resolver": "^2.3||^3.0",
-        "psr/http-message-implementation": "~1.0",
-        "php-http/adapter-implementation": "^0.1.0",
-        "php-http/discovery": "^0.1.1",
-        "php-http/message-decorator": "^0.1.0"
+        "symfony/event-dispatcher": "~2.3",
+        "symfony/options-resolver": "~2.3",
+        "php-http/client-implementation": "^1.0.0",
+        "php-http/discovery": "^0.3.0"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.1",
         "monolog/monolog": "~1.0",
-        "php-http/guzzle6-adapter": "^0.1.0",
-        "guzzlehttp/psr7": "^1.0",
-        "symfony/process": "^2.3||^3.0",
-        "symfony/http-kernel": "^2.3||^3.0"
+        "php-http/guzzle6-adapter": "^0.2.0",
+        "symfony/process": "~2.3",
+        "symfony/http-kernel": "~2.3"
     },
     "suggest": {
         "monolog/monolog": "For logging issues while invalidating"

@@ -159,7 +159,7 @@ trait NginxTest
         if (null === $this->proxyClient) {
             $this->proxyClient = new Nginx(
                 ['http://127.0.0.1:' . $this->getCachingProxyPort()],
-                $this->getHostName()
+                ['base_uri' => $this->getHostName()]
             );
 
             $this->proxyClient->setPurgeLocation($purgeLocation);

@@ -17,9 +17,9 @@ use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
-use FOS\HttpCache\ProxyClient\Request\InvalidationRequest;
-use FOS\HttpCache\ProxyClient\Request\RequestQueue;
-use Http\Adapter\HttpAdapter;
+use Http\Client\HttpAsyncClient;
+use Http\Message\MessageFactory;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Varnish HTTP cache invalidator.
@@ -60,16 +60,22 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
 
     /**
      * {@inheritdoc}
+     *
+     * Additional options:
+     *
+     * - tags_header Header for tagging responses, defaults to X-Cache-Tags
+     *
+     * @param string $tagsHeader
      */
     public function __construct(
         array $servers,
-        $baseUri = null,
-        HttpAdapter $httpAdapter = null,
-        $tagsHeader = 'X-Cache-Tags'
+        array $options = [],
+        HttpAsyncClient $httpClient = null,
+        MessageFactory $messageFactory = null
     ) {
-        parent::__construct($servers, $baseUri, $httpAdapter);
-        $this->baseUriSet = $baseUri !== null;
-        $this->tagsHeader = $tagsHeader;
+        parent::__construct($servers, $options, $httpClient, $messageFactory);
+        $this->baseUriSet = $this->options['base_uri'] !== null;
+        $this->tagsHeader = $this->options['tags_header'];
     }
 
     /**
@@ -186,6 +192,19 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
 
     /**
      * {@inheritdoc}
+     */
+    protected function getDefaultOptions()
+    {
+        $resolver = parent::getDefaultOptions();
+        $resolver->setDefault('tags_header', 'X-Cache-Tags');
+
+        return $resolver;
+    }
+
+    /**
+     * Build the invalidation request and validate it.
+     *
+     * {@inheritdoc}
      *
      * @throws MissingHostException If a relative path is queued for purge/
      *                              refresh and no base URL is set
@@ -193,7 +212,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      */
     protected function queueRequest($method, $url, array $headers = [])
     {
-        $request = new InvalidationRequest($method, $url, $headers);
+        $request = $this->messageFactory->createRequest($method, $url, $headers);
 
         if (self::HTTP_METHOD_BAN !== $method
             && !$this->baseUriSet
@@ -202,6 +221,6 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
             throw MissingHostException::missingHost($url);
         }
 
-        parent::queueRequest($method, $url, $headers);
+        $this->httpAdapter->invalidate($request);
     }
 }

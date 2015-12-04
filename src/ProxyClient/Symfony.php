@@ -14,7 +14,8 @@ namespace FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use Http\Adapter\HttpAdapter;
+use Http\Client\HttpAsyncClient;
+use Http\Message\MessageFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -28,13 +29,6 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     const HTTP_METHOD_REFRESH = 'GET';
 
     /**
-     * The options configured in the constructor argument or default values.
-     *
-     * @var array
-     */
-    private $options;
-
-    /**
      * {@inheritDoc}
      *
      * When creating the client, you can configure options:
@@ -45,18 +39,11 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     public function __construct(
         array $servers,
-        $baseUrl = null,
-        HttpAdapter $httpAdapter = null,
-        $options = []
+        array $options,
+        HttpAsyncClient $httpClient = null,
+        MessageFactory $messageFactory = null
     ) {
-        parent::__construct($servers, $baseUrl, $httpAdapter);
-
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
-        ]);
-
-        $this->options = $resolver->resolve($options);
+        parent::__construct($servers, $options, $httpClient, $messageFactory);
     }
 
     /**
@@ -78,5 +65,15 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
+    }
+
+    protected function getDefaultOptions()
+    {
+        $resolver = parent::getDefaultOptions();
+        $resolver->setDefaults([
+            'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
+        ]);
+
+        return $resolver;
     }
 }

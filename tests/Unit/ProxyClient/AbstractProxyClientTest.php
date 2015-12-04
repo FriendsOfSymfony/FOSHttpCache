@@ -13,8 +13,10 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Varnish;
-use FOS\HttpCache\Test\HttpClient\MockHttpAdapter;
-use Http\Adapter\Exception\HttpAdapterException;
+use FOS\HttpCache\Test\HttpClient\MockHttpClient;
+use Http\Client\Exception\RequestException;
+use Http\Client\Promise;
+use Http\Client\Tools\Promise\FulfilledPromise;
 use Http\Discovery\MessageFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
 use \Mockery;
@@ -25,21 +27,21 @@ use \Mockery;
 class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MockHttpAdapter
+     * @var MockHttpClient
      */
     private $client;
 
     /**
      * @dataProvider exceptionProvider
      *
-     * @param \Exception $exception Exception thrown by HTTP adapter.
+     * @param \Exception $exception Exception thrown by HTTP client.
      * @param string     $type      The returned exception class to be expected.
      * @param string     $message   Optional exception message to match against.
      */
     public function testExceptions(\Exception $exception, $type, $message = null)
     {
         $this->client->setException($exception);
-        $varnish = new Varnish(['127.0.0.1:123'], 'my_hostname.dev', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'my_hostname.dev'], $this->client);
 
         $varnish->purge('/');
 
@@ -72,8 +74,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
             ->andReturn('bla.com')
             ->getMock()
         ;
-        $unreachableException = new HttpAdapterException();
-        $unreachableException->setRequest($request);
+        $unreachableException = new RequestException('test', $request);
 
         return [
             [
@@ -92,7 +93,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
         );
         $this->client->addResponse($response);
 
-        $varnish = new Varnish(['127.0.0.1:123'], 'my_hostname.dev', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'my_hostname.dev'], $this->client);
         try {
             $varnish->purge('/')->flush();
             $this->fail('Should have aborted with an exception');
@@ -111,13 +112,13 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingHostExceptionIsThrown()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], null, $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], [], $this->client);
         $varnish->purge('/path/without/hostname');
     }
 
     public function testSetBasePathWithHost()
     {
-        $varnish = new Varnish(['127.0.0.1'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1'], ['base_uri' => 'fos.lo'], $this->client);
         $varnish->purge('/path')->flush();
         $requests = $this->getRequests();
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
@@ -125,7 +126,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     public function testSetBasePathWithPath()
     {
-        $varnish = new Varnish(['127.0.0.1'], 'http://fos.lo/my/path', $this->client);
+        $varnish = new Varnish(['127.0.0.1'], ['base_uri' => 'http://fos.lo/my/path'], $this->client);
         $varnish->purge('append')->flush();
         $requests = $this->getRequests();
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
@@ -134,7 +135,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     public function testSetServersDefaultSchemeIsAdded()
     {
-        $varnish = new Varnish(['127.0.0.1'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1'], ['base_uri' => 'fos.lo'], $this->client);
         $varnish->purge('/some/path')->flush();
         $requests = $this->getRequests();
         $this->assertEquals('http://127.0.0.1/some/path', $requests[0]->getUri());
@@ -169,7 +170,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     public function testFlushEmpty()
     {
-        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], ['base_uri' => 'fos.lo'], $this->client);
         $this->assertEquals(0, $varnish->flush());
 
         $this->assertCount(0, $this->client->getRequests());
@@ -177,26 +178,31 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     public function testFlushCountSuccess()
     {
-        $httpAdapter = \Mockery::mock('\Http\Adapter\HttpAdapter')
-            ->shouldReceive('sendRequests')
-            ->once()
+        $httpClient = \Mockery::mock('\Http\Client\HttpAsyncClient')
+            ->shouldReceive('sendAsyncRequest')
+            ->between(4, 4)
             ->with(
                 \Mockery::on(
-                    function ($requests) {
-                        /** @type RequestInterface[] $requests */
-                        $this->assertCount(4, $requests);
-                        foreach ($requests as $request) {
-                            $this->assertEquals('PURGE', $request->getMethod());
-                        }
+                    function (RequestInterface $request) {
+                        $this->assertEquals('PURGE', $request->getMethod());
 
                         return true;
                     }
                 )
             )
-            ->andReturn([])
+            ->andReturn(
+                \Mockery::mock('\Http\Client\Promise')
+                    ->shouldReceive('wait')
+                    ->between(4, 4)
+                    ->andReturnNull()
+                    ->shouldReceive('getState')
+                    ->between(4, 4)
+                    ->andReturn(Promise::FULFILLED)
+                    ->getMock()
+            )
             ->getMock();
 
-        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], 'fos.lo', $httpAdapter);
+        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], ['base_uri' => 'fos.lo'], $httpClient);
 
         $this->assertEquals(
             2,
@@ -209,26 +215,31 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     public function testEliminateDuplicates()
     {
-        $client = \Mockery::mock('\Http\Adapter\HttpAdapter')
-            ->shouldReceive('sendRequests')
-            ->once()
+        $httpClient = \Mockery::mock('\Http\Client\HttpAsyncClient')
+            ->shouldReceive('sendAsyncRequest')
+            ->between(4, 4)
             ->with(
                 \Mockery::on(
-                    function ($requests) {
-                        /** @type RequestInterface[] $requests */
-                        $this->assertCount(4, $requests);
-                        foreach ($requests as $request) {
-                            $this->assertEquals('PURGE', $request->getMethod());
-                        }
+                    function (RequestInterface $request) {
+                        $this->assertEquals('PURGE', $request->getMethod());
 
                         return true;
                     }
                 )
             )
-            ->andReturn([])
+            ->andReturn(
+                \Mockery::mock('\Http\Client\Promise')
+                    ->shouldReceive('wait')
+                    ->between(4, 4)
+                    ->andReturnNull()
+                    ->shouldReceive('getState')
+                    ->between(4, 4)
+                    ->andReturn(Promise::FULFILLED)
+                    ->getMock()
+            )
             ->getMock();
 
-        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], 'fos.lo', $client);
+        $varnish = new Varnish(['127.0.0.1', '127.0.0.2'], ['base_uri' => 'fos.lo'], $httpClient);
 
         $this->assertEquals(
             2,
@@ -243,7 +254,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->client = new MockHttpAdapter();
+        $this->client = new MockHttpClient();
     }
 
     /**

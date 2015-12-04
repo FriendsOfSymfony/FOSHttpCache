@@ -18,7 +18,7 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Varnish;
-use Http\Adapter\Exception\HttpAdapterException;
+use Http\Client\Exception\RequestException;
 use \Mockery;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -182,10 +182,9 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         $failedRequest = \Mockery::mock('\Psr\Http\Message\RequestInterface')
             ->shouldReceive('getHeaderLine')->with('Host')->andReturn('127.0.0.1')
             ->getMock();
-        $adapterException = new HttpAdapterException('Couldn\'t connect to host');
-        $adapterException->setRequest($failedRequest);
+        $clientException = new RequestException('Couldn\'t connect to host', $failedRequest);
 
-        $unreachableException = ProxyUnreachableException::proxyUnreachable($adapterException);
+        $unreachableException = ProxyUnreachableException::proxyUnreachable($clientException);
 
         $response = \Mockery::mock('\Psr\Http\Message\ResponseInterface')
             ->shouldReceive('getStatusCode')->andReturn(403)

@@ -12,20 +12,20 @@
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Varnish;
-use FOS\HttpCache\Test\HttpClient\MockHttpAdapter;
 use Psr\Http\Message\RequestInterface;
+use FOS\HttpCache\Test\HttpClient\MockHttpClient;
 use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MockHttpAdapter
+     * @var MockHttpClient
      */
     protected $client;
 
     public function testBanEverything()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
         $varnish->ban([])->flush();
 
         $requests = $this->getRequests();
@@ -40,7 +40,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanEverythingNoBaseUrl()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], null, $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], [], $this->client);
         $varnish->ban([])->flush();
 
         $requests = $this->getRequests();
@@ -57,7 +57,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanHeaders()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
         $varnish->setDefaultBanHeaders(
             ['A' => 'B']
         );
@@ -75,7 +75,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanPath()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
 
         $hosts = ['fos.lo', 'fos2.lo'];
         $varnish->banPath('/articles/.*', 'text/html', $hosts)->flush();
@@ -94,7 +94,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
      */
     public function testBanPathEmptyHost()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
 
         $hosts = [];
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
@@ -102,7 +102,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testTagsHeaders()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
         $varnish->setDefaultBanHeaders(
             ['A' => 'B']
         );
@@ -125,7 +125,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testTagsHeadersEscapingAndCustomHeader()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client, 'X-Tags-TRex');
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'X-Tags-TRex'], $this->client);
         $varnish->invalidateTags(['post-1', 'post,type-3'])->flush();
 
         $requests = $this->getRequests();
@@ -140,7 +140,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
     public function testPurge()
     {
         $ips = ['127.0.0.1:8080', '123.123.123.2'];
-        $varnish = new Varnish($ips, 'my_hostname.dev', $this->client);
+        $varnish = new Varnish($ips, ['base_uri' => 'my_hostname.dev'], $this->client);
 
         $count = $varnish->purge('/url/one')
             ->purge('/url/two', ['X-Foo' => 'bar'])
@@ -165,7 +165,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testRefresh()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
         $varnish->refresh('/fresh')->flush();
 
         $requests = $this->getRequests();
@@ -176,7 +176,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->client = new MockHttpAdapter();
+        $this->client = new MockHttpClient();
     }
 
     /**

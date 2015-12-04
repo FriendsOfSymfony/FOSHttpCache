@@ -14,6 +14,8 @@ namespace FOS\HttpCache\Tests\Functional\Varnish;
 use FOS\HttpCache\Test\VarnishTestCase;
 
 /**
+ * Test case for VCL handling the user context.
+ *
  * @group webserver
  * @group varnish
  */
