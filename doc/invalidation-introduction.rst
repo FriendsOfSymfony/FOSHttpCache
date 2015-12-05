@@ -99,7 +99,7 @@ Cache invalidation has two possible downsides:
   changed, a lot more is involved in invalidating all of its representations.
   In other words, invalidation adds a layer of complexity to your application.
   This library tries to help reduce complexity, for instance by
-  :ref:`tagging <tags>` cached content. Additionally, if you use Symfony2, we
+  :ref:`tagging <tags>` cached content. Additionally, if you use Symfony, we
   recommend you use the FOSHttpCacheBundle_.
   which provides additional functionality to make invalidation easier.
 * Invalidation is done through requests to your caching proxy. Sending these

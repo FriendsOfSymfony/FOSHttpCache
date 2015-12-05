@@ -111,7 +111,7 @@ It is up to you to return the user context hash in response to the hash request
     // 406 Not acceptable in case of an incorrect accept header
     header('HTTP/1.1 406');
 
-If you use Symfony2, the FOSHttpCacheBundle_ will set the correct response
+If you use Symfony, the FOSHttpCacheBundle_ will set the correct response
 headers for you.
 
 Caching the Hash Response
