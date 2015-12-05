@@ -150,7 +150,7 @@ request with :ref:`a proper user hash <return context hash>`.
     We do not use ``X-Original-Url`` here, as the header will be sent to the
     backend and some applications look at this header, which would lead to
     problems. For example, the Microsoft IIS rewriting module uses this header
-    and Symfony2 has to look into that header to support IIS.
+    and Symfony has to look into that header to support IIS.
 
 .. note::
 
