@@ -118,7 +118,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     public function getTagsHeaderValue(array $tags)
     {
-        return json_encode($tags);
+        return json_decode($tags);
     }
 
     /**

@@ -116,8 +116,8 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->event->shouldReceive('getResponse')->andReturn($response);
 
-        $this->tagManager->shouldReceive('createTag')->withArgs(['one', '1234']);
-        $this->tagManager->shouldReceive('createTag')->withArgs(['two', '1234']);
+        $this->tagManager->shouldReceive('tagDigest')->withArgs(['one', '1234']);
+        $this->tagManager->shouldReceive('tagDigest')->withArgs(['two', '1234']);
         $this->createSubscriber(array())->postHandle(
             $this->event
         );

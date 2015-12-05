@@ -97,7 +97,7 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
             ->withArgs([$digest])
             ->andReturn($this->http1Path);
 
-        $this->manager->createTag($tag, $digest);
+        $this->manager->tagDigest($tag, $digest);
 
         $this->assertFileExists($this->tagsPath . '/' . $tag);
         $this->assertFileExists($expectedLinkPath);
@@ -118,10 +118,10 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
             ->withArgs([$digest])
             ->andReturn($this->http1Path);
 
-        $this->manager->createTag('hello', $digest);
+        $this->manager->tagDigest('hello', $digest);
         $this->assertFileExists($this->tagsPath . '/hello');
 
-        $this->manager->createTag('hello', $digest);
+        $this->manager->tagDigest('hello', $digest);
         $this->assertFileExists($this->tagsPath . '/hello');
     }
 
@@ -139,7 +139,7 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->mkdir($this->tagsPath . '/hello');
         $this->filesystem->symlink($this->http2Path, $this->tagsPath . '/hello/' . $digest);
 
-        $this->manager->createTag('hello', $digest);
+        $this->manager->tagDigest('hello', $digest);
         $this->assertEquals(
             $this->http1Path,
             realpath($expectedLinkPath)
@@ -168,9 +168,9 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
             ->withArgs([$digest3])
             ->andReturn($this->http3Path);
 
-        $sym1Path = $this->manager->createTag('one', $digest1);
-        $sym2Path = $this->manager->createTag('two', $digest2);
-        $sym3Path = $this->manager->createTag('one', $digest3);
+        $sym1Path = $this->manager->tagDigest('one', $digest1);
+        $sym2Path = $this->manager->tagDigest('two', $digest2);
+        $sym3Path = $this->manager->tagDigest('one', $digest3);
         $real1Path = realpath($sym1Path);
         $real2Path = realpath($sym2Path);
         $real3Path = realpath($sym3Path);
@@ -203,7 +203,7 @@ class SymlinkManagerTest extends \PHPUnit_Framework_TestCase
             ->withArgs([$digest])
             ->andReturn($this->http1Path);
 
-        $symlinkPath = $this->manager->createTag('one', $digest);
+        $symlinkPath = $this->manager->tagDigest('one', $digest);
 
         // we have a dead link
         unlink($this->http1Path);

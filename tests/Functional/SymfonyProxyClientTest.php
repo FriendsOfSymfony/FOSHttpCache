@@ -13,6 +13,7 @@ namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\Test\SymfonyTestCase;
+use FOS\HttpCache\CacheInvalidator;
 
 /**
  * @group webserver
@@ -20,13 +21,31 @@ use FOS\HttpCache\Test\SymfonyTestCase;
  */
 class SymfonyProxyClientTest extends SymfonyTestCase
 {
+    const CACHE_URL = '/symfony.php/cache';
+
     public function testPurge()
     {
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
-        $this->assertHit($this->getResponse('/symfony.php/cache'));
+        $this->assertMiss($this->getResponse(self::CACHE_URL));
+        $this->assertHit($this->getResponse(self::CACHE_URL));
 
-        $this->getProxyClient()->purge('/symfony.php/cache')->flush();
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
+        $this->getProxyClient()->purge(self::CACHE_URL)->flush();
+        $this->assertMiss($this->getResponse(self::CACHE_URL));
+    }
+
+    public function testInvalidateTags()
+    {
+        $client = $this->getProxyClient();
+        $cacheInvalidator = new CacheInvalidator($client);
+        $resp = $this->getResponse(self::CACHE_URL, [
+            $client->getTagsHeaderName() => $client->getTagsHeaderValue(['tag1'])
+        ]);
+        $this->assertMiss($resp);
+        $this->assertHit($this->getResponse(self::CACHE_URL));
+
+        $cacheInvalidator->invalidateTags(['tag1']);
+        $cacheInvalidator->flush();
+
+        $this->assertMiss($this->getResponse(self::CACHE_URL));
     }
 
     public function testPurgeContentType()
@@ -54,21 +73,21 @@ class SymfonyProxyClientTest extends SymfonyTestCase
     {
         $symfony = new Symfony(['http://127.0.0.1:' . $this->getCachingProxyPort()], ['purge_method' => 'NOTIFY']);
 
-        $this->getResponse('/symfony.php/cache');
+        $this->getResponse(self::CACHE_URL);
 
         $symfony->purge('http://localhost:8080/symfony.php/cache')->flush();
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
+        $this->assertMiss($this->getResponse(self::CACHE_URL));
     }
 
     public function testRefresh()
     {
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
-        $response = $this->getResponse('/symfony.php/cache');
+        $this->assertMiss($this->getResponse(self::CACHE_URL));
+        $response = $this->getResponse(self::CACHE_URL);
         $this->assertHit($response);
 
-        $this->getProxyClient()->refresh('/symfony.php/cache')->flush();
+        $this->getProxyClient()->refresh(self::CACHE_URL)->flush();
         usleep(100);
-        $refreshed = $this->getResponse('/symfony.php/cache');
+        $refreshed = $this->getResponse(self::CACHE_URL);
 
         $originalTimestamp = (float)(string) $response->getBody();
         $refreshedTimestamp = (float)(string) $refreshed->getBody();

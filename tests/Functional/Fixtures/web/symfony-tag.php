@@ -5,14 +5,14 @@ use FOS\HttpCache\Tests\Functional\Fixtures\Symfony\AppCache;
 use FOS\HttpCache\Tests\Functional\Fixtures\Symfony\AppKernel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpCache\Store;
-use FOS\HttpCache\SymfonyCache\Tag\NullManager;
 
 $loader = require_once __DIR__.'/../../../../vendor/autoload.php';
 
 $symfonyProxy = new SymfonyProxy();
 
 $kernel = new AppKernel();
-$kernel = new AppCache($kernel, new Store($symfonyProxy->getCacheDir()), null, new NullManager(), ['debug' => true]);
+$kernel = new EventDispa
+$kernel = new AppCache($kernel, new Store($symfonyProxy->getCacheDir()), null, ['debug' => true]);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

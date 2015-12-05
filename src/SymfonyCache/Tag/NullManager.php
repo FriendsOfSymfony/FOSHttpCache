@@ -2,6 +2,9 @@
 
 namespace FOS\HttpCache\SymfonyCache\Tag;
 
+/**
+ * Null tag manager - use this manager in a dev environment.
+ */
 class NullManager implements ManagerInterface
 {
     /**
@@ -14,7 +17,8 @@ class NullManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function createTag($tag, $contentDigest)
+    public function tagDigest($tag, $contentDigest)
     {
+        die('tagDigeest');
     }
 }

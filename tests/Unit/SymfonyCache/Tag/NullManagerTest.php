@@ -12,7 +12,7 @@ class NullManagerTest extends \PHPUnit_Framework_TestCase
     public function testNullManager()
     {
         $nullManager = new NullManager();
-        $nullManager->createTag(array('one', 'two'), 'jasdmjag');
+        $nullManager->tagDigest(array('one', 'two'), 'jasdmjag');
         $nullManager->invalidateTags(array('one', 'two'));
     }
 }

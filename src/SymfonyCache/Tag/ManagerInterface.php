@@ -5,9 +5,8 @@ namespace FOS\HttpCache\SymfonyCache\Tag;
 /**
  * Symfony HTTP cache tag manager. 
  *
- * Classes implementing this interface are responsible for associating cache
- * entries with tags and invalidating cache entries associated with a given
- * tag.
+ * Implementations are responsible for associating cache entries with tags and
+ * invalidating cache entries associated with a given tag.
  */
 interface ManagerInterface extends InvalidatorInterface
 {
@@ -18,5 +17,5 @@ interface ManagerInterface extends InvalidatorInterface
      * @param string $contentDigest
      * @return void
      */
-    public function createTag($tag, $contentDigest);
+    public function tagDigest($tag, $contentDigest);
 }

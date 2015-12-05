@@ -14,12 +14,15 @@ use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use FOS\HttpCache\SymfonyCache\TagSubscriber;
+use FOS\HttpCache\SymfonyCache\Tag\NullManager;
+use FOS\HttpCache\SymfonyCache\Tag\ManagerInterface;
 
 class AppCache extends HttpCache implements CacheInvalidationInterface
 {
     use EventDispatchingHttpCache;
 
-    public function __construct(HttpKernelInterface $kernel, StoreInterface $store, SurrogateInterface $surrogate = null, array $options = array())
+    public function __construct(HttpKernelInterface $kernel, StoreInterface $store, SurrogateInterface $surrogate = null, ManagerInterface $tagManager = null, array $options = array())
     {
         parent::__construct($kernel, $store, $surrogate, $options);
 
@@ -27,6 +30,7 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
         $this->addSubscriber(new PurgeSubscriber(['purge_method' => 'NOTIFY']));
         $this->addSubscriber(new RefreshSubscriber());
         $this->addSubscriber(new UserContextSubscriber());
+        $this->addSubscriber(new TagSubscriber($tagManager ?: new NullManager()));
         if (isset($options['debug']) && $options['debug']) {
             $this->addSubscriber(new DebugListener());
         }

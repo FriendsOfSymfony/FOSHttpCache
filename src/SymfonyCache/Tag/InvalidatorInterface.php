@@ -2,6 +2,9 @@
 
 namespace FOS\HttpCache\SymfonyCache\Tag;
 
+/**
+ * Implementations assume the responsiblity of invalidating tags.
+ */
 interface InvalidatorInterface
 {
     /**

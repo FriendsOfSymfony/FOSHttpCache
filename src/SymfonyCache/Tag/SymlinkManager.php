@@ -5,10 +5,30 @@ namespace FOS\HttpCache\SymfonyCache\Tag;
 use Symfony\Component\HttpKernel\HttpCache\Store;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Tag manager which uses symlinks to reference actual cache entries.
+ *
+ * Each tag is represented by a physical folder, within which are symlinks
+ * to the cache entries.
+ *
+ * When a tag is invalidated all of the symlink targets (the cache entries) are
+ * removed, and then the tag directory is removed.
+ */
 class SymlinkManager implements ManagerInterface
 {
+    /**
+     * @var Store
+     */
     private $store;
+
+    /**
+     * @var string
+     */
     private $filesystem;
+
+    /**
+     * @var string
+     */
     private $baseTagPath;
 
     public function __construct(Store $store, $baseTagPath, Filesystem $filesystem = null)
@@ -73,7 +93,7 @@ class SymlinkManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function createTag($tag, $contentDigest)
+    public function tagDigest($tag, $contentDigest)
     {
         $tagPath = $this->getTagPath($tag);
 

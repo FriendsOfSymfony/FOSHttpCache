@@ -118,7 +118,7 @@ class TagSubscriber implements EventSubscriberInterface
         $tags = $this->getTagsFromHeaders($response->headers);
 
         foreach ($tags as $tag) {
-            $this->tagManager->createTag($tag, $contentDigest);
+            $this->tagManager->tagDigest($tag, $contentDigest);
         }
     }
 
