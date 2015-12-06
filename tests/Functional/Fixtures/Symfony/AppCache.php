@@ -30,7 +30,9 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
         $this->addSubscriber(new PurgeSubscriber(['purge_method' => 'NOTIFY']));
         $this->addSubscriber(new RefreshSubscriber());
         $this->addSubscriber(new UserContextSubscriber());
+
         $this->addSubscriber(new TagSubscriber($tagManager ?: new NullManager()));
+
         if (isset($options['debug']) && $options['debug']) {
             $this->addSubscriber(new DebugListener());
         }

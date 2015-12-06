@@ -93,7 +93,7 @@ class SymlinkManager implements ManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function tagDigest($tag, $contentDigest)
+    public function tagCacheReference($tag, $cachereference) // hash, URL, ID
     {
         $tagPath = $this->getTagPath($tag);
 

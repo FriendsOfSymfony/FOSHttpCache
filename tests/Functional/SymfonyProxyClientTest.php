@@ -34,7 +34,9 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
     public function testInvalidateTags()
     {
-        $client = $this->getProxyClient();
+        $client = $this->getProxyClient([
+            'tags_invalidator' => new SymlinkManager(__DIR__ . '/Tag/cache
+        ]);
         $cacheInvalidator = new CacheInvalidator($client);
         $resp = $this->getResponse(self::CACHE_URL, [
             $client->getTagsHeaderName() => $client->getTagsHeaderValue(['tag1'])

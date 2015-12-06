@@ -20,5 +20,5 @@ interface InvalidatorInterface
      * @return InvalidationRequest|null
      */
     public function invalidateTags(array $tags);
-
 }
+

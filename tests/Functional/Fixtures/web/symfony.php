@@ -11,8 +11,12 @@ $loader = require_once __DIR__.'/../../../../vendor/autoload.php';
 
 $symfonyProxy = new SymfonyProxy();
 
+$httpCacheStore = new Store($symfonyProxy->getCacheDir();
+$tagStore = new DoctrineCachTagStore();
+$sfHttpCacheTagManager = new SymfonyHttpCacheManager($tagStore, $httpCacheStore); // ...
+
 $kernel = new AppKernel();
-$kernel = new AppCache($kernel, new Store($symfonyProxy->getCacheDir()), null, new NullManager(), ['debug' => true]);
+$kernel = new AppCache($kernel, $httpCacheStore), null, $sfHttpCacheTagManager, ['debug' => true]);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
