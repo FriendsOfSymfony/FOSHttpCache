@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Prophecy\Argument;
 use FOS\HttpCache\SymfonyCache\TagSubscriber;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\HttpCache\ProxyClient\Symfony;
 
 class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 {
@@ -87,8 +88,8 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         $digest = 'abcd1234';
 
         $response = Response::create('response', 200, [
-            TagSubscriber::HEADER_CONTENT_DIGEST => $digest,
-            TagSubscriber::HEADER_TAGS => 'this ain\'t JSON',
+            Symfony::HTTP_HEADER_CONTENT_DIGEST => $digest,
+            Symfony::HTTP_HEADER_TAGS => 'this ain\'t JSON',
         ]);
         $this->event->shouldReceive('getResponse')->andReturn($response);
         $this->createSubscriber(array())->postHandle(

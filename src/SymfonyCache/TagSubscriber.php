@@ -21,18 +21,6 @@ use FOS\HttpCache\ProxyClient\Symfony;
 class TagSubscriber implements EventSubscriberInterface
 {
     /**
-     * Name for HTTP header containing the tags (for both invalidation and
-     * initial tagging).
-     */
-    const HEADER_TAGS = 'X-Cache-Tags';
-
-    /**
-     * Header which should contain the content digest produced by the Symfony
-     * HTTP cache.
-     */
-    const HEADER_CONTENT_DIGEST = 'X-Content-Digest';
-
-    /**
      * @var ManagerInterface
      */
     private $manager;
@@ -66,7 +54,7 @@ class TagSubscriber implements EventSubscriberInterface
     {
         $response = $event->getResponse();
 
-        if (false === $response->headers->has(self::HEADER_TAGS)) {
+        if (false === $response->headers->has(Symfony::HTTP_HEADER_TAGS)) {
             return;
         }
 
@@ -98,15 +86,15 @@ class TagSubscriber implements EventSubscriberInterface
      */
     private function getContentDigestFromHeaders(HeaderBag $headers)
     {
-        if (!$headers->has(self::HEADER_CONTENT_DIGEST)) {
+        if (!$headers->has(Symfony::HTTP_HEADER_CONTENT_DIGEST)) {
             throw new \RuntimeException(sprintf(
                 'Could not find content digest header: "%s". Got headers: "%s"',
-                self::HEADER_CONTENT_DIGEST,
+                Symfony::HTTP_HEADER_CONTENT_DIGEST,
                 implode('", "', array_keys($headers->all()))
             ));
         }
 
-        return $headers->get(self::HEADER_CONTENT_DIGEST);
+        return $headers->get(Symfony::HTTP_HEADER_CONTENT_DIGEST);
     }
 
     /**
@@ -122,14 +110,14 @@ class TagSubscriber implements EventSubscriberInterface
      */
     private function getTagsFromHeaders(HeaderBag $headers)
     {
-        if (!$headers->has(self::HEADER_TAGS)) {
+        if (!$headers->has(Symfony::HTTP_HEADER_TAGS)) {
             throw new \RuntimeException(sprintf(
                 'Could not find tags header "%s"',
-                self::HEADER_TAGS
+                Symfony::HEADER_TAGS
             ));
         }
 
-        $tagsRaw = $headers->get(self::HEADER_TAGS);
+        $tagsRaw = $headers->get(Symfony::HTTP_HEADER_TAGS);
         $tags = json_decode($tagsRaw, true);
 
         if (null === $tags) {

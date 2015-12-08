@@ -33,8 +33,28 @@ use FOS\HttpCache\Tag\Manager\NullTagManager;
  */
 class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInterface, TagsInterface
 {
+    /**
+     * Method used for refresh
+     */
     const HTTP_METHOD_REFRESH = 'GET';
+
+    /**
+     * Method used for invalidation
+     */
     const HTTP_METHOD_INVALIDATE = 'INVALIDATE';
+
+    /**
+     * Name for HTTP header containing the tags (for both invalidation and
+     * initial tagging).
+     */
+    const HTTP_HEADER_TAGS = 'X-Cache-Tags';
+
+    /**
+     * Header which should contain the content digest produced by the Symfony
+     * HTTP cache.
+     */
+    const HTTP_HEADER_CONTENT_DIGEST = 'X-Content-Digest';
+
 
     /**
      * The options configured in the constructor argument or default values.
@@ -114,7 +134,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     public function getTagsHeaderValue(array $tags)
     {
-        return json_decode($tags);
+        return json_encode($tags, true);
     }
 
     /**
@@ -122,6 +142,6 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     public function getTagsHeaderName()
     {
-        return SymfonyTagManager::HEADER_TAGS;
+        return self::HTTP_HEADER_TAGS;
     }
 }
