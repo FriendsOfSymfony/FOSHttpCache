@@ -6,6 +6,7 @@ use FOS\HttpCache\Tag\Manager\Symfony;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\HttpCache\Tag\StorageInterface;
 use Symfony\Component\HttpKernel\HttpCache\Store;
+use FOS\HttpCache\SymfonyCache\TagSubscriber;
 
 class SymfonyTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,66 +73,8 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
         $digest = 'abcd1234';
         $sMaxAge = 600;
 
-        $response = Response::create('response', 200, [
-            Symfony::HEADER_CONTENT_DIGEST => $digest,
-            Symfony::HEADER_TAGS => json_encode($tags),
-        ]);
-        $response->setSharedMaxAge($sMaxAge);
-
         $this->tagStorage->shouldReceive('tagCacheId')
             ->withArgs([$tags, $digest, $sMaxAge]);
-        $this->manager->tagResponse($response);
-    }
-
-    /**
-     * It should throw an exception if there are no content digest header.
-     *
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Could not find content digest header
-     */
-    public function testNoContentDigestHeader()
-    {
-        $tags = ['one', 'two'];
-
-        $response = Response::create('response', 200, [
-            Symfony::HEADER_TAGS => json_encode($tags),
-        ]);
-
-        $this->manager->tagResponse($response);
-    }
-
-    /**
-     * It should throw an exception if there are no tags header.
-     *
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Could not find tags header
-     */
-    public function testNoTagsHeader()
-    {
-        $digest = 'abcd1234';
-
-        $response = Response::create('response', 200, [
-            Symfony::HEADER_CONTENT_DIGEST => $digest,
-        ]);
-
-        $this->manager->tagResponse($response);
-    }
-
-    /**
-     * It should throw an exception if the JSON is invalid.
-     *
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Could not JSON decode
-     */
-    public function testInvalidJsonEncodedTags()
-    {
-        $digest = 'abcd1234';
-
-        $response = Response::create('response', 200, [
-            Symfony::HEADER_CONTENT_DIGEST => $digest,
-            Symfony::HEADER_TAGS => 'this ain\'t JSON',
-        ]);
-
-        $this->manager->tagResponse($response);
+        $this->manager->tagCacheId($tags, $digest, $sMaxAge);
     }
 }

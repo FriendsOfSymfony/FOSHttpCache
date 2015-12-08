@@ -19,7 +19,8 @@ use Http\Adapter\HttpAdapter;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
 use FOS\HttpCache\SymfonyCache\TagSubscriber;
-use FOS\HttpCache\SymfonyCache\Tag\NullManager;
+use FOS\HttpCache\Tag\Manager\Symfony as SymfonyTagManager;
+use FOS\HttpCache\Tag\Manager\NullTagManager;
 
 /**
  * Symfony HttpCache invalidator.
@@ -62,7 +63,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
-            'tags_invalidator' => new NullManager()
+            'tags_invalidator' => new NullTagManager()
         ]);
 
         $this->options = $resolver->resolve($options);
@@ -104,12 +105,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     public function invalidateTags(array $tags)
     {
-        $invalidationRequest = $this->options['tags_invalidator']->invalidateTags($tags);
-
-        if (null !== $invalidationRequest) {
-            $this->queue->add($invalidationRequest);
-        }
-
+        $this->options['tags_invalidator']->invalidateTags($tags);
         return $this;
     }
 
@@ -126,6 +122,6 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     public function getTagsHeaderName()
     {
-        return TagSubscriber::HEADER_TAGS;
+        return SymfonyTagManager::HEADER_TAGS;
     }
 }

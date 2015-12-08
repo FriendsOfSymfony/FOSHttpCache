@@ -21,73 +21,8 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tagManager = \Mockery::mock('FOS\HttpCache\SymfonyCache\Tag\ManagerInterface');
+        $this->tagManager = \Mockery::mock('FOS\HttpCache\Tag\ManagerInterface');
         $this->event = \Mockery::mock('FOS\HttpCache\SymfonyCache\CacheEvent');
-    }
-
-    /**
-     * If the HTTP method is not INVALIDATE it should return early.
-     */
-    public function testNoInvalidate()
-    {
-        $request = Request::create('/url');
-        $this->event->shouldReceive('getRequest')->andReturn($request);
-        $this->event->shouldReceive('setResponse')->never();
-        $this->createSubscriber(array())->preHandle(
-            $this->event
-        );
-    }
-
-    /**
-     * It the HTTP method is INVALIDATE then it should invalidate the tags
-     * given in the tags header.
-     */
-    public function testInvalidate()
-    {
-        $request = Request::create('/url', 'INVALIDATE');
-        $request->headers->set('X-TaggedCache-Tags', json_encode(['one', 'two']));
-        $this->event->shouldReceive('getRequest')->andReturn($request);
-        $this->tagManager->shouldReceive('invalidateTags')
-            ->withArgs([['one', 'two']])
-            ->andReturn('asd');
-        $this->event->shouldReceive('setResponse');
-
-        $this->createSubscriber(array())->preHandle(
-            $this->event
-        );
-    }
-
-    /**
-     * It should throw an exception if the tags header is not present but the
-     * HTTP method is INVALIDATE
-     *
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Could not find header
-     */
-    public function testInvalidateNoTagsHeader()
-    {
-        $request = Request::create('/url', 'INVALIDATE');
-        $this->event->shouldReceive('getRequest')->andReturn($request);
-        $this->createSubscriber(array())->preHandle(
-            $this->event
-        );
-    }
-
-    /**
-     * It should throw an exception if it could not decode the JSON tags from
-     * the header.
-     *
-     * @expectedException RuntimeException
-     * @expectedExceptionMessage Could not JSON decode
-     */
-    public function testInvalidateInvalidJson()
-    {
-        $request = Request::create('/url', 'INVALIDATE');
-        $request->headers->set('X-TaggedCache-Tags', 'one,two');
-        $this->event->shouldReceive('getRequest')->andReturn($request);
-        $this->createSubscriber(array())->preHandle(
-            $this->event
-        );
     }
 
     /**
@@ -111,13 +46,13 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $response = Response::create('test', 200, [
             'X-Content-Digest' => '1234',
-            'X-TaggedCache-Tags' => json_encode(['one', 'two'])
+            'X-Cache-Tags' => json_encode(['one', 'two'])
         ]);
+        $response->setMaxAge(10);
 
         $this->event->shouldReceive('getResponse')->andReturn($response);
 
-        $this->tagManager->shouldReceive('tagDigest')->withArgs(['one', '1234']);
-        $this->tagManager->shouldReceive('tagDigest')->withArgs(['two', '1234']);
+        $this->tagManager->shouldReceive('tagCacheId')->withArgs([ ['one', 'two'], '1234', 10]);
         $this->createSubscriber(array())->postHandle(
             $this->event
         );
@@ -132,9 +67,29 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testHandleTagsNoContentDigest()
     {
         $response = Response::create('test', 200, [
-            'X-TaggedCache-Tags' => json_encode(['one', 'two'])
+            'X-Cache-Tags' => json_encode(['one', 'two'])
         ]);
 
+        $this->event->shouldReceive('getResponse')->andReturn($response);
+        $this->createSubscriber(array())->postHandle(
+            $this->event
+        );
+    }
+
+    /**
+     * It should throw an exception if the JSON is invalid.
+     *
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Could not JSON decode
+     */
+    public function testInvalidJsonEncodedTags()
+    {
+        $digest = 'abcd1234';
+
+        $response = Response::create('response', 200, [
+            TagSubscriber::HEADER_CONTENT_DIGEST => $digest,
+            TagSubscriber::HEADER_TAGS => 'this ain\'t JSON',
+        ]);
         $this->event->shouldReceive('getResponse')->andReturn($response);
         $this->createSubscriber(array())->postHandle(
             $this->event

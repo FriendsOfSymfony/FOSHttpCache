@@ -3,7 +3,7 @@
 namespace FOS\HttpCache\SymfonyCache;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use FOS\HttpCache\SymfonyCache\Tag\ManagerInterface;
+use FOS\HttpCache\Tag\ManagerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\HeaderBag;
@@ -24,7 +24,7 @@ class TagSubscriber implements EventSubscriberInterface
      * Name for HTTP header containing the tags (for both invalidation and
      * initial tagging).
      */
-    const HEADER_TAGS = 'X-TaggedCache-Tags';
+    const HEADER_TAGS = 'X-Cache-Tags';
 
     /**
      * Header which should contain the content digest produced by the Symfony
@@ -35,15 +35,15 @@ class TagSubscriber implements EventSubscriberInterface
     /**
      * @var ManagerInterface
      */
-    private $tagManager;
+    private $manager;
 
     /**
-     * @param ManagerInterface $tagManager
+     * @param ManagerInterface $manager
      * @param mixed $options
      */
-    public function __construct(ManagerInterface $tagManager)
+    public function __construct(ManagerInterface $manager)
     {
-        $this->tagManager = $tagManager;
+        $this->manager = $manager;
     }
 
     /**
@@ -52,28 +52,8 @@ class TagSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::PRE_HANDLE => 'preHandle',
             Events::POST_HANDLE => 'postHandle',
         ];
-    }
-
-    /**
-     * Check to see if the request is an invalidation request, if so
-     * handle the invalidation.
-     *
-     * @param CacheEvent $event
-     */
-    public function preHandle(CacheEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if (Symfony::HTTP_METHOD_INVALIDATE!== $request->getMethod()) {
-            return;
-        }
-
-        $event->setResponse(
-            $this->handleInvalidate($request)
-        );
     }
 
     /**
@@ -90,43 +70,61 @@ class TagSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->handleTags($response);
+        $this->tagResponse($response);
     }
 
-    private function handleInvalidate(Request $request)
+    /**
+     * {@inheritdoc}
+     */
+    private function tagResponse(Response $response)
     {
-        $tags = $this->getTagsFromHeaders($request->headers);
-        $nbCacheEntries = $this->tagManager->invalidateTags($tags);
-
-        return new JsonResponse(array(
-            'Status' => 'PURGED',
-            'NbCacheEntries' => $nbCacheEntries
-        ));
+        $contentDigest = $this->getContentDigestFromHeaders($response->headers);
+        $tags = $this->getTagsFromHeaders($response->headers);
+        $expiry = $this->getExpiryFromResponse($response);
+        $this->manager->tagCacheId($tags, $contentDigest, $expiry);
     }
 
-    private function handleTags(Response $response)
+    /**
+     * Return the content digest from the headers.
+     * The content digest should be set by the Symfony HTTP cache before
+     * this method is invoked.
+     *
+     * If the content digest cannot be found then a \RuntimeException
+     * is thrown.
+     *
+     * @param HeaderBag $headers
+     * @return string
+     * @throws RuntimeException
+     */
+    private function getContentDigestFromHeaders(HeaderBag $headers)
     {
-        if (!$response->headers->has(self::HEADER_CONTENT_DIGEST)) {
+        if (!$headers->has(self::HEADER_CONTENT_DIGEST)) {
             throw new \RuntimeException(sprintf(
-                'Could not find content digest in the header: "%s". Got headers: "%s"',
+                'Could not find content digest header: "%s". Got headers: "%s"',
                 self::HEADER_CONTENT_DIGEST,
-                implode('", "', array_keys($response->headers->all()))
+                implode('", "', array_keys($headers->all()))
             ));
         }
 
-        $contentDigest = $response->headers->get(self::HEADER_CONTENT_DIGEST);
-        $tags = $this->getTagsFromHeaders($response->headers);
-
-        foreach ($tags as $tag) {
-            $this->tagManager->tagCacheReference($tag, $ref);
-        }
+        return $headers->get(self::HEADER_CONTENT_DIGEST);
     }
 
+    /**
+     * Retrieve and decode the tag list from the response
+     * headers.
+     *
+     * If no tags header is found then throw a \RuntimeException.
+     * If the JSON is invalid then throw a \RuntimeException
+     *
+     * @param HeaderBag $headers
+     * @return string[]
+     * @throws \RuntimeException
+     */
     private function getTagsFromHeaders(HeaderBag $headers)
     {
         if (!$headers->has(self::HEADER_TAGS)) {
             throw new \RuntimeException(sprintf(
-                'Could not find header "%s"',
+                'Could not find tags header "%s"',
                 self::HEADER_TAGS
             ));
         }
@@ -142,5 +140,17 @@ class TagSubscriber implements EventSubscriberInterface
         }
 
         return $tags;
+    }
+
+    /**
+     * Determine the cache expiry time from the response headers.
+     *
+     * If no expiry can be inferred, then return NULL.
+     *
+     * @return integer|null
+     */
+    private function getExpiryFromResponse(Response $response)
+    {
+        return $response->getMaxAge();
     }
 }
