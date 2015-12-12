@@ -1,3 +1,4 @@
+sudo: required
 group: edge
 
 language: php
