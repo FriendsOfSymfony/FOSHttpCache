@@ -21,19 +21,22 @@
         }
     ],
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": ">=5.4.8",
-        "symfony/event-dispatcher": "~2.3",
-        "symfony/options-resolver": "~2.3",
+        "symfony/event-dispatcher": "^2.3||^3.0",
+        "symfony/options-resolver": "^2.3||^3.0",
         "php-http/client-implementation": "^1.0.0",
-        "php-http/discovery": "^0.3.0"
+        "php-http/discovery": "^0.5.0",
+        "php-http/message": "^0.1.2"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.1",
         "monolog/monolog": "~1.0",
-        "php-http/guzzle6-adapter": "^0.2.0",
-        "symfony/process": "~2.3",
-        "symfony/http-kernel": "~2.3"
+        "php-http/guzzle6-adapter": "0.3.x-dev",
+        "php-http/mock-client": "0.1.x-dev",
+        "symfony/process": "^2.3||^3.0",
+        "symfony/http-kernel": "^2.3||^3.0"
     },
     "suggest": {
         "monolog/monolog": "For logging issues while invalidating"

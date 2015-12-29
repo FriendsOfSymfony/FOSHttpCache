@@ -12,8 +12,8 @@
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Varnish;
+use Http\Mock\Client;
 use Psr\Http\Message\RequestInterface;
-use FOS\HttpCache\Test\HttpClient\MockHttpClient;
 use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
@@ -176,7 +176,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->client = new MockHttpClient();
+        $this->client = new Client();
     }
 
     /**

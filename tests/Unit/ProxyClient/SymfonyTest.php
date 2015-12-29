@@ -12,14 +12,16 @@
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Symfony;
-use FOS\HttpCache\Test\HttpClient\MockHttpClient;
+use Http\Mock\Client;
 use \Mockery;
 use Psr\Http\Message\RequestInterface;
 
 class SymfonyTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MockHttpClient
+     * Mock client
+     *
+     * @var Client
      */
     protected $client;
 
@@ -62,7 +64,7 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->client = new MockHttpClient();
+        $this->client = new Client();
     }
 
     /**

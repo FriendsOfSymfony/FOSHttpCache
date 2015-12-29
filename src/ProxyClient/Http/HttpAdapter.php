@@ -11,7 +11,7 @@ use Http\Client\Exception;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
-use Http\Client\Promise;
+use Http\Promise\Promise;
 use Http\Discovery\UriFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -29,9 +29,9 @@ class HttpAdapter
     private $httpClient;
 
     /**
-     * Asynchronously sent requests
+     * Queued requests
      *
-     * @var Promise[]
+     * @var RequestInterface[]
      */
     private $queue = [];
 
@@ -110,20 +110,14 @@ class HttpAdapter
         }
 
         foreach ($promises as $promise) {
-            // TODO: or will the final version of promise return the value in wait()?
-            $promise->wait();
-            if (Promise::FULFILLED === $promise->getState()) {
-                continue;
-            }
-            $exception = $promise->getException();
-            if ($exception instanceof \Exception) {
-                if ($exception instanceof HttpException) {
-                    $exceptions->add(ProxyResponseException::proxyResponse($exception->getResponse()));
-                } elseif ($exception instanceof RequestException) {
-                    $exceptions->add(ProxyUnreachableException::proxyUnreachable($exception));
-                } else {
+            try {
+                $promise->wait();
+            } catch (HttpException $exception) {
+                $exceptions->add(ProxyResponseException::proxyResponse($exception->getResponse()));
+            } catch (RequestException $exception) {
+                $exceptions->add(ProxyUnreachableException::proxyUnreachable($exception));
+            } catch (\Exception $exception)  {
                     $exceptions->add(new InvalidArgumentException($exception));
-                }
             }
         }
 
