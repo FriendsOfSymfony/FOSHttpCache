@@ -15,20 +15,18 @@ Setup
 HTTP Client Installation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Because the clients send invalidation requests over HTTP, an `HTTP client`_
-must be installed. You can choose a client that fits for your project or
-an adapter to a client you already use. For instance, if you use Guzzle 6 in
-your project, install the appropriate adapter:
+Because the clients send invalidation requests over HTTP, an `HTTPlug client`_
+must be installed. Pick either a standalone client or an adapter to a client
+library that is already included in your project. For instance, if you use
+Guzzle 6 in your project, install the appropriate adapter:
 
 .. code-block:: bash
 
     $ composer require php-http/guzzle6-adapter
 
 You also need a `PSR-7 message implementation`_. If you use Guzzle 6, Guzzle’s
-implementation is already included. If you use another client, install one of
-the implementations. Recommended:
-
-TODO: i think we need the matching adapter for the factory, if guzzle6-adapter is not installed
+implementation is already included. If you use another client, you need to
+install one of the message implementations. Recommended:
 
 .. code-block:: bash
 
@@ -285,5 +283,5 @@ Varnish client::
 Make sure to add any headers that you want to ban on to your
 :doc:`proxy configuration <proxy-configuration>`.
 
-.. _HTTP client: http://httplug.io/
+.. _HTTPlug client: http://httplug.io/
 .. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation
