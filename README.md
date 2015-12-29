@@ -1,7 +1,7 @@
 FOSHttpCache
 ============
-[![Build Status](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache.svg?branch=master)](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache) 
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/badges/quality-score.png?s=bc263d4deb45becdb1469b71e8630c5e65efdcf4)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/) 
+[![Build Status](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache.svg?branch=master)](https://travis-ci.org/FriendsOfSymfony/FOSHttpCache)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/badges/quality-score.png?s=bc263d4deb45becdb1469b71e8630c5e65efdcf4)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/)
 [![Code Coverage](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/badges/coverage.png?s=a19df7bb7e830642fb937891aebe8c3e1c9f59c0)](https://scrutinizer-ci.com/g/FriendsOfSymfony/FOSHttpCache/)
 [![Latest Stable Version](https://poser.pugx.org/friendsofsymfony/http-cache/v/stable.svg)](https://packagist.org/packages/friendsofsymfony/http-cache)
 
@@ -15,10 +15,10 @@ and to test your caching and invalidation code against a Varnish setup.
 It does this by abstracting some caching concepts and attempting to make sure these
 can be supported across Varnish, Nginx and Symfony HttpCache.
 
-If you use Symfony2, have a look at the
+If you use Symfony, have a look at the
 [FOSHttpCacheBundle](https://github.com/FriendsOfSymfony/FOSHttpCacheBundle).
 The bundle provides the invalidator as a service, along with a number of
-Symfony2-specific features to help with caching and caching proxies.
+Symfony-specific features to help with caching and caching proxies.
 
 Features
 --------
@@ -27,7 +27,7 @@ Features
   with minimal impact on performance.
 * Cache tagging abstraction, uses BAN with Varnish and allows tagging support for other caching proxies in the future.
 * Use the built-in support for [Varnish](http://foshttpcache.readthedocs.org/en/stable/varnish-configuration.html)
-  3 and 4, [NGINX](http://foshttpcache.readthedocs.org/en/stable/nginx-configuration.html), the 
+  3 and 4, [NGINX](http://foshttpcache.readthedocs.org/en/stable/nginx-configuration.html), the
   [Symfony reverse proxy from the http-kernel component](http://foshttpcache.readthedocs.org/en/stable/symfony-cache-configuration.html)
   or easily implement your own caching proxy client.
 * [Test your application](http://foshttpcache.readthedocs.org/en/stable/testing-your-application.html)
