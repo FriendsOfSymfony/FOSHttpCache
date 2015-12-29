@@ -1,3 +1,5 @@
+group: edge
+
 language: php
 
 php:
