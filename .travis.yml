@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.4
   - 5.5
   - 5.6
   - hhvm
@@ -12,7 +11,7 @@ env:
 
 matrix:
   include:
-    - php: 5.4
+    - php: 5.5
       env: SYMFONY_VERSION=2.3.* VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
 
 branches:
@@ -22,8 +21,6 @@ branches:
     - '/^\d+\.\d+$/'
 
 install:
-  - if [[ "$TRAVIS_PHP_VERSION" == "5.4" || "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then composer remove "php-http/guzzle6-adapter" --dev --no-update; fi
-  - if [[ "$TRAVIS_PHP_VERSION" == "5.4" || "$TRAVIS_PHP_VERSION" == "hhvm" ]]; then composer require "php-http/guzzle5-adapter" --dev --no-update; fi
   - composer update $COMPOSER_FLAGS --prefer-source --no-interaction
 
 before_script:

@@ -93,7 +93,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     protected function getDefaultOptions()
     {
         $resolver = new OptionsResolver();
-        $resolver->setDefault('base_uri', null);
+        $resolver->setDefaults(['base_uri' => null]);
 
         return $resolver;
     }

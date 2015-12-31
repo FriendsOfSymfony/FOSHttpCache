@@ -196,7 +196,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     protected function getDefaultOptions()
     {
         $resolver = parent::getDefaultOptions();
-        $resolver->setDefault('tags_header', 'X-Cache-Tags');
+        $resolver->setDefaults(['tags_header' => 'X-Cache-Tags']);
 
         return $resolver;
     }
