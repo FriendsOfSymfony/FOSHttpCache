@@ -27,9 +27,8 @@
         "symfony/event-dispatcher": "^2.3||^3.0",
         "symfony/options-resolver": "^2.3||^3.0",
         "php-http/client-implementation": "^1.0.0",
-        "php-http/discovery": "^0.6.0",
-        "php-http/message": "^0.2.1",
-        "puli/cli": "^1.0.0-beta8"
+        "php-http/discovery": "^0.6.3",
+        "php-http/message": "^0.2.1"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.1",
