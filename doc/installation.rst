@@ -5,23 +5,20 @@ Installation
 ------------
 
 The FOSHttpCache library is available on Packagist_. You can install it using
-Composer_:
+Composer_.
+
+The library relies on HTTPlug_ for sending invalidation requests over HTTP, so
+you need to install an HTTPlug-compatible client or adapter first:
+
+.. code-block:: bash
+
+    $ composer require php-http/guzzle6-adapter
+
+Then install the FOSHttpCache library itself:
 
 .. code-block:: bash
 
     $ composer require friendsofsymfony/http-cache
-
-Note that the library needs a ``psr/http-message-implementation`` and
-``php-http/adapter-implementation``. If your project does not contain one,
-composer will complain that it did not find ``psr/http-message-implementation``.
-
-When on PHP 5.5+, use the following line instead:
-
-.. code-block:: bash
-
-    $ composer require friendsofsymfony/http-cache guzzlehttp/psr7:^1.0 php-http/guzzle6-adapter:^0.1.0
-
-On PHP 5.4, the ``php-http/guzzle5-adapter:^0.1.0`` works fine.
 
 .. note::
 
@@ -61,3 +58,4 @@ invalidation requests:
 .. _Packagist: https://packagist.org/packages/friendsofsymfony/http-cache
 .. _Composer: http://getcomposer.org
 .. _Semantic Versioning: http://semver.org/
+.. _HTTPlug: http://httplug.io

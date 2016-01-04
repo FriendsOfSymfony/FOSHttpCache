@@ -12,21 +12,21 @@ which caching solution you use.
 Setup
 -----
 
-HTTP Adapter Installation
-~~~~~~~~~~~~~~~~~~~~~~~~~
+HTTP Client Installation
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-Because the clients send invalidation requests over HTTP, an `HTTP adapter`_
-must be installed. Which one you need depends on the HTTP client library that
-you use in your project. For instance, if you use Guzzle 6 in your project,
-install the appropriate adapter:
+Because the clients send invalidation requests over HTTP, an `HTTPlug client`_
+must be installed. Pick either a standalone client or an adapter to a client
+library that is already included in your project. For instance, if you use
+Guzzle 6 in your project, install the appropriate adapter:
 
 .. code-block:: bash
 
     $ composer require php-http/guzzle6-adapter
 
 You also need a `PSR-7 message implementation`_. If you use Guzzle 6, Guzzle’s
-implementation is already included. If you use another client, install one of
-the implementations. Recommended:
+implementation is already included. If you use another client, you need to
+install one of the message implementations. Recommended:
 
 .. code-block:: bash
 
@@ -40,13 +40,13 @@ Alternatively:
 
 .. _HTTP adapter configuration:
 
-HTTP Adapter Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+HTTP Client Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, the proxy client will find the adapter that you have installed
-through Composer. But you can also pass the adapter explicitly. This is most
-useful when you have created a HTTP client with custom options or middleware
-(such as logging)::
+By default, the proxy client will automatically locate an HTTP client that you
+have installed through Composer. But you can also pass the adapter explicitly.
+This is most useful when you have created a HTTP client with custom options or
+middleware (such as logging)::
 
     use GuzzleHttp\Client;
 
@@ -65,6 +65,13 @@ Then pass that adapter to the caching proxy client::
 
     $proxyClient = new Varnish($servers, '/baseUrl', $adapter);
     // Varnish as example, but also possible for NGINX and Symfony
+
+HTTP Message Factory Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Similar to the HTTP client, the HTTP message factory is automatically located
+by default. You can pass an explicit instance of the message factory if you
+need to.
 
 .. _varnish client:
 
@@ -276,6 +283,5 @@ Varnish client::
 Make sure to add any headers that you want to ban on to your
 :doc:`proxy configuration <proxy-configuration>`.
 
-.. _header: http://php.net/header
-.. _HTTP Adapter: http://php-http.readthedocs.org/en/latest/
+.. _HTTPlug client: http://httplug.io/
 .. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation

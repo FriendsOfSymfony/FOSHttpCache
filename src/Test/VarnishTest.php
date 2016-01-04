@@ -176,7 +176,7 @@ trait VarnishTest
         if (null === $this->proxyClient) {
             $this->proxyClient = new Varnish(
                 ['http://127.0.0.1:' . $this->getProxy()->getPort()],
-                $this->getHostName() . ':' . $this->getProxy()->getPort()
+                ['base_uri' => $this->getHostName() . ':' . $this->getProxy()->getPort()]
             );
         }
 

@@ -11,10 +11,10 @@
 
 namespace FOS\HttpCache\Test;
 
-use Http\Adapter\HttpAdapter;
-use Http\Discovery\HttpAdapterDiscovery;
+use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
+use Http\Client\HttpClient as PhpHttpClient;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -25,11 +25,11 @@ use Psr\Http\Message\UriInterface;
 class HttpClient
 {
     /**
-     * HTTP adapter for requests to the application
+     * HTTP client for requests to the application
      *
-     * @var HttpAdapter
+     * @var HttpClient
      */
-    private $httpAdapter;
+    private $httpClient;
 
     /**
      * @var string
@@ -67,21 +67,21 @@ class HttpClient
         $headers['Connection'] = 'Close';
         $request = $this->createRequest($method, $uri, $headers);
 
-        return $this->getHttpAdapter()->sendRequest($request);
+        return $this->getHttpClient()->sendRequest($request);
     }
 
     /**
      * Get HTTP adapter for your application
      *
-     * @return HttpAdapter
+     * @return PhpHttpClient
      */
-    private function getHttpAdapter()
+    private function getHttpClient()
     {
-        if ($this->httpAdapter === null) {
-            $this->httpAdapter = HttpAdapterDiscovery::find();
+        if ($this->httpClient === null) {
+            $this->httpClient = HttpClientDiscovery::find();
         }
 
-        return $this->httpAdapter;
+        return $this->httpClient;
     }
 
     /**
@@ -113,7 +113,6 @@ class HttpClient
         return MessageFactoryDiscovery::find()->createRequest(
             $method,
             $uri,
-            '1.1',
             $headers
         );
     }
