@@ -3,7 +3,7 @@ language: php
 php:
   - 5.5
   - 5.6
-  - hhvm
+# broken with puli discovery  - hhvm
   - 7
 
 env:
