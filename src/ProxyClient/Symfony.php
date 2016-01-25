@@ -14,12 +14,13 @@ namespace FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use Http\Client\HttpAsyncClient;
 use Http\Message\MessageFactory;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Symfony HttpCache invalidator.
+ *
+ * Additional constructor options:
+ * - purge_method:         HTTP method that identifies purge requests.
  *
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
@@ -27,24 +28,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_REFRESH = 'GET';
-
-    /**
-     * {@inheritDoc}
-     *
-     * When creating the client, you can configure options:
-     *
-     * - purge_method:         HTTP method that identifies purge requests.
-     *
-     * @param array $options The purge_method that should be used.
-     */
-    public function __construct(
-        array $servers,
-        array $options,
-        HttpAsyncClient $httpClient = null,
-        MessageFactory $messageFactory = null
-    ) {
-        parent::__construct($servers, $options, $httpClient, $messageFactory);
-    }
 
     /**
      * {@inheritdoc}

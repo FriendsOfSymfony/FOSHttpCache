@@ -17,12 +17,13 @@ use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
-use Http\Client\HttpAsyncClient;
 use Http\Message\MessageFactory;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Varnish HTTP cache invalidator.
+ *
+ * Additional constructor options:
+ * - tags_header Header for tagging responses, defaults to X-Cache-Tags
  *
  * @author David de Boer <david@driebit.nl>
  */
@@ -45,38 +46,6 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
         self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
     ];
-
-    /**
-     * Has a base URI been set?
-     *
-     * @var bool
-     */
-    private $baseUriSet;
-
-    /**
-     * @var string
-     */
-    private $tagsHeader;
-
-    /**
-     * {@inheritdoc}
-     *
-     * Additional options:
-     *
-     * - tags_header Header for tagging responses, defaults to X-Cache-Tags
-     *
-     * @param string $tagsHeader
-     */
-    public function __construct(
-        array $servers,
-        array $options = [],
-        HttpAsyncClient $httpClient = null,
-        MessageFactory $messageFactory = null
-    ) {
-        parent::__construct($servers, $options, $httpClient, $messageFactory);
-        $this->baseUriSet = $this->options['base_uri'] !== null;
-        $this->tagsHeader = $this->options['tags_header'];
-    }
 
     /**
      * Set the default headers that get merged with the provided headers in self::ban().
@@ -107,7 +76,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     {
         $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $this->escapeTags($tags))));
 
-        return $this->ban([$this->tagsHeader => $tagExpression]);
+        return $this->ban([$this->options['tags_header'] => $tagExpression]);
     }
 
     /**
@@ -125,7 +94,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      */
     public function getTagsHeaderName()
     {
-        return $this->tagsHeader;
+        return $this->options['tags_header'];
     }
 
     /**
@@ -215,7 +184,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
         $request = $this->messageFactory->createRequest($method, $url, $headers);
 
         if (self::HTTP_METHOD_BAN !== $method
-            && !$this->baseUriSet
+            && null === $this->options['base_uri']
             && !$request->getHeaderLine('Host')
         ) {
             throw MissingHostException::missingHost($url);
