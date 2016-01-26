@@ -15,7 +15,9 @@ use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
 use Http\Client\HttpAsyncClient;
 use Http\Discovery\HttpAsyncClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\UriFactoryDiscovery;
 use Http\Message\MessageFactory;
+use Http\Message\UriFactory;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -62,18 +64,29 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      *                                             client is supplied, a default one is created.
      * @param MessageFactory|null  $messageFactory Factory for PSR-7 messages. If none supplied,
      *                                             a default one is created.
+     * @param UriFactory|null      $uriFactory     Factory for PSR-7 URIs. If not specified, a
+     *                                             default one is created.
      */
     public function __construct(
         array $servers,
         array $options = [],
         HttpAsyncClient $httpClient = null,
-        MessageFactory $messageFactory = null
+        MessageFactory $messageFactory = null,
+        UriFactory $uriFactory = null
     ) {
+        if ((!$httpClient || !$messageFactory || !$uriFactory) && !class_exists('Http\Discovery\HttpAsyncClientDiscovery')) {
+            throw new \LogicException('Either specify the client and the message and uri factories or include php-http/discovery in your project');
+        }
+
         if (!$httpClient) {
             $httpClient = HttpAsyncClientDiscovery::find();
         }
+        if (!$uriFactory) {
+            $uriFactory = UriFactoryDiscovery::find();
+        }
+
         $this->options = $this->getDefaultOptions()->resolve($options);
-        $this->httpAdapter = new HttpAdapter($servers, $this->options['base_uri'], $httpClient);
+        $this->httpAdapter = new HttpAdapter($servers, $this->options['base_uri'], $httpClient, $uriFactory);
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
     }
 

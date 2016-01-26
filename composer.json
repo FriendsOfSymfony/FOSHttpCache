@@ -27,18 +27,19 @@
         "symfony/event-dispatcher": "^2.3||^3.0",
         "symfony/options-resolver": "^2.3||^3.0",
         "php-http/client-implementation": "^1.0.0",
-        "php-http/discovery": "~0.8",
         "php-http/message": "~0.3"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.1",
         "monolog/monolog": "^1.0",
+        "php-http/discovery": "~0.8",
         "php-http/guzzle6-adapter": "^0.3.1",
         "php-http/mock-client": "~0.1",
         "symfony/process": "^2.3||^3.0",
         "symfony/http-kernel": "^2.3||^3.0"
     },
     "suggest": {
+        "php-http/discovery": "When not explicitly instantiating the php-http client for the proxy client",
         "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {

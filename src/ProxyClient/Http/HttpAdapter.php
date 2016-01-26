@@ -11,8 +11,8 @@ use Http\Client\Exception;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
+use Http\Message\UriFactory;
 use Http\Promise\Promise;
-use Http\Discovery\UriFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -27,6 +27,11 @@ class HttpAdapter
      * @var HttpAsyncClient
      */
     private $httpClient;
+
+    /**
+     * @var UriFactory
+     */
+    private $uriFactory;
 
     /**
      * Queued requests
@@ -59,12 +64,15 @@ class HttpAdapter
      *                          you purge and refresh paths instead of
      *                          absolute URLs.
      * @param HttpAsyncClient $httpClient
+     * @param UriFactory      $uriFactory
      */
-    public function __construct(array $servers, $baseUri, HttpAsyncClient $httpClient)
+    public function __construct(array $servers, $baseUri, HttpAsyncClient $httpClient, UriFactory $uriFactory)
     {
+        $this->httpClient = $httpClient;
+        $this->uriFactory = $uriFactory;
+
         $this->setServers($servers);
         $this->setBaseUri($baseUri);
-        $this->httpClient = $httpClient;
     }
 
     /**
@@ -247,7 +255,7 @@ class HttpAdapter
         }
 
         try {
-            $uri = UriFactoryDiscovery::find()->createUri($uriString);
+            $uri = $this->uriFactory->createUri($uriString);
         } catch (\InvalidArgumentException $e) {
             throw InvalidUrlException::invalidUrl($uriString);
         }
