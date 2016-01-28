@@ -95,4 +95,32 @@ class TagHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($tagHandler->hasTags());
         $this->assertEquals('post-1,test_post', $tagHandler->getTagsHeaderValue());
     }
+
+    public function testInvalidateTwice()
+    {
+        $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
+            ->shouldReceive('supports')
+            ->with(CacheInvalidator::INVALIDATE)
+            ->once()
+            ->andReturn(true)
+            ->shouldReceive('invalidate')
+            ->twice()
+            ->getMock();
+
+        $tagHandler = new TagHandler($cacheInvalidator, 'X-Cache-Tags', 7);
+        $tagHandler->invalidateTags(array('post-1', 'post-2'));
+    }
+
+    public function testHeaderLength()
+    {
+        $cacheInvalidator = \Mockery::mock('FOS\HttpCache\CacheInvalidator')
+            ->shouldReceive('supports')
+            ->with(CacheInvalidator::INVALIDATE)
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+
+        $tagHandler = new TagHandler($cacheInvalidator, 'X-Cache-Tags', 8000);
+        $this->assertEquals(8000, $tagHandler->getHeaderLength());
+    }
 }
