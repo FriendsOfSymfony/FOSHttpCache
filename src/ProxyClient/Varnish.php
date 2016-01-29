@@ -84,7 +84,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      */
     public function getTagsHeaderValue(array $tags)
     {
-        return implode(',', array_unique($this->escapeTags($tags)));
+        return array_unique($this->escapeTags($tags));
     }
 
     /**

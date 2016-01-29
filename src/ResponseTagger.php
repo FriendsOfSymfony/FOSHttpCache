@@ -11,8 +11,9 @@
 
 namespace FOS\HttpCache;
 
-use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
 use FOS\HttpCache\Exception\InvalidTagException;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -116,5 +117,23 @@ class ResponseTagger
         $this->tags = array_merge($this->tags, $filtered);
 
         return $this;
+    }
+
+    /**
+     * Set tags on a response
+     *
+     * @param ResponseInterface $response Original response
+     * @param bool              $replace  Whether to replace the current tags
+     *                                    on the response
+     *
+     * @return ResponseInterface          Tagged response
+     */
+    public function tagResponse(ResponseInterface $response, $replace = false)
+    {
+        if ($replace) {
+            return $response->withHeader($this->getTagsHeaderName(), $this->getTagsHeaderValue());
+        }
+
+        return $response->withAddedHeader($this->getTagsHeaderName(), $this->getTagsHeaderValue());
     }
 }
