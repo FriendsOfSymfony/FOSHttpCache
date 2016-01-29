@@ -12,6 +12,8 @@
 namespace FOS\HttpCache;
 
 use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\Exception\InvalidTagException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Service for Response cache tagging.
@@ -19,9 +21,16 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  * @author André Rømcke <ar@ez.no>
+ * @author Wicliff Wolda <wicliff.wolda@gmail.com>
  */
 class ResponseTagger
 {
+
+    /**
+     * @var array
+     */
+    private $options;
+
     /**
      * @var TagsInterface
      */
@@ -36,10 +45,21 @@ class ResponseTagger
      * Constructor
      *
      * @param TagsInterface $client
+     * @param array         $options supported options:
+     *                               - strict (bool) Default: false. If set to true, throws exception when adding empty tags.
      */
-    public function __construct(TagsInterface $client)
+    public function __construct(TagsInterface $client, array $options = array())
     {
         $this->client = $client;
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults(array(
+            'strict' => false,
+        ));
+
+        $resolver->setAllowedTypes('strict', 'bool');
+
+        $this->options = $resolver->resolve($options);
     }
 
     /**
@@ -81,11 +101,19 @@ class ResponseTagger
      *
      * @param array $tags List of tags to add.
      *
+     * @throws InvalidTagException
+     *
      * @return $this
      */
     public function addTags(array $tags)
     {
-        $this->tags = array_merge($this->tags, $tags);
+        $filtered = array_filter($tags, 'strlen');
+
+        if ($this->options['strict'] && array_diff($tags, $filtered)) {
+            throw new InvalidTagException('Empty tags are not allowed');
+        }
+
+        $this->tags = array_merge($this->tags, $filtered);
 
         return $this;
     }
