@@ -13,7 +13,6 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
-use Guzzle\Http\ClientInterface;
 
 /**
  * NGINX HTTP cache invalidator.
@@ -35,37 +34,21 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     private $purgeLocation;
 
     /**
-     * {@inheritdoc}
+     * Set path that triggers purge
      *
-     * @param array           $servers       Caching proxy server hostnames or IP addresses,
-     *                                       including port if not port 80.
-     *                                       E.g. array('127.0.0.1:6081')
-     * @param string          $baseUrl       Default application hostname, optionally
-     *                                       including base URL, for purge and refresh
-     *                                       requests (optional). This is required
-     *                                       if you purge relative URLs and the domain
-     *                                       is not part of your `proxy_cache_key`
-     * @param string          $purgeLocation Path that triggers purge (optional).
-     * @param ClientInterface $client        HTTP client (optional). If no HTTP client
-     *                                       is supplied, a default one will be
-     *                                       created.
+     * @param string $purgeLocation
      */
-    public function __construct(
-        array $servers,
-        $baseUrl = null,
-        $purgeLocation = '',
-        ClientInterface $client = null
-    ) {
+    public function setPurgeLocation($purgeLocation = '')
+    {
         $this->purgeLocation = (string) $purgeLocation;
-        parent::__construct($servers, $baseUrl, $client);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function refresh($url, array $headers = array())
+    public function refresh($url, array $headers = [])
     {
-        $headers = array_merge($headers, array(self::HTTP_HEADER_REFRESH => '1'));
+        $headers = array_merge($headers, [self::HTTP_HEADER_REFRESH => '1']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
@@ -74,20 +57,12 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     /**
      * {@inheritdoc}
      */
-    public function purge($url, array $headers = array())
+    public function purge($url, array $headers = [])
     {
         $purgeUrl = $this->buildPurgeUrl($url);
         $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl, $headers);
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAllowedSchemes()
-    {
-        return array('http', 'https');
     }
 
     /**
@@ -109,7 +84,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
             $pathStartAt = strpos($url, $urlParts['path']);
             $purgeUrl = substr($url, 0, $pathStartAt).$this->purgeLocation.substr($url, $pathStartAt);
         } else {
-            $purgeUrl = $this->getBaseUrl().$this->purgeLocation.$url;
+            $purgeUrl = $this->purgeLocation.$url;
         }
 
         return $purgeUrl;

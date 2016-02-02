@@ -1,14 +1,79 @@
 Caching Proxy Clients
 =====================
 
-This library ships with clients for the Varnish, NGINX and Symfony built-in caching proxies. You
-can use the clients either wrapped by the :doc:`cache invalidator <cache-invalidator>`
-(recommended), or directly for low-level access to invalidation functionality.
+This library ships with clients for the Varnish and NGINX caching servers and
+the Symfony built-in HTTP cache. You can use the clients either wrapped by the
+:doc:`cache invalidator <cache-invalidator>` (recommended), or directly for
+low-level access to invalidation functionality. Which client you need depends on
+which caching solution you use.
 
 .. _client setup:
 
 Setup
 -----
+
+HTTP Client Installation
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Because the clients send invalidation requests over HTTP, an `HTTPlug client`_
+must be installed. Pick either a standalone client or an adapter to a client
+library that is already included in your project. For instance, if you use
+Guzzle 6 in your project, install the appropriate adapter:
+
+.. code-block:: bash
+
+    $ composer require php-http/guzzle6-adapter
+
+You also need a `PSR-7 message implementation`_. If you use Guzzle 6, Guzzle’s
+implementation is already included. If you use another client, you need to
+install one of the message implementations. Recommended:
+
+.. code-block:: bash
+
+    $ composer require guzzlehttp/psr7
+
+Alternatively:
+
+.. code-block:: bash
+
+    $ composer require zendframework/zend-diactoros
+
+.. _HTTP adapter configuration:
+
+HTTP Client Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, the proxy client will automatically locate an HTTP client that you
+have installed through Composer. But you can also pass the adapter explicitly.
+This is most useful when you have created a HTTP client with custom options or
+middleware (such as logging)::
+
+    use GuzzleHttp\Client;
+
+    $config = [
+        // For instance, custom middlewares
+    ];
+    $yourHttpClient = new Client($config);
+
+Take your client and create a HTTP adapter from it::
+
+    use Http\Adapter\Guzzle6HttpAdapter;
+
+    $adapter = new Guzzle6HttpAdapter($client);
+
+Then pass that adapter to the caching proxy client::
+
+    $proxyClient = new Varnish($servers, '/baseUrl', $adapter);
+    // Varnish as example, but also possible for NGINX and Symfony
+
+HTTP Message Factory Configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Similar to the HTTP client, the HTTP message factory is automatically located
+by default. You can pass an explicit instance of the message factory if you
+need to.
+
+.. _varnish client:
 
 Varnish Client
 ~~~~~~~~~~~~~~
@@ -19,19 +84,35 @@ Varnish runs on if it is not port 80::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 
-    $servers = array('10.0.0.1', '10.0.0.2:6081'); // Port 80 assumed for 10.0.0.1
+    $servers = ['10.0.0.1', '10.0.0.2:6081']; // Port 80 assumed for 10.0.0.1
     $varnish = new Varnish($servers);
 
 This is sufficient for invalidating absolute URLs. If you also wish to
 invalidate relative paths, supply the hostname (or base URL) where your website
-is available as the second parameter::
+is available as the value for the ``base_uri`` key in the second options parameter::
 
-    $varnish = new Varnish($servers, 'my-cool-app.com');
+    $varnish = new Varnish($servers, array('base_uri' => 'my-cool-app.com'));
 
 Again, if you access your web application on a port other than 80, make sure to
 include that port in the base URL::
 
-    $varnish = new Varnish($servers, 'my-cool-app.com:8080');
+    $varnish = new Varnish($servers, array('base_uri' => 'my-cool-app.com:8080'));
+
+.. _varnish_optional_parameters:
+
+Two other optional parameters available for the Varnish client are ``tags_header`` and ``header_length``.
+``tags_header`` allows you to change the default HTTP header used for tagging,
+while ``header_length`` allows you to change the maximum header size (in bytes) used to invalidate tags::
+
+    $options = array(
+        'base_uri' => 'example.com',
+        'tags_header' => 'X-Custom-Tags-Header',
+        'header_length' => 4000,
+    );
+
+    $varnish = new Varnish($servers, $options, $adapter);
+
+Make sure to reflect a change to ``tags_header`` in your :doc:`caching proxy configuration <proxy-configuration>`.
 
 .. note::
 
@@ -46,7 +127,7 @@ NGINX runs on if it is not the default::
 
     use FOS\HttpCache\ProxyClient\Nginx;
 
-    $servers = array('10.0.0.1', '10.0.0.2:8088'); // Port 80 assumed for 10.0.0.1
+    $servers = ['10.0.0.1', '10.0.0.2:8088']; // Port 80 assumed for 10.0.0.1
     $nginx = new Nginx($servers);
 
 This is sufficient for invalidating absolute URLs. If you also wish to
@@ -56,9 +137,13 @@ is available as the second parameter::
     $nginx = new Nginx($servers, 'my-cool-app.com');
 
 If you have configured NGINX to support purge requests at a separate location,
-supply that location to the class as the third parameter::
+call `setPurgeLocation()`::
 
-    $nginx = new Nginx($servers, 'my-cool-app.com', '/purge');
+    use FOS\HttpCache\ProxyClient\Nginx;
+
+    $nginx = new Nginx($servers, $baseUri);
+    $nginx->setPurgeLocation('/purge');
+
 
 .. note::
 
@@ -74,7 +159,7 @@ the web server runs on if it is not the default::
 
     use FOS\HttpCache\ProxyClient\Symfony;
 
-    $servers = array('10.0.0.1', '10.0.0.2:8088'); // Port 80 assumed for 10.0.0.1
+    $servers = ['10.0.0.1', '10.0.0.2:8088']; // Port 80 assumed for 10.0.0.1
     $client = new Symfony($servers);
 
 This is sufficient for invalidating absolute URLs. If you also wish to
@@ -133,7 +218,7 @@ You can specify HTTP headers as the second argument to ``purge()``.
 For instance::
 
     $client
-        ->purge('/some/path', array('X-Foo' => 'bar')
+        ->purge('/some/path', ['X-Foo' => 'bar'])
         ->flush()
     ;
 
@@ -161,7 +246,7 @@ You can specify HTTP headers as the second argument to ``refresh()``. For
 instance, to only refresh the JSON representation of an URL::
 
     $client
-        ->refresh('/some/path', array('Accept' => 'application/json')
+        ->refresh('/some/path', ['Accept' => 'application/json'])
         ->flush()
     ;
 
@@ -196,34 +281,14 @@ Varnish client::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 
-    $varnish->ban(array(
+    $varnish->ban([
         Varnish::HTTP_HEADER_URL   => '.*\.png$',
         Varnish::HTTP_HEADER_HOST  => '.*example\.com',
         Varnish::HTTP_HEADER_CACHE => 'my-tag',
-    ));
+    ]);
 
 Make sure to add any headers that you want to ban on to your
 :doc:`proxy configuration <proxy-configuration>`.
 
-.. _custom guzzle client:
-
-Custom Guzzle Client
---------------------
-
-By default, the proxy clients instantiate a `Guzzle client`_ to communicate
-with the caching proxy. If you need to customize the requests, for example to
-send a basic authentication header, you can inject a custom Guzzle client::
-
-    use FOS\HttpCache\ProxyClient\Varnish;
-    use Guzzle\Http\Client;
-
-    $client = new Client();
-    $client->setDefaultOption('auth', array('username', 'password', 'Digest'));
-
-    $servers = array('10.0.0.1');
-    $varnish = new Varnish($servers, '/baseUrl', $client);
-
-The Symfony client accepts a guzzle client as the 3rd parameter as well, NGINX
-accepts it as 4th parameter.
-
-.. _Guzzle client: http://guzzle3.readthedocs.org/
+.. _HTTPlug client: http://httplug.io/
+.. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation

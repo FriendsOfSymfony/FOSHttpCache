@@ -16,13 +16,19 @@ use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use Http\Message\MessageFactory;
 
 /**
  * Varnish HTTP cache invalidator.
  *
+ * Additional constructor options:
+ * - tags_header   Header for tagging responses, defaults to X-Cache-Tags
+ * - header_length Maximum header length, defaults to 7500 bytes
+ *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface
+class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface, TagsInterface
 {
     const HTTP_METHOD_BAN          = 'BAN';
     const HTTP_METHOD_PURGE        = 'PURGE';
@@ -36,11 +42,11 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      *
      * @var array
      */
-    private $defaultBanHeaders = array(
+    private $defaultBanHeaders = [
         self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
-    );
+    ];
 
     /**
      * Set the default headers that get merged with the provided headers in self::ban().
@@ -62,6 +68,60 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     public function setDefaultBanHeader($name, $value)
     {
         $this->defaultBanHeaders[$name] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function invalidateTags(array $tags)
+    {
+        $escapedTags = array_map('preg_quote', $this->escapeTags($tags));
+
+        if (mb_strlen(implode('|', $escapedTags)) >= $this->options['header_length']) {
+            /*
+             * estimate the amount of tags to invalidate by dividing the max
+             * header length by the largest tag (minus 1 for the implode character)
+             */
+            $tagsize = max(array_map('mb_strlen', $escapedTags));
+            $elems = floor($this->options['header_length'] / ($tagsize - 1)) ? : 1;
+        } else {
+            $elems = count($escapedTags);
+        }
+
+        foreach (array_chunk($escapedTags, $elems) as $tagchunk) {
+            $tagExpression = sprintf('(%s)(,.+)?$', implode('|', $tagchunk));
+            $this->ban([$this->options['tags_header'] => $tagExpression]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTagsHeaderValue(array $tags)
+    {
+        return array_unique($this->escapeTags($tags));
+    }
+
+    /**
+     * Get the HTTP header name that will hold cache tags.
+     *
+     * @return string
+     */
+    public function getTagsHeaderName()
+    {
+        return $this->options['tags_header'];
+    }
+
+    /**
+     * Get the maximum HTTP header length.
+     *
+     * @return int
+     */
+    public function getHeaderLength()
+    {
+        return $this->options['header_length'];
     }
 
     /**
@@ -91,9 +151,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
             $hosts = '^('.join('|', $hosts).')$';
         }
 
-        $headers = array(
+        $headers = [
             self::HTTP_HEADER_URL => $path,
-        );
+        ];
 
         if ($contentType) {
             $headers[self::HTTP_HEADER_CONTENT_TYPE] = $contentType;
@@ -108,7 +168,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     /**
      * {@inheritdoc}
      */
-    public function purge($url, array $headers = array())
+    public function purge($url, array $headers = [])
     {
         $this->queueRequest(self::HTTP_METHOD_PURGE, $url, $headers);
 
@@ -118,9 +178,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     /**
      * {@inheritdoc}
      */
-    public function refresh($url, array $headers = array())
+    public function refresh($url, array $headers = [])
     {
-        $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
+        $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
@@ -128,31 +188,36 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
 
     /**
      * {@inheritdoc}
+     */
+    protected function getDefaultOptions()
+    {
+        $resolver = parent::getDefaultOptions();
+        $resolver->setDefaults(['tags_header' => 'X-Cache-Tags']);
+        $resolver->setDefaults(['header_length' => 7500]);
+
+        return $resolver;
+    }
+
+    /**
+     * Build the invalidation request and validate it.
+     *
+     * {@inheritdoc}
      *
      * @throws MissingHostException If a relative path is queued for purge/
      *                              refresh and no base URL is set
      *
      */
-    protected function createRequest($method, $url, array $headers = array())
+    protected function queueRequest($method, $url, array $headers = [])
     {
-        $request = parent::createRequest($method, $url, $headers);
+        $request = $this->messageFactory->createRequest($method, $url, $headers);
 
-        // For purge and refresh, add a host header to the request if it hasn't
-        // been set
         if (self::HTTP_METHOD_BAN !== $method
-            && '' == $request->getHeader('Host')
+            && null === $this->options['base_uri']
+            && !$request->getHeaderLine('Host')
         ) {
             throw MissingHostException::missingHost($url);
         }
 
-        return $request;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAllowedSchemes()
-    {
-        return array('http');
+        $this->httpAdapter->invalidate($request);
     }
 }

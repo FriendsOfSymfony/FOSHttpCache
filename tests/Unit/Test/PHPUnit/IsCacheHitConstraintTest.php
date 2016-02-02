@@ -27,12 +27,14 @@ class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
 
     /**
      * @expectedException \PHPUnit_Framework_ExpectationFailedException
+     * @expectedExceptionMessage Failed asserting that response (with status code 500) is a cache hit
      */
     public function testMatches()
     {
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
-            ->shouldReceive('getHeader')->with('cache-header')->once()->andReturn('MISS')
+            ->shouldReceive('getHeaderLine')->with('cache-header')->once()->andReturn('MISS')
+            ->shouldReceive('getStatusCode')->andReturn(500)
             ->getMock();
 
         $this->constraint->evaluate($response);
@@ -45,8 +47,8 @@ class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
     public function testMatchesThrowsExceptionIfHeaderIsMissing()
     {
         $response = $this->getResponseMock()
-            ->shouldReceive('hasHeader')->with('cache-header')->once()
-            ->andReturn(false)
+            ->shouldReceive('hasHeader')->with('cache-header')->once()->andReturn(false)
+            ->shouldReceive('getStatusCode')->andReturn(200)
             ->getMock();
 
         $this->constraint->evaluate($response);

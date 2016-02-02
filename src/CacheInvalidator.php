@@ -17,19 +17,19 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
-use FOS\HttpCache\Handler\TagHandler;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Manages HTTP cache invalidation.
  *
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
+ * @author André Rømcke <ar@ez.no>
  */
 class CacheInvalidator
 {
@@ -49,6 +49,11 @@ class CacheInvalidator
     const INVALIDATE = 'invalidate';
 
     /**
+     * Value to check support of invalidateTags operation.
+     */
+    const TAGS = 'tags';
+
+    /**
      * @var ProxyClientInterface
      */
     private $cache;
@@ -59,23 +64,6 @@ class CacheInvalidator
     private $eventDispatcher;
 
     /**
-     * @deprecated This reference is only for BC and will be removed in version 2.0.
-     *
-     * @var TagHandler
-     */
-    private $tagHandler;
-
-    /**
-     * @var string
-     */
-    private $tagsHeader = 'X-Cache-Tags';
-
-    /**
-     * @var int
-     */
-    private $headerLength = 7500;
-
-    /**
      * Constructor
      *
      * @param ProxyClientInterface $cache HTTP cache
@@ -83,9 +71,6 @@ class CacheInvalidator
     public function __construct(ProxyClientInterface $cache)
     {
         $this->cache = $cache;
-        if ($cache instanceof BanInterface) {
-            $this->tagHandler = new TagHandler($this, $this->tagsHeader, $this->headerLength);
-        }
     }
 
     /**
@@ -111,6 +96,8 @@ class CacheInvalidator
                 return $this->cache instanceof RefreshInterface;
             case self::INVALIDATE:
                 return $this->cache instanceof BanInterface;
+            case self::TAGS:
+                return $this->cache instanceof TagsInterface;
             default:
                 throw new InvalidArgumentException('Unknown operation ' . $operation);
         }
@@ -150,52 +137,6 @@ class CacheInvalidator
     }
 
     /**
-     * Add subscriber
-     *
-     * @param EventSubscriberInterface $subscriber
-     *
-     * @return $this
-     *
-     * @deprecated Use getEventDispatcher()->addSubscriber($subscriber) instead.
-     */
-    public function addSubscriber(EventSubscriberInterface $subscriber)
-    {
-        $this->getEventDispatcher()->addSubscriber($subscriber);
-
-        return $this;
-    }
-
-    /**
-     * Set the HTTP header name that will hold cache tags
-     *
-     * @param string $tagsHeader
-     *
-     * @return $this
-     *
-     * @deprecated Use constructor argument to TagHandler instead.
-     */
-    public function setTagsHeader($tagsHeader)
-    {
-        if ($this->tagHandler && $this->tagHandler->getTagsHeaderName() !== $tagsHeader) {
-            $this->tagHandler = new TagHandler($this, $tagsHeader, $this->headerLength);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get the HTTP header name that will hold cache tags
-     *
-     * @return string
-     *
-     * @deprecated Use TagHandler::getTagsHeaderName instead.
-     */
-    public function getTagsHeader()
-    {
-        return $this->tagHandler ? $this->tagHandler->getTagsHeaderName() : $this->tagsHeader;
-    }
-
-    /**
      * Invalidate a path or URL
      *
      * @param string $path    Path or URL
@@ -205,7 +146,7 @@ class CacheInvalidator
      *
      * @return $this
      */
-    public function invalidatePath($path, array $headers = array())
+    public function invalidatePath($path, array $headers = [])
     {
         if (!$this->cache instanceof PurgeInterface) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('PURGE');
@@ -228,7 +169,7 @@ class CacheInvalidator
      *
      * @return $this
      */
-    public function refreshPath($path, array $headers = array())
+    public function refreshPath($path, array $headers = [])
     {
         if (!$this->cache instanceof RefreshInterface) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('REFRESH');
@@ -243,7 +184,7 @@ class CacheInvalidator
      * Invalidate all cached objects matching the provided HTTP headers.
      *
      * Each header is a a POSIX regular expression, for example
-     * array('X-Host' => '^(www\.)?(this|that)\.com$')
+     * ['X-Host' => '^(www\.)?(this|that)\.com$']
      *
      * @see BanInterface::ban()
      *
@@ -265,12 +206,33 @@ class CacheInvalidator
     }
 
     /**
+     * Remove/Expire cache objects based on cache tags
+     *
+     * @see TagsInterface::tags()
+     *
+     * @param array $tags Tags that should be removed/expired from the cache
+     *
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support Tags invalidation
+     *
+     * @return $this
+     */
+    public function invalidateTags(array $tags)
+    {
+        if (!$this->cache instanceof TagsInterface) {
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('Tags');
+        }
+        $this->cache->invalidateTags($tags);
+
+        return $this;
+    }
+
+    /**
      * Invalidate URLs based on a regular expression for the URI, an optional
      * content type and optional limit to certain hosts.
      *
      * The hosts parameter can either be a regular expression, e.g.
      * '^(www\.)?(this|that)\.com$' or an array of exact host names, e.g.
-     * array('example.com', 'other.net'). If the parameter is empty, all hosts
+     * ['example.com', 'other.net']. If the parameter is empty, all hosts
      * are matched.
      *
      * @see BanInterface::banPath()
@@ -293,29 +255,6 @@ class CacheInvalidator
         }
 
         $this->cache->banPath($path, $contentType, $hosts);
-
-        return $this;
-    }
-
-    /**
-     * Invalidate cache entries that contain any of the specified tags in their
-     * tag header.
-     *
-     * @param array $tags Cache tags
-     *
-     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
-     *
-     * @return $this
-     *
-     * @deprecated Use TagHandler::invalidateTags instead.
-     */
-    public function invalidateTags(array $tags)
-    {
-        if (!$this->tagHandler) {
-            throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
-        }
-
-        $this->tagHandler->invalidateTags($tags);
 
         return $this;
     }

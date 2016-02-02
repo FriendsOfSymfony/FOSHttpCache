@@ -46,7 +46,7 @@ interface BanInterface extends ProxyClientInterface
      *
      * The hosts parameter can either be a regular expression, e.g.
      * '^(www\.)?(this|that)\.com$' or an array of exact host names, e.g.
-     * array('example.com', 'other.net'). If the parameter is empty, all hosts
+     * ['example.com', 'other.net']. If the parameter is empty, all hosts
      * are matched.
 
      * @param string       $path        Regular expression pattern for URI to

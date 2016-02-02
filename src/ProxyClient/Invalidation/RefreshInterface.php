@@ -37,5 +37,5 @@ interface RefreshInterface extends ProxyClientInterface
      *
      * @return $this
      */
-    public function refresh($url, array $headers = array());
+    public function refresh($url, array $headers = []);
 }

@@ -16,11 +16,11 @@ if (!file_exists($file)) {
 
 if (!defined('VARNISH_FILE')) {
     if (getenv('VARNISH_VERSION')
-        && (0 === strncmp('4.', getenv('VARNISH_VERSION'), 2))
+        && (0 === strncmp('3', getenv('VARNISH_VERSION'), 1))
     ) {
-        define('VARNISH_FILE', './tests/Functional/Fixtures/varnish-4/fos.vcl');
-    } else {
         define('VARNISH_FILE', './tests/Functional/Fixtures/varnish-3/fos.vcl');
+    } else {
+        define('VARNISH_FILE', './tests/Functional/Fixtures/varnish-4/fos.vcl');
     }
 }
 

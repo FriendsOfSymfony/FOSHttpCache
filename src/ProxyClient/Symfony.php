@@ -11,17 +11,16 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\Exception\InvalidArgumentException;
-use FOS\HttpCache\Exception\MissingHostException;
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use Guzzle\Http\ClientInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Http\Message\MessageFactory;
 
 /**
  * Symfony HttpCache invalidator.
+ *
+ * Additional constructor options:
+ * - purge_method:         HTTP method that identifies purge requests.
  *
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
@@ -31,37 +30,9 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     const HTTP_METHOD_REFRESH = 'GET';
 
     /**
-     * The options configured in the constructor argument or default values.
-     *
-     * @var array
-     */
-    private $options;
-
-    /**
-     * {@inheritDoc}
-     *
-     * When creating the client, you can configure options:
-     *
-     * - purge_method:         HTTP method that identifies purge requests.
-     *
-     * @param array $options The purge_method that should be used.
-     */
-    public function __construct(array $servers, $baseUrl = null, ClientInterface $client = null, array $options = array())
-    {
-        parent::__construct($servers, $baseUrl, $client);
-
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults(array(
-            'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
-        ));
-
-        $this->options = $resolver->resolve($options);
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function purge($url, array $headers = array())
+    public function purge($url, array $headers = [])
     {
         $this->queueRequest($this->options['purge_method'], $url, $headers);
 
@@ -71,19 +42,21 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     /**
      * {@inheritdoc}
      */
-    public function refresh($url, array $headers = array())
+    public function refresh($url, array $headers = [])
     {
-        $headers = array_merge($headers, array('Cache-Control' => 'no-cache'));
+        $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAllowedSchemes()
+    protected function getDefaultOptions()
     {
-        return array('http', 'https');
+        $resolver = parent::getDefaultOptions();
+        $resolver->setDefaults([
+            'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
+        ]);
+
+        return $resolver;
     }
 }

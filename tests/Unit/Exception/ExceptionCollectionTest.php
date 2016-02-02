@@ -31,10 +31,10 @@ class ExceptionCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($e1, $collection->getFirst());
 
-        $actual = array();
+        $actual = [];
         foreach ($collection as $e) {
             $actual[] = $e;
         }
-        $this->assertEquals(array($e1, $e2), $actual);
+        $this->assertEquals([$e1, $e2], $actual);
     }
 }

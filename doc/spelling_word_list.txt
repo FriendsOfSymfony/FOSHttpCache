@@ -8,6 +8,8 @@ hostnames
 http
 invalidator
 localhost
+middleware
+middlewares
 nginx
 roundtrip
 symfony
@@ -15,3 +17,7 @@ whitelisted
 paywall
 paywalls
 github
+vcl
+fos
+Vcl
+inline

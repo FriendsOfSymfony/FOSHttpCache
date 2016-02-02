@@ -5,17 +5,28 @@ Installation
 ------------
 
 The FOSHttpCache library is available on Packagist_. You can install it using
-Composer_:
+Composer_.
+
+The library relies on HTTPlug_ for sending invalidation requests over HTTP, so
+you need to install an HTTPlug-compatible client or adapter first:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache:~1.0
+    $ composer require php-http/guzzle6-adapter
+
+Then install the FOSHttpCache library itself:
+
+.. code-block:: bash
+
+    $ composer require friendsofsymfony/http-cache
 
 .. note::
 
-    This library follows `Semantic Versioning`_. Because constraint ``~1.0``
-    will only increment the minor and patch numbers, it will not introduce BC
-    breaks.
+    This library follows `Semantic Versioning`_.  Except for major versions, we
+    aim to not introduce BC breaks in new releases. You should still test your
+    application after upgrading though. What is a bug fix for somebody could
+    break something for others when they where (probably unawares) relying on
+    that bug.
 
 Configuration
 -------------
@@ -47,3 +58,4 @@ invalidation requests:
 .. _Packagist: https://packagist.org/packages/friendsofsymfony/http-cache
 .. _Composer: http://getcomposer.org
 .. _Semantic Versioning: http://semver.org/
+.. _HTTPlug: http://httplug.io

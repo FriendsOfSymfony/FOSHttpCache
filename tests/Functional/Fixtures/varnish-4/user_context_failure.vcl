@@ -1,6 +1,5 @@
 vcl 4.0;
 
-include "debug.vcl";
 include "../varnish-3/debug_user_context.vcl";
 
 backend default {

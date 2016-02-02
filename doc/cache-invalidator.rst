@@ -50,7 +50,7 @@ Invalidate a URL with added header(s)::
 
     $cacheInvalidator->invalidatePath(
         'http://www.example.com/users',
-        array('Cookie' => 'foo=bar; fizz=bang')
+        ['Cookie' => 'foo=bar; fizz=bang']
     )->flush();
 
 .. include:: includes/custom-headers.rst
@@ -75,12 +75,38 @@ Refresh a URL with added header(s)::
 
     $cacheInvalidator->refreshPath(
         'http://www.example.com/users',
-        array('Cookie' => 'foo=bar; fizz=bang')
+        ['Cookie' => 'foo=bar; fizz=bang']
     )->flush();
 
 .. include:: includes/custom-headers.rst
 
 .. _invalidate regex:
+
+
+Invalidating by Tags
+--------------------
+
+.. note::
+
+    Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first,
+    in the case of Varnish this is powered by banning.
+
+When you are using :doc:`response tagging <response-tagging>`, you can invalidate
+all responses that where tagged with a specific label.
+
+Invalidate a tag::
+
+    $cacheInvalidator->invalidateTags(['blog-post-44'])->flush();
+
+See below for the :ref:`flush() <flush>` method.
+
+Invalidate several tags::
+
+    $cacheInvalidator
+        ->invalidateTags(['type-65', 'location-3'])
+        ->flush()
+    ;
+
 
 Invalidating With a Regular Expression
 --------------------------------------
@@ -105,7 +131,7 @@ caching proxy::
 To invalidate all ``.png`` files on host example.com::
 
     $cacheInvalidator
-        ->invalidateRegex('.*', 'image/png', array('example.com'))
+        ->invalidateRegex('.*', 'image/png', ['example.com'])
         ->flush()
     ;
 
@@ -124,7 +150,7 @@ default headers always present to simplify the cache configuration rules.
 
 To invalidate on a custom header ``X-My-Header``, you would do::
 
-    $cacheInvalidator->invalidate(array('X-My-Header' => 'my-value'))->flush();
+    $cacheInvalidator->invalidate(['X-My-Header' => 'my-value'])->flush();
 
 .. _flush:
 
