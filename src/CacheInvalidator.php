@@ -71,6 +71,11 @@ class CacheInvalidator
     private $tagsHeader = 'X-Cache-Tags';
 
     /**
+     * @var int
+     */
+    private $headerLength = 7500;
+
+    /**
      * Constructor
      *
      * @param ProxyClientInterface $cache HTTP cache
@@ -79,7 +84,7 @@ class CacheInvalidator
     {
         $this->cache = $cache;
         if ($cache instanceof BanInterface) {
-            $this->tagHandler = new TagHandler($this, $this->tagsHeader);
+            $this->tagHandler = new TagHandler($this, $this->tagsHeader, $this->headerLength);
         }
     }
 
@@ -172,7 +177,7 @@ class CacheInvalidator
     public function setTagsHeader($tagsHeader)
     {
         if ($this->tagHandler && $this->tagHandler->getTagsHeaderName() !== $tagsHeader) {
-            $this->tagHandler = new TagHandler($this, $tagsHeader);
+            $this->tagHandler = new TagHandler($this, $tagsHeader, $this->headerLength);
         }
 
         return $this;

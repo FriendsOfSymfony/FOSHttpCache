@@ -33,6 +33,11 @@ class TagHandler
     private $tagsHeader;
 
     /**
+     * @var int
+     */
+    private $headerLength;
+
+    /**
      * @var array
      */
     private $tags = array();
@@ -40,18 +45,20 @@ class TagHandler
     /**
      * Constructor
      *
-     * @param CacheInvalidator $invalidator The invalidator instance.
-     * @param string           $tagsHeader  Header to use for tags, defaults to X-Cache-Tags.
+     * @param CacheInvalidator $invalidator  The invalidator instance.
+     * @param string           $tagsHeader   Header to use for tags, defaults to X-Cache-Tags.
+     * @param int              $headerLength Maximum header size in bytes, defaults to 7500.
      *
      * @throws UnsupportedProxyOperationException If CacheInvalidator does not support invalidate requests
      */
-    public function __construct(CacheInvalidator $invalidator, $tagsHeader = 'X-Cache-Tags')
+    public function __construct(CacheInvalidator $invalidator, $tagsHeader = 'X-Cache-Tags', $headerLength = 7500)
     {
         if (!$invalidator->supports(CacheInvalidator::INVALIDATE)) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
         }
         $this->invalidator = $invalidator;
         $this->tagsHeader = $tagsHeader;
+        $this->headerLength = $headerLength;
     }
 
     /**
@@ -62,6 +69,16 @@ class TagHandler
     public function getTagsHeaderName()
     {
         return $this->tagsHeader;
+    }
+
+    /**
+     * Get the maximum HTTP header length.
+     *
+     * @return int
+     */
+    public function getHeaderLength()
+    {
+        return $this->headerLength;
     }
 
     /**
@@ -112,9 +129,24 @@ class TagHandler
      */
     public function invalidateTags(array $tags)
     {
-        $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $this->escapeTags($tags))));
-        $headers = array($this->tagsHeader => $tagExpression);
-        $this->invalidator->invalidate($headers);
+        $escapedTags = array_map('preg_quote', $this->escapeTags($tags));
+
+        if (mb_strlen(implode('|', $escapedTags)) >= $this->headerLength) {
+            /*
+             * estimate the amount of tags to invalidate by dividing the max
+             * header length by the largest tag (minus 1 for the implode character)
+             */
+            $tagsize = max(array_map('mb_strlen', $escapedTags));
+            $elems = floor($this->headerLength / ($tagsize - 1)) ? : 1;
+        } else {
+            $elems = count($escapedTags);
+        }
+
+        foreach (array_chunk($escapedTags, $elems) as $tagchunk) {
+            $tagExpression = sprintf('(%s)(,.+)?$', implode('|', $tagchunk));
+            $headers = array($this->tagsHeader => $tagExpression);
+            $this->invalidator->invalidate($headers);
+        }
 
         return $this;
     }
