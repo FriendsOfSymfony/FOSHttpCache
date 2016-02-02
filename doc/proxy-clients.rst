@@ -98,7 +98,7 @@ include that port in the base URL::
 
     $varnish = new Varnish($servers, array('base_uri' => 'my-cool-app.com:8080'));
 
-.. _varnish_optional_parameters:
+.. _varnish_custom_tags_header:
 
 Two other optional parameters available for the Varnish client are ``tags_header`` and ``header_length``.
 ``tags_header`` allows you to change the default HTTP header used for tagging,
