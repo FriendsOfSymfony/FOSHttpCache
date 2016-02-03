@@ -87,32 +87,37 @@ Varnish runs on if it is not port 80::
     $servers = ['10.0.0.1', '10.0.0.2:6081']; // Port 80 assumed for 10.0.0.1
     $varnish = new Varnish($servers);
 
-This is sufficient for invalidating absolute URLs. If you also wish to
-invalidate relative paths, supply the hostname (or base URL) where your website
-is available as the value for the ``base_uri`` key in the second options parameter::
+This is sufficient for invalidating absolute URLs. If you want to use relative
+paths in invalidation requests, supply the hostname and possibly a base path to
+your website as ``base_uri`` option::
 
-    $varnish = new Varnish($servers, array('base_uri' => 'my-cool-app.com'));
+    $varnish = new Varnish($servers, ['base_uri' => 'my-cool-app.com']);
 
-Again, if you access your web application on a port other than 80, make sure to
+Again, if your web application is accessed on a port other than 80, make sure to
 include that port in the base URL::
 
-    $varnish = new Varnish($servers, array('base_uri' => 'my-cool-app.com:8080'));
+    $varnish = new Varnish($servers, ['base_uri' => 'my-cool-app.com:8080']);
 
 .. _varnish_custom_tags_header:
 
-Two other optional parameters available for the Varnish client are ``tags_header`` and ``header_length``.
-``tags_header`` allows you to change the default HTTP header used for tagging,
-while ``header_length`` allows you to change the maximum header size (in bytes) used to invalidate tags::
+The other options for the Varnish client are:
 
-    $options = array(
+* ``tags_header`` (X-Cache-Tags): Allows you to change the HTTP header used for
+  tagging. If you change this, make sure to use the correct header name in your
+  :doc:`caching proxy configuration <proxy-configuration>`;
+* ``header_length`` (7500): Control the maximum header size when invalidating
+  tags. If there are more tags to invalidate than fit into the header, the
+  invalidation request is split into several requests.
+
+A full example could look like this::
+
+    $options = [
         'base_uri' => 'example.com',
         'tags_header' => 'X-Custom-Tags-Header',
         'header_length' => 4000,
-    );
+    ];
 
     $varnish = new Varnish($servers, $options, $adapter);
-
-Make sure to reflect a change to ``tags_header`` in your :doc:`caching proxy configuration <proxy-configuration>`.
 
 .. note::
 

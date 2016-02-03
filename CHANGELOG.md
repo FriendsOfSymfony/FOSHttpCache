@@ -32,6 +32,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   cause it's ``invalidateTags`` function to invalidate in batches if the header
   length exceeds this value.
 
+1.4.1
+-----
+
+* Support for Symfony 3.
+
 1.4.0
 -----
 

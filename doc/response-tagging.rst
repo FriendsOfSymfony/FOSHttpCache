@@ -24,13 +24,11 @@ the ``TagsInterface``, handling adding tags to responses::
 
 .. _response_tagger_optional_parameters:
 
-An optional parameter for the response tagger is the ``strict`` boolean which can be
-passed in the options array as the second parameter of the constructor::
+The response tagger validates tags that you set. By default, it simply ignores
+empty strings. You can set the response tagger to strict mode to have it throw
+an ``InvalidTagException`` on empty tags::
 
-    $responseTagger = new ResponseTagger($proxyClient, array('strict' => true));
-
-Setting ``strict`` to ``true`` will cause the response tagger to throw an ``InvalidTagException``
-when an invalid tag is passed to the ``addTags`` method.
+    $responseTagger = new ResponseTagger($proxyClient, ['strict' => true]);
 
 Usage
 ~~~~~
