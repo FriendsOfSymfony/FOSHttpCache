@@ -99,7 +99,7 @@ the listeners you need there::
         HttpKernelInterface $kernel,
         StoreInterface $store,
         SurrogateInterface $surrogate = null,
-        array $options = array()
+        array $options = []
     ) {
         parent::__construct($kernel, $store, $surrogate, $options);
 
