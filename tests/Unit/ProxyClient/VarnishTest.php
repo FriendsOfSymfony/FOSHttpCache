@@ -174,6 +174,23 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUri());
     }
 
+    public function testInvalidateTwice()
+    {
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'header_length' => 7], $this->client);
+        $varnish->invalidateTags(['post-1', 'post-2'])->flush();
+
+        $requests = $this->getRequests();
+        $this->assertCount(2, $requests);
+    }
+
+    public function testAdditionalContructorOptions()
+    {
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'X-Tags-TRex', 'header_length' => 8000], $this->client);
+
+        $this->assertEquals('X-Tags-TRex', $varnish->getTagsHeaderName());
+        $this->assertEquals(8000, $varnish->getHeaderLength());
+    }
+
     protected function setUp()
     {
         $this->client = new Client();

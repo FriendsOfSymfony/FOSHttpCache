@@ -25,6 +25,13 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * The ResponseTagger validates that no tags are empty. It can skip empty tags
   or throw exceptions
 
+1.4.2
+-----
+
+* The TagHandler constructor now accepts a ``headerLenght`` argument which will
+  cause it's ``invalidateTags`` function to invalidate in batches if the header
+  length exceeds this value.
+
 1.4.0
 -----
 

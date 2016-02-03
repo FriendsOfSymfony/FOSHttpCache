@@ -89,23 +89,30 @@ Varnish runs on if it is not port 80::
 
 This is sufficient for invalidating absolute URLs. If you also wish to
 invalidate relative paths, supply the hostname (or base URL) where your website
-is available as the second parameter::
+is available as the value for the ``base_uri`` key in the second options parameter::
 
-    $varnish = new Varnish($servers, 'my-cool-app.com');
+    $varnish = new Varnish($servers, array('base_uri' => 'my-cool-app.com'));
 
 Again, if you access your web application on a port other than 80, make sure to
 include that port in the base URL::
 
-    $varnish = new Varnish($servers, 'my-cool-app.com:8080');
+    $varnish = new Varnish($servers, array('base_uri' => 'my-cool-app.com:8080'));
 
 .. _varnish_custom_tags_header:
 
-Another optional parameter available on Varnish client is ``tagsHeader``, which allows you to
-change the default HTTP header used for tagging, ``X-Cache-Tags``::
+Two other optional parameters available for the Varnish client are ``tags_header`` and ``header_length``.
+``tags_header`` allows you to change the default HTTP header used for tagging,
+while ``header_length`` allows you to change the maximum header size (in bytes) used to invalidate tags::
 
-    $varnish = new Varnish($servers, 'example.com', $adapter, 'X-Custom-Tags-Header');
+    $options = array(
+        'base_uri' => 'example.com',
+        'tags_header' => 'X-Custom-Tags-Header',
+        'header_length' => 4000,
+    );
 
- Make sure to reflect this change in your :doc:`caching proxy configuration <proxy-configuration>`.
+    $varnish = new Varnish($servers, $options, $adapter);
+
+Make sure to reflect a change to ``tags_header`` in your :doc:`caching proxy configuration <proxy-configuration>`.
 
 .. note::
 

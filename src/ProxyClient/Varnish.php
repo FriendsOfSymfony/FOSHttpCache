@@ -23,7 +23,8 @@ use Http\Message\MessageFactory;
  * Varnish HTTP cache invalidator.
  *
  * Additional constructor options:
- * - tags_header Header for tagging responses, defaults to X-Cache-Tags
+ * - tags_header   Header for tagging responses, defaults to X-Cache-Tags
+ * - header_length Maximum header length, defaults to 7500 bytes
  *
  * @author David de Boer <david@driebit.nl>
  */
@@ -74,9 +75,25 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      */
     public function invalidateTags(array $tags)
     {
-        $tagExpression = sprintf('(%s)(,.+)?$', implode('|', array_map('preg_quote', $this->escapeTags($tags))));
+        $escapedTags = array_map('preg_quote', $this->escapeTags($tags));
 
-        return $this->ban([$this->options['tags_header'] => $tagExpression]);
+        if (mb_strlen(implode('|', $escapedTags)) >= $this->options['header_length']) {
+            /*
+             * estimate the amount of tags to invalidate by dividing the max
+             * header length by the largest tag (minus 1 for the implode character)
+             */
+            $tagsize = max(array_map('mb_strlen', $escapedTags));
+            $elems = floor($this->options['header_length'] / ($tagsize - 1)) ? : 1;
+        } else {
+            $elems = count($escapedTags);
+        }
+
+        foreach (array_chunk($escapedTags, $elems) as $tagchunk) {
+            $tagExpression = sprintf('(%s)(,.+)?$', implode('|', $tagchunk));
+            $this->ban([$this->options['tags_header'] => $tagExpression]);
+        }
+
+        return $this;
     }
 
     /**
@@ -95,6 +112,16 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     public function getTagsHeaderName()
     {
         return $this->options['tags_header'];
+    }
+
+    /**
+     * Get the maximum HTTP header length.
+     *
+     * @return int
+     */
+    public function getHeaderLength()
+    {
+        return $this->options['header_length'];
     }
 
     /**
@@ -166,6 +193,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     {
         $resolver = parent::getDefaultOptions();
         $resolver->setDefaults(['tags_header' => 'X-Cache-Tags']);
+        $resolver->setDefaults(['header_length' => 7500]);
 
         return $resolver;
     }

@@ -22,6 +22,16 @@ the ``TagsInterface``, handling adding tags to responses::
     // $proxyClient already created, implementing FOS\HttpCache\ProxyClient\Invalidation\TagsInterface
     $responseTagger = new ResponseTagger($proxyClient);
 
+.. _response_tagger_optional_parameters:
+
+An optional parameter for the response tagger is the ``strict`` boolean which can be
+passed in the options array as the second parameter of the constructor::
+
+    $responseTagger = new ResponseTagger($proxyClient, array('strict' => true));
+
+Setting ``strict`` to ``true`` will cause the response tagger to throw an ``InvalidTagException``
+when an invalid tag is passed to the ``addTags`` method.
+
 Usage
 ~~~~~
 
