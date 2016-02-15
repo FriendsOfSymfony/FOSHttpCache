@@ -24,11 +24,17 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
 {
     use EventDispatchingHttpCache;
 
-    public function __construct(HttpKernelInterface $kernel, $cacheDir, SurrogateInterface $surrogate = null, array $options = array())
+    public function __construct(
+        HttpKernelInterface $kernel, 
+        $cacheDir, 
+        SurrogateInterface $surrogate = null, 
+        array $options = array()
+    )
     {
+        // we need to instantiate the store early so we can share it.
         $store = new Store($cacheDir);
-        parent::__construct($kernel, $store, $surrogate, $options);
 
+        // instantiate the tag storage and the Symfony HTTPCache tag manager.
         $tagStorage = new Tag\Storage\DoctrineCache(new PhpFileCache($cacheDir));
         $tagManager = new Tag\Manager\Symfony($tagStorage, $store);
 
@@ -41,6 +47,8 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
         if (isset($options['debug']) && $options['debug']) {
             $this->addSubscriber(new DebugListener());
         }
+
+        parent::__construct($kernel, $store, $surrogate, $options);
     }
 
     /**
