@@ -1,14 +1,14 @@
 <?php
 
-namespace FOS\HttpCache\Tests\Unit\Tag\Manager;
+namespace FOS\HttpCache\Tests\Unit\SymfonyCache\Tag;
 
-use FOS\HttpCache\Tag\Manager\Symfony;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\HttpCache\Tag\StorageInterface;
 use Symfony\Component\HttpKernel\HttpCache\Store;
 use FOS\HttpCache\SymfonyCache\TagSubscriber;
+use FOS\HttpCache\SymfonyCache\Tag\SymfonyCacheManager;
 
-class SymfonyTest extends \PHPUnit_Framework_TestCase
+class SymfonyCacheManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ManagerInterface
@@ -30,7 +30,7 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
         $this->tagStorage = \Mockery::mock('FOS\HttpCache\Tag\StorageInterface');
         $this->cacheStorage = \Mockery::mock('Symfony\Component\HttpKernel\HttpCache\Store');
         $this->filesystem = \Mockery::mock('Symfony\Component\Filesystem\Filesystem');
-        $this->manager = new Symfony($this->tagStorage, $this->cacheStorage);
+        $this->manager = new SymfonyCacheManager($this->tagStorage, $this->cacheStorage);
     }
 
     /**

@@ -17,8 +17,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\HttpCache\Store;
 use FOS\HttpCache\Test\Proxy\SymfonyProxy;
 use FOS\HttpCache\SymfonyCache\TagSubscriber;
-use FOS\HttpCache\Tag;
 use Doctrine\Common\Cache\PhpFileCache;
+use FOS\HttpCache\Tag\Storage\DoctrineCache;
+use FOS\HttpCache\SymfonyCache\Tag\SymfonyCacheManager;
 
 class AppCache extends HttpCache implements CacheInvalidationInterface
 {
@@ -35,8 +36,8 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
         $store = new Store($cacheDir);
 
         // instantiate the tag storage and the Symfony HTTPCache tag manager.
-        $tagStorage = new Tag\Storage\DoctrineCache(new PhpFileCache($cacheDir));
-        $tagManager = new Tag\Manager\Symfony($tagStorage, $store);
+        $tagStorage = new DoctrineCache(new PhpFileCache($cacheDir));
+        $tagManager = new SymfonyCacheManager($tagStorage, $store);
 
         $this->addSubscriber(new CustomTtlListener());
         $this->addSubscriber(new PurgeSubscriber(['purge_method' => 'NOTIFY']));

@@ -97,6 +97,24 @@ class TagSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * It should invalidate tags from the response.
+     */
+    public function testInvalidateTags()
+    {
+        $tags = ['one', 'two', 'three'];
+        $response = Response::create('', 200, [
+            Symfony::HTTP_HEADER_INVALIDATE_TAGS => json_encode($tags)
+        ]);
+
+        $this->event->shouldReceive('getResponse')->andReturn($response);
+        $this->tagManager->shouldReceive('invalidateTags')->withArgs([ $tags ]);
+
+        $this->createSubscriber(array())->postHandle(
+            $this->event
+        );
+    }
+
     private function createSubscriber($options)
     {
         return new TagSubscriber($this->tagManager, $options);

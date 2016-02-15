@@ -7,6 +7,10 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Implementing classes are responsible for associating tags with cache entries
  * and invalidating tags (and removing cache entries).
+ *
+ * You may notice the similarity between this class and the StorageInterface. The
+ * difference is that this class is typically coupled to a specific implementation,
+ * whereas the StorageInterface is agnostic to cache implementations.
  */
 interface ManagerInterface extends InvalidatorInterface
 {

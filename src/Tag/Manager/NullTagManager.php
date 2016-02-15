@@ -2,10 +2,12 @@
 
 namespace FOS\HttpCache\Tag\Manager;
 
+use FOS\HttpCache\Tag\ManagerInterface;
+
 /**
  * Null tag manager - use this manager when no tagging is required.
  */
-class NullTagManager
+class NullTagManager implements ManagerInterface
 {
     /**
      * {@inheritdoc}
