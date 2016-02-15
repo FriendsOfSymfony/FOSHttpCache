@@ -12,7 +12,18 @@ use Symfony\Component\HttpFoundation\Response;
 use FOS\HttpCache\ProxyClient\Symfony;
 
 /**
- * Adds tag invalidation capabilities to the Symfony HTTP cache
+ * This class associates responses from the Symfony HTTP proxy cache with tags.
+ *
+ * Firstly, in order that tags may be associated with a response, the
+ * application must add a header to the response (@see
+ * Symfony::HTTP_HEADER_TAGS) containing the tag names. The list of tag names
+ * MUST be JSON encoded.
+ *
+ * The `postHandle` method is called *after* the Symfony HttpProxy has stored
+ * the response in the cache and has set the "content digest" in the response.
+ *
+ * The `postHandle` method will associate the content digest with the tags found in
+ * the header.
  *
  * @author Daniel Leech <daniel@dantleech.com>
  * 
@@ -58,18 +69,15 @@ class TagSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->tagResponse($response);
+        $this->storeTagsFromResponse($response);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    private function tagResponse(Response $response)
+    private function storeTagsFromResponse(Response $response)
     {
         $contentDigest = $this->getContentDigestFromHeaders($response->headers);
         $tags = $this->getTagsFromHeaders($response->headers);
-        $expiry = $this->getExpiryFromResponse($response);
-        $this->manager->tagCacheId($tags, $contentDigest, $expiry);
+        $lifetime = $this->getExpiryFromResponse($response);
+        $this->manager->tagCacheId($tags, $contentDigest, $lifetime);
     }
 
     /**
@@ -131,9 +139,9 @@ class TagSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Determine the cache expiry time from the response headers.
+     * Determine the cache lifetime time from the response headers.
      *
-     * If no expiry can be inferred, then return NULL.
+     * If no lifetime can be inferred, then return NULL.
      *
      * @return integer|null
      */

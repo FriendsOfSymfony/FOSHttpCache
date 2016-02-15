@@ -55,7 +55,6 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      */
     const HTTP_HEADER_CONTENT_DIGEST = 'X-Content-Digest';
 
-
     /**
      * The options configured in the constructor argument or default values.
      *
