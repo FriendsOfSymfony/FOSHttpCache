@@ -113,8 +113,6 @@ trait SymfonyTest
         if (null === $this->proxyClient) {
             $this->proxyClient = new Symfony(
                 ['http://127.0.0.1:' . $this->getCachingProxyPort()],
-                null,
-                null,
                 [
                     'base_uri' => $this->getHostName() . ':' . $this->getCachingProxyPort(),
                     'purge_method' => 'NOTIFY'

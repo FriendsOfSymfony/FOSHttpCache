@@ -50,43 +50,16 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     const HTTP_HEADER_TAGS = 'X-Cache-Tags';
 
     /**
+     * Name for HTTP header containing a list of tags which should be
+     * invalidated.
+     */
+    const HTTP_HEADER_INVALIDATE_TAGS = 'X-Cache-Invalidate-Tags';
+
+    /**
      * Header which should contain the content digest produced by the Symfony
      * HTTP cache.
      */
     const HTTP_HEADER_CONTENT_DIGEST = 'X-Content-Digest';
-
-    /**
-     * The options configured in the constructor argument or default values.
-     *
-     * @var array
-     */
-    private $options;
-
-    /**
-     * {@inheritDoc}
-     *
-     * When creating the client, you can configure options:
-     *
-     * - purge_method:         HTTP method that identifies purge requests.
-     *
-     * @param array $options The purge_method that should be used.
-     */
-    public function __construct(
-        array $servers,
-        $baseUrl = null,
-        HttpAdapter $httpAdapter = null,
-        $options = []
-    ) {
-        parent::__construct($servers, $baseUrl, $httpAdapter);
-
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
-            'tags_invalidator' => new NullTagManager()
-        ]);
-
-        $this->options = $resolver->resolve($options);
-    }
 
     /**
      * {@inheritdoc}
@@ -114,6 +87,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
         $resolver = parent::getDefaultOptions();
         $resolver->setDefaults([
             'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
+            'tags_invalidator' => new NullTagManager()
         ]);
 
         return $resolver;

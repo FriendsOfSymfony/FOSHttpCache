@@ -107,7 +107,7 @@ class HttpClient
         }
 
         if ($uri->getScheme() === '') {
-            $uri = $uri->withScheme('http');
+           $uri = $uri->withScheme('http');
         }
 
         return MessageFactoryDiscovery::find()->createRequest(

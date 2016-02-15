@@ -8,10 +8,10 @@ use Symfony\Component\HttpKernel\HttpCache\Store;
 
 $loader = require_once __DIR__.'/../../../../vendor/autoload.php';
 
-$symfonyProxy = new SymfonyProxy();
+$proxy = new SymfonyProxy();
 
 $kernel = new AppKernel();
-$kernel = new AppCache($kernel, new Store($symfonyProxy->getCacheDir()), null, ['debug' => true]);
+$kernel = new AppCache($kernel, $proxy->getCacheDir(), null, ['debug' => true]);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();

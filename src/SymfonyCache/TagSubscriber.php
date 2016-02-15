@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\HttpCache\ProxyClient\Symfony;
+use FOS\HttpCache\SymfonyCache\Events;
 
 /**
  * This class associates responses from the Symfony HTTP proxy cache with tags.
@@ -65,19 +66,38 @@ class TagSubscriber implements EventSubscriberInterface
     {
         $response = $event->getResponse();
 
-        if (false === $response->headers->has(Symfony::HTTP_HEADER_TAGS)) {
-            return;
+        if ($response->headers->has(Symfony::HTTP_HEADER_TAGS)) {
+            $this->storeTagsFromResponse($response);
         }
 
-        $this->storeTagsFromResponse($response);
+        if ($response->headers->has(Symfony::HTTP_HEADER_INVALIDATE_TAGS)) {
+            $this->invalidateTagsFromResponse($response);
+        }
     }
 
+    /**
+     * Store tags and associate them with the response.
+     *
+     * @param Response
+     */
     private function storeTagsFromResponse(Response $response)
     {
         $contentDigest = $this->getContentDigestFromHeaders($response->headers);
         $tags = $this->getTagsFromHeaders($response->headers);
         $lifetime = $this->getExpiryFromResponse($response);
         $this->manager->tagCacheId($tags, $contentDigest, $lifetime);
+    }
+
+    public function invalidateTagsFromResponse(Response $response)
+    {
+        $tags = json_decode($response->headers->get(Symfony::HTTP_HEADER_INVALIDATE_TAGS));
+
+        if (null === $tags) {
+            // could not decode the tags
+            return;
+        }
+
+        $this->manager->invalidateTags($tags);
     }
 
     /**
