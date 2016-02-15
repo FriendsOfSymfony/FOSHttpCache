@@ -108,20 +108,17 @@ trait SymfonyTest
      *
      * @return Symfony
      */
-    protected function getProxyClient(array $options = array())
+    protected function getProxyClient()
     {
-        $options = array_merge(
-            [
-                    'base_uri' => $this->getHostName() . ':' . $this->getCachingProxyPort(),
-                'purge_method' => 'NOTIFY'
-            ],
-            $options
-        );
-
         if (null === $this->proxyClient) {
             $this->proxyClient = new Symfony(
                 ['http://127.0.0.1:' . $this->getCachingProxyPort()],
-                $options
+                null,
+                null,
+                [
+                    'base_uri' => $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                    'purge_method' => 'NOTIFY'
+                ]
             );
         }
 
