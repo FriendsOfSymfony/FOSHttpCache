@@ -24,10 +24,12 @@ information), rather than individually.
     (e.g. is  removed from or added to groups on server side), you also do not
     want the clients to cache pages. Because ``VARY`` is used for the control
     of the caching proxy, it is not available to control clients. Often, the
-    best solution is to mark your pages as private with a max-age of 0 and use
-    the *custom TTL* mechanism (see the documentation for
-    :ref:`Varnish <varnish_customttl>` or the
-    :ref:`Symfony HttpCache <symfonycache_customttl>`).
+    best solution is to disable intermediary caches by setting the cache control
+    header s-maxage to 0 and using the *custom TTL* mechanism (see the
+    documentation for :ref:`Varnish <varnish_customttl>` or the
+    :ref:`Symfony HttpCache <symfonycache_customttl>`). If you want to use the
+    ``private`` cache control instruction instead, you need to adjust your
+    caching proxy configuration to cache content with a ``private`` instruction.
 
 Overview
 --------
