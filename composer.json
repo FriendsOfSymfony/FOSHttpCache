@@ -36,7 +36,8 @@
         "php-http/guzzle6-adapter": "^1.0.0",
         "php-http/mock-client": "~0.1",
         "symfony/process": "^2.3||^3.0",
-        "symfony/http-kernel": "^2.3||^3.0"
+        "symfony/http-kernel": "^2.3||^3.0",
+        "puli/composer-plugin": "^1.0.0-beta9@beta"
     },
     "suggest": {
         "php-http/discovery": "When not explicitly instantiating the php-http client for the proxy client",
