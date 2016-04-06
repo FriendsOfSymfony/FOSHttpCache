@@ -13,6 +13,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   calling `setPurgeLocation()`.
 * In ProxyTestCase, `getHttpClient()` has been replaced with `getHttpAdapter()`;
   added HTTP method parameter to `getResponse()`.
+* Varnish configuration are now files that you can directly include from your
+  .vcl and call custom functions to avoid copy-pasting VCL code.
 * Changed default Varnish version to 4.
 * Added support and documentation for setting a custom TTL specifically for the
   caching proxy.
