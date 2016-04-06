@@ -9,18 +9,18 @@
  * file that was distributed with this source code.
  */
 
-header('Cache-Debug: 1');
+header('X-Cache-Debug: 1');
 
 header('Cache-Control: max-age=3600');
-header('Vary: User-Context-Hash');
+header('Vary: X-User-Context-Hash');
 
 if (!isset($_COOKIE[0])) {
-    header('HashTest: anonymous');
+    header('X-HashTest: anonymous');
     echo "anonymous";
-} elseif ($_COOKIE[0] === "foo") {
-    header('HashTest: foo');
+} elseif ($_COOKIE[0] == "foo") {
+    header('X-HashTest: foo');
     echo "foo";
 } else {
-    header('HashTest: bar');
+    header('X-HashTest: bar');
     echo "bar";
 }

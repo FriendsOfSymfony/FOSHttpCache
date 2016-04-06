@@ -62,7 +62,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         $resolver->setDefaults([
             'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
             'user_hash_accept_header' => 'application/vnd.fos.user-context-hash',
-            'user_hash_header' => 'User-Context-Hash',
+            'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
             'user_hash_method' => 'GET',
             'session_name_prefix' => 'PHPSESSID',

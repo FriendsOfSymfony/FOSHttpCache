@@ -12,7 +12,7 @@ sub fos_user_context_recv {
     # Prevent tampering attacks on the hash mechanism
     if (req.restarts == 0
         && (req.http.accept ~ "application/vnd.fos.user-context-hash"
-            || req.http.User-Context-Hash
+            || req.http.X-User-Context-Hash
         )
     ) {
         return (synth(400));
@@ -27,13 +27,13 @@ sub fos_user_context_recv {
     ) {
         # Backup accept header, if set
         if (req.http.accept) {
-            set req.http.Fos-Original-Accept = req.http.accept;
+            set req.http.X-Fos-Original-Accept = req.http.accept;
         }
         set req.http.accept = "application/vnd.fos.user-context-hash";
 
         # Backup original URL
-        set req.http.Fos-Original-Url = req.url;
-
+        set req.http.X-Fos-Original-Url = req.url;
+        
         call user_context_hash_url;
 
         # Force the lookup, the backend must tell not to cache or vary on all
@@ -45,11 +45,11 @@ sub fos_user_context_recv {
     if (req.restarts > 0
         && req.http.accept == "application/vnd.fos.user-context-hash"
     ) {
-        set req.url = req.http.Fos-Original-Url;
-        unset req.http.Fos-Original-Url;
-        if (req.http.Fos-Original-Accept) {
-            set req.http.accept = req.http.Fos-Original-Accept;
-            unset req.http.Fos-Original-Accept;
+        set req.url = req.http.X-Fos-Original-Url;
+        unset req.http.X-Fos-Original-Url;
+        if (req.http.X-Fos-Original-Accept) {
+            set req.http.accept = req.http.X-Fos-Original-Accept;
+            unset req.http.X-Fos-Original-Accept;
         } else {
             # If accept header was not set in original request, remove the header here.
             unset req.http.accept;
@@ -76,7 +76,7 @@ sub fos_user_context_deliver {
     if (req.restarts == 0
         && resp.http.content-type ~ "application/vnd.fos.user-context-hash"
     ) {
-        set req.http.User-Context-Hash = resp.http.User-Context-Hash;
+        set req.http.X-User-Context-Hash = resp.http.X-User-Context-Hash;
 
         return (restart);
     }
@@ -85,12 +85,12 @@ sub fos_user_context_deliver {
 
     # Remove the vary on context user hash, this is nothing public. Keep all
     # other vary headers.
-    set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *User-Context-Hash *", "");
+    set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *X-User-Context-Hash *", "");
     set resp.http.Vary = regsub(resp.http.Vary, "^, *", "");
     if (resp.http.Vary == "") {
         unset resp.http.Vary;
     }
 
     # Sanity check to prevent ever exposing the hash to a client.
-    unset resp.http.User-Context-Hash;
+    unset resp.http.X-User-Context-Hash;
 }

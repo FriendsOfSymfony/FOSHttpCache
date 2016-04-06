@@ -11,5 +11,5 @@
 
 header('Cache-Control: max-age=3600');
 header(sprintf('Content-Type: %s', $_SERVER['HTTP_ACCEPT']));
-header('Cache-Debug: 1');
+header('X-Cache-Debug: 1');
 header('Vary: Accept');

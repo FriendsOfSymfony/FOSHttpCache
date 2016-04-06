@@ -9,11 +9,11 @@
 
 sub fos_debug_deliver {
     # Add extra headers if debugging is enabled
-    if (resp.http.Cache-Debug) {
+    if (resp.http.X-Cache-Debug) {
         if (obj.hits > 0) {
-            set resp.http.Cache = "HIT";
+            set resp.http.X-Cache = "HIT";
         } else {
-            set resp.http.Cache = "MISS";
+            set resp.http.X-Cache = "MISS";
         }
     }
 }

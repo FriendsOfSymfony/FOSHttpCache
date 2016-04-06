@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-header('Cache-Debug: 1');
+header('X-Cache-Debug: 1');
 
 if (isset($_GET['accept'])) {
     if ($_GET['accept'] != $_SERVER['HTTP_ACCEPT']) {
@@ -26,18 +26,18 @@ if ('POST' == strtoupper($_SERVER['REQUEST_METHOD'])) {
     exit;
 }
 
-if (!isset($_COOKIE[0]) || ($_COOKIE[0] !== "foo" && $_COOKIE[0] !== "bar")) {
+if (!isset($_COOKIE[0]) || ($_COOKIE[0] != "foo" && $_COOKIE[0] != "bar")) {
     header('HTTP/1.1 403');
     exit;
 }
 
 header('Cache-Control: max-age=3600');
-header('Vary: User-Context-Hash');
+header('Vary: X-User-Context-Hash');
 
-if ($_COOKIE[0] === "foo") {
-    header('HashTest: foo');
+if ($_COOKIE[0] == "foo") {
+    header('X-HashTest: foo');
     echo "foo";
 } else {
-    header('HashTest: bar');
+    header('X-HashTest: bar');
     echo "bar";
 }

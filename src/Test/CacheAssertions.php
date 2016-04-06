@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
  * Provides cache hit/miss assertions to PHPUnit tests
  *
  * To enable the assertHit and assertMiss assertions, you need to configure your
- * caching proxy to set an Cache header with the cache status.
+ * caching proxy to set an X-Cache header with the cache status.
  *
  * Use this trait in conjunction with either the NginxTest, SymfonyTest or
  * VarnishTest trait to reset the cache between tests and properly isolate your

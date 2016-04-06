@@ -43,7 +43,7 @@ class UserContextFailureTest extends VarnishTestCase
             ]
         );
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertFalse($response->hasHeader('User-Context-Hash'));
+        $this->assertFalse($response->hasHeader('X-User-Context-Hash'));
     }
 
     /**
@@ -54,7 +54,7 @@ class UserContextFailureTest extends VarnishTestCase
         $response = $this->getResponse(
             '/user_context_hash_nocache.php',
             [
-                'User-Context-Hash' => 'miam',
+                'X-User-Context-Hash' => 'miam',
                 'Cookie' => ['0=miam'],
             ]
         );
@@ -77,7 +77,7 @@ class UserContextFailureTest extends VarnishTestCase
         );
 
         $this->assertEquals('POST', $postResponse->getBody());
-        $this->assertEquals('MISS', $postResponse->getHeaderLine('HashCache'));
+        $this->assertEquals('MISS', $postResponse->getHeaderLine('X-HashCache'));
         $this->assertMiss($postResponse);
     }
 

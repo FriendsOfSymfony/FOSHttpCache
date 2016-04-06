@@ -6,8 +6,6 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.0.0 (unreleased)
 ------------------
 
-* Change all our custom headers to not use a `X-` prefix to comply with
-  [RFC 6648](http://tools.ietf.org/html/rfc6648#section-3).
 * Replace hard coupling on Guzzle HTTP client with HTTP adapter. You now need
   to explicitly specify the adapter you want, see [installation instructions]
   (http://foshttpcache.readthedocs.org/en/stable/installation.html)

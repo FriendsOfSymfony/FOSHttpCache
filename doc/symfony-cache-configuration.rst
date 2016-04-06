@@ -191,7 +191,7 @@ options through the constructor:
 * **user_hash_header**: Name of the header the user context hash will be stored
   into. Must match the setup for the Vary header in the backend application.
 
-  **default**: ``User-Context-Hash``
+  **default**: ``X-User-Context-Hash``
 
 * **user_hash_uri**: Target URI used in the request for user context hash
   generation.
@@ -243,14 +243,14 @@ Custom TTL
 .. include:: includes/custom-ttl.rst
 
 The ``CustomTtlSubscriber`` looks at a specific header to determine the TTL,
-preferring that over ``s-maxage``. The default header is ``Reverse-Proxy-TTL``
+preferring that over ``s-maxage``. The default header is ``X-Reverse-Proxy-TTL``
 but you can customize that in the subscriber constructor::
 
     new CustomTtlSubscriber('My-TTL-Header');
 
 The custom header is removed before sending the response to the client.
 
-.. _symfony-cache debugging:
+.. _symfony-cache x-debugging:
 
 Debugging
 ~~~~~~~~~

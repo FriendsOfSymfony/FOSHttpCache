@@ -14,16 +14,16 @@ sub fos_ban_recv {
             return (synth(405, "Not allowed"));
         }
 
-        if (req.http.Cache-Tags) {
-            ban("obj.http.Host ~ " + req.http.Host
-                + " && obj.http.Url ~ " + req.http.Url
-                + " && obj.http.content-type ~ " + req.http.Content-Type
-                + " && obj.http.Cache-Tags ~ " + req.http.Cache-Tags
+        if (req.http.X-Cache-Tags) {
+            ban("obj.http.X-Host ~ " + req.http.X-Host
+                + " && obj.http.X-Url ~ " + req.http.X-Url
+                + " && obj.http.content-type ~ " + req.http.X-Content-Type
+                + " && obj.http.X-Cache-Tags ~ " + req.http.X-Cache-Tags
             );
         } else {
-            ban("obj.http.Host ~ " + req.http.Host
-                + " && obj.http.Url ~ " + req.http.Url
-                + " && obj.http.content-type ~ " + req.http.Content-Type
+            ban("obj.http.X-Host ~ " + req.http.X-Host
+                + " && obj.http.X-Url ~ " + req.http.X-Url
+                + " && obj.http.content-type ~ " + req.http.X-Content-Type
             );
         }
 
@@ -34,19 +34,19 @@ sub fos_ban_recv {
 sub fos_ban_backend_response {
 
     # Set ban-lurker friendly custom headers
-    set beresp.http.Url = bereq.url;
-    set beresp.http.Host = bereq.http.host;
+    set beresp.http.X-Url = bereq.url;
+    set beresp.http.X-Host = bereq.http.host;
 }
 
 sub fos_ban_deliver {
 
     # Keep ban-lurker headers only if debugging is enabled
-    if (!resp.http.Cache-Debug) {
+    if (!resp.http.X-Cache-Debug) {
         # Remove ban-lurker friendly custom headers when delivering to client
-        unset resp.http.Url;
-        unset resp.http.Host;
+        unset resp.http.X-Url;
+        unset resp.http.X-Host;
 
         # Unset the tagged cache headers
-        unset resp.http.Cache-Tags;
+        unset resp.http.X-Cache-Tags;
     }
 }

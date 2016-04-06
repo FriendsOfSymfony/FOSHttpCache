@@ -12,6 +12,6 @@ the response to remove or reduce the ``s-maxage``. This is not a good solution
 however, as you start to duplicate your caching rule definitions.
 
 The solution to this issue provided here is to use a separate, different header
-called ``Reverse-Proxy-TTL`` that controls the TTL of the caching proxy to
+called ``X-Reverse-Proxy-TTL`` that controls the TTL of the caching proxy to
 keep ``s-maxage`` for other proxies. Because this is not a standard feature,
 you need to add configuration to your caching proxy.

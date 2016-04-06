@@ -56,7 +56,7 @@ Before any content is sent out, you need to send the tag header_::
 Assume you sent four responses:
 
 +------------+-------------------------+
-| Response:  | ``Cache-Tags`` header:|
+| Response:  | ``X-Cache-Tags`` header:|
 +============+=========================+
 | ``/one``   | ``tag-one``             |
 +------------+-------------------------+

@@ -161,7 +161,7 @@ To enable support add the following to ``your_varnish.vcl``:
             call fos_ban_deliver;
         }
 
-This subroutine also sets the ``Url`` and ``Host`` headers on the cache
+This subroutine also sets the ``X-Url`` and ``X-Host`` headers on the cache
 object. These headers are used by the Varnish `ban lurker`_ that crawls the
 content to eventually throw out banned data even when it’s not requested by any
 client. Read more on `handling BAN requests`_ in the Varnish documentation (for
@@ -175,10 +175,10 @@ Tagging
 Feature: :ref:`cache tagging <tags>`
 
 If you have included ``fos_ban.vcl``, tagging will be automatically enabled
-using an ``Cache-Tags`` header.
+using an ``X-Cache-Tags`` header.
 
 If you need to use a different tag for the headers than the default
-``Cache-Tags`` used in ``fos_ban.vcl``, you will have to write your own VCL
+``X-Cache-Tags`` used in ``fos_ban.vcl``, you will have to write your own VCL
 code for tag invalidation and change the tagging header
 :ref:`configured in the cache invalidator <varnish_custom_tags_header>`. Your custom
 VCL will look like this:
@@ -261,6 +261,13 @@ To enable support add the following to ``your_varnish.vcl``:
 
 Your backend application needs to respond to the ``application/vnd.fos.user-context-hash``
 request with :ref:`a proper user hash <return context hash>`.
+
+.. note::
+
+    We do not use ``X-Original-Url`` here, as the header will be sent to the
+    backend and the header has semantical meaning for some applications, which
+    would lead to problems. For example, the Microsoft IIS rewriting module
+    uses it, and consequently Symfony also looks into it to support IIS.
 
 .. tip::
 
@@ -345,9 +352,9 @@ The custom header is removed before sending the response to the client.
 Debugging
 ~~~~~~~~~
 
-Configure your Varnish to set a custom header (``Cache``) that shows whether a
+Configure your Varnish to set a custom header (``X-Cache``) that shows whether a
 cache hit or miss occurred. This header will only be set if your application
-sends an ``Cache-Debug`` header:
+sends an ``X-Cache-Debug`` header:
 
 Subroutines are provided in ``fos_debug.vcl``.
 

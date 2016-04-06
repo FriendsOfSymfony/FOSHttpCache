@@ -148,9 +148,9 @@ You can also invalidate the cache based on any headers.
 Cache client implementations should fill up the headers to at least have the
 default headers always present to simplify the cache configuration rules.
 
-To invalidate on a custom header ``My-Header``, you would do::
+To invalidate on a custom header ``X-My-Header``, you would do::
 
-    $cacheInvalidator->invalidate(['My-Header' => 'my-value'])->flush();
+    $cacheInvalidator->invalidate(['X-My-Header' => 'my-value'])->flush();
 
 .. _flush:
 

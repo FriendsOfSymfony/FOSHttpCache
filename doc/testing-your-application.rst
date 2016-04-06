@@ -153,7 +153,7 @@ Enable Assertions
 '''''''''''''''''
 
 For the `assertHit` and `assertMiss` assertions to work, you need to add a
-:ref:`custom Cache header <varnish_debugging>` to responses served
+:ref:`custom X-Cache header <varnish_debugging>` to responses served
 by your Varnish.
 
 NginxTest Trait
@@ -225,11 +225,11 @@ CacheAssertions Trait
 
 Provides cache hit/miss assertions to your tests. To enable the these
 ``assertHit`` and ``assertMiss`` assertions, you need to configure your caching
-server to set an `Cache` header with the cache status:
+server to set an `X-Cache` header with the cache status:
 
 * :ref:`Varnish <varnish_debugging>`
 * :ref:`NGINX <nginx_debugging>`
-* :ref:`Symfony HttpCache <symfony-cache debugging>`
+* :ref:`Symfony HttpCache <symfony-cache x-debugging>`
 
 Then use the assertions as follows::
 

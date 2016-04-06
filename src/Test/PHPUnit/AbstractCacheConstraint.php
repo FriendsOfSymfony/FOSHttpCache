@@ -18,12 +18,12 @@ use Psr\Http\Message\ResponseInterface;
  */
 abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
 {
-    protected $header = 'Cache';
+    protected $header = 'X-Cache';
 
     /**
      * Constructor
      *
-     * @param string $header Cache debug header; defaults to Cache-Debug
+     * @param string $header Cache debug header; defaults to X-Cache-Debug
      */
     public function __construct($header = null)
     {

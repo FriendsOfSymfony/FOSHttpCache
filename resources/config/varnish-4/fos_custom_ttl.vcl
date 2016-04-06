@@ -15,7 +15,7 @@ C{
  * instead of s-maxage.
  */
 sub fos_custom_ttl_backend_response {
-    if (beresp.http.Reverse-Proxy-TTL) {
+    if (beresp.http.X-Reverse-Proxy-TTL) {
         /*
          * Note that there is a ``beresp.ttl`` field in VCL but unfortunately
          * it can only be set to absolute values and not dynamically. Thus we
@@ -27,11 +27,11 @@ sub fos_custom_ttl_backend_response {
          */
         C{
             const char *ttl;
-            const struct gethdr_s hdr = { HDR_BERESP, "\024Reverse-Proxy-TTL:" };
+            const struct gethdr_s hdr = { HDR_BERESP, "\024X-Reverse-Proxy-TTL:" };
             ttl = VRT_GetHdr(ctx, &hdr);
             VRT_l_beresp_ttl(ctx, atoi(ttl));
         }C
 
-        unset beresp.http.Reverse-Proxy-TTL;
+        unset beresp.http.X-Reverse-Proxy-TTL;
     }
 }
