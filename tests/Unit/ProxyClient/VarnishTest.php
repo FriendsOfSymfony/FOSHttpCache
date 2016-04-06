@@ -32,9 +32,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $requests);
         $this->assertEquals('BAN', $requests[0]->getMethod());
 
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Host'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Url'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Content-Type'));
+        $this->assertEquals('.*', $requests[0]->getHeaderLine('Host'));
+        $this->assertEquals('.*', $requests[0]->getHeaderLine('Url'));
+        $this->assertEquals('.*', $requests[0]->getHeaderLine('Content-Type'));
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
     }
 
@@ -47,9 +47,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $requests);
         $this->assertEquals('BAN', $requests[0]->getMethod());
 
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Host'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Url'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Content-Type'));
+        $this->assertEquals('.*', $requests[0]->getHeaderLine('Host'));
+        $this->assertEquals('.*', $requests[0]->getHeaderLine('Url'));
+        $this->assertEquals('.*', $requests[0]->getHeaderLine('Content-Type'));
 
         // Ensure host header matches the Varnish server one.
         $this->assertEquals('http://127.0.0.1:123/', $requests[0]->getUri());
@@ -84,9 +84,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $requests);
         $this->assertEquals('BAN', $requests[0]->getMethod());
 
-        $this->assertEquals('^(fos.lo|fos2.lo)$', $requests[0]->getHeaderLine('X-Host'));
-        $this->assertEquals('/articles/.*', $requests[0]->getHeaderLine('X-Url'));
-        $this->assertEquals('text/html', $requests[0]->getHeaderLine('X-Content-Type'));
+        $this->assertEquals('^(fos.lo|fos2.lo)$', $requests[0]->getHeaderLine('Host'));
+        $this->assertEquals('/articles/.*', $requests[0]->getHeaderLine('Url'));
+        $this->assertEquals('text/html', $requests[0]->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -114,7 +114,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $requests);
         $this->assertEquals('BAN', $requests[0]->getMethod());
 
-        $this->assertEquals('(post\-1|post\-type\-3)(,.+)?$', $requests[0]->getHeaderLine('X-Cache-Tags'));
+        $this->assertEquals('(post\-1|post\-type\-3)(,.+)?$', $requests[0]->getHeaderLine('Cache-Tags'));
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
 
         // That default BANs is taken into account also for tags as they are powered by BAN in this client.
@@ -125,7 +125,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testTagsHeadersEscapingAndCustomHeader()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'X-Tags-TRex'], $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'Tags-TRex'], $this->client);
         $varnish->invalidateTags(['post-1', 'post,type-3'])->flush();
 
         $requests = $this->getRequests();
@@ -133,7 +133,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $requests);
         $this->assertEquals('BAN', $requests[0]->getMethod());
 
-        $this->assertEquals('(post\-1|post_type\-3)(,.+)?$', $requests[0]->getHeaderLine('X-Tags-TRex'));
+        $this->assertEquals('(post\-1|post_type\-3)(,.+)?$', $requests[0]->getHeaderLine('Tags-TRex'));
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
     }
 
@@ -143,7 +143,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $varnish = new Varnish($ips, ['base_uri' => 'my_hostname.dev'], $this->client);
 
         $count = $varnish->purge('/url/one')
-            ->purge('/url/two', ['X-Foo' => 'bar'])
+            ->purge('/url/two', ['Foo' => 'bar'])
             ->flush()
         ;
         $this->assertEquals(2, $count);
@@ -158,9 +158,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://127.0.0.1:8080/url/one', $requests[0]->getUri());
         $this->assertEquals('http://123.123.123.2/url/one', $requests[1]->getUri());
         $this->assertEquals('http://127.0.0.1:8080/url/two', $requests[2]->getUri());
-        $this->assertEquals('bar', $requests[2]->getHeaderLine('X-Foo'));
+        $this->assertEquals('bar', $requests[2]->getHeaderLine('Foo'));
         $this->assertEquals('http://123.123.123.2/url/two', $requests[3]->getUri());
-        $this->assertEquals('bar', $requests[3]->getHeaderLine('X-Foo'));
+        $this->assertEquals('bar', $requests[3]->getHeaderLine('Foo'));
     }
 
     public function testRefresh()
@@ -185,9 +185,9 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testAdditionalContructorOptions()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'X-Tags-TRex', 'header_length' => 8000], $this->client);
+        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'Tags-TRex', 'header_length' => 8000], $this->client);
 
-        $this->assertEquals('X-Tags-TRex', $varnish->getTagsHeaderName());
+        $this->assertEquals('Tags-TRex', $varnish->getTagsHeaderName());
         $this->assertEquals(8000, $varnish->getHeaderLength());
     }
 

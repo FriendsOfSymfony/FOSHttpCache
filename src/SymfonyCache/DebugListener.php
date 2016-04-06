@@ -58,7 +58,7 @@ class DebugListener implements EventSubscriberInterface
             } else {
                 $state = 'UNDETERMINED';
             }
-            $response->headers->set('X-Cache', $state);
+            $response->headers->set('-Cache', $state);
         }
     }
 }

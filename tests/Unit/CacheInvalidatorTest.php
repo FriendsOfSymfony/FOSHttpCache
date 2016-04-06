@@ -64,7 +64,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     {
         $purge = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface')
             ->shouldReceive('purge')->once()->with('/my/route', [])
-            ->shouldReceive('purge')->once()->with('/my/route', ['X-Test-Header' => 'xyz'])
+            ->shouldReceive('purge')->once()->with('/my/route', ['Test-Header' => 'xyz'])
             ->shouldReceive('flush')->once()
             ->getMock();
 
@@ -72,7 +72,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
         $cacheInvalidator
             ->invalidatePath('/my/route')
-            ->invalidatePath('/my/route', ['X-Test-Header' => 'xyz'])
+            ->invalidatePath('/my/route', ['Test-Header' => 'xyz'])
             ->flush()
         ;
     }
@@ -95,7 +95,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     public function testInvalidate()
     {
         $headers = [
-            'X-Header' => '^value.*$',
+            'Header' => '^value.*$',
             'Other-Header' => '^a|b|c$',
         ];
 

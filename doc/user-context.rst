@@ -44,12 +44,12 @@ Caching on user context works as follows:
 3. The :term:`application` receives the hash request. The application knows the
    client’s user context (roles, permissions, etc.) and generates a hash based
    on that information. The application then returns a response containing that
-   hash in a custom header (``X-User-Context-Hash``) and with ``Content-Type``
+   hash in a custom header (``User-Context-Hash``) and with ``Content-Type``
    ``application/vnd.fos.user-context-hash``.
 4. The caching proxy receives the hash response, copies the hash header to the
    client’s original request for ``/foo.php`` and restarts that request.
 5. If the response to this request should differ per user context, the
-   application specifies so by setting a ``Vary: X-User-Context-Hash`` header.
+   application specifies so by setting a ``Vary: User-Context-Hash`` header.
    The appropriate user role dependent representation of ``/foo.php`` will
    then be returned to the client.
 
@@ -121,7 +121,7 @@ It is up to you to return the user context hash in response to the hash request
     $hash = $hashGenerator->generateHash();
 
     if ('application/vnd.fos.user-context-hash' == strtolower($_SERVER['HTTP_ACCEPT'])) {
-        header(sprintf('X-User-Context-Hash: %s', $hash));
+        header(sprintf('User-Context-Hash: %s', $hash));
         header('Content-Type: application/vnd.fos.user-context-hash');
         exit;
     }
@@ -166,7 +166,7 @@ differently depending on whether the user is logged in or not, using the
 
     // /index.php file
     header('Cache-Control: max-age=3600');
-    header('Vary: X-User-Context-Hash');
+    header('Vary: User-Context-Hash');
 
     $authenticationService = new AuthenticationService();
 

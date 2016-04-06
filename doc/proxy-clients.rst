@@ -102,7 +102,7 @@ include that port in the base URL::
 
 The other options for the Varnish client are:
 
-* ``tags_header`` (X-Cache-Tags): Allows you to change the HTTP header used for
+* ``tags_header`` (Cache-Tags): Allows you to change the HTTP header used for
   tagging. If you change this, make sure to use the correct header name in your
   :doc:`caching proxy configuration <proxy-configuration>`;
 * ``header_length`` (7500): Control the maximum header size when invalidating
@@ -113,7 +113,7 @@ A full example could look like this::
 
     $options = [
         'base_uri' => 'example.com',
-        'tags_header' => 'X-Custom-Tags-Header',
+        'tags_header' => 'Custom-Tags-Header',
         'header_length' => 4000,
     ];
 
@@ -223,7 +223,7 @@ You can specify HTTP headers as the second argument to ``purge()``.
 For instance::
 
     $client
-        ->purge('/some/path', ['X-Foo' => 'bar'])
+        ->purge('/some/path', ['Foo' => 'bar'])
         ->flush()
     ;
 
