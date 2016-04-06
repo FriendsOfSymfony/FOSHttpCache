@@ -30,7 +30,7 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
         $symfony = new Symfony($ips, ['base_uri' => 'my_hostname.dev'], $this->client);
 
         $count = $symfony->purge('/url/one')
-            ->purge('/url/two', ['X-Foo' => 'bar'])
+            ->purge('/url/two', ['Foo' => 'bar'])
             ->flush()
         ;
         $this->assertEquals(2, $count);
@@ -45,9 +45,9 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://127.0.0.1:8080/url/one', $requests[0]->getUri());
         $this->assertEquals('http://123.123.123.2/url/one', $requests[1]->getUri());
         $this->assertEquals('http://127.0.0.1:8080/url/two', $requests[2]->getUri());
-        $this->assertEquals('bar', $requests[2]->getHeaderLine('X-Foo'));
+        $this->assertEquals('bar', $requests[2]->getHeaderLine('Foo'));
         $this->assertEquals('http://123.123.123.2/url/two', $requests[3]->getUri());
-        $this->assertEquals('bar', $requests[3]->getHeaderLine('X-Foo'));
+        $this->assertEquals('bar', $requests[3]->getHeaderLine('Foo'));
     }
 
     public function testRefresh()

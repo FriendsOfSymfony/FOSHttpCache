@@ -12,7 +12,7 @@
  * instead of s-maxage.
  */
 sub fos_custom_ttl_fetch {
-    if (beresp.http.X-Reverse-Proxy-TTL) {
+    if (beresp.http.Reverse-Proxy-TTL) {
         /*
          * Note that there is a ``beresp.ttl`` field in VCL but unfortunately
          * it can only be set to absolute values and not dynamically. Thus we
@@ -20,10 +20,10 @@ sub fos_custom_ttl_fetch {
          */
         C{
             char *ttl;
-            ttl = VRT_GetHdr(sp, HDR_BERESP, "\024X-Reverse-Proxy-TTL:");
+            ttl = VRT_GetHdr(sp, HDR_BERESP, "\024Reverse-Proxy-TTL:");
             VRT_l_beresp_ttl(sp, atoi(ttl));
         }C
 
-        unset beresp.http.X-Reverse-Proxy-TTL;
+        unset beresp.http.Reverse-Proxy-TTL;
     }
 }

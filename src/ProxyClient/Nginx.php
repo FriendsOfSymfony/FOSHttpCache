@@ -23,7 +23,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
 {
     const HTTP_METHOD_PURGE = 'PURGE';
     const HTTP_METHOD_REFRESH = 'GET';
-    const HTTP_HEADER_REFRESH = 'X-Refresh';
+    const HTTP_HEADER_REFRESH = 'Refresh';
 
     /**
      * Path location that triggers purging. If false, same location purging is

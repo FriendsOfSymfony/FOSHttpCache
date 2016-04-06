@@ -184,7 +184,7 @@ class CacheInvalidator
      * Invalidate all cached objects matching the provided HTTP headers.
      *
      * Each header is a a POSIX regular expression, for example
-     * ['X-Host' => '^(www\.)?(this|that)\.com$']
+     * ['Host' => '^(www\.)?(this|that)\.com$']
      *
      * @see BanInterface::ban()
      *

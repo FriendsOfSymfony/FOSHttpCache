@@ -26,13 +26,13 @@ interface BanInterface extends ProxyClientInterface
      * Ban cached objects matching HTTP headers.
      *
      * Each header is either a:
-     * - regular string ('X-Host' => 'example.com')
-     * - or a POSIX regular expression ('X-Host' => '^(www\.)?(this|that)\.com$').
+     * - regular string ('Host' => 'example.com')
+     * - or a POSIX regular expression ('Host' => '^(www\.)?(this|that)\.com$').
      *
      * Please make sure to configure your HTTP caching proxy to set the headers
      * supplied here on the cached objects. So if you want to match objects by
      * host name, configure your proxy to copy the host to a custom HTTP header
-     * such as X-Host.
+     * such as Host.
      *
      * @param array $headers HTTP headers that path must match to be banned
      *
