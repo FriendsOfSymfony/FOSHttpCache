@@ -14,22 +14,42 @@ use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\HttpCache\Store;
+use FOS\HttpCache\Test\Proxy\SymfonyProxy;
+use FOS\HttpCache\SymfonyCache\TagSubscriber;
+use Doctrine\Common\Cache\PhpFileCache;
+use FOS\HttpCache\Tag\Storage\DoctrineCache;
+use FOS\HttpCache\SymfonyCache\Tag\SymfonyCacheManager;
 
 class AppCache extends HttpCache implements CacheInvalidationInterface
 {
     use EventDispatchingHttpCache;
 
-    public function __construct(HttpKernelInterface $kernel, StoreInterface $store, SurrogateInterface $surrogate = null, array $options = array())
+    public function __construct(
+        HttpKernelInterface $kernel, 
+        $cacheDir, 
+        SurrogateInterface $surrogate = null, 
+        array $options = array()
+    )
     {
-        parent::__construct($kernel, $store, $surrogate, $options);
+        // we need to instantiate the store early so we can share it.
+        $store = new Store($cacheDir);
+
+        // instantiate the tag storage and the Symfony HTTPCache tag manager.
+        $tagStorage = new DoctrineCache(new PhpFileCache($cacheDir));
+        $tagManager = new SymfonyCacheManager($tagStorage, $store);
 
         $this->addSubscriber(new CustomTtlListener());
         $this->addSubscriber(new PurgeSubscriber(['purge_method' => 'NOTIFY']));
         $this->addSubscriber(new RefreshSubscriber());
         $this->addSubscriber(new UserContextSubscriber());
+        $this->addSubscriber(new TagSubscriber($tagManager));
+
         if (isset($options['debug']) && $options['debug']) {
             $this->addSubscriber(new DebugListener());
         }
+
+        parent::__construct($kernel, $store, $surrogate, $options);
     }
 
     /**
