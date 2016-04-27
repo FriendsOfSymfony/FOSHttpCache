@@ -13,6 +13,7 @@ namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Test\VarnishTestCase;
+use FOS\HttpCache\Tests\Functional\Fixtures\BanTest;
 
 /**
  * @group webserver
@@ -20,57 +21,7 @@ use FOS\HttpCache\Test\VarnishTestCase;
  */
 class VarnishProxyClientTest extends VarnishTestCase
 {
-    public function testBanAll()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->assertMiss($this->getResponse('/json.php'));
-        $this->assertHit($this->getResponse('/json.php'));
-
-        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_URL => '.*'])->flush();
-
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertMiss($this->getResponse('/json.php'));
-    }
-
-    public function testBanHost()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'])->flush();
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => $this->getHostname()])->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
-    }
-
-    public function testBanPathAll()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->assertMiss($this->getResponse('/json.php'));
-        $this->assertHit($this->getResponse('/json.php'));
-
-        $this->getProxyClient()->banPath('.*')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertMiss($this->getResponse('/json.php'));
-    }
-
-    public function testBanPathContentType()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->assertMiss($this->getResponse('/json.php'));
-        $this->assertHit($this->getResponse('/json.php'));
-
-        $this->getProxyClient()->banPath('.*', 'text/html')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/json.php'));
-    }
+    use BanTest;
 
     public function testPurge()
     {
