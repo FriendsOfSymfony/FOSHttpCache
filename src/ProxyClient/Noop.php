@@ -15,11 +15,8 @@ use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
-use Http\Message\MessageFactory;
 
 /**
- * Class Noop
- *
  * This is a no operation client, its only purpose is to provide an implementation for use in an enviroments that
  * have no proxy to use.
  *
