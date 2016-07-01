@@ -52,7 +52,7 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
     public function testPurgeHost()
     {
-        $symfony = new Symfony(array('http://127.0.0.1:' . $this->getCachingProxyPort()), null, null, array('purge_method' => 'NOTIFY'));
+        $symfony = new Symfony(array('http://127.0.0.1:'.$this->getCachingProxyPort()), null, null, array('purge_method' => 'NOTIFY'));
 
         $this->getResponse('/symfony.php/cache');
 

@@ -18,7 +18,6 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Varnish;
-use \Mockery;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
@@ -185,7 +184,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     public function testProxyClientExceptionsAreLogged()
     {
         $unreachableException = ProxyUnreachableException::proxyUnreachable('http://127.0.0.1', 'Couldn\'t connect to host');
-        $responseException    = ProxyResponseException::proxyResponse('http://127.0.0.1', 403, 'Forbidden');
+        $responseException = ProxyResponseException::proxyResponse('http://127.0.0.1', 403, 'Forbidden');
 
         $exceptions = new ExceptionCollection();
         $exceptions->add($unreachableException)->add($responseException);
@@ -202,7 +201,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
                 'critical',
                 'Request to caching proxy at http://127.0.0.1 failed with message "Couldn\'t connect to host"',
                 array(
-                    'exception' => $unreachableException
+                    'exception' => $unreachableException,
                 )
             )
             ->shouldReceive('log')->once()

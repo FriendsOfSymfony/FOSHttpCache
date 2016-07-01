@@ -11,16 +11,11 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Guzzle\Http\Client;
-use Guzzle\Http\Exception\CurlException;
-use Guzzle\Http\Exception\MultiTransferException;
-use Guzzle\Http\Exception\RequestException;
 use Guzzle\Plugin\Mock\MockPlugin;
 use Guzzle\Http\Message\Response;
 use Guzzle\Http\Message\Request;
-use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
 {
@@ -120,7 +115,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function ($requests) use ($self) {
-                        /** @type Request[] $requests */
+                        /* @type Request[] $requests */
                         $self->assertCount(4, $requests);
                         foreach ($requests as $request) {
                             $self->assertEquals('PURGE', $request->getMethod());

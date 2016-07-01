@@ -14,7 +14,7 @@ class AppKernel implements HttpKernelInterface
     /**
      * This simplistic kernel handles the request immediately inline.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {

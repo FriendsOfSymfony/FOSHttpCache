@@ -38,7 +38,7 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
     private $eventDispatcher;
 
     /**
-     * Get event dispatcher
+     * Get event dispatcher.
      *
      * @return EventDispatcherInterface
      */
@@ -52,7 +52,7 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
     }
 
     /**
-     * Add subscriber
+     * Add subscriber.
      *
      * @param EventSubscriberInterface $subscriber
      */
@@ -62,7 +62,7 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Adding the Events::PRE_HANDLE event.
      */
@@ -82,7 +82,7 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
     /**
      * Made public to allow event subscribers to do refresh operations.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fetch(Request $request, $catch = false)
     {
@@ -90,7 +90,7 @@ abstract class EventDispatchingHttpCache extends HttpCache implements CacheInval
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Adding the Events::PRE_INVALIDATE event.
      */

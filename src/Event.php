@@ -18,7 +18,7 @@ class Event extends BaseEvent
     private $exception;
 
     /**
-     * Set exception
+     * Set exception.
      *
      * @param \Exception $exception
      */
@@ -28,7 +28,7 @@ class Event extends BaseEvent
     }
 
     /**
-     * Get exception
+     * Get exception.
      *
      * @return \Exception
      */

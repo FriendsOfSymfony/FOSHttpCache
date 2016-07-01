@@ -29,7 +29,7 @@ class InvalidUrlException extends InvalidArgumentException implements HttpCacheE
             $msg .= sprintf('Reason: %s', $reason);
         }
 
-        return new InvalidUrlException($msg);
+        return new self($msg);
     }
 
     /**
@@ -40,7 +40,7 @@ class InvalidUrlException extends InvalidArgumentException implements HttpCacheE
      */
     public static function invalidUrlParts($server, array $allowed)
     {
-        return new InvalidUrlException(sprintf(
+        return new self(sprintf(
             'Server "%s" is invalid. Only %s URL parts are allowed.',
             $server,
             implode(', ', $allowed)
@@ -56,7 +56,7 @@ class InvalidUrlException extends InvalidArgumentException implements HttpCacheE
      */
     public static function invalidUrlScheme($url, $scheme, array $allowed)
     {
-        return new InvalidUrlException(sprintf(
+        return new self(sprintf(
             'Host "%s" with scheme "%s" is invalid. Only schemes "%s" are supported',
             $url,
             $scheme,

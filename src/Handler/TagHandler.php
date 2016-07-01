@@ -43,7 +43,7 @@ class TagHandler
     private $tags = array();
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CacheInvalidator $invalidator  The invalidator instance.
      * @param string           $tagsHeader   Header to use for tags, defaults to X-Cache-Tags.
@@ -137,7 +137,7 @@ class TagHandler
              * header length by the largest tag (minus 1 for the implode character)
              */
             $tagsize = max(array_map('mb_strlen', $escapedTags));
-            $elems = floor($this->headerLength / ($tagsize - 1)) ? : 1;
+            $elems = floor($this->headerLength / ($tagsize - 1)) ?: 1;
         } else {
             $elems = count($escapedTags);
         }

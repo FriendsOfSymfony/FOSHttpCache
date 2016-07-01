@@ -76,7 +76,7 @@ class CacheInvalidator
     private $headerLength = 7500;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ProxyClientInterface $cache HTTP cache
      */
@@ -112,12 +112,12 @@ class CacheInvalidator
             case self::INVALIDATE:
                 return $this->cache instanceof BanInterface;
             default:
-                throw new InvalidArgumentException('Unknown operation ' . $operation);
+                throw new InvalidArgumentException('Unknown operation '.$operation);
         }
     }
 
     /**
-     * Set event dispatcher
+     * Set event dispatcher.
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -136,7 +136,7 @@ class CacheInvalidator
     }
 
     /**
-     * Get event dispatcher
+     * Get event dispatcher.
      *
      * @return EventDispatcherInterface
      */
@@ -150,7 +150,7 @@ class CacheInvalidator
     }
 
     /**
-     * Add subscriber
+     * Add subscriber.
      *
      * @param EventSubscriberInterface $subscriber
      *
@@ -166,7 +166,7 @@ class CacheInvalidator
     }
 
     /**
-     * Set the HTTP header name that will hold cache tags
+     * Set the HTTP header name that will hold cache tags.
      *
      * @param string $tagsHeader
      *
@@ -184,7 +184,7 @@ class CacheInvalidator
     }
 
     /**
-     * Get the HTTP header name that will hold cache tags
+     * Get the HTTP header name that will hold cache tags.
      *
      * @return string
      *
@@ -196,7 +196,7 @@ class CacheInvalidator
     }
 
     /**
-     * Invalidate a path or URL
+     * Invalidate a path or URL.
      *
      * @param string $path    Path or URL
      * @param array  $headers HTTP headers (optional)
@@ -217,7 +217,7 @@ class CacheInvalidator
     }
 
     /**
-     * Refresh a path or URL
+     * Refresh a path or URL.
      *
      * @param string $path    Path or URL
      * @param array  $headers HTTP headers (optional)
