@@ -18,6 +18,10 @@ information), rather than individually.
     those parts over AJAX requests or look into ESI_. Both approaches integrate
     with the concepts presented in this chapter.
 
+    Put differently, if every user has their own hash, you probably don't want
+    to cache at all. If you still do, simply vary on the credentials and don't
+    use the context hash mechnism.
+
 Overview
 --------
 
@@ -47,8 +51,22 @@ Currently, user context caching is only supported by Varnish and by the Symfony
 HttpCache. See the :ref:`Varnish Configuration <varnish user context>` or
 :ref:`Symfony HttpCache Configuration <symfony-cache user context>`.
 
+User Context Hash from Your Application
+---------------------------------------
+
+It is your application's responsibility to determine the hash for a user. Only
+your application can know what is relevant for the hash. You can use the path
+or the accept header to detect that a hash was requested.
+
+.. warning::
+
+    Treat the hash lookup path like the login path so that anonymous users also
+    can get a hash. That means that your cache can access the hash lookup even
+    with no user provided credential and that the hash lookup never redirects
+    to a login page.
+
 Calculating the User Context Hash
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The user context hash calculation (step 3 above) is managed by the HashGenerator.
 Because the calculation itself will be different per application, you need to
@@ -65,7 +83,7 @@ Once all providers are registered, call ``generateHash()`` to get the hash for
 the current user context.
 
 Context Providers
------------------
+~~~~~~~~~~~~~~~~~
 
 Each provider is passed the :source:`UserContext <src/UserContext/UserContext.php>`
 and updates that with parameters which influence the varied response.
@@ -93,7 +111,7 @@ A provider that looks at whether the user is authenticated could look like this:
 .. _return context hash:
 
 Returning the User Context Hash
--------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is up to you to return the user context hash in response to the hash request
 (``/_fos_user_context_hash`` in step 3 above)::
