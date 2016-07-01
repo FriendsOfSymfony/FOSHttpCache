@@ -21,7 +21,7 @@ abstract class AbstractProxy implements ProxyInterface
     protected $ip = '127.0.0.1';
 
     /**
-     * Wait for caching proxy to be started up and reachable
+     * Wait for caching proxy to be started up and reachable.
      *
      * @param string $ip
      * @param int    $port
@@ -48,7 +48,7 @@ abstract class AbstractProxy implements ProxyInterface
     }
 
     /**
-     * Wait for caching proxy to be started up and reachable
+     * Wait for caching proxy to be started up and reachable.
      *
      * @param string $ip
      * @param int    $port
@@ -77,7 +77,7 @@ abstract class AbstractProxy implements ProxyInterface
 
     protected function wait($timeout, $callback)
     {
-        for ($i = 0; $i < $timeout; $i++) {
+        for ($i = 0; $i < $timeout; ++$i) {
             if ($callback()) {
                 return true;
             }
@@ -89,7 +89,7 @@ abstract class AbstractProxy implements ProxyInterface
     }
 
     /**
-     * Run a shell command
+     * Run a shell command.
      *
      * @param string $command
      * @param array  $arguments
@@ -109,7 +109,6 @@ abstract class AbstractProxy implements ProxyInterface
         }
     }
 
-
     /**
      * @param int $port
      */
@@ -127,7 +126,7 @@ abstract class AbstractProxy implements ProxyInterface
     }
 
     /**
-     * Set Varnish binary (defaults to varnishd)
+     * Set Varnish binary (defaults to varnishd).
      *
      * @param string $binary
      */
@@ -137,7 +136,7 @@ abstract class AbstractProxy implements ProxyInterface
     }
 
     /**
-     * Get Varnish binary
+     * Get Varnish binary.
      *
      * @return string
      */
@@ -146,9 +145,8 @@ abstract class AbstractProxy implements ProxyInterface
         return $this->binary;
     }
 
-
     /**
-     * Set IP address (defaults to 127.0.0.1)
+     * Set IP address (defaults to 127.0.0.1).
      *
      * @param string $ip
      */
@@ -158,7 +156,7 @@ abstract class AbstractProxy implements ProxyInterface
     }
 
     /**
-     * Get IP address
+     * Get IP address.
      *
      * @return string
      */
@@ -175,7 +173,7 @@ abstract class AbstractProxy implements ProxyInterface
     public function setConfigFile($configFile)
     {
         if (!file_exists($configFile)) {
-            throw new \InvalidArgumentException('Cannot find config file: ' . $configFile);
+            throw new \InvalidArgumentException('Cannot find config file: '.$configFile);
         }
 
         $this->configFile = $configFile;

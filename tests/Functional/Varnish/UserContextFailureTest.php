@@ -44,7 +44,7 @@ class UserContextFailureTest extends VarnishTestCase
                 array('cookies' => array('miam'))
             );
 
-            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
+            $this->fail("Request should have failed with a 400 response.\n\n".$response->getRawHeaders()."\n".$response->getBody(true));
         } catch (ClientErrorResponseException $e) {
             $this->assertEquals(400, $e->getResponse()->getStatusCode());
             $this->assertFalse($e->getResponse()->hasHeader('X-User-Context-Hash'));
@@ -63,7 +63,7 @@ class UserContextFailureTest extends VarnishTestCase
                 array('cookies' => array('miam'))
             );
 
-            $this->fail("Request should have failed with a 400 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
+            $this->fail("Request should have failed with a 400 response.\n\n".$response->getRawHeaders()."\n".$response->getBody(true));
         } catch (ClientErrorResponseException $e) {
             $this->assertEquals(400, $e->getResponse()->getStatusCode());
         }
@@ -92,7 +92,7 @@ class UserContextFailureTest extends VarnishTestCase
         try {
             $response = $this->getResponse('/user_context.php', array(), array('cookies' => array('foo')));
 
-            $this->fail("Request should have failed with a 500 response.\n\n" . $response->getRawHeaders() . "\n" . $response->getBody(true));
+            $this->fail("Request should have failed with a 500 response.\n\n".$response->getRawHeaders()."\n".$response->getBody(true));
         } catch (ServerErrorResponseException $e) {
             $this->assertEquals(503, $e->getResponse()->getStatusCode());
         }

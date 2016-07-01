@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCache package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCache\Tests\Functional\Fixtures\Symfony;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +23,7 @@ class AppKernel implements HttpKernelInterface
     /**
      * This simplistic kernel handles the request immediately inline.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {

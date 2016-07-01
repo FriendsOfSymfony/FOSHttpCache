@@ -24,11 +24,11 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
  */
 class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface
 {
-    const HTTP_METHOD_BAN          = 'BAN';
-    const HTTP_METHOD_PURGE        = 'PURGE';
-    const HTTP_METHOD_REFRESH      = 'GET';
-    const HTTP_HEADER_HOST         = 'X-Host';
-    const HTTP_HEADER_URL          = 'X-Url';
+    const HTTP_METHOD_BAN = 'BAN';
+    const HTTP_METHOD_PURGE = 'PURGE';
+    const HTTP_METHOD_REFRESH = 'GET';
+    const HTTP_HEADER_HOST = 'X-Host';
+    const HTTP_HEADER_URL = 'X-Url';
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
 
     /**
@@ -37,9 +37,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      * @var array
      */
     private $defaultBanHeaders = array(
-        self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
-        self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
-        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
+        self::HTTP_HEADER_HOST => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_URL => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL,
     );
 
     /**
@@ -88,7 +88,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
             if (!count($hosts)) {
                 throw new InvalidArgumentException('Either supply a list of hosts or null, but not an empty array.');
             }
-            $hosts = '^('.join('|', $hosts).')$';
+            $hosts = '^('.implode('|', $hosts).')$';
         }
 
         $headers = array(
@@ -131,7 +131,6 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      *
      * @throws MissingHostException If a relative path is queued for purge/
      *                              refresh and no base URL is set
-     *
      */
     protected function createRequest($method, $url, array $headers = array())
     {

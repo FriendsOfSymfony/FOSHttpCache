@@ -22,9 +22,9 @@ use Guzzle\Http\ClientInterface;
  */
 class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterface
 {
-    const HTTP_METHOD_PURGE        = 'PURGE';
-    const HTTP_METHOD_REFRESH      = 'GET';
-    const HTTP_HEADER_REFRESH      = 'X-Refresh';
+    const HTTP_METHOD_PURGE = 'PURGE';
+    const HTTP_METHOD_REFRESH = 'GET';
+    const HTTP_HEADER_REFRESH = 'X-Refresh';
 
     /**
      * Path location that triggers purging. If false, same location purging is
@@ -91,7 +91,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     }
 
     /**
-     * Create the correct URL to purge a resource
+     * Create the correct URL to purge a resource.
      *
      * @param string $url URL
      *

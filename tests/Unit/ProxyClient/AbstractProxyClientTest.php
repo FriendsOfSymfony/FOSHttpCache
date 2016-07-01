@@ -20,7 +20,7 @@ use Guzzle\Http\Exception\RequestException;
 use Guzzle\Plugin\Mock\MockPlugin;
 use Guzzle\Http\Message\Response;
 use Guzzle\Http\Message\Request;
-use \Mockery;
+use Mockery;
 
 /**
  * Testing the base methods of the proxy client, using the Varnish client as concrete class.
@@ -65,6 +65,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 
         $curlException = new CurlException('curl');
         $curlException->setRequest(new Request('GET', '/'));
+
         return array(
             array($curlException, '\FOS\HttpCache\Exception\ProxyUnreachableException'),
             array($requestException, '\FOS\HttpCache\Exception\ProxyResponseException'),
@@ -206,7 +207,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function ($requests) use ($self) {
-                        /** @type Request[] $requests */
+                        /* @type Request[] $requests */
                         $self->assertCount(4, $requests);
                         foreach ($requests as $request) {
                             $self->assertEquals('PURGE', $request->getMethod());
@@ -238,7 +239,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function ($requests) use ($self) {
-                        /** @type Request[] $requests */
+                        /* @type Request[] $requests */
                         $self->assertCount(4, $requests);
                         foreach ($requests as $request) {
                             $self->assertEquals('PURGE', $request->getMethod());
@@ -262,7 +263,6 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
                 ->flush()
         );
     }
-
 
     protected function setUp()
     {

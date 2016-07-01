@@ -51,11 +51,11 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
             'user_hash_header' => 'test/header',
             'user_hash_accept_header' => 'test accept',
             'anonymous_hash' => 'test hash',
-        );;
+        );
 
         return array(
             array(array(), $options),
-            array($custom, $custom + $options)
+            array($custom, $custom + $options),
         );
     }
 
@@ -127,7 +127,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $cookies = array(
             'PHPSESSID' => $sessionId1,
             'PHPSESSIDsdiuhsdf4535d4f' => $sessionId2,
-            'foo' => 'bar'
+            'foo' => 'bar',
         );
         $cookieString = "PHPSESSID=$sessionId1; foo=bar; PHPSESSIDsdiuhsdf4535d4f=$sessionId2";
         $request = Request::create('/foo', 'GET', array(), $cookies, array(), array('Cookie' => $cookieString));
@@ -148,7 +148,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
             ->setMethods(array('prepare'))
             ->getMock();
-        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash );
+        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
         $that = $this;
         $this->kernel
@@ -198,7 +198,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $expectedContextHash = 'my_generated_hash';
         $hashResponse = new Response();
-        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash );
+        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
         $that = $this;
         $this->kernel

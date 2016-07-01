@@ -17,7 +17,7 @@ use FOS\HttpCache\Test\NginxTestCase;
  * @group webserver
  * @group nginx
  */
-class NginxTest extends NginxTestCase
+class NginxProxyClientTest extends NginxTestCase
 {
     public function testPurgeSeparateLocationPath()
     {

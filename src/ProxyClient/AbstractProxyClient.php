@@ -23,35 +23,35 @@ use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Message\RequestInterface;
 
 /**
- * Guzzle-based abstract caching proxy client
+ * Guzzle-based abstract caching proxy client.
  *
  * @author David de Boer <david@driebit.nl>
  */
 abstract class AbstractProxyClient implements ProxyClientInterface
 {
     /**
-     * IP addresses/hostnames of all caching proxy servers
+     * IP addresses/hostnames of all caching proxy servers.
      *
      * @var array
      */
     private $servers;
 
     /**
-     * HTTP client
+     * HTTP client.
      *
      * @var ClientInterface
      */
     private $client;
 
     /**
-     * Request queue
+     * Request queue.
      *
      * @var array|RequestInterface[]
      */
     private $queue;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array           $servers Caching proxy server hostnames or IP addresses,
      *                                 including port if not port 80.
@@ -73,7 +73,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Set caching proxy servers
+     * Set caching proxy servers.
      *
      * @param array $servers Caching proxy proxy server hostnames or IP
      *                       addresses, including port if not port 80.
@@ -92,7 +92,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
 
     /**
      * Set application hostname, optionally including a base URL, for purge and
-     * refresh requests
+     * refresh requests.
      *
      * @param string $url Your application’s base URL or hostname
      */
@@ -106,7 +106,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Get application base URL
+     * Get application base URL.
      *
      * @return string Your application base url
      */
@@ -132,7 +132,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Add a request to the queue
+     * Add a request to the queue.
      *
      * @param string $method  HTTP method
      * @param string $url     URL
@@ -163,7 +163,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Create request
+     * Create request.
      *
      * @param string $method  HTTP method
      * @param string $url     URL
@@ -177,7 +177,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Sends all requests to each caching proxy server
+     * Sends all requests to each caching proxy server.
      *
      * Requests are sent in parallel to minimise impact on performance.
      *
@@ -213,7 +213,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Handle request exception
+     * Handle request exception.
      *
      * @param GuzzleExceptionCollection $exceptions
      *
@@ -253,7 +253,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Filter a URL
+     * Filter a URL.
      *
      * Prefix the URL with "http://" if it has no scheme, then check the URL
      * for validity. You can specify what parts of the URL are allowed.
@@ -296,7 +296,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Get default scheme
+     * Get default scheme.
      *
      * @return string
      */
@@ -306,7 +306,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     }
 
     /**
-     * Get schemes allowed by caching proxy
+     * Get schemes allowed by caching proxy.
      *
      * @return string[] Array of schemes allowed by caching proxy, e.g. 'http'
      *                  or 'https'
