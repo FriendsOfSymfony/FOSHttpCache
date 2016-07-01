@@ -104,7 +104,7 @@ class VarnishProxyClientTest extends VarnishTestCase
 
     public function testPurgeHost()
     {
-        $varnish = new Varnish(['http://127.0.0.1:' . $this->getProxy()->getPort()]);
+        $varnish = new Varnish(['http://127.0.0.1:'.$this->getProxy()->getPort()]);
 
         $this->getResponse('/cache.php');
 

@@ -20,14 +20,14 @@ class NginxProxy extends Abstractproxy
     protected $cacheDir;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $configFile Path to NGINX configuration file
      */
     public function __construct($configFile)
     {
         $this->setConfigFile($configFile);
-        $this->setCacheDir(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-nginx');
+        $this->setCacheDir(sys_get_temp_dir().DIRECTORY_SEPARATOR.'foshttpcache-nginx');
     }
 
     /**
@@ -39,7 +39,7 @@ class NginxProxy extends Abstractproxy
             $this->getBinary(),
             [
                 '-c', $this->getConfigFile(),
-                '-g', 'pid ' . $this->pid . ';',
+                '-g', 'pid '.$this->pid.';',
             ]
         );
 

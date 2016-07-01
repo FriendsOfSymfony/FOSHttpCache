@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\UserContext;
 
 /**
- * A UserContext is a set of parameters which allow to determinate different views for an url
+ * A UserContext is a set of parameters which allow to determinate different views for an url.
  *
  * For example a menu can be different if a user is authenticated or not,
  * in this case the UserContext should have a authenticated parameter set
@@ -23,7 +23,7 @@ class UserContext implements \IteratorAggregate
     private $parameters = [];
 
     /**
-     * Set a parameter for this context
+     * Set a parameter for this context.
      *
      * @param string $key   Parameter identifier
      * @param mixed  $value Parameter value (it should be serializable)
@@ -34,7 +34,7 @@ class UserContext implements \IteratorAggregate
     }
 
     /**
-     * Set all the parameters of this context
+     * Set all the parameters of this context.
      *
      * @param array $parameters
      */
@@ -44,11 +44,11 @@ class UserContext implements \IteratorAggregate
     }
 
     /**
-     * Determine whether a parameter exists
+     * Determine whether a parameter exists.
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function hasParameter($key)
     {
@@ -56,7 +56,7 @@ class UserContext implements \IteratorAggregate
     }
 
     /**
-     * Return all parameters of this context
+     * Return all parameters of this context.
      *
      * @return array
      */

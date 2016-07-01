@@ -48,7 +48,7 @@ trait EventDispatchingHttpCache
     private $eventDispatcher;
 
     /**
-     * Get event dispatcher
+     * Get event dispatcher.
      *
      * @return EventDispatcherInterface
      */
@@ -62,7 +62,7 @@ trait EventDispatchingHttpCache
     }
 
     /**
-     * Add subscriber
+     * Add subscriber.
      *
      * @param EventSubscriberInterface $subscriber
      */
@@ -72,7 +72,7 @@ trait EventDispatchingHttpCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Adding the Events::PRE_HANDLE and Events::POST_HANDLE events.
      */
@@ -91,7 +91,7 @@ trait EventDispatchingHttpCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Trigger event to alter response before storing it in the cache.
      */
@@ -103,7 +103,7 @@ trait EventDispatchingHttpCache
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Adding the Events::PRE_INVALIDATE event.
      */

@@ -26,14 +26,14 @@ class VarnishProxy extends AbstractProxy
     protected $allowInlineC = false;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $configFile Path to VCL file
      */
     public function __construct($configFile)
     {
         $this->setConfigFile($configFile);
-        $this->setCacheDir(sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'foshttpcache-varnish');
+        $this->setCacheDir(sys_get_temp_dir().DIRECTORY_SEPARATOR.'foshttpcache-varnish');
     }
 
     /**
@@ -106,7 +106,7 @@ class VarnishProxy extends AbstractProxy
     }
 
     /**
-     * Set Varnish management port (defaults to 6182)
+     * Set Varnish management port (defaults to 6182).
      *
      * @param int $managementPort
      */
@@ -116,7 +116,7 @@ class VarnishProxy extends AbstractProxy
     }
 
     /**
-     * Get Varnish management port
+     * Get Varnish management port.
      *
      * @return int
      */
@@ -126,7 +126,7 @@ class VarnishProxy extends AbstractProxy
     }
 
     /**
-     * Set Varnish cache directory
+     * Set Varnish cache directory.
      *
      * @param string $cacheDir
      */
@@ -136,7 +136,7 @@ class VarnishProxy extends AbstractProxy
     }
 
     /**
-     * Get Varnish cache directory
+     * Get Varnish cache directory.
      *
      * @return string
      */

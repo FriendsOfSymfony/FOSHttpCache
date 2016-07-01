@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Test;
 
 /**
- * A PHPUnit test listener that starts and stops the PHP built-in web server
+ * A PHPUnit test listener that starts and stops the PHP built-in web server.
  *
  * This listener is configured with a couple of constants from the phpunit.xml
  * file. To define constants in the phpunit file, use this syntax:
@@ -27,7 +27,7 @@ namespace FOS\HttpCache\Test;
 class WebServerListener implements \PHPUnit_Framework_TestListener
 {
     /**
-     * PHP web server PID
+     * PHP web server PID.
      *
      * @var int
      */
@@ -35,7 +35,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
 
     /**
      * Make sure the PHP built-in web server is running for tests with group
-     * 'webserver'
+     * 'webserver'.
      */
     public function startTestSuite(\PHPUnit_Framework_TestSuite $suite)
     {
@@ -52,24 +52,47 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
         $this->pid = $pid = $this->startPhpWebServer();
 
         register_shutdown_function(function () use ($pid) {
-            exec('kill ' . $pid);
+            exec('kill '.$pid);
         });
     }
 
     /**
-     *  We don't need these
+     *  We don't need these.
      */
-    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite) {}
-    public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time) {}
-    public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time) {}
-    public function addIncompleteTest(\PHPUnit_Framework_Test $test, \Exception $e, $time) {}
-    public function addSkippedTest(\PHPUnit_Framework_Test $test, \Exception $e, $time) {}
-    public function startTest(\PHPUnit_Framework_Test $test) {}
-    public function endTest(\PHPUnit_Framework_Test $test, $time) {}
-    public function addRiskyTest(\PHPUnit_Framework_Test $test, \Exception $e, $time) {}
+    public function endTestSuite(\PHPUnit_Framework_TestSuite $suite)
+    {
+    }
+
+    public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time)
+    {
+    }
+
+    public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time)
+    {
+    }
+
+    public function addIncompleteTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
+    {
+    }
+
+    public function addSkippedTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
+    {
+    }
+
+    public function startTest(\PHPUnit_Framework_Test $test)
+    {
+    }
+
+    public function endTest(\PHPUnit_Framework_Test $test, $time)
+    {
+    }
+
+    public function addRiskyTest(\PHPUnit_Framework_Test $test, \Exception $e, $time)
+    {
+    }
 
     /**
-     * Get web server hostname
+     * Get web server hostname.
      *
      * @throws \Exception
      *
@@ -85,7 +108,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
     }
 
     /**
-     * Get web server port
+     * Get web server port.
      *
      * @throws \Exception
      *
@@ -101,7 +124,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
     }
 
     /**
-     * Get web server port
+     * Get web server port.
      *
      * @throws \Exception
      *
@@ -117,7 +140,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
     }
 
     /**
-     * Start PHP built-in web server
+     * Start PHP built-in web server.
      *
      * @return int PID
      */
@@ -137,7 +160,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
     }
 
     /**
-     * Wait for caching proxy to be started up and reachable
+     * Wait for caching proxy to be started up and reachable.
      *
      * @param string $ip
      * @param int    $port
@@ -147,7 +170,7 @@ class WebServerListener implements \PHPUnit_Framework_TestListener
      */
     protected function waitFor($ip, $port, $timeout)
     {
-        for ($i = 0; $i < $timeout; $i++) {
+        for ($i = 0; $i < $timeout; ++$i) {
             if (@fsockopen($ip, $port)) {
                 return;
             }

@@ -14,9 +14,6 @@ namespace FOS\HttpCache\SymfonyCache;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Base class for handlers for the symfony built-in HttpCache that need access
@@ -64,7 +61,7 @@ abstract class AccessControlledSubscriber implements EventSubscriberInterface
      *
      * @param Request $request The request to check.
      *
-     * @return boolean Whether access is granted.
+     * @return bool Whether access is granted.
      */
     protected function isRequestAllowed(Request $request)
     {

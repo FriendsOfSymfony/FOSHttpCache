@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\UserContext;
 
 /**
- * Allow a class to update a user context
+ * Allow a class to update a user context.
  */
 interface ContextProviderInterface
 {

@@ -14,7 +14,7 @@ namespace FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\Exception\ExceptionCollection;
 
 /**
- * An HTTP caching reverse proxy client
+ * An HTTP caching reverse proxy client.
  *
  * Implementations should implement at least one of the Invalidation interfaces.
  */

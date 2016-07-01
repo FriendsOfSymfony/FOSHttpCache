@@ -32,7 +32,7 @@ class ProxyUnreachableException extends \RuntimeException implements HttpCacheEx
             $adapterException->getMessage()
         );
 
-        return new ProxyUnreachableException(
+        return new self(
             $message,
             0,
             $adapterException

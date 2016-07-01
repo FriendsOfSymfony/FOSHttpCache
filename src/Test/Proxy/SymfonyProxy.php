@@ -20,17 +20,17 @@ namespace FOS\HttpCache\Test\Proxy;
 class SymfonyProxy implements ProxyInterface
 {
     /**
-     * Get Symfony cache directory
+     * Get Symfony cache directory.
      *
      * @return string
      */
     public function getCacheDir()
     {
-        return defined('SYMFONY_CACHE_DIR') ? SYMFONY_CACHE_DIR : sys_get_temp_dir() . '/foshttpcache-symfony';
+        return defined('SYMFONY_CACHE_DIR') ? SYMFONY_CACHE_DIR : sys_get_temp_dir().'/foshttpcache-symfony';
     }
 
     /**
-     * Start the proxy server
+     * Start the proxy server.
      */
     public function start()
     {
@@ -38,7 +38,7 @@ class SymfonyProxy implements ProxyInterface
     }
 
     /**
-     * Stop the proxy server
+     * Stop the proxy server.
      */
     public function stop()
     {
@@ -46,14 +46,14 @@ class SymfonyProxy implements ProxyInterface
     }
 
     /**
-     * Clear all cached content from the proxy server
+     * Clear all cached content from the proxy server.
      */
     public function clear()
     {
         if (is_dir($this->getCacheDir())) {
             $path = realpath($this->getCacheDir());
             if (!$this->getCacheDir() || '/' == $path) {
-                throw new \Exception('Invalid test setup, the cache dir is ' . $path);
+                throw new \Exception('Invalid test setup, the cache dir is '.$path);
             }
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 system('DEL /S '.$path);
