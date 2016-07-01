@@ -45,7 +45,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     private $defaultBanHeaders = [
         self::HTTP_HEADER_HOST => self::REGEX_MATCH_ALL,
         self::HTTP_HEADER_URL => self::REGEX_MATCH_ALL,
-        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
+        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL,
     ];
 
     /**
@@ -83,7 +83,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
              * header length by the largest tag (minus 1 for the implode character)
              */
             $tagsize = max(array_map('mb_strlen', $escapedTags));
-            $elems = floor($this->options['header_length'] / ($tagsize - 1)) ? : 1;
+            $elems = floor($this->options['header_length'] / ($tagsize - 1)) ?: 1;
         } else {
             $elems = count($escapedTags);
         }

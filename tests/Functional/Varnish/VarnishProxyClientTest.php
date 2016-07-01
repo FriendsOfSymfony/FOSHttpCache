@@ -122,8 +122,8 @@ class VarnishProxyClientTest extends VarnishTestCase
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
 
-        $originalTimestamp = (float)(string) $response->getBody();
-        $refreshedTimestamp = (float)(string) $refreshed->getBody();
+        $originalTimestamp = (float) (string) $response->getBody();
+        $refreshedTimestamp = (float) (string) $refreshed->getBody();
 
         $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
     }

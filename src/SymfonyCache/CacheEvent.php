@@ -39,7 +39,7 @@ class CacheEvent extends Event
     private $response;
 
     /**
-     * Make sure your $kernel implements CacheInvalidationInterface
+     * Make sure your $kernel implements CacheInvalidationInterface.
      *
      * @param CacheInvalidationInterface $kernel   The kernel raising with this event.
      * @param Request                    $request  The request being processed.

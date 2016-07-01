@@ -18,7 +18,6 @@ use Http\Client\Exception\RequestException;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
-use \Mockery;
 
 /**
  * Testing the base methods of the proxy client, using the Varnish client as concrete class.
@@ -26,7 +25,7 @@ use \Mockery;
 class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Mock client
+     * Mock client.
      *
      * @var Client
      */
@@ -79,8 +78,8 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
             [
                 $unreachableException,
                 '\FOS\HttpCache\Exception\ProxyUnreachableException',
-                'bla.com'
-            ]
+                'bla.com',
+            ],
         ];
     }
 

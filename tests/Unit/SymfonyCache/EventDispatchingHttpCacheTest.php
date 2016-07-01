@@ -13,14 +13,9 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
-use FOS\HttpCache\SymfonyCache\CacheEvent;
-use FOS\HttpCache\SymfonyCache\Events;
 use FOS\HttpCache\Test\EventDispatchingHttpCacheTestCase;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * This test ensures that the EventDispatchingHttpCache trait is correctly used.
@@ -40,7 +35,7 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
     /**
      * Made public to allow event subscribers to do refresh operations.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fetch(Request $request, $catch = false)
     {

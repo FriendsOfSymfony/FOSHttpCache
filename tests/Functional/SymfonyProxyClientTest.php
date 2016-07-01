@@ -70,8 +70,8 @@ class SymfonyProxyClientTest extends SymfonyTestCase
         usleep(100);
         $refreshed = $this->getResponse('/symfony.php/cache');
 
-        $originalTimestamp = (float)(string) $response->getBody();
-        $refreshedTimestamp = (float)(string) $refreshed->getBody();
+        $originalTimestamp = (float) (string) $response->getBody();
+        $refreshedTimestamp = (float) (string) $refreshed->getBody();
 
         $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
     }

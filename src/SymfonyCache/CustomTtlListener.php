@@ -1,9 +1,16 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCache package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCache\SymfonyCache;
 
-use FOS\HttpCache\SymfonyCache\CacheEvent;
-use FOS\HttpCache\SymfonyCache\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -24,7 +31,7 @@ class CustomTtlListener implements EventSubscriberInterface
     private $ttlHeader;
 
     /**
-     * Header used for backing up the s-maxage
+     * Header used for backing up the s-maxage.
      *
      * @var string
      */

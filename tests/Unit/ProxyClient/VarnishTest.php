@@ -14,7 +14,6 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Mock\Client;
 use Psr\Http\Message\RequestInterface;
-use \Mockery;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
 {
@@ -121,7 +120,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('.*', $requests[0]->getHeaderLine('Test'));
         $this->assertEquals('B', $requests[0]->getHeaderLine('A'));
     }
-
 
     public function testTagsHeadersEscapingAndCustomHeader()
     {

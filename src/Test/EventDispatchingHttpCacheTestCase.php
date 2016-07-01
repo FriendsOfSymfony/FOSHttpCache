@@ -43,7 +43,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
     {
         $mock = $this
             ->getMockBuilder($this->getCacheClass())
-            ->setMethods( $mockedMethods )
+            ->setMethods($mockedMethods)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -54,7 +54,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $options = [
             'debug' => false,
             'default_ttl' => 0,
-            'private_headers' => [ 'Authorization', 'Cookie' ],
+            'private_headers' => ['Authorization', 'Cookie'],
             'allow_reload' => false,
             'allow_revalidate' => false,
             'stale_while_revalidate' => 2,
@@ -68,7 +68,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         } else {
             $refOptions = $refHttpCache->getProperty('options');
             $refOptions->setAccessible(true);
-            $refOptions->setValue($mock, $options );
+            $refOptions->setValue($mock, $options);
         }
 
         return $mock;
@@ -381,7 +381,7 @@ class TestSubscriber implements EventSubscriberInterface
         if ($this->preHandleResponse) {
             $event->setResponse($this->preHandleResponse);
         }
-        $this->preHandleCalls++;
+        ++$this->preHandleCalls;
     }
 
     public function postHandle(CacheEvent $event)
@@ -391,7 +391,7 @@ class TestSubscriber implements EventSubscriberInterface
         if ($this->postHandleResponse) {
             $event->setResponse($this->postHandleResponse);
         }
-        $this->postHandleCalls++;
+        ++$this->postHandleCalls;
     }
 
     public function preStore(CacheEvent $event)
@@ -401,16 +401,16 @@ class TestSubscriber implements EventSubscriberInterface
         if ($this->preStoreResponse) {
             $event->setResponse($this->preStoreResponse);
         }
-        $this->preStoreCalls++;
+        ++$this->preStoreCalls;
     }
 
-        public function preInvalidate(CacheEvent $event)
+    public function preInvalidate(CacheEvent $event)
     {
         $this->test->assertSame($this->kernel, $event->getKernel());
         $this->test->assertSame($this->request, $event->getRequest());
         if ($this->preInvalidateResponse) {
             $event->setResponse($this->preInvalidateResponse);
         }
-        $this->preInvalidateCalls++;
+        ++$this->preInvalidateCalls;
     }
 }

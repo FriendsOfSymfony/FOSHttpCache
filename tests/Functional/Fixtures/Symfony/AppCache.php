@@ -44,7 +44,7 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
     /**
      * Made public to allow event subscribers to do refresh operations.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function fetch(Request $request, $catch = false)
     {

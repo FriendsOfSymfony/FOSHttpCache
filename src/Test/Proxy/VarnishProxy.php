@@ -42,11 +42,11 @@ class VarnishProxy extends AbstractProxy
     public function start()
     {
         $args = [
-            '-a', $this->ip . ':' . $this->getPort(),
-            '-T', $this->ip . ':' . $this->getManagementPort(),
+            '-a', $this->ip.':'.$this->getPort(),
+            '-T', $this->ip.':'.$this->getManagementPort(),
             '-f', $this->getConfigFile(),
             '-n', $this->getCacheDir(),
-            '-p', 'vcl_dir=' . $this->getConfigDir(),
+            '-p', 'vcl_dir='.$this->getConfigDir(),
 
             '-P', $this->pid,
         ];
@@ -148,7 +148,7 @@ class VarnishProxy extends AbstractProxy
     /**
      * Whether the inline C flag should be set.
      *
-     * @return boolean
+     * @return bool
      */
     public function getAllowInlineC()
     {
@@ -156,12 +156,12 @@ class VarnishProxy extends AbstractProxy
     }
 
     /**
-     * Set whether the inline c flag should be on or off
+     * Set whether the inline c flag should be on or off.
      *
-     * @param boolean $allowInlineC True for on, false for off
+     * @param bool $allowInlineC True for on, false for off
      */
     public function setAllowInlineC($allowInlineC)
     {
-        $this->allowInlineC = (boolean) $allowInlineC;
+        $this->allowInlineC = (bool) $allowInlineC;
     }
 }
