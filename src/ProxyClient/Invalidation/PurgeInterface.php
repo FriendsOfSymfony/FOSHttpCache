@@ -23,7 +23,7 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 interface PurgeInterface extends ProxyClientInterface
 {
     /**
-     * Purge a URL
+     * Purge a URL.
      *
      * Purging a URL will remove the cache for the URL (including the query string)
      *

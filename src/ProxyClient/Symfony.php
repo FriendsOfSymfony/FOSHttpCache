@@ -11,9 +11,6 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\Exception\InvalidArgumentException;
-use FOS\HttpCache\Exception\MissingHostException;
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
@@ -38,7 +35,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
     private $options;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * When creating the client, you can configure options:
      *

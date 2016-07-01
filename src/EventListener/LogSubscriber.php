@@ -36,7 +36,7 @@ class LogSubscriber implements EventSubscriberInterface
     {
         return array(
             Events::PROXY_UNREACHABLE_ERROR => 'onProxyUnreachableError',
-            Events::PROXY_RESPONSE_ERROR    => 'onProxyResponseError'
+            Events::PROXY_RESPONSE_ERROR => 'onProxyResponseError',
         );
     }
 
@@ -53,7 +53,7 @@ class LogSubscriber implements EventSubscriberInterface
     private function log($level, \Exception $exception)
     {
         $context = array(
-            'exception' => $exception
+            'exception' => $exception,
         );
 
         $this->logger->log($level, $exception->getMessage(), $context);

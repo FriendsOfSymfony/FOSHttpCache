@@ -61,7 +61,7 @@ abstract class NginxTestCase extends ProxyTestCase
     {
         if (!defined('NGINX_FILE')) {
             throw new \Exception('Specify the NGINX'
-                    . ' configuration file path in phpunit.xml or override getConfigFile()');
+                    .' configuration file path in phpunit.xml or override getConfigFile()');
         }
 
         // NGINX needs an absolute path
@@ -69,7 +69,7 @@ abstract class NginxTestCase extends ProxyTestCase
     }
 
     /**
-     * Defaults to "nginx"
+     * Defaults to "nginx".
      *
      * @return string
      */
@@ -89,7 +89,7 @@ abstract class NginxTestCase extends ProxyTestCase
     }
 
     /**
-     * Get NGINX cache directory
+     * Get NGINX cache directory.
      */
     protected function getCacheDir()
     {
@@ -118,7 +118,7 @@ abstract class NginxTestCase extends ProxyTestCase
     }
 
     /**
-     * Get proxy client
+     * Get proxy client.
      *
      * @param string $purgeLocation Optional purgeLocation
      *
@@ -128,7 +128,7 @@ abstract class NginxTestCase extends ProxyTestCase
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Nginx(
-                array('http://127.0.0.1:' . $this->getCachingProxyPort()),
+                array('http://127.0.0.1:'.$this->getCachingProxyPort()),
                 $this->getHostName(),
                 $purgeLocation
             );

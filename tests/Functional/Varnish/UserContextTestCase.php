@@ -99,7 +99,6 @@ abstract class UserContextTestCase extends VarnishTestCase
             array('cookies' => array('foo'))
         );
         $this->assertEquals('foo', $response1->getBody(true));
-
     }
 
     public function testUserContextUnauthorized()

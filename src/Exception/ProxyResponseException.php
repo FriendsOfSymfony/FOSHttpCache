@@ -37,6 +37,6 @@ class ProxyResponseException extends \RuntimeException implements HttpCacheExcep
             $message .= ". $details";
         }
 
-        return new ProxyResponseException($message, $statusCode, $previous);
+        return new self($message, $statusCode, $previous);
     }
 }

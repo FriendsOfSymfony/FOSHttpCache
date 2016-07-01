@@ -15,7 +15,7 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 
 /**
  * An HTTP cache that supports invalidation by banning, that is, removing
- * objects from the cache that match a regular expression
+ * objects from the cache that match a regular expression.
  */
 interface BanInterface extends ProxyClientInterface
 {
@@ -23,7 +23,7 @@ interface BanInterface extends ProxyClientInterface
     const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;
 
     /**
-     * Ban cached objects matching HTTP headers
+     * Ban cached objects matching HTTP headers.
      *
      * Each header is either a:
      * - regular string ('X-Host' => 'example.com')

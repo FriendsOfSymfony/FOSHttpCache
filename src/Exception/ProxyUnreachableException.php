@@ -36,7 +36,7 @@ class ProxyUnreachableException extends \RuntimeException implements HttpCacheEx
             $message .= ". $details";
         }
 
-        return new ProxyUnreachableException(
+        return new self(
             $message,
             0,
             $previous

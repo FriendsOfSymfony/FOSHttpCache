@@ -28,7 +28,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
     {
         $mock = $this
             ->getMockBuilder('\FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache')
-            ->setMethods( $mockedMethods )
+            ->setMethods($mockedMethods)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -37,7 +37,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $options = array(
             'debug' => false,
             'default_ttl' => 0,
-            'private_headers' => array( 'Authorization', 'Cookie' ),
+            'private_headers' => array('Authorization', 'Cookie'),
             'allow_reload' => false,
             'allow_revalidate' => false,
             'stale_while_revalidate' => 2,
@@ -51,7 +51,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         } else {
             $refOptions = $refHttpCache->getProperty('options');
             $refOptions->setAccessible(true);
-            $refOptions->setValue($mock, $options );
+            $refOptions->setValue($mock, $options);
         }
 
         return $mock;
@@ -163,7 +163,7 @@ class TestSubscriber implements EventSubscriberInterface
     {
         return array(
             Events::PRE_HANDLE => 'preHandle',
-            Events::PRE_INVALIDATE => 'preInvalidate'
+            Events::PRE_INVALIDATE => 'preInvalidate',
         );
     }
 
@@ -174,7 +174,7 @@ class TestSubscriber implements EventSubscriberInterface
         if ($this->handleResponse) {
             $event->setResponse($this->handleResponse);
         }
-        $this->handleHits++;
+        ++$this->handleHits;
     }
 
     public function preInvalidate(CacheEvent $event)
@@ -184,6 +184,6 @@ class TestSubscriber implements EventSubscriberInterface
         if ($this->invalidateResponse) {
             $event->setResponse($this->invalidateResponse);
         }
-        $this->invalidateHits++;
+        ++$this->invalidateHits;
     }
 }

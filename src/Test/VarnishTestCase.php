@@ -67,7 +67,7 @@ abstract class VarnishTestCase extends ProxyTestCase
     }
 
     /**
-     * Get Varnish binary
+     * Get Varnish binary.
      *
      * @return string
      */
@@ -77,7 +77,7 @@ abstract class VarnishTestCase extends ProxyTestCase
     }
 
     /**
-     * Get Varnish port
+     * Get Varnish port.
      *
      * @return int
      */
@@ -87,7 +87,7 @@ abstract class VarnishTestCase extends ProxyTestCase
     }
 
     /**
-     * Get Varnish management port
+     * Get Varnish management port.
      *
      * @return int
      */
@@ -97,7 +97,7 @@ abstract class VarnishTestCase extends ProxyTestCase
     }
 
     /**
-     * Get Varnish cache directory
+     * Get Varnish cache directory.
      *
      * @return string
      */
@@ -107,7 +107,7 @@ abstract class VarnishTestCase extends ProxyTestCase
     }
 
     /**
-     * Defaults to 3
+     * Defaults to 3.
      *
      * @return int
      */
@@ -144,7 +144,7 @@ abstract class VarnishTestCase extends ProxyTestCase
     }
 
     /**
-     * Get Varnish proxy client
+     * Get Varnish proxy client.
      *
      * @return Varnish
      */
@@ -152,8 +152,8 @@ abstract class VarnishTestCase extends ProxyTestCase
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Varnish(
-                array('http://127.0.0.1:' . $this->getProxy()->getPort()),
-                $this->getHostName() . ':' . $this->getProxy()->getPort()
+                array('http://127.0.0.1:'.$this->getProxy()->getPort()),
+                $this->getHostName().':'.$this->getProxy()->getPort()
             );
         }
 

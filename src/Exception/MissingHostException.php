@@ -26,11 +26,11 @@ class MissingHostException extends \RuntimeException implements HttpCacheExcepti
     {
         $msg = sprintf(
             'Path "%s" cannot be invalidated without a host. '
-            . 'Either invalidate full URLs containing hostnames instead of paths '
-            . 'or configure the caching proxy class with a hostname in the base path.',
+            .'Either invalidate full URLs containing hostnames instead of paths '
+            .'or configure the caching proxy class with a hostname in the base path.',
             $path
         );
 
-        return new MissingHostException($msg);
+        return new self($msg);
     }
 }

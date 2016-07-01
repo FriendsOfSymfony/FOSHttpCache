@@ -17,8 +17,7 @@ use Guzzle\Http\Client;
 use Guzzle\Http\Message\Response;
 
 /**
- * Abstract caching proxy test case
- *
+ * Abstract caching proxy test case.
  */
 abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -30,7 +29,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     protected $httpClient;
 
     /**
-     * Assert a cache miss
+     * Assert a cache miss.
      *
      * @param Response $response
      * @param string   $message  Test failure message (optional)
@@ -41,7 +40,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Assert a cache hit
+     * Assert a cache hit.
      *
      * @param Response $response
      * @param string   $message  Test failure message (optional)
@@ -62,7 +61,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Get HTTP response from your application
+     * Get HTTP response from your application.
      *
      * @param string $url
      * @param array  $headers
@@ -76,7 +75,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Get HTTP client for your application
+     * Get HTTP client for your application.
      *
      * @return Client
      */
@@ -84,7 +83,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     {
         if (null === $this->httpClient) {
             $this->httpClient = new Client(
-                'http://' . $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                'http://'.$this->getHostName().':'.$this->getCachingProxyPort(),
                 array('curl.options' => array(CURLOPT_FORBID_REUSE => true))
             );
         }
@@ -93,7 +92,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Start the proxy server and reset any cached content
+     * Start the proxy server and reset any cached content.
      */
     protected function setUp()
     {
@@ -101,7 +100,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Stop the proxy server
+     * Stop the proxy server.
      */
     protected function tearDown()
     {
@@ -109,7 +108,7 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Get the hostname where your application can be reached
+     * Get the hostname where your application can be reached.
      *
      * @throws \Exception
      *
@@ -125,21 +124,21 @@ abstract class ProxyTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Get proxy server
+     * Get proxy server.
      *
      * @return \FOS\HttpCache\Test\Proxy\ProxyInterface
      */
     abstract protected function getProxy();
 
     /**
-     * Get proxy client
+     * Get proxy client.
      *
      * @return \FOS\HttpCache\ProxyClient\ProxyClientInterface
      */
     abstract protected function getProxyClient();
 
     /**
-     * Get port that caching proxy listens on
+     * Get port that caching proxy listens on.
      *
      * @return int
      */
