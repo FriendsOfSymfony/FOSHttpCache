@@ -75,8 +75,8 @@ class NginxProxyClientTest extends NginxTestCase
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan(
-            (float)(string) $response->getBody(),
-            (float)(string) $refreshed->getBody()
+            (float) (string) $response->getBody(),
+            (float) (string) $refreshed->getBody()
         );
     }
 
@@ -90,10 +90,10 @@ class NginxProxyClientTest extends NginxTestCase
         $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
-        
+
         $this->assertGreaterThan(
-            (float)(string) $response->getBody(),
-            (float)(string) $refreshed->getBody()
+            (float) (string) $response->getBody(),
+            (float) (string) $refreshed->getBody()
         );
     }
 }

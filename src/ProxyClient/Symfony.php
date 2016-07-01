@@ -14,7 +14,6 @@ namespace FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use Http\Message\MessageFactory;
 
 /**
  * Symfony HttpCache invalidator.

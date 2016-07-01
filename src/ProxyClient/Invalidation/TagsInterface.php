@@ -20,7 +20,7 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 interface TagsInterface extends ProxyClientInterface
 {
     /**
-     * Remove/Expire cache objects based on cache tags
+     * Remove/Expire cache objects based on cache tags.
      *
      * @param array $tags Tags that should be removed/expired from the cache
      *
@@ -29,7 +29,7 @@ interface TagsInterface extends ProxyClientInterface
     public function invalidateTags(array $tags);
 
     /**
-     * Get escaped tags
+     * Get escaped tags.
      *
      * @param array $tags
      *

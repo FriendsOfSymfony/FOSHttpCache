@@ -16,7 +16,7 @@ use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Provides cache hit/miss assertions to PHPUnit tests
+ * Provides cache hit/miss assertions to PHPUnit tests.
  *
  * To enable the assertHit and assertMiss assertions, you need to configure your
  * caching proxy to set an X-Cache header with the cache status.
@@ -28,10 +28,10 @@ use Psr\Http\Message\ResponseInterface;
 trait CacheAssertions
 {
     /**
-     * Assert a cache miss
+     * Assert a cache miss.
      *
      * @param ResponseInterface $response
-     * @param string            $message Test failure message (optional)
+     * @param string            $message  Test failure message (optional)
      */
     public function assertMiss(ResponseInterface $response, $message = null)
     {
@@ -39,10 +39,10 @@ trait CacheAssertions
     }
 
     /**
-     * Assert a cache hit
+     * Assert a cache hit.
      *
      * @param ResponseInterface $response
-     * @param string            $message Test failure message (optional)
+     * @param string            $message  Test failure message (optional)
      */
     public function assertHit(ResponseInterface $response, $message = null)
     {

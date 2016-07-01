@@ -26,7 +26,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ResponseTagger
 {
-
     /**
      * @var array
      */
@@ -43,7 +42,7 @@ class ResponseTagger
     private $tags = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param TagsInterface $client
      * @param array         $options supported options:
@@ -120,13 +119,13 @@ class ResponseTagger
     }
 
     /**
-     * Set tags on a response
+     * Set tags on a response.
      *
      * @param ResponseInterface $response Original response
      * @param bool              $replace  Whether to replace the current tags
      *                                    on the response
      *
-     * @return ResponseInterface          Tagged response
+     * @return ResponseInterface Tagged response
      */
     public function tagResponse(ResponseInterface $response, $replace = false)
     {

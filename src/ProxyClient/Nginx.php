@@ -34,7 +34,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     private $purgeLocation;
 
     /**
-     * Set path that triggers purge
+     * Set path that triggers purge.
      *
      * @param string $purgeLocation
      */

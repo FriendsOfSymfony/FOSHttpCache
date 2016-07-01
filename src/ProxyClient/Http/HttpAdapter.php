@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the FOSHttpCache package.
+ *
+ * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace FOS\HttpCache\ProxyClient\Http;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
@@ -7,7 +16,6 @@ use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\Exception\InvalidUrlException;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
-use Http\Client\Exception;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
@@ -34,7 +42,7 @@ class HttpAdapter
     private $uriFactory;
 
     /**
-     * Queued requests
+     * Queued requests.
      *
      * @var RequestInterface[]
      */
@@ -55,14 +63,14 @@ class HttpAdapter
     private $baseUri;
 
     /**
-     * @param string[] $servers Caching proxy server hostnames or IP
-     *                          addresses, including port if not port 80.
-     *                          E.g. ['127.0.0.1:6081']
-     * @param string   $baseUri Default application hostname, optionally
-     *                          including base URL, for purge and refresh
-     *                          requests (optional). This is required if
-     *                          you purge and refresh paths instead of
-     *                          absolute URLs.
+     * @param string[]        $servers    Caching proxy server hostnames or IP
+     *                                    addresses, including port if not port 80.
+     *                                    E.g. ['127.0.0.1:6081']
+     * @param string          $baseUri    Default application hostname, optionally
+     *                                    including base URL, for purge and refresh
+     *                                    requests (optional). This is required if
+     *                                    you purge and refresh paths instead of
+     *                                    absolute URLs.
      * @param HttpAsyncClient $httpClient
      * @param UriFactory      $uriFactory
      */
@@ -124,8 +132,8 @@ class HttpAdapter
                 $exceptions->add(ProxyResponseException::proxyResponse($exception->getResponse()));
             } catch (RequestException $exception) {
                 $exceptions->add(ProxyUnreachableException::proxyUnreachable($exception));
-            } catch (\Exception $exception)  {
-                    $exceptions->add(new InvalidArgumentException($exception));
+            } catch (\Exception $exception) {
+                $exceptions->add(new InvalidArgumentException($exception));
             }
         }
 
@@ -137,7 +145,7 @@ class HttpAdapter
     }
 
     /**
-     * Duplicate a request for each caching server
+     * Duplicate a request for each caching server.
      *
      * @param RequestInterface $request The request to duplicate for each configured server
      *
@@ -169,7 +177,7 @@ class HttpAdapter
 
                 // Base path
                 if ($this->baseUri->getPath() !== '') {
-                    $path = $this->baseUri->getPath() . '/' . ltrim($uri->getPath(), '/');
+                    $path = $this->baseUri->getPath().'/'.ltrim($uri->getPath(), '/');
                     $uri = $uri->withPath($path);
                 }
             }
@@ -185,8 +193,7 @@ class HttpAdapter
                 $uri
                     ->withScheme($server->getScheme())
                     ->withHost($server->getHost())
-                    ->withPort($server->getPort())
-                ,
+                    ->withPort($server->getPort()),
                 true    // Preserve application Host header
             );
         }
@@ -232,13 +239,13 @@ class HttpAdapter
     }
 
     /**
-     * Filter a URL
+     * Filter a URL.
      *
      * Prefix the URL with "http://" if it has no scheme, then check the URL
      * for validity. You can specify what parts of the URL are allowed.
      *
-     * @param string       $uriString
-     * @param string[]     $allowedParts Array of allowed URL parts (optional)
+     * @param string   $uriString
+     * @param string[] $allowedParts Array of allowed URL parts (optional)
      *
      * @return UriInterface Filtered URI (with default scheme if there was no scheme)
      *
@@ -290,6 +297,6 @@ class HttpAdapter
         $headers = $request->getHeaders();
         ksort($headers);
 
-        return md5($request->getMethod(). "\n" . $request->getUri(). "\n" . var_export($headers, true));
+        return md5($request->getMethod()."\n".$request->getUri()."\n".var_export($headers, true));
     }
 }

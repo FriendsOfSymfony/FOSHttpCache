@@ -55,7 +55,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         return [
             [[], $options],
-            [$custom, $custom + $options]
+            [$custom, $custom + $options],
         ];
     }
 

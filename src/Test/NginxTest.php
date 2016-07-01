@@ -15,7 +15,7 @@ use FOS\HttpCache\ProxyClient\Nginx;
 use FOS\HttpCache\Test\Proxy\NginxProxy;
 
 /**
- * Starts and clears the NGINX proxy between tests
+ * Starts and clears the NGINX proxy between tests.
  *
  * You can define constants in your phpunit.xml to control how this test behaves.
  *
@@ -72,7 +72,7 @@ trait NginxTest
         if (!defined('NGINX_FILE')) {
             throw new \Exception(
                 'Specify the NGINX'
-                . ' configuration file path in phpunit.xml or override getConfigFile()'
+                .' configuration file path in phpunit.xml or override getConfigFile()'
             );
         }
 
@@ -81,7 +81,7 @@ trait NginxTest
     }
 
     /**
-     * Defaults to "nginx"
+     * Defaults to "nginx".
      *
      * @return string
      */
@@ -101,7 +101,7 @@ trait NginxTest
     }
 
     /**
-     * Get NGINX cache directory
+     * Get NGINX cache directory.
      */
     protected function getCacheDir()
     {
@@ -109,7 +109,7 @@ trait NginxTest
     }
 
     /**
-     * Get the hostname where your application can be reached
+     * Get the hostname where your application can be reached.
      *
      * @throws \Exception
      *
@@ -148,7 +148,7 @@ trait NginxTest
     }
 
     /**
-     * Get proxy client
+     * Get proxy client.
      *
      * @param string $purgeLocation Optional purgeLocation
      *
@@ -158,7 +158,7 @@ trait NginxTest
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Nginx(
-                ['http://127.0.0.1:' . $this->getCachingProxyPort()],
+                ['http://127.0.0.1:'.$this->getCachingProxyPort()],
                 ['base_uri' => $this->getHostName()]
             );
 

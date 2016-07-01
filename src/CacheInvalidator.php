@@ -206,7 +206,7 @@ class CacheInvalidator
     }
 
     /**
-     * Remove/Expire cache objects based on cache tags
+     * Remove/Expire cache objects based on cache tags.
      *
      * @see TagsInterface::tags()
      *

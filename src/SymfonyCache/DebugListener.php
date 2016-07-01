@@ -12,11 +12,7 @@
 namespace FOS\HttpCache\SymfonyCache;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Debug handler for the symfony built-in HttpCache.

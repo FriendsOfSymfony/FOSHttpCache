@@ -15,7 +15,7 @@ use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Test\Proxy\VarnishProxy;
 
 /**
- * Starts and clears the Varnish proxy between tests
+ * Starts and clears the Varnish proxy between tests.
  *
  * You can define constants in your phpunit to control how this test behaves.
  *
@@ -56,7 +56,7 @@ trait VarnishTest
     protected $proxyClient;
 
     /**
-     * Start Varnish and discard any cached content
+     * Start Varnish and discard any cached content.
      */
     protected function setUp()
     {
@@ -64,7 +64,7 @@ trait VarnishTest
     }
 
     /**
-     * Stop Varnish
+     * Stop Varnish.
      */
     protected function tearDown()
     {
@@ -90,7 +90,7 @@ trait VarnishTest
     }
 
     /**
-     * Get Varnish binary
+     * Get Varnish binary.
      *
      * @return string
      */
@@ -100,7 +100,7 @@ trait VarnishTest
     }
 
     /**
-     * Get Varnish port
+     * Get Varnish port.
      *
      * @return int
      */
@@ -110,7 +110,7 @@ trait VarnishTest
     }
 
     /**
-     * Get Varnish management port
+     * Get Varnish management port.
      *
      * @return int
      */
@@ -120,7 +120,7 @@ trait VarnishTest
     }
 
     /**
-     * Get Varnish cache directory
+     * Get Varnish cache directory.
      *
      * @return string
      */
@@ -130,7 +130,7 @@ trait VarnishTest
     }
 
     /**
-     * Defaults to 4
+     * Defaults to 4.
      *
      * @return int
      */
@@ -167,7 +167,7 @@ trait VarnishTest
     }
 
     /**
-     * Get Varnish proxy client
+     * Get Varnish proxy client.
      *
      * @return Varnish
      */
@@ -175,8 +175,8 @@ trait VarnishTest
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Varnish(
-                ['http://127.0.0.1:' . $this->getProxy()->getPort()],
-                ['base_uri' => $this->getHostName() . ':' . $this->getProxy()->getPort()]
+                ['http://127.0.0.1:'.$this->getProxy()->getPort()],
+                ['base_uri' => $this->getHostName().':'.$this->getProxy()->getPort()]
             );
         }
 
@@ -184,7 +184,7 @@ trait VarnishTest
     }
 
     /**
-     * Get the hostname where your application can be reached
+     * Get the hostname where your application can be reached.
      *
      * @throws \Exception
      *
