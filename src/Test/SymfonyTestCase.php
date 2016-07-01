@@ -44,7 +44,7 @@ abstract class SymfonyTestCase extends ProxyTestCase
     protected $proxy;
 
     /**
-     * Get server port
+     * Get server port.
      *
      * @return int
      *
@@ -72,7 +72,7 @@ abstract class SymfonyTestCase extends ProxyTestCase
     }
 
     /**
-     * Get Symfony proxy client
+     * Get Symfony proxy client.
      *
      * We use a non-default method for PURGE because the built-in PHP webserver
      * does not allow arbitrary HTTP methods.
@@ -84,8 +84,8 @@ abstract class SymfonyTestCase extends ProxyTestCase
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Symfony(
-                array('http://127.0.0.1:' . $this->getCachingProxyPort()),
-                $this->getHostName() . ':' . $this->getCachingProxyPort(),
+                array('http://127.0.0.1:'.$this->getCachingProxyPort()),
+                $this->getHostName().':'.$this->getCachingProxyPort(),
                 null,
                 array('purge_method' => 'NOTIFY')
             );

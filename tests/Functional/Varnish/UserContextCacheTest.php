@@ -28,7 +28,7 @@ class UserContextCacheTest extends UserContextTestCase
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function assertContextCache($status)
     {

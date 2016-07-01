@@ -12,14 +12,14 @@
 namespace FOS\HttpCache\Test\PHPUnit;
 
 /**
- * Abstract cache constraint
+ * Abstract cache constraint.
  */
 abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
 {
     protected $header = 'X-Cache';
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $header Cache debug header; defaults to X-Cache-Debug
      */
@@ -33,7 +33,7 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
     }
 
     /**
-     * Get cache header value
+     * Get cache header value.
      *
      * @return string
      */
@@ -48,7 +48,7 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
             throw new \RuntimeException(
                 sprintf(
                     'Response has no "%s" header. Configure your caching proxy '
-                    . 'to set the header with cache hit/miss status.',
+                    .'to set the header with cache hit/miss status.',
                     $this->header
                 )
             );
@@ -62,6 +62,6 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
      */
     protected function failureDescription($other)
     {
-        return (string) $other . ' ' . $this->toString();
+        return (string) $other.' '.$this->toString();
     }
 }
