@@ -19,7 +19,6 @@ use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Client\Exception\RequestException;
-use \Mockery;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
@@ -113,7 +112,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     {
         $tags = [
             'post-8',
-            'post-type-2'
+            'post-type-2',
         ];
 
         $tagHandler = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\TagsInterface')

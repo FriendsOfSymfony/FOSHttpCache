@@ -29,7 +29,7 @@ class CustomTtlTest extends VarnishTestCase
 
     protected function getConfigFile()
     {
-        switch ((int)$this->getVarnishVersion()) {
+        switch ((int) $this->getVarnishVersion()) {
             case 4:
                 return './tests/Functional/Fixtures/varnish-4/custom_ttl.vcl';
             default:

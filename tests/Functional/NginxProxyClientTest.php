@@ -17,7 +17,7 @@ use FOS\HttpCache\Test\NginxTestCase;
  * @group webserver
  * @group nginx
  */
-class NginxTest extends NginxTestCase
+class NginxProxyClientTest extends NginxTestCase
 {
     public function testPurgeSeparateLocationPath()
     {
@@ -75,8 +75,8 @@ class NginxTest extends NginxTestCase
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
         $this->assertGreaterThan(
-            (float)(string) $response->getBody(),
-            (float)(string) $refreshed->getBody()
+            (float) (string) $response->getBody(),
+            (float) (string) $refreshed->getBody()
         );
     }
 
@@ -90,10 +90,10 @@ class NginxTest extends NginxTestCase
         $nginx->refresh('/cache.php')->flush();
         usleep(1000);
         $refreshed = $this->getResponse('/cache.php');
-        
+
         $this->assertGreaterThan(
-            (float)(string) $response->getBody(),
-            (float)(string) $refreshed->getBody()
+            (float) (string) $response->getBody(),
+            (float) (string) $refreshed->getBody()
         );
     }
 }

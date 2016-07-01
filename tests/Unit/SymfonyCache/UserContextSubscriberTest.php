@@ -55,7 +55,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         return [
             [[], $options],
-            [$custom, $custom + $options]
+            [$custom, $custom + $options],
         ];
     }
 
@@ -148,7 +148,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
             ->setMethods(['prepare'])
             ->getMock();
-        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash );
+        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
         $that = $this;
         $this->kernel
@@ -198,7 +198,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $expectedContextHash = 'my_generated_hash';
         $hashResponse = new Response();
-        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash );
+        $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
         $that = $this;
         $this->kernel

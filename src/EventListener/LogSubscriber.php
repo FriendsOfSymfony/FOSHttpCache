@@ -36,7 +36,7 @@ class LogSubscriber implements EventSubscriberInterface
     {
         return [
             Events::PROXY_UNREACHABLE_ERROR => 'onProxyUnreachableError',
-            Events::PROXY_RESPONSE_ERROR    => 'onProxyResponseError',
+            Events::PROXY_RESPONSE_ERROR => 'onProxyResponseError',
         ];
     }
 

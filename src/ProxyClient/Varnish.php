@@ -30,11 +30,11 @@ use Http\Message\MessageFactory;
  */
 class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface, TagsInterface
 {
-    const HTTP_METHOD_BAN          = 'BAN';
-    const HTTP_METHOD_PURGE        = 'PURGE';
-    const HTTP_METHOD_REFRESH      = 'GET';
-    const HTTP_HEADER_HOST         = 'X-Host';
-    const HTTP_HEADER_URL          = 'X-Url';
+    const HTTP_METHOD_BAN = 'BAN';
+    const HTTP_METHOD_PURGE = 'PURGE';
+    const HTTP_METHOD_REFRESH = 'GET';
+    const HTTP_HEADER_HOST = 'X-Host';
+    const HTTP_HEADER_URL = 'X-Url';
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
 
     /**
@@ -43,9 +43,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      * @var array
      */
     private $defaultBanHeaders = [
-        self::HTTP_HEADER_HOST         => self::REGEX_MATCH_ALL,
-        self::HTTP_HEADER_URL          => self::REGEX_MATCH_ALL,
-        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL
+        self::HTTP_HEADER_HOST => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_URL => self::REGEX_MATCH_ALL,
+        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL,
     ];
 
     /**
@@ -83,7 +83,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
              * header length by the largest tag (minus 1 for the implode character)
              */
             $tagsize = max(array_map('mb_strlen', $escapedTags));
-            $elems = floor($this->options['header_length'] / ($tagsize - 1)) ? : 1;
+            $elems = floor($this->options['header_length'] / ($tagsize - 1)) ?: 1;
         } else {
             $elems = count($escapedTags);
         }
@@ -148,7 +148,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
             if (!count($hosts)) {
                 throw new InvalidArgumentException('Either supply a list of hosts or null, but not an empty array.');
             }
-            $hosts = '^('.join('|', $hosts).')$';
+            $hosts = '^('.implode('|', $hosts).')$';
         }
 
         $headers = [
@@ -205,7 +205,6 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      *
      * @throws MissingHostException If a relative path is queued for purge/
      *                              refresh and no base URL is set
-     *
      */
     protected function queueRequest($method, $url, array $headers = [])
     {

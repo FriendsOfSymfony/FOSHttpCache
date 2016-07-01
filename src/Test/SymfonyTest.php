@@ -15,7 +15,7 @@ use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\Test\Proxy\SymfonyProxy;
 
 /**
- * Clears the Symfony HttpCache proxy between tests
+ * Clears the Symfony HttpCache proxy between tests.
  *
  * The webserver with Symfony is to be started with the WebServerListener.
  *
@@ -44,7 +44,7 @@ trait SymfonyTest
     protected $proxy;
 
     /**
-     * Clear Symfony HttpCache
+     * Clear Symfony HttpCache.
      *
      * @throws \Exception
      */
@@ -54,7 +54,7 @@ trait SymfonyTest
     }
 
     /**
-     * Get server port
+     * Get server port.
      *
      * @return int
      *
@@ -70,7 +70,7 @@ trait SymfonyTest
     }
 
     /**
-     * Get the hostname where your application can be reached
+     * Get the hostname where your application can be reached.
      *
      * @throws \Exception
      *
@@ -100,7 +100,7 @@ trait SymfonyTest
     }
 
     /**
-     * Get Symfony proxy client
+     * Get Symfony proxy client.
      *
      * We use a non-default method for PURGE because the built-in PHP webserver
      * does not allow arbitrary HTTP methods.
@@ -112,10 +112,10 @@ trait SymfonyTest
     {
         if (null === $this->proxyClient) {
             $this->proxyClient = new Symfony(
-                ['http://127.0.0.1:' . $this->getCachingProxyPort()],
+                ['http://127.0.0.1:'.$this->getCachingProxyPort()],
                 [
-                    'base_uri' => $this->getHostName() . ':' . $this->getCachingProxyPort(),
-                    'purge_method' => 'NOTIFY'
+                    'base_uri' => $this->getHostName().':'.$this->getCachingProxyPort(),
+                    'purge_method' => 'NOTIFY',
                 ]
             );
         }

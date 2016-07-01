@@ -48,7 +48,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     protected $options;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * Supported options:
      *

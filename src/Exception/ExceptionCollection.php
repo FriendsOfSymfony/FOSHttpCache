@@ -13,7 +13,7 @@ namespace FOS\HttpCache\Exception;
 
 /**
  * A collection of exceptions that might occur during the flush operation of a
- * ProxyClientInterface implementation
+ * ProxyClientInterface implementation.
  */
 class ExceptionCollection extends \Exception implements \IteratorAggregate, \Countable, HttpCacheExceptionInterface
 {
@@ -27,7 +27,7 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
     }
 
     /**
-     * Add an exception to the collection
+     * Add an exception to the collection.
      *
      * @param \Exception $e
      *
@@ -55,11 +55,11 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
             return $this->exceptions[0];
         }
 
-        return null;
+        return;
     }
 
     /**
-     * Get exception iterator
+     * Get exception iterator.
      *
      * @return \ArrayIterator
      */
@@ -69,7 +69,7 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
     }
 
     /**
-     * Get number of exceptions in collection
+     * Get number of exceptions in collection.
      *
      * @return int
      */

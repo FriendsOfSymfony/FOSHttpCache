@@ -64,7 +64,7 @@ class CacheInvalidator
     private $eventDispatcher;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ProxyClientInterface $cache HTTP cache
      */
@@ -99,12 +99,12 @@ class CacheInvalidator
             case self::TAGS:
                 return $this->cache instanceof TagsInterface;
             default:
-                throw new InvalidArgumentException('Unknown operation ' . $operation);
+                throw new InvalidArgumentException('Unknown operation '.$operation);
         }
     }
 
     /**
-     * Set event dispatcher
+     * Set event dispatcher.
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -123,7 +123,7 @@ class CacheInvalidator
     }
 
     /**
-     * Get event dispatcher
+     * Get event dispatcher.
      *
      * @return EventDispatcherInterface
      */
@@ -137,7 +137,7 @@ class CacheInvalidator
     }
 
     /**
-     * Invalidate a path or URL
+     * Invalidate a path or URL.
      *
      * @param string $path    Path or URL
      * @param array  $headers HTTP headers (optional)
@@ -158,7 +158,7 @@ class CacheInvalidator
     }
 
     /**
-     * Refresh a path or URL
+     * Refresh a path or URL.
      *
      * @param string $path    Path or URL
      * @param array  $headers HTTP headers (optional)
@@ -206,7 +206,7 @@ class CacheInvalidator
     }
 
     /**
-     * Remove/Expire cache objects based on cache tags
+     * Remove/Expire cache objects based on cache tags.
      *
      * @see TagsInterface::tags()
      *

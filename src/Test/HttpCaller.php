@@ -11,23 +11,22 @@
 
 namespace FOS\HttpCache\Test;
 
-use FOS\HttpCache\Test\HttpClient;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Provides a method for getting responses from your application
+ * Provides a method for getting responses from your application.
  */
 trait HttpCaller
 {
     /**
-     * HTTP adapter for requests to the application
+     * HTTP adapter for requests to the application.
      *
      * @var HttpClient
      */
     private $client;
 
     /**
-     * Call a HTTP resource from your test
+     * Call a HTTP resource from your test.
      *
      * @param string $uri     HTTP URI, domain and port are added from the embedding class if not specified
      * @param array  $headers HTTP headers

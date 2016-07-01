@@ -12,22 +12,22 @@
 namespace FOS\HttpCache\Test\Proxy;
 
 /**
- * Controls a HTTP caching proxy server
+ * Controls a HTTP caching proxy server.
  */
 interface ProxyInterface
 {
     /**
-     * Start the proxy server
+     * Start the proxy server.
      */
     public function start();
 
     /**
-     * Stop the proxy server
+     * Stop the proxy server.
      */
     public function stop();
 
     /**
-     * Clear all cached content from the proxy server
+     * Clear all cached content from the proxy server.
      */
     public function clear();
 }

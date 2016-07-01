@@ -25,7 +25,7 @@ use Psr\Http\Message\UriInterface;
 class HttpClient
 {
     /**
-     * HTTP client for requests to the application
+     * HTTP client for requests to the application.
      *
      * @var HttpClient
      */
@@ -52,7 +52,7 @@ class HttpClient
     }
 
     /**
-     * Get HTTP response from your application
+     * Get HTTP response from your application.
      *
      * @param string $uri     HTTP URI
      * @param array  $headers HTTP headers
@@ -71,7 +71,7 @@ class HttpClient
     }
 
     /**
-     * Get HTTP adapter for your application
+     * Get HTTP adapter for your application.
      *
      * @return PhpHttpClient
      */
@@ -85,13 +85,14 @@ class HttpClient
     }
 
     /**
-     * Create a request
+     * Create a request.
      *
      * @param string $method
      * @param string $uri
      * @param array  $headers
      *
      * @return RequestInterface
+     *
      * @throws \Exception
      */
     private function createRequest($method, $uri, $headers)
@@ -118,7 +119,7 @@ class HttpClient
     }
 
     /**
-     * Create PSR-7 URI object from URI string
+     * Create PSR-7 URI object from URI string.
      *
      * @param string $uriString
      *
