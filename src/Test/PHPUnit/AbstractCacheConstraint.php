@@ -64,7 +64,7 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
             throw new \RuntimeException($message);
         }
 
-        return preg_match($this->getPattern(), (string) $other->getHeader($this->header)) === 1;
+        return preg_match($this->getPattern(), (string) $other->getHeaderLine($this->header)) === 1;
     }
 
     /**
