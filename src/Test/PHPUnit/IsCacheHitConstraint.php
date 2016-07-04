@@ -24,8 +24,8 @@ class IsCacheHitConstraint extends AbstractCacheConstraint
     /**
      * {@inheritdoc}
      */
-    public function getValue()
+    public function getPattern()
     {
-        return 'HIT';
+        return '/^HIT( \d+)?$/';
     }
 }
