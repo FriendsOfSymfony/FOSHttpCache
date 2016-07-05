@@ -39,7 +39,7 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
      *
      * @return string
      */
-    abstract public function getPattern();
+    abstract public function getValue();
 
     /**
      * {@inheritdoc}
@@ -64,7 +64,7 @@ abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
             throw new \RuntimeException($message);
         }
 
-        return preg_match($this->getPattern(), (string) $other->getHeaderLine($this->header)) === 1;
+        return strpos((string) $other->getHeaderLine($this->header), $this->getValue()) !== false;
     }
 
     /**

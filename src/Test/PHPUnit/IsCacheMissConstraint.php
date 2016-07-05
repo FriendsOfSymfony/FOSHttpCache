@@ -24,8 +24,8 @@ class IsCacheMissConstraint extends AbstractCacheConstraint
     /**
      * {@inheritdoc}
      */
-    public function getPattern()
+    public function getValue()
     {
-        return '/^MISS$/';
+        return 'MISS';
     }
 }
