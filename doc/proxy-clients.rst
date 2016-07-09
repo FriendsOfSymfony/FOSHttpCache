@@ -2,8 +2,9 @@ Caching Proxy Clients
 =====================
 
 This library ships with clients for the Varnish and NGINX caching servers and
-the Symfony built-in HTTP cache. A Noop client is provided for local development
-and testing purposes. You can use the clients either wrapped by the
+the Symfony built-in HTTP cache. A Noop client that implements the interfaces
+but does nothing at all is provided for local development and testing purposes.
+You can use the clients either wrapped by the
 :doc:`cache invalidator <cache-invalidator>` (recommended), or directly for
 low-level access to invalidation functionality. Which client you need depends on
 which caching solution you use.
@@ -181,12 +182,12 @@ is available as the second parameter::
 Noop Client
 ~~~~~~~~~~~
 
-The Noop client implements the interfaces for invalidation, but does nothing.
-It is useful for developping your application or on a testing environment that
-does not have a caching proxy set up. Rather than making the cache invalidator
-optional in your code, you can (based on the environment) determine whether
-to inject the real client or the Noop client. The rest of your application then
-does not need to worry about the environment.
+The Noop (no operation) client implements the interfaces for invalidation, but
+does nothing. It is useful for developing your application or on a testing
+environment that does not have a caching proxy set up. Rather than making the
+cache invalidator optional in your code, you can (based on the environment)
+determine whether to inject the real client or the Noop client. The rest of your
+application then does not need to worry about the environment.
 
 Using the Clients
 -----------------
