@@ -32,12 +32,11 @@
     "require-dev": {
         "mockery/mockery": "~0.9.1",
         "monolog/monolog": "^1.0",
-        "php-http/discovery": "~0.8",
+        "php-http/discovery": "^1.0",
         "php-http/guzzle6-adapter": "^1.0.0",
-        "php-http/mock-client": "~0.1",
+        "php-http/mock-client": "^0.3.2",
         "symfony/process": "^2.3||^3.0",
         "symfony/http-kernel": "^2.3||^3.0",
-        "puli/composer-plugin": "^1.0.0-beta9@beta",
         "phpunit/phpunit": "^4.5.0 || ^5.0.0 <5.4"
     },
     "suggest": {
