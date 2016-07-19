@@ -76,7 +76,7 @@ trait VarnishTest
      *
      * @throws \Exception
      *
-     * @return string the path to the varnish server configuration file to use with this test.
+     * @return string the path to the varnish server configuration file to use with this test
      */
     protected function getConfigFile()
     {

@@ -41,8 +41,8 @@ class CacheEvent extends Event
     /**
      * Make sure your $kernel implements CacheInvalidationInterface.
      *
-     * @param CacheInvalidationInterface $kernel   The kernel raising with this event.
-     * @param Request                    $request  The request being processed.
+     * @param CacheInvalidationInterface $kernel   The kernel raising with this event
+     * @param Request                    $request  The request being processed
      * @param Response                   $response The response, if available
      */
     public function __construct(CacheInvalidationInterface $kernel, Request $request, Response $response = null)
@@ -76,7 +76,7 @@ class CacheEvent extends Event
      * Events that occur after the response is created provide the default response.
      * Event listeners can also set the response to make it available here.
      *
-     * @return Response|null The response if one was set.
+     * @return Response|null The response if one was set
      */
     public function getResponse()
     {

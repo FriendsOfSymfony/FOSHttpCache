@@ -46,7 +46,7 @@ class ResponseTagger
      *
      * @param TagsInterface $client
      * @param array         $options supported options:
-     *                               - strict (bool) Default: false. If set to true, throws exception when adding empty tags.
+     *                               - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      */
     public function __construct(TagsInterface $client, array $options = array())
     {
@@ -87,7 +87,7 @@ class ResponseTagger
     /**
      * Check whether the tag handler has any tags to set on the response.
      *
-     * @return bool True if this handler will set at least one tag.
+     * @return bool True if this handler will set at least one tag
      */
     public function hasTags()
     {
@@ -99,7 +99,7 @@ class ResponseTagger
      *
      * This must be called before any HTTP response is sent to the client.
      *
-     * @param array $tags List of tags to add.
+     * @param array $tags List of tags to add
      *
      * @throws InvalidTagException
      *
