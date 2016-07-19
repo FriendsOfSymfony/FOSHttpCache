@@ -74,10 +74,6 @@ abstract class AbstractProxyClient implements ProxyClientInterface
         MessageFactory $messageFactory = null,
         UriFactory $uriFactory = null
     ) {
-        if ((!$httpClient || !$messageFactory || !$uriFactory) && !class_exists('Http\Discovery\HttpAsyncClientDiscovery')) {
-            throw new \LogicException('Either specify the client and the message and uri factories or include php-http/discovery in your project');
-        }
-
         if (!$httpClient) {
             $httpClient = HttpAsyncClientDiscovery::find();
         }
