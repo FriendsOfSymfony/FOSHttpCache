@@ -43,7 +43,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     /**
      * The options configured in the constructor argument or default values.
      *
-     * @var array The resolved options.
+     * @var array The resolved options
      */
     protected $options;
 
@@ -59,13 +59,13 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      * @param array                $servers        Caching proxy server hostnames or IP
      *                                             addresses, including port if not port 80.
      *                                             E.g. ['127.0.0.1:6081']
-     * @param array                $options        List of options for the client.
+     * @param array                $options        List of options for the client
      * @param HttpAsyncClient|null $httpClient     Client capable of sending HTTP requests. If no
-     *                                             client is supplied, a default one is created.
+     *                                             client is supplied, a default one is created
      * @param MessageFactory|null  $messageFactory Factory for PSR-7 messages. If none supplied,
-     *                                             a default one is created.
+     *                                             a default one is created
      * @param UriFactory|null      $uriFactory     Factory for PSR-7 URIs. If not specified, a
-     *                                             default one is created.
+     *                                             default one is created
      */
     public function __construct(
         array $servers,
@@ -127,9 +127,9 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      * Reusable function for proxy clients.
      * Escapes `,` and `\n` (newline) characters.
      *
-     * @param array $tags The tags to escape.
+     * @param array $tags The tags to escape
      *
-     * @return array Sane tags.
+     * @return array Sane tags
      */
     protected function escapeTags(array $tags)
     {

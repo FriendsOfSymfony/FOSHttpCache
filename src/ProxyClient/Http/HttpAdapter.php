@@ -70,7 +70,7 @@ class HttpAdapter
      *                                    including base URL, for purge and refresh
      *                                    requests (optional). This is required if
      *                                    you purge and refresh paths instead of
-     *                                    absolute URLs.
+     *                                    absolute URLs
      * @param HttpAsyncClient $httpClient
      * @param UriFactory      $uriFactory
      */
@@ -102,9 +102,9 @@ class HttpAdapter
     /**
      * Send all pending invalidation requests and make sure the requests have terminated and gather exceptions.
      *
-     * @return int The number of cache invalidations performed per caching server.
+     * @return int The number of cache invalidations performed per caching server
      *
-     * @throws ExceptionCollection If any errors occurred during flush.
+     * @throws ExceptionCollection If any errors occurred during flush
      */
     public function flush()
     {
@@ -225,7 +225,7 @@ class HttpAdapter
      *
      * @param string $uriString Your application’s base URI
      *
-     * @throws InvalidUrlException If the base URI is not a valid URI.
+     * @throws InvalidUrlException If the base URI is not a valid URI
      */
     private function setBaseUri($uriString = null)
     {
@@ -250,7 +250,7 @@ class HttpAdapter
      * @return UriInterface Filtered URI (with default scheme if there was no scheme)
      *
      * @throws InvalidUrlException If URL is invalid, the scheme is not http or
-     *                             contains parts that are not expected.
+     *                             contains parts that are not expected
      */
     private function filterUri($uriString, array $allowedParts = [])
     {
@@ -288,9 +288,9 @@ class HttpAdapter
      *
      * This signature is used to avoid sending the same invalidation request twice.
      *
-     * @param RequestInterface $request An invalidation request.
+     * @param RequestInterface $request An invalidation request
      *
-     * @return string A signature for this request.
+     * @return string A signature for this request
      */
     private function getRequestSignature(RequestInterface $request)
     {

@@ -123,7 +123,7 @@ trait EventDispatchingHttpCache
      * @param Request       $request
      * @param Response|null $response If already available
      *
-     * @return Response The response to return, which might be provided/altered by a listener.
+     * @return Response The response to return, which might be provided/altered by a listener
      */
     protected function dispatch($name, Request $request, Response $response = null)
     {

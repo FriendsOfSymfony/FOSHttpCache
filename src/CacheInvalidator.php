@@ -81,7 +81,7 @@ class CacheInvalidator
      * refreshPath works and INVALIDATE is about all other invalidation
      * methods.
      *
-     * @param string $operation one of the class constants.
+     * @param string $operation one of the class constants
      *
      * @return bool
      *
@@ -110,7 +110,7 @@ class CacheInvalidator
      *
      * @return $this
      *
-     * @throws \Exception When trying to override the event dispatcher.
+     * @throws \Exception When trying to override the event dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
@@ -188,7 +188,7 @@ class CacheInvalidator
      *
      * @see BanInterface::ban()
      *
-     * @param array $headers HTTP headers that path must match to be banned.
+     * @param array $headers HTTP headers that path must match to be banned
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
@@ -238,11 +238,11 @@ class CacheInvalidator
      * @see BanInterface::banPath()
      *
      * @param string       $path        Regular expression pattern for URI to
-     *                                  invalidate.
+     *                                  invalidate
      * @param string       $contentType Regular expression pattern for the content
-     *                                  type to limit banning, for instance 'text'.
+     *                                  type to limit banning, for instance 'text'
      * @param array|string $hosts       Regular expression of a host name or list of
-     *                                  exact host names to limit banning.
+     *                                  exact host names to limit banning
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
@@ -262,9 +262,9 @@ class CacheInvalidator
     /**
      * Send all pending invalidation requests.
      *
-     * @return int The number of cache invalidations performed per caching server.
+     * @return int The number of cache invalidations performed per caching server
      *
-     * @throws ExceptionCollection If any errors occurred during flush.
+     * @throws ExceptionCollection If any errors occurred during flush
      */
     public function flush()
     {

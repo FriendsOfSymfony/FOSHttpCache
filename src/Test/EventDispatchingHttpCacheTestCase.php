@@ -35,7 +35,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
     /**
      * Create a partial mock of the HttpCache to only test some methods.
      *
-     * @param array $mockedMethods List of methods to mock.
+     * @param array $mockedMethods List of methods to mock
      *
      * @return CacheInvalidationInterface|EventDispatchingHttpCache|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -300,22 +300,22 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
 class TestSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var int Count how many times preHandle has been called.
+     * @var int Count how many times preHandle has been called
      */
     public $preHandleCalls = 0;
 
     /**
-     * @var int Count how many times postHandle has been called.
+     * @var int Count how many times postHandle has been called
      */
     public $postHandleCalls = 0;
 
     /**
-     * @var int Count how many times preStore has been called.
+     * @var int Count how many times preStore has been called
      */
     public $preStoreCalls = 0;
 
     /**
-     * @var int Count how many times preInvalidate has been called.
+     * @var int Count how many times preInvalidate has been called
      */
     public $preInvalidateCalls = 0;
 

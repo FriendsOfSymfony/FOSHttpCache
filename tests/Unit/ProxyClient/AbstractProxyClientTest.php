@@ -34,9 +34,9 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider exceptionProvider
      *
-     * @param \Exception $exception Exception thrown by HTTP client.
-     * @param string     $type      The returned exception class to be expected.
-     * @param string     $message   Optional exception message to match against.
+     * @param \Exception $exception Exception thrown by HTTP client
+     * @param string     $type      The returned exception class to be expected
+     * @param string     $message   Optional exception message to match against
      */
     public function testExceptions(\Exception $exception, $type, $message = null)
     {

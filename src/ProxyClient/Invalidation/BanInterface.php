@@ -34,7 +34,7 @@ interface BanInterface extends ProxyClientInterface
      * host name, configure your proxy to copy the host to a custom HTTP header
      * such as X-Host.
      *
-     * @param array $headers HTTP headers that path must match to be banned.
+     * @param array $headers HTTP headers that path must match to be banned
      *
      * @return $this
      */
@@ -50,11 +50,11 @@ interface BanInterface extends ProxyClientInterface
      * are matched.
 
      * @param string       $path        Regular expression pattern for URI to
-     *                                  invalidate.
+     *                                  invalidate
      * @param string       $contentType Regular expression pattern for the content
-     *                                  type to limit banning, for instance 'text'.
+     *                                  type to limit banning, for instance 'text'
      * @param array|string $hosts       Regular expression of a host name or list
-     *                                  of exact host names to limit banning.
+     *                                  of exact host names to limit banning
      *
      * @return $this
      */

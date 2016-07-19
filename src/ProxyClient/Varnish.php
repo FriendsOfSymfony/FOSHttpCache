@@ -52,7 +52,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
      * Set the default headers that get merged with the provided headers in self::ban().
      *
      * @param array $headers Hashmap with keys being the header names, values
-     *                       the header values.
+     *                       the header values
      */
     public function setDefaultBanHeaders(array $headers)
     {
