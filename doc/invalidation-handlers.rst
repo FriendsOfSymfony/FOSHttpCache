@@ -45,10 +45,10 @@ correct tags on all responses. You can add tags to the handler using::
 
 Before any content is sent out, you need to send the tag header_::
 
-    header(sprintf('%s: %s'),
+    header(sprintf('%s: %s',
         $tagHandler->getTagsHeaderName(),
         $tagHandler->getTagsHeaderValue()
-    );
+    ));
 
 .. tip::
 
