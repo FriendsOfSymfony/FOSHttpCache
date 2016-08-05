@@ -41,10 +41,10 @@ correct tags on all responses. You can add tags to the response using::
 
 Before any content is sent out, you need to send the tag header_::
 
-    header(sprintf('%s: %s'),
+    header(sprintf('%s: %s',
         $responseTagger->getTagsHeaderName(),
         $responseTagger->getTagsHeaderValue()
-    );
+    ));
 
 .. tip::
 
