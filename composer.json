@@ -40,6 +40,7 @@
         "phpunit/phpunit": "^4.5.0 || ^5.0.0 <5.4"
     },
     "suggest": {
+        "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
         "php-http/discovery": "When not explicitly instantiating the php-http client for the proxy client",
         "monolog/monolog": "For logging issues while invalidating"
     },
