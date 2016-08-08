@@ -38,7 +38,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
         $response = new Response('', 200, array(
-            'X-Reverse-Proxy-TTL' => '120',
+            'Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 's-maxage=60, max-age=30',
         ));
         $event = new CacheEvent($this->kernel, $request, $response);
@@ -56,7 +56,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
         $response = new Response('', 200, array(
-            'X-Reverse-Proxy-TTL' => '120',
+            'Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 'max-age=30',
         ));
         $event = new CacheEvent($this->kernel, $request, $response);
@@ -74,7 +74,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
         $response = new Response('', 200, array(
-            'X-Reverse-Proxy-TTL' => '120',
+            'Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 's-maxage=120, max-age=30',
             CustomTtlListener::SMAXAGE_BACKUP => '60',
         ));
@@ -86,7 +86,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
         $this->assertTrue($response->headers->hasCacheControlDirective('s-maxage'));
         $this->assertSame('60', $response->headers->getCacheControlDirective('s-maxage'));
-        $this->assertFalse($response->headers->has('X-Reverse-Proxy-TTL'));
+        $this->assertFalse($response->headers->has('Reverse-Proxy-TTL'));
         $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
     }
 
@@ -95,7 +95,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
         $response = new Response('', 200, array(
-            'X-Reverse-Proxy-TTL' => '120',
+            'Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 's-maxage: 120, max-age: 30',
             CustomTtlListener::SMAXAGE_BACKUP => 'false',
         ));
@@ -106,7 +106,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
         $this->assertFalse($response->headers->hasCacheControlDirective('s_maxage'));
-        $this->assertFalse($response->headers->has('X-Reverse-Proxy-TTL'));
+        $this->assertFalse($response->headers->has('Reverse-Proxy-TTL'));
         $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
     }
 }

@@ -23,7 +23,7 @@ use Http\Message\MessageFactory;
  * Varnish HTTP cache invalidator.
  *
  * Additional constructor options:
- * - tags_header   Header for tagging responses, defaults to X-Cache-Tags
+ * - tags_header   Header for tagging responses, defaults to Cache-Tags
  * - header_length Maximum header length, defaults to 7500 bytes
  *
  * @author David de Boer <david@driebit.nl>
@@ -33,9 +33,9 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     const HTTP_METHOD_BAN = 'BAN';
     const HTTP_METHOD_PURGE = 'PURGE';
     const HTTP_METHOD_REFRESH = 'GET';
-    const HTTP_HEADER_HOST = 'X-Host';
-    const HTTP_HEADER_URL = 'X-Url';
-    const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
+    const HTTP_HEADER_HOST = 'Host';
+    const HTTP_HEADER_URL = 'Url';
+    const HTTP_HEADER_CONTENT_TYPE = 'Content-Type';
 
     /**
      * Map of default headers for ban requests with their default values.
@@ -192,7 +192,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     protected function getDefaultOptions()
     {
         $resolver = parent::getDefaultOptions();
-        $resolver->setDefaults(['tags_header' => 'X-Cache-Tags']);
+        $resolver->setDefaults(['tags_header' => 'Cache-Tags']);
         $resolver->setDefaults(['header_length' => 7500]);
 
         return $resolver;

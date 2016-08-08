@@ -10,8 +10,8 @@
  */
 
 header('Cache-Control: s-maxage=0');
-header('X-Reverse-Proxy-TTL: 3600');
+header('Reverse-Proxy-TTL: 3600');
 header('Content-Type: text/html');
-header('X-Cache-Debug: 1');
+header('Cache-Debug: 1');
 
 echo microtime(true);
