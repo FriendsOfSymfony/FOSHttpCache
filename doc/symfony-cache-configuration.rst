@@ -13,7 +13,7 @@ You can use features of this library with the help of event listeners that act
 on events of the ``HttpCache``. The Symfony ``HttpCache`` does not have an
 event system, for this you need to use the trait ``EventDispatchingHttpCache``
 provided by this library. The event listeners handle the requests from the
-:doc:`proxy-clients`.
+:doc:`cache invalidator <cache-invalidator>`.
 
 .. note::
 
@@ -119,7 +119,7 @@ happen before the configuration is loaded.
 Purge
 ~~~~~
 
-To support :ref:`cache purging <proxy-client purge>`, register the
+To support :ref:`cache invalidation <cache invalidate>`, register the
 ``PurgeSubscriber``. If the default settings are right for you, you don't
 need to do anything more.
 
@@ -145,7 +145,7 @@ one of purge_client_ips or purge_client_matcher*.
 Refresh
 ~~~~~~~
 
-To support :ref:`cache refresh <proxy-client refresh>`, register the
+To support :ref:`cache refresh <cache refresh>`, register the
 ``RefreshSubscriber``. You can pass the constructor an option to specify
 what clients are allowed to refresh cache entries. Refreshing is only allowed
 from the same machine by default. To refresh from other hosts, provide the

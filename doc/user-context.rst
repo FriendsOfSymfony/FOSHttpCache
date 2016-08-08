@@ -27,13 +27,13 @@ context hash mechanism.
     context. If the client will not see a difference when his context changes
     (e.g. is  removed from or added to groups on server side), you also do not
     want the clients to cache pages. Because ``VARY`` is used for the control
-    of the caching proxy, it is not available to control clients. Often, the
+    of the proxy server, it is not available to control clients. Often, the
     best solution is to disable intermediary caches by setting the cache control
     header ``s-maxage`` to 0 and using the *custom TTL* mechanism (see the
     documentation for :ref:`Varnish <varnish_customttl>` or the
     :ref:`Symfony HttpCache <symfonycache_customttl>`). If you want to use the
     ``private`` cache control instruction instead, you need to adjust your
-    caching proxy configuration to cache content with a ``private`` instruction.
+    proxy server configuration to cache content with a ``private`` instruction.
 
 Overview
 --------
@@ -41,7 +41,7 @@ Overview
 Caching on user context works as follows:
 
 1. A :term:`client` requests ``/foo.php`` (the *original request*).
-2. The :term:`caching proxy`  receives the request. It sends a request
+2. The :term:`proxy server`  receives the request. It sends a request
    (the *hash request*) with a special accept header
    (``application/vnd.fos.user-context-hash``) to a specific URL,
    e.g., ``/_fos_user_context_hash``.
@@ -50,7 +50,7 @@ Caching on user context works as follows:
    on that information. The application then returns a response containing that
    hash in a custom header (``X-User-Context-Hash``) and with ``Content-Type``
    ``application/vnd.fos.user-context-hash``.
-4. The caching proxy receives the hash response, copies the hash header to the
+4. The proxy server receives the hash response, copies the hash header to the
    client’s original request for ``/foo.php`` and restarts that request.
 5. If the response to this request should differ per user context, the
    application specifies so by setting a ``Vary: X-User-Context-Hash`` header.

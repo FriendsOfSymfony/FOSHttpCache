@@ -14,6 +14,20 @@ you need to install an HTTPlug-compatible client or adapter first:
 
     $ composer require php-http/guzzle6-adapter
 
+You also need a `PSR-7 message implementation`_. If you use Guzzle 6, Guzzle’s
+implementation is already included. If you use another client, you need to
+install one of the message implementations. Recommended:
+
+.. code-block:: bash
+
+    $ composer require guzzlehttp/psr7
+
+Alternatively:
+
+.. code-block:: bash
+
+    $ composer require zendframework/zend-diactoros
+
 Then install the FOSHttpCache library itself:
 
 .. code-block:: bash
@@ -33,8 +47,8 @@ Configuration
 
 There are three things you need to do to get started:
 
-1. :doc:`configure your caching proxy <proxy-configuration>`
-2. :doc:`set up a client for your caching proxy <proxy-clients>`
+1. :doc:`configure your proxy server <proxy-configuration>`
+2. :doc:`set up a client for your proxy server <proxy-clients>`
 3. :doc:`set up the cache invalidator <cache-invalidator>`
 
 Overview
@@ -42,11 +56,12 @@ Overview
 
 This library mainly consists of:
 
-* low-level clients for communicating with caching proxies (Varnish and NGINX)
-* a cache invalidator that acts as an abstraction layer for the caching proxy
-  clients
+* low-level clients for communicating with a proxy server (Varnish, NGINX and
+  Symfony `HttpCache`)
+* a cache invalidator that acts as an abstraction layer for the proxy
+  client
 * test classes that you can use for integration testing your application
-  against a caching proxy.
+  against a proxy server.
 
 Measures have been taken to minimize the performance impact of sending
 invalidation requests:
@@ -57,5 +72,6 @@ invalidation requests:
 
 .. _Packagist: https://packagist.org/packages/friendsofsymfony/http-cache
 .. _Composer: http://getcomposer.org
+.. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation
 .. _Semantic Versioning: http://semver.org/
 .. _HTTPlug: http://httplug.io

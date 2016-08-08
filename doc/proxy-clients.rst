@@ -1,79 +1,26 @@
-Caching Proxy Clients
-=====================
+Proxy Client Setup
+==================
 
 This library ships with clients for the Varnish and NGINX caching servers and
 the Symfony built-in HTTP cache. A Noop client that implements the interfaces
 but does nothing at all is provided for local development and testing purposes.
-You can use the clients either wrapped by the
-:doc:`cache invalidator <cache-invalidator>` (recommended), or directly for
-low-level access to invalidation functionality. Which client you need depends on
-which caching solution you use.
+
+The recommended usage is to have your application interact with the
+:doc:`cache invalidator <cache-invalidator>` which you set up with the proxy
+client suitable for the proxy server you use.
 
 .. _client setup:
 
 Setup
 -----
 
-HTTP Client Installation
-~~~~~~~~~~~~~~~~~~~~~~~~
+The proxy client uses a HTTP client to send requests to the proxy server.
+FOSHttpCache uses the Httplug_ abstraction to not tie itself to a specific
+client implementation.
 
-Because the clients send invalidation requests over HTTP, an `HTTPlug client`_
-must be installed. Pick either a standalone client or an adapter to a client
-library that is already included in your project. For instance, if you use
-Guzzle 6 in your project, install the appropriate adapter:
-
-.. code-block:: bash
-
-    $ composer require php-http/guzzle6-adapter
-
-You also need a `PSR-7 message implementation`_. If you use Guzzle 6, Guzzle’s
-implementation is already included. If you use another client, you need to
-install one of the message implementations. Recommended:
-
-.. code-block:: bash
-
-    $ composer require guzzlehttp/psr7
-
-Alternatively:
-
-.. code-block:: bash
-
-    $ composer require zendframework/zend-diactoros
-
-.. _HTTP adapter configuration:
-
-HTTP Client Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-By default, the proxy client will automatically locate an HTTP client that you
-have installed through Composer. But you can also pass the adapter explicitly.
-This is most useful when you have created a HTTP client with custom options or
-middleware (such as logging)::
-
-    use GuzzleHttp\Client;
-
-    $config = [
-        // For instance, custom middlewares
-    ];
-    $yourHttpClient = new Client($config);
-
-Take your client and create a HTTP adapter from it::
-
-    use Http\Adapter\Guzzle6HttpAdapter;
-
-    $adapter = new Guzzle6HttpAdapter($client);
-
-Then pass that adapter to the caching proxy client::
-
-    $proxyClient = new Varnish($servers, '/baseUrl', $adapter);
-    // Varnish as example, but also possible for NGINX and Symfony
-
-HTTP Message Factory Configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Similar to the HTTP client, the HTTP message factory is automatically located
-by default. You can pass an explicit instance of the message factory if you
-need to.
+The proxy client uses `Httplug discovery_` to find a suitable HTTP client. If
+you need more control, see the section on :ref:`HTTP Client Configuration <HTTP client configuration>`
+at the end of this chapter.
 
 .. _varnish client:
 
@@ -106,7 +53,7 @@ The other options for the Varnish client are:
 
 * ``tags_header`` (X-Cache-Tags): Allows you to change the HTTP header used for
   tagging. If you change this, make sure to use the correct header name in your
-  :doc:`caching proxy configuration <proxy-configuration>`;
+  :doc:`proxy server configuration <proxy-configuration>`;
 * ``header_length`` (7500): Control the maximum header size when invalidating
   tags. If there are more tags to invalidate than fit into the header, the
   invalidation request is split into several requests.
@@ -184,128 +131,59 @@ Noop Client
 
 The Noop (no operation) client implements the interfaces for invalidation, but
 does nothing. It is useful for developing your application or on a testing
-environment that does not have a caching proxy set up. Rather than making the
+environment that does not have a proxy server set up. Rather than making the
 cache invalidator optional in your code, you can (based on the environment)
 determine whether to inject the real client or the Noop client. The rest of your
 application then does not need to worry about the environment.
 
-Using the Clients
------------------
+Using the Proxy Client
+----------------------
+
+The recommended usage of the proxy client is to create an instance of
+``CacheInvalidator`` with the correct client for your setup. See
+:doc:`cache-invalidator` for more information.
+
+.. _HTTP client configuration:
+
+HTTP Client Configuration
+-------------------------
+
+To avoid automatic `Httplug discovery`_, you can pass a HTTP client instance
+to the proxy client. Learn more about available HTTP clients `in the Httplug documentation`_.
+To customize the behavior of the HTTP client, you can use `Httplug plugins`_
+
+The proxy client also uses the Httplug `message factory and URI factory`_. You
+can pass those to the constructor as well, if you don't want it to use discovery.
+
+The full constructor looks like this (for Varnish, NGINX and Symfony client
+have the same constructor)::
+
+    use FOS\HttpCache\ProxyClient\Varnish;
+
+    $httpClient = ...
+    $messageFactory = ...
+    $streamFactory = ...
+
+    $proxyClient = new Varnish($servers, $options, $httpClient, $messageFactory, $streamFactory);
+
+Implementation Notes
+--------------------
 
 Each client is an implementation of :source:`ProxyClientInterface <src/ProxyClient/ProxyClientInterface.php>`.
 All other interfaces, ``PurgeInterface``, ``RefreshInterface`` and ``BanInterface``
 extend this ``ProxyClientInterface``. So each client implements at least one of
 the three :ref:`invalidation methods <invalidation methods>` depending on the
-caching proxy’s abilities.
+proxy server’s abilities. To interact with a proxy client directly, refer to the
+doc comments on the interfaces.
 
 The ``ProxyClientInterface`` has one method: ``flush()``. After collecting
 invalidation requests, ``flush()`` needs to be called to actually send the
-requests to the caching proxy. This is on purpose: this way, we can send
+requests to the proxy server. This is on purpose: this way, we can send
 all requests together, reducing the performance impact of sending invalidation
 requests.
 
-Supported invalidation methods
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-============= ======= ======= =======
-Client        Purge   Refresh Ban
-============= ======= ======= =======
-Varnish       ✓       ✓       ✓
-NGINX         ✓       ✓
-Symfony Cache ✓       ✓
-============= ======= ======= =======
-
-.. _proxy-client purge:
-
-Purge
-~~~~~
-
-If the caching proxy understands :term:`purge` requests,
-its client should implement ``PurgeInterface``. Use the ``purge($url)`` method to
-purge one specific URL. The URL can be either an absolute URL or a relative
-path::
-
-    $client
-        ->purge('http://my-app.com/some/path')
-        ->purge('/other/path')
-        ->flush()
-    ;
-
-You can specify HTTP headers as the second argument to ``purge()``.
-For instance::
-
-    $client
-        ->purge('/some/path', ['X-Foo' => 'bar'])
-        ->flush()
-    ;
-
-Please note that purge will invalidate all variants, so you do not have to
-send any headers that you vary on, such as ``Accept``.
-
-.. include:: includes/custom-headers.rst
-
-.. _proxy-client refresh:
-
-Refresh
-~~~~~~~
-
-If the caching proxy understands :term:`refresh` requests,
-its client should implement ``RefreshInterface``. Use ``refresh()`` to refresh
-one specific URL. The URL can be either an absolute URL or a relative path::
-
-    $client
-        ->refresh('http://my-app.com/some/path')
-        ->refresh('other/path')
-        ->flush()
-    ;
-
-You can specify HTTP headers as the second argument to ``refresh()``. For
-instance, to only refresh the JSON representation of an URL::
-
-    $client
-        ->refresh('/some/path', ['Accept' => 'application/json'])
-        ->flush()
-    ;
-
-Ban
-~~~
-
-If the caching proxy understands :term:`ban` requests,
-its client should implement ``BanInterface``.
-
-You can invalidate all URLs matching a regular expression by using the
-``banPath($path, $contentType, $hosts)`` method. It accepts a regular expression
-for the path to invalidate and an optional content type regular expression and
-list of application hostnames.
-
-For instance, to ban all ``.png`` files on all application hosts::
-
-    $client->banPath('.*png$');
-
-To ban all HTML URLs that begin with ``/articles/``::
-
-    $client->banPath('/articles/.*', 'text/html');
-
-By default, URLs will be banned on all application hosts. You can limit this by
-specifying a host header::
-
-    $client->banPath('*.png$', null, '^www.example.com$');
-
-If you want to go beyond banning combinations of path, content type and hostname,
-use the ``ban(array $headers)`` method. This method allows you to specify any
-combination of headers that should be banned. For instance, when using the
-Varnish client::
-
-    use FOS\HttpCache\ProxyClient\Varnish;
-
-    $varnish->ban([
-        Varnish::HTTP_HEADER_URL   => '.*\.png$',
-        Varnish::HTTP_HEADER_HOST  => '.*example\.com',
-        Varnish::HTTP_HEADER_CACHE => 'my-tag',
-    ]);
-
-Make sure to add any headers that you want to ban on to your
-:doc:`proxy configuration <proxy-configuration>`.
-
-.. _HTTPlug client: http://httplug.io/
-.. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation
+.. _Httplug: http://httplug.io/
+.. _Httplug discovery: http://php-http.readthedocs.io/en/latest/discovery.html
+.. _in the Httplug documentation: http://php-http.readthedocs.io/en/latest/clients.html
+.. _Httplug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
+.. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html

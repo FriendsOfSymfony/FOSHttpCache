@@ -48,7 +48,22 @@ interface BanInterface extends ProxyClientInterface
      * '^(www\.)?(this|that)\.com$' or an array of exact host names, e.g.
      * ['example.com', 'other.net']. If the parameter is empty, all hosts
      * are matched.
-
+     *
+     * Examples:
+     *
+     * Ban all ``.png`` files on all application hosts::
+     *
+     *    $client->banPath('.*png$');
+     *
+     * To ban all HTML URLs that begin with ``/articles/``::
+     *
+     *    $client->banPath('/articles/.*', 'text/html');
+     *
+     * By default, URLs will be banned on all application hosts. You can limit
+     * this by specifying a host header::
+     *
+     *    $client->banPath('*.png$', null, '^www.example.com$');
+     *
      * @param string       $path        Regular expression pattern for URI to
      *                                  invalidate
      * @param string       $contentType Regular expression pattern for the content

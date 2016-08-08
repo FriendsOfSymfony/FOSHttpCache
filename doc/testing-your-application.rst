@@ -4,14 +4,14 @@ Testing Your Application
 ========================
 
 This chapter describes how to test your application against your reverse proxy.
-By running your tests against a live instance of your caching proxy, you can
+By running your tests against a live instance of your proxy server, you can
 validate the caching headers that your application sets, and the invalidation
 rules that it defines.
 
 The FOSHttpCache library provides traits and base test classes to help you write
 functional tests. Using the traits, you can extend your own (or your
 framework’s) base test classes. For convenience, you can also extend the
-FOSHttpCache base test class suitable for your caching proxy, which includes
+FOSHttpCache base test class suitable for your proxy server, which includes
 a sensible set of traits.
 
 By using the traits, you get:
@@ -20,7 +20,7 @@ By using the traits, you get:
   ``setUp()`` method;
 * an instance of this library’s proxy client that is configured to talk to your
   proxy server for invalidation requests;
-* a convenience method for executing HTTP requests to your caching proxy:
+* a convenience method for executing HTTP requests to your proxy server:
   ``$this->getResponse()``;
 * custom assertions ``assertHit()`` and ``assertMiss()`` for validating a cache
   hit/miss.
@@ -35,7 +35,7 @@ Web Server
 ~~~~~~~~~~
 
 You will need to run a web server to provide the PHP application you want to
-test. The test cases only handle running the caching proxy. It’s easiest to
+test. The test cases only handle running the proxy server. It’s easiest to
 use PHP’s built in web server. Include the WebServerListener in your
 ``phpunit.xml``:
 
@@ -96,20 +96,20 @@ You can override getters in your test class in the following way::
 Traits
 ------
 
-Caching Proxy Server Traits
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Proxy Server Traits
+~~~~~~~~~~~~~~~~~~~
 
-FOSHttpCache provides three caching proxy traits that:
+FOSHttpCache provides three proxy server traits that:
 
-* if necessary, start your caching proxy server before running the tests;
+* if necessary, start your proxy server before running the tests;
 * clear any cached content between tests to guarantee test isolation;
-* if necessary, stop the caching proxy server after the tests have finished;
+* if necessary, stop the proxy server after the tests have finished;
 * provide ``getProxyClient()``, which returns the right
   :doc:`proxy client <proxy-clients>` for your proxy server.
 
 You only need to include one of these traits in your test classes. Which one
 you need (``VarnishTest``, ``NginxTest`` or ``SymfonyTest``) depends on the
-caching proxy server that you use.
+proxy server that you use.
 
 VarnishTest Trait
 """""""""""""""""
@@ -197,8 +197,7 @@ HttpCaller Trait
 ~~~~~~~~~~~~~~~~
 
 Provides your tests with a ``getResponse`` method, which retrieves a URI from
-your application through a real HTTP call that goes through the HTTP caching
-proxy::
+your application through a real HTTP call that goes through the HTTP proxy server::
 
     use FOS\HttpCache\Test\HttpCaller;
 
@@ -217,14 +216,14 @@ proxy::
     }
 
 This trait requires the methods ``getHostName()`` and ``getCachingProxyPort()``
-to exist. When using one of the caching proxy traits, these will be provided by
+to exist. When using one of the proxy server traits, these will be provided by
 the trait, otherwise you have to implement them.
 
 CacheAssertions Trait
 ~~~~~~~~~~~~~~~~~~~~~
 
 Provides cache hit/miss assertions to your tests. To enable the these
-``assertHit`` and ``assertMiss`` assertions, you need to configure your caching
+``assertHit`` and ``assertMiss`` assertions, you need to configure your proxy
 server to set an `X-Cache` header with the cache status:
 
 * :ref:`Varnish <varnish_debugging>`
@@ -258,7 +257,7 @@ Usage
 -----
 
 This example shows how you can test whether the caching headers your
-application sets influence your caching proxy as you expect them to::
+application sets influence your proxy server as you expect them to::
 
     use FOS\HttpCache\Test\CacheAssertions;
     use FOS\HttpCache\Test\HttpCaller;
@@ -270,9 +269,9 @@ application sets influence your caching proxy as you expect them to::
     {
         public function testCachingHeaders()
         {
-            // The caching proxy is (re)started, so you don’t have to worry
+            // The proxy server is (re)started, so you don’t have to worry
             // about  previously cached content. Before continuing, the
-            // VarnishTest/ NginxTest trait waits for the caching proxy to
+            // VarnishTest/ NginxTest trait waits for the proxy server to
             // become available.
 
             // Retrieve a URL from your application
@@ -284,7 +283,7 @@ application sets influence your caching proxy as you expect them to::
 
             // Assume the URL /your/resource sets caching headers. If we
             // retrieve it again, we should have a cache hit (response delivered
-            // by the caching proxy):
+            // by the proxy server):
             $response = $this->getResponse('/your/resource');
             $this->assertHit($response);
         }
@@ -303,7 +302,7 @@ correctly::
     {
         public function testCachePurge()
         {
-            // Again, the caching proxy is restarted, so your test is independent
+            // Again, the proxy server is restarted, so your test is independent
             // from other tests
 
             $url = '/blog/articles/1';

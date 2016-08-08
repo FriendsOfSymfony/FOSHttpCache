@@ -14,11 +14,7 @@ namespace FOS\HttpCache\ProxyClient\Invalidation;
 use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 
 /**
- * An HTTP cache that supports invalidation by purging, that is, removing one
- * URL from the cache.
- *
- * Implementations should be configurable with a default host to be able to
- * handle purge calls that do not contain a full URL but only a path.
+ * An HTTP cache that supports invalidation by purging: Remove one URL from the cache.
  */
 interface PurgeInterface extends ProxyClientInterface
 {
@@ -27,8 +23,18 @@ interface PurgeInterface extends ProxyClientInterface
      *
      * Purging a URL will remove the cache for the URL (including the query string)
      *
-     * If the $url is just a path, the proxy client class will add a default
-     * host name.
+     * If the HTTP client uses the AddHostPlugin, $url can also be only a path.
+     *
+     * Example:
+     *
+     *    $client
+     *        ->purge('http://my-app.com/some/path')
+     *        ->purge('/other/path')
+     *        ->flush()
+     *    ;
+     *
+     * Please note that purge will invalidate all variants, so you do not need
+     * to specify variants headers, such as ``Accept``.
      *
      * @param string $url     Path or URL to purge
      * @param array  $headers Extra HTTP headers to send to the caching proxy
