@@ -297,6 +297,6 @@ class HttpAdapter
         $headers = $request->getHeaders();
         ksort($headers);
 
-        return md5($request->getMethod()."\n".$request->getUri()."\n".var_export($headers, true));
+        return sha1($request->getMethod()."\n".$request->getUri()."\n".var_export($headers, true));
     }
 }
