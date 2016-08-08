@@ -1,7 +1,7 @@
 {
     "name": "friendsofsymfony/http-cache",
     "type": "library",
-    "description": "Tools to manage cache invalidation",
+    "description": "Tools to manage HTTP caching proxies with PHP",
     "keywords": [ "http", "caching", "purge", "invalidation", "varnish", "nginx" ],
     "homepage": "https://github.com/friendsofsymfony/FOSHttpCache",
     "license": "MIT",
@@ -41,7 +41,6 @@
     },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
-        "php-http/discovery": "When not explicitly instantiating the php-http client for the proxy client",
         "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {
