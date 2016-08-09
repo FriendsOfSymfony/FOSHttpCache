@@ -19,12 +19,28 @@ Create the cache invalidator by passing a proxy client as
     $client = new ProxyClient\Nginx(...);
     // or
     $client = new ProxyClient\Symfony(...);
+    // or, for local development
+    $client = new ProxyClient\Noop();
 
     $cacheInvalidator = new CacheInvalidator($client);
+
+Supported invalidation methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+============= ======= ======= =======
+Client        Purge   Refresh Ban
+============= ======= ======= =======
+Varnish       ✓       ✓       ✓
+NGINX         ✓       ✓
+Symfony Cache ✓       ✓
+Noop          ✓       ✓       ✓
+============= ======= ======= =======
 
 .. note::
 
     See :ref:`proxy client setup <client setup>` for more on constructing a client.
+
+.. _cache invalidate:
 
 Invalidating Paths and URLs
 ---------------------------
@@ -55,6 +71,11 @@ Invalidate a URL with added header(s)::
 
 .. include:: includes/custom-headers.rst
 
+Please note that purge will invalidate all variants, so you do not have to
+send any headers that you vary on, such as ``Accept``.
+
+.. _cache refresh:
+
 Refreshing Paths and URLs
 -------------------------
 
@@ -82,7 +103,6 @@ Refresh a URL with added header(s)::
 
 .. _invalidate regex:
 
-
 Invalidating by Tags
 --------------------
 
@@ -107,7 +127,6 @@ Invalidate several tags::
         ->flush()
     ;
 
-
 Invalidating With a Regular Expression
 --------------------------------------
 
@@ -124,7 +143,7 @@ You can invalidate all URLs matching a regular expression by using the
 with a regular expression for the content type and/or the application hostname.
 
 For instance, to invalidate all .css files for all hostnames handled by this
-caching proxy::
+proxy server::
 
     $cacheInvalidator->invalidateRegex('.*css$')->flush();
 
@@ -145,7 +164,7 @@ You can also invalidate the cache based on any headers.
     If you use non-default headers, make sure to :doc:`configure your proxy <proxy-configuration>`
     to have them taken into account.
 
-Cache client implementations should fill up the headers to at least have the
+Proxy client implementations should fill up the headers to at least have the
 default headers always present to simplify the cache configuration rules.
 
 To invalidate on a custom header ``X-My-Header``, you would do::
@@ -174,20 +193,20 @@ When using the FOSHttpCacheBundle_, you don’t have to call ``flush()``, as the
 bundle flushes the invalidator for you after the response has been sent.
 
 As ``flush()`` empties the invalidation queue, you can safely call the method
-multiple times.
+multiple times. If there are no requests to be sent, flush will simply do nothing.
 
 Error handling
 --------------
 
 If an error occurs during ``flush()``, the method throws an
 :source:`ExceptionCollection <src/Exception/ExceptionCollection.php>`
-that contains an exception for each failed request to the caching proxy.
+that contains an exception for each failed request to the proxy server.
 
 These exception are of two types:
 
 * ``\FOS\HttpCache\ProxyUnreachableException`` when the client cannot connect to
-  the caching proxy
-* ``\FOS\HttpCache\ProxyResponseException`` when the caching proxy returns an
+  the proxy server
+* ``\FOS\HttpCache\ProxyResponseException`` when the proxy server returns an
   error response, such as 403 Forbidden.
 
 So, to catch exceptions::
@@ -212,8 +231,9 @@ So, to catch exceptions::
 Logging errors
 ~~~~~~~~~~~~~~
 
-You can log any exceptions in the following way. First construct a logger that
-implements ``\Psr\Log\LoggerInterface``. For instance, when using Monolog_::
+You can log any exceptions with the help of the ``LogSubscriber`` provided in
+this library. First construct a logger that implements
+``\Psr\Log\LoggerInterface``. For instance, when using Monolog_::
 
     use Monolog\Logger;
 

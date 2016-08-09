@@ -20,9 +20,9 @@ HTTP Caching Terminology
         Also *backend application* or *origin server*. The web application that
         holds the data.
 
-    Caching proxy
+    Proxy Server
         Also `reverse caching proxy <http://en.wikipedia.org/wiki/Reverse_proxy>`_.
-        Examples: Varnish, NGINX.
+        Examples: Varnish, NGINX, Symfony ``HttpCache``.
 
     Time to live (TTL)
         Maximum lifetime of some content. Expressed in either an expiry date
@@ -30,7 +30,7 @@ HTTP Caching Terminology
         ``max-age`` and ``s-maxage`` cache control directives).
 
     Invalidation
-        Invalidating a piece of content means telling the caching proxy to no
+        Invalidating a piece of content means telling the proxy server to no
         longer serve that content to clients. The proxy can choose to either
         discard the content immediately, or do so when it is next requested.
         On that next request, the proxy will fetch a fresh copy from the
@@ -102,7 +102,7 @@ Cache invalidation has two possible downsides:
   :ref:`tagging <tags>` cached content. Additionally, if you use Symfony, we
   recommend you use the FOSHttpCacheBundle_.
   which provides additional functionality to make invalidation easier.
-* Invalidation is done through requests to your caching proxy. Sending these
+* Invalidation is done through requests to your proxy server. Sending these
   requests could negatively influence performance, in particular if the client
   has to wait for them. This library resolves this issue by optimizing the way
   invalidation requests are sent.
@@ -118,9 +118,9 @@ all methods, please refer to proxy specific documentation for the details.
 .. glossary::
 
     Purge
-        Purge removes content from the caching proxy immediately. The next time a
+        Purge removes content from the proxy server immediately. The next time a
         client requests the URL, data is fetched from the application, stored in
-        the caching proxy, and returned to the client.
+        the proxy server, and returned to the client.
 
         A purge removes all *variants* of the cached content, as per the ``Vary``
         header.
@@ -138,7 +138,7 @@ all methods, please refer to proxy specific documentation for the details.
         immediately. Instead, a reference to the content is added to a blacklist (or
         ban list). Every client request is checked against this blacklist. If the
         request happens to match blacklisted content, fresh content is fetched from the
-        application, stored in the caching proxy and returned to the client.
+        application, stored in the proxy server and returned to the client.
 
         Bans cannot remove content from cache immediately because that would require
         going through all cached content, which could take a long time and reduce

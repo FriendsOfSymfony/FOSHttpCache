@@ -16,20 +16,36 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 /**
  * An HTTP cache that supports invalidation by refresh requests that force a
  * cache miss for one specific URL.
- *
- * Implementations should be configurable with a default host to be able to
- * handle refresh calls that do not contain a full URL but only a path.
  */
 interface RefreshInterface extends ProxyClientInterface
 {
     /**
      * Refresh a URL.
      *
-     * Refreshing a URL will generate a new cached response for the URL,
-     * including the query string but excluding any Vary variants.
+     * Refreshing a URL will generate a new cached response for this request,
+     * including the query string.
      *
-     * If the $url is just a path, the proxy client class will add a default
-     * host name.
+     * If the HTTP client uses the AddHostPlugin, $url can also be only a path.
+     *
+     * Example:
+     *
+     *    $client
+     *        ->refresh('http://my-app.com/some/path')
+     *        ->refresh('other/path')
+     *        ->flush()
+     *    ;
+     *
+     * You can specify HTTP headers for the request. Those headers will be
+     * forwarded by the proxy cache to your application.
+     *
+     * If you use a Vary header, you need to refresh each variant separately,
+     * as the proxy server does not know which variants exist. To refresh the
+     * JSON representation of an URL:
+     *
+     *    $client
+     *        ->refresh('/some/path', ['Accept' => 'application/json'])
+     *        ->flush()
+     *    ;
      *
      * @param string $url     Path or URL to refresh
      * @param array  $headers Extra HTTP headers to send to the caching proxy
