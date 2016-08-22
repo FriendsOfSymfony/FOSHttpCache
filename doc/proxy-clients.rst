@@ -160,8 +160,9 @@ to all Proxy clients provided at creation time.::
 
 .. note::
 
-    Having multiple layers of HTTP caches in place is usually not a good idea, the
-    Multiplexer client is useful during transition phases.
+    Having multiple layers of HTTP caches in place is not a good idea in general. The
+    MultiplexerClient is provided for special situations, for example during a transition
+    phase of an application where an old and a new system run in parallel.
 
 Using the Proxy Client
 ----------------------
