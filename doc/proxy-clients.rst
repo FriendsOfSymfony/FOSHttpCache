@@ -5,6 +5,8 @@ This library ships with clients for the Varnish and NGINX caching servers and
 the Symfony built-in HTTP cache. A Noop client that implements the interfaces
 but does nothing at all is provided for local development and testing purposes.
 
+A Multiplexer client is also available to forward calls to multiple proxy clients.
+
 The recommended usage is to have your application interact with the
 :doc:`cache invalidator <cache-invalidator>` which you set up with the proxy
 client suitable for the proxy server you use.
@@ -135,6 +137,31 @@ environment that does not have a proxy server set up. Rather than making the
 cache invalidator optional in your code, you can (based on the environment)
 determine whether to inject the real client or the Noop client. The rest of your
 application then does not need to worry about the environment.
+
+.. _multiplexer client:
+
+Multiplexer Client
+~~~~~~~~~~~~~~~~~~
+
+The Multiplexer client allows multiple Proxy clients to be used during the standard
+cache invalidation, thus enabling multiple caches to be handled at once.
+It is useful when multiple caches exist in the environment and they need to be handled
+at the same time; the Multiplexer proxy client will forward the cache invalidation calls
+to all Proxy clients provided at creation time.::
+
+    use FOS\HttpCache\ProxyClient\MultiplexerClient;
+    use FOS\HttpCache\ProxyClient\Nginx;
+    use FOS\HttpCache\ProxyClient\Symfony;
+
+    $nginxClient = new Nginx($servers);
+    $symfonyClient = new Symfony([...]);
+    // Expects an array of ProxyClientInterface in the constructor
+    $client = new MultiplexerClient([$nginxClient, $symfonyClient]);
+
+.. note::
+
+    Having multiple layers of HTTP caches in place is usually not a good idea, the
+    Multiplexer client is useful during transition phases.
 
 Using the Proxy Client
 ----------------------
