@@ -11,10 +11,6 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 /**
  * Refresh handler for the symfony built-in HttpCache.
  *
@@ -27,30 +23,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RefreshSubscriber extends AccessControlledSubscriber
 {
-    /**
-     * When creating this subscriber, you can configure a number of options.
-     *
-     * - refresh_client_matcher: RequestMatcher to identify valid refresh clients.
-     * - refresh_client_ips:     IP or array of IPs that are allowed to refresh.
-     *
-     * Only set one of refresh_client_ips and refresh_client_matcher.
-     *
-     * @param array $options Options to overwrite the default options
-     *
-     * @throws \InvalidArgumentException if unknown keys are found in $options
-     */
-    public function __construct(array $options = [])
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults([
-            'refresh_client_matcher' => null,
-            'refresh_client_ips' => null,
-        ]);
-        $options = $resolver->resolve($options);
-
-        parent::__construct($options['refresh_client_matcher'], $options['refresh_client_ips']);
-    }
-
     /**
      * {@inheritdoc}
      */

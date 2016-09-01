@@ -14,6 +14,8 @@ namespace FOS\HttpCache\SymfonyCache;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Base class for handlers for the symfony built-in HttpCache that need access
@@ -28,32 +30,54 @@ abstract class AccessControlledSubscriber implements EventSubscriberInterface
     /**
      * @var RequestMatcher
      */
-    private $requestMatcher;
+    private $clientMatcher;
 
     /**
-     * Initializes this subscriber with either a request matcher or an IP or
-     * list of IPs.
+     * When creating this subscriber, you can configure a number of options.
+     *
+     * - client_matcher: RequestMatcherInterface to identify clients that are allowed to send request.
+     * - client_ips:     IP or array of IPs of clients that are allowed to send requests.
      *
      * Only one of request matcher or IPs may be a non-null value. If you use a
      * RequestMatcher, configure your IPs into it.
      *
      * If neither parameter is set, the filter is IP 127.0.0.1
      *
-     * @param RequestMatcher|null  $requestMatcher Request matcher configured to only match allowed requests
-     * @param string|string[]|null $ips            IP or list of IPs that are allowed to send requests
+     * @param array $options Options to overwrite the default options
      *
-     * @throws \InvalidArgumentException If both $requestMatcher and $ips are set
+     * @throws \InvalidArgumentException if both client_matcher and client_ips are set or unknown keys are found in $options
      */
-    public function __construct(RequestMatcher $requestMatcher = null, $ips = null)
+    public function __construct(array $options = [])
     {
-        if ($requestMatcher && $ips) {
+        $options = $this->getOptionsResolver()->resolve($options);
+
+        $clientMatcher = $options['client_matcher'];
+        if ($clientMatcher && $options['client_ips']) {
             throw new \InvalidArgumentException('You may not set both a request matcher and an IP.');
         }
-        if (!$requestMatcher) {
-            $requestMatcher = new RequestMatcher(null, null, null, $ips ?: '127.0.0.1');
+        if (!$clientMatcher) {
+            $clientMatcher = new RequestMatcher(null, null, null, $options['client_ips'] ?: '127.0.0.1');
         }
 
-        $this->requestMatcher = $requestMatcher;
+        $this->clientMatcher = $clientMatcher;
+    }
+
+    /**
+     * Get the options resolver for the constructor arguments.
+     *
+     * @return OptionsResolver
+     */
+    protected function getOptionsResolver()
+    {
+        $resolver = new OptionsResolver();
+        $resolver->setDefaults([
+            'client_matcher' => null,
+            'client_ips' => null,
+        ]);
+        $resolver->setAllowedTypes('client_matcher', [RequestMatcherInterface::class, 'null']);
+        $resolver->setAllowedTypes('client_ips', ['string', 'array', 'null']);
+
+        return $resolver;
     }
 
     /**
@@ -65,6 +89,6 @@ abstract class AccessControlledSubscriber implements EventSubscriberInterface
      */
     protected function isRequestAllowed(Request $request)
     {
-        return $this->requestMatcher->matches($request);
+        return $this->clientMatcher->matches($request);
     }
 }

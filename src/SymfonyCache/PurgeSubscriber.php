@@ -11,8 +11,6 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,43 +26,28 @@ class PurgeSubscriber extends AccessControlledSubscriber
     const DEFAULT_PURGE_METHOD = 'PURGE';
 
     /**
-     * The options configured in the constructor argument or default values.
+     * The purge method to use.
      *
-     * @var array
+     * @var string
      */
-    private $options = [];
+    private $purgeMethod;
 
     /**
-     * When creating this subscriber, you can configure a number of options.
+     * When creating the purge subscriber, you can configure an additional option.
      *
      * - purge_method:         HTTP method that identifies purge requests.
-     * - purge_client_matcher: RequestMatcher to identify valid purge clients.
-     * - purge_client_ips:     IP or array of IPs that are allowed to purge.
-     *
-     * Only set one of purge_client_ips and purge_client_matcher.
      *
      * @param array $options Options to overwrite the default options
      *
      * @throws \InvalidArgumentException if unknown keys are found in $options
+     *
+     * @see AccessControlledSubscriber::__construct
      */
     public function __construct(array $options = [])
     {
-        $resolver = new OptionsResolver();
-        if (method_exists($resolver, 'setDefined')) {
-            // this was only added in symfony 2.6
-            $resolver->setDefined(['purge_client_matcher', 'purge_client_ips', 'purge_method']);
-        } else {
-            $resolver->setOptional(['purge_client_matcher', 'purge_client_ips', 'purge_method']);
-        }
-        $resolver->setDefaults([
-            'purge_client_matcher' => null,
-            'purge_client_ips' => null,
-            'purge_method' => static::DEFAULT_PURGE_METHOD,
-        ]);
+        parent::__construct($options);
 
-        $this->options = $resolver->resolve($options);
-
-        parent::__construct($this->options['purge_client_matcher'], $this->options['purge_client_ips']);
+        $this->purgeMethod = $this->getOptionsResolver()->resolve($options)['purge_method'];
     }
 
     /**
@@ -87,7 +70,7 @@ class PurgeSubscriber extends AccessControlledSubscriber
     public function handlePurge(CacheEvent $event)
     {
         $request = $event->getRequest();
-        if ($this->options['purge_method'] !== $request->getMethod()) {
+        if ($this->purgeMethod !== $request->getMethod()) {
             return;
         }
 
@@ -104,5 +87,19 @@ class PurgeSubscriber extends AccessControlledSubscriber
             $response->setStatusCode(200, 'Not found');
         }
         $event->setResponse($response);
+    }
+
+    /**
+     * Add the purge_method option.
+     *
+     * @return OptionsResolver
+     */
+    protected function getOptionsResolver()
+    {
+        $resolver = parent::getOptionsResolver();
+        $resolver->setDefault('purge_method', static::DEFAULT_PURGE_METHOD);
+        $resolver->setAllowedTypes('purge_method', 'string');
+
+        return $resolver;
     }
 }

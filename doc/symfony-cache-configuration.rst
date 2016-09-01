@@ -126,14 +126,14 @@ need to do anything more.
 Purging is only allowed from the same machine by default. To purge data from
 other hosts, provide the IPs of the machines allowed to purge, or provide a
 RequestMatcher that checks for an Authorization header or similar. *Only set
-one of purge_client_ips or purge_client_matcher*.
+one of ``client_ips`` or ``client_matcher``*.
 
-* **purge_client_ips**: String with IP or array of IPs that are allowed to
+* **client_ips**: String with IP or array of IPs that are allowed to
   purge the cache.
 
   **default**: ``127.0.0.1``
 
-* **purge_client_matcher**: RequestMatcher that only matches requests that are
+* **client_matcher**: RequestMatcherInterface that only matches requests that are
   allowed to purge.
 
   **default**: ``null``
@@ -151,19 +151,19 @@ what clients are allowed to refresh cache entries. Refreshing is only allowed
 from the same machine by default. To refresh from other hosts, provide the
 IPs of the machines allowed to refresh, or provide a RequestMatcher that
 checks for an Authorization header or similar. *Only set one of
-refresh_client_ips or refresh_client_matcher*.
+``client_ips`` or ``client_matcher``*.
 
 The refresh subscriber needs to access the ``HttpCache::fetch`` method which
 is protected on the base HttpCache class. The ``EventDispatchingHttpCache``
 exposes the method as public, but if you implement your own kernel, you need
 to overwrite the method to make it public.
 
-* **refresh_client_ips**: String with IP or array of IPs that are allowed to
+* **client_ips**: String with IP or array of IPs that are allowed to
   refresh the cache.
 
   **default**: ``127.0.0.1``
 
-* **refresh_client_matcher**: RequestMatcher that only matches requests that are
+* **client_matcher**: RequestMatcher that only matches requests that are
   allowed to refresh.
 
   **default**: ``null``
