@@ -17,8 +17,14 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
+use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Client\Exception\RequestException;
+use Psr\Http\Message\RequestInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
@@ -37,7 +43,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSupportsFalse()
     {
-        $proxyClient = \Mockery::mock('\FOS\HttpCache\ProxyClient\ProxyClientInterface');
+        $proxyClient = \Mockery::mock(ProxyClientInterface::class);
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
 
@@ -52,7 +58,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsInvalid()
     {
-        $proxyClient = \Mockery::mock('\FOS\HttpCache\ProxyClient\ProxyClientInterface');
+        $proxyClient = \Mockery::mock(ProxyClientInterface::class);
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
 
@@ -61,7 +67,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidatePath()
     {
-        $purge = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface')
+        $purge = \Mockery::mock(PurgeInterface::class)
             ->shouldReceive('purge')->once()->with('/my/route', [])
             ->shouldReceive('purge')->once()->with('/my/route', ['X-Test-Header' => 'xyz'])
             ->shouldReceive('flush')->once()
@@ -79,7 +85,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     public function testRefreshPath()
     {
         $headers = ['X' => 'Y'];
-        $refresh = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface')
+        $refresh = \Mockery::mock(RefreshInterface::class)
             ->shouldReceive('refresh')->once()->with('/my/route', $headers)
             ->shouldReceive('flush')->never()
             ->getMock();
@@ -98,7 +104,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             'Other-Header' => '^a|b|c$',
         ];
 
-        $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
+        $ban = \Mockery::mock(BanInterface::class)
             ->shouldReceive('ban')
             ->with($headers)
             ->once()
@@ -115,7 +121,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             'post-type-2',
         ];
 
-        $tagHandler = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\TagsInterface')
+        $tagHandler = \Mockery::mock(TagsInterface::class)
             ->shouldReceive('invalidateTags')
             ->with($tags)
             ->once()
@@ -127,7 +133,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidateRegex()
     {
-        $ban = \Mockery::mock('\FOS\HttpCache\ProxyClient\Invalidation\BanInterface')
+        $ban = \Mockery::mock(BanInterface::class)
             ->shouldReceive('banPath')
             ->with('/a', 'b', ['example.com'])
             ->once()
@@ -139,7 +145,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testMethodException()
     {
-        $proxyClient = \Mockery::mock('\FOS\HttpCache\ProxyClient\ProxyClientInterface');
+        $proxyClient = \Mockery::mock(ProxyClientInterface::class);
         $cacheInvalidator = new CacheInvalidator($proxyClient);
         try {
             $cacheInvalidator->invalidatePath('/');
@@ -178,7 +184,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProxyClientExceptionsAreLogged()
     {
-        $failedRequest = \Mockery::mock('\Psr\Http\Message\RequestInterface')
+        $failedRequest = \Mockery::mock(RequestInterface::class)
             ->shouldReceive('getHeaderLine')->with('Host')->andReturn('127.0.0.1')
             ->getMock();
         $clientException = new RequestException('Couldn\'t connect to host', $failedRequest);

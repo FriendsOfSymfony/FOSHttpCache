@@ -6,26 +6,45 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.0.0 (unreleased)
 ------------------
 
-* Replace hard coupling on Guzzle HTTP client with HTTP adapter. You now need
+### HTTP
+
+* Replaced hard coupling on Guzzle HTTP client with HTTP adapter. You now need
   to explicitly specify the adapter you want, see [installation instructions]
   (http://foshttpcache.readthedocs.org/en/stable/installation.html)
-* The NGINX purge location is no longer passed as constructor argument but by
-  calling `setPurgeLocation()`.
-* In ProxyTestCase, `getHttpClient()` has been replaced with `getHttpAdapter()`;
-  added HTTP method parameter to `getResponse()`.
-* Varnish configuration are now files that you can directly include from your
-  .vcl and call custom functions to avoid copy-pasting VCL code.
-* Changed default Varnish version to 4.
 * Added support and documentation for setting a custom TTL specifically for the
   caching proxy.
-* Refactored the proxy client test system into traits. Removed ProxyTestCase,
-  use the traits `CacheAssertions` and `HttpCaller` instead.
+
+### Tagging
+
 * Abstracting tags by adding new `TagsInterface` for ProxyClients, as part of
   that also:
   BC break: Moved tag invalidation to `CacheInvalidator`, and rename TagHandler
   to ResponseTagger.
 * The ResponseTagger validates that no tags are empty. It can skip empty tags
   or throw exceptions
+
+### Varnish
+
+* Varnish configuration are now files that you can directly include from your
+  .vcl and call custom functions to avoid copy-pasting VCL code.
+* Changed default Varnish version to 4.
+
+### NGINX
+
+* The NGINX purge location is no longer passed as constructor argument but by
+  calling `setPurgeLocation()`.
+
+### Symfony HttpCache
+
+* BC BREAK: Constructors for PurgeSubscriber and RefreshSubscriber now use an
+  options array for customization.
+
+### Testing
+
+* In ProxyTestCase, `getHttpClient()` has been replaced with `getHttpAdapter()`;
+  added HTTP method parameter to `getResponse()`.
+* Refactored the proxy client test system into traits. Removed ProxyTestCase,
+  use the traits `CacheAssertions` and `HttpCaller` instead.
 
 1.4.2
 -----
