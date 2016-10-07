@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
+use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
 use FOS\HttpCache\ProxyClient\Symfony;
 use Http\Mock\Client;
 use Psr\Http\Message\RequestInterface;
@@ -26,8 +27,8 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
 
     public function testPurge()
     {
-        $ips = ['127.0.0.1:8080', '123.123.123.2'];
-        $symfony = new Symfony($ips, ['base_uri' => 'my_hostname.dev'], $this->client);
+        $httpAdapter = new HttpAdapter(['127.0.0.1:8080', '123.123.123.2'], 'my_hostname.dev', $this->client);
+        $symfony = new Symfony($httpAdapter);
 
         $count = $symfony->purge('/url/one')
             ->purge('/url/two', ['X-Foo' => 'bar'])
@@ -52,7 +53,8 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
 
     public function testRefresh()
     {
-        $symfony = new Symfony(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
+        $httpAdapter = new HttpAdapter(['127.0.0.1:123'], 'fos.lo', $this->client);
+        $symfony = new Symfony($httpAdapter);
         $symfony->refresh('/fresh')->flush();
 
         $requests = $this->getRequests();

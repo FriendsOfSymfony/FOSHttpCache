@@ -12,23 +12,23 @@
 namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\InvalidArgumentException;
-use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
-use Http\Message\MessageFactory;
 
 /**
  * Varnish HTTP cache invalidator.
  *
  * Additional constructor options:
- * - tags_header   Header for tagging responses, defaults to X-Cache-Tags
- * - header_length Maximum header length, defaults to 7500 bytes
+ * - tags_header         Header for tagging responses, defaults to X-Cache-Tags
+ * - header_length       Maximum header length, defaults to 7500 bytes
+ * - default_ban_headers Map of headers that are set on each ban request,
+ *                       merged with the built-in headers
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface, TagsInterface
+class Varnish extends HttpProxyClient implements BanInterface, PurgeInterface, RefreshInterface, TagsInterface
 {
     const HTTP_METHOD_BAN = 'BAN';
     const HTTP_METHOD_PURGE = 'PURGE';
@@ -36,39 +36,7 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     const HTTP_HEADER_HOST = 'X-Host';
     const HTTP_HEADER_URL = 'X-Url';
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
-
-    /**
-     * Map of default headers for ban requests with their default values.
-     *
-     * @var array
-     */
-    private $defaultBanHeaders = [
-        self::HTTP_HEADER_HOST => self::REGEX_MATCH_ALL,
-        self::HTTP_HEADER_URL => self::REGEX_MATCH_ALL,
-        self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL,
-    ];
-
-    /**
-     * Set the default headers that get merged with the provided headers in self::ban().
-     *
-     * @param array $headers Hashmap with keys being the header names, values
-     *                       the header values
-     */
-    public function setDefaultBanHeaders(array $headers)
-    {
-        $this->defaultBanHeaders = $headers;
-    }
-
-    /**
-     * Add or overwrite a default ban header.
-     *
-     * @param string $name  The name of that header
-     * @param string $value The content of that header
-     */
-    public function setDefaultBanHeader($name, $value)
-    {
-        $this->defaultBanHeaders[$name] = $value;
-    }
+    const DEFAULT_HTTP_HEADER_CACHE_TAGS = 'X-Cache-Tags';
 
     /**
      * {@inheritdoc}
@@ -115,22 +83,12 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     }
 
     /**
-     * Get the maximum HTTP header length.
-     *
-     * @return int
-     */
-    public function getHeaderLength()
-    {
-        return $this->options['header_length'];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function ban(array $headers)
     {
         $headers = array_merge(
-            $this->defaultBanHeaders,
+            $this->options['default_ban_headers'],
             $headers
         );
 
@@ -192,31 +150,22 @@ class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterfac
     protected function getDefaultOptions()
     {
         $resolver = parent::getDefaultOptions();
-        $resolver->setDefaults(['tags_header' => 'X-Cache-Tags']);
-        $resolver->setDefaults(['header_length' => 7500]);
+        $resolver->setDefaults([
+            'tags_header' => self::DEFAULT_HTTP_HEADER_CACHE_TAGS,
+            'header_length' => 7500,
+            'default_ban_headers' => [],
+        ]);
+        $resolver->setNormalizer('default_ban_headers', function ($resolver, $specified) {
+            return array_merge(
+                [
+                    self::HTTP_HEADER_HOST => self::REGEX_MATCH_ALL,
+                    self::HTTP_HEADER_URL => self::REGEX_MATCH_ALL,
+                    self::HTTP_HEADER_CONTENT_TYPE => self::REGEX_MATCH_ALL,
+                ],
+                $specified
+            );
+        });
 
         return $resolver;
-    }
-
-    /**
-     * Build the invalidation request and validate it.
-     *
-     * {@inheritdoc}
-     *
-     * @throws MissingHostException If a relative path is queued for purge/
-     *                              refresh and no base URL is set
-     */
-    protected function queueRequest($method, $url, array $headers = [])
-    {
-        $request = $this->messageFactory->createRequest($method, $url, $headers);
-
-        if (self::HTTP_METHOD_BAN !== $method
-            && null === $this->options['base_uri']
-            && !$request->getHeaderLine('Host')
-        ) {
-            throw MissingHostException::missingHost($url);
-        }
-
-        $this->httpAdapter->invalidate($request);
     }
 }

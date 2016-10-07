@@ -17,31 +17,17 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 /**
  * NGINX HTTP cache invalidator.
  *
+ * Additional constructor options:
+ * - purge_location: Path location that triggers purging. String, or set to
+ *   boolean false for same location purging.
+ *
  * @author Simone Fumagalli <simone@iliveinperego.com>
  */
-class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterface
+class Nginx extends HttpProxyClient implements PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_PURGE = 'PURGE';
     const HTTP_METHOD_REFRESH = 'GET';
     const HTTP_HEADER_REFRESH = 'X-Refresh';
-
-    /**
-     * Path location that triggers purging. If false, same location purging is
-     * assumed.
-     *
-     * @var string|false
-     */
-    private $purgeLocation;
-
-    /**
-     * Set path that triggers purge.
-     *
-     * @param string $purgeLocation
-     */
-    public function setPurgeLocation($purgeLocation = '')
-    {
-        $this->purgeLocation = (string) $purgeLocation;
-    }
 
     /**
      * {@inheritdoc}
@@ -63,6 +49,17 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
         $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl, $headers);
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultOptions()
+    {
+        $resolver = parent::getDefaultOptions();
+        $resolver->setDefaults(['purge_location' => false]);
+
+        return $resolver;
     }
 
     /**

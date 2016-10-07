@@ -12,21 +12,17 @@
 namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
-use Http\Client\HttpAsyncClient;
-use Http\Discovery\HttpAsyncClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\UriFactoryDiscovery;
 use Http\Message\MessageFactory;
-use Http\Message\UriFactory;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Abstract HTTP based caching proxy client.
+ * Base class for HTTP based caching proxy client.
  *
  * @author David de Boer <david@driebit.nl>
  */
-abstract class AbstractProxyClient implements ProxyClientInterface
+abstract class HttpProxyClient implements ProxyClientInterface
 {
     /**
      * HTTP client adapter.
@@ -50,39 +46,20 @@ abstract class AbstractProxyClient implements ProxyClientInterface
     /**
      * Constructor.
      *
-     * Supported options:
+     * The base class has no options.
      *
-     * - base_uri Default application hostname, optionally including base URL,
-     *   for purge and refresh requests (optional). This is required if you
-     *   purge and refresh paths instead of absolute URLs.
-     *
-     * @param array                $servers        Caching proxy server hostnames or IP
-     *                                             addresses, including port if not port 80.
-     *                                             E.g. ['127.0.0.1:6081']
-     * @param array                $options        List of options for the client
-     * @param HttpAsyncClient|null $httpClient     Client capable of sending HTTP requests. If no
-     *                                             client is supplied, a default one is created
-     * @param MessageFactory|null  $messageFactory Factory for PSR-7 messages. If none supplied,
-     *                                             a default one is created
-     * @param UriFactory|null      $uriFactory     Factory for PSR-7 URIs. If not specified, a
-     *                                             default one is created
+     * @param HttpAdapter         $httpAdapter    Helper to send HTTP requests to caching proxy
+     * @param array               $options        Options for this client
+     * @param MessageFactory|null $messageFactory Factory for PSR-7 messages. If none supplied,
+     *                                            a default one is created
      */
     public function __construct(
-        array $servers,
+        HttpAdapter $httpAdapter,
         array $options = [],
-        HttpAsyncClient $httpClient = null,
-        MessageFactory $messageFactory = null,
-        UriFactory $uriFactory = null
+        MessageFactory $messageFactory = null
     ) {
-        if (!$httpClient) {
-            $httpClient = HttpAsyncClientDiscovery::find();
-        }
-        if (!$uriFactory) {
-            $uriFactory = UriFactoryDiscovery::find();
-        }
-
+        $this->httpAdapter = $httpAdapter;
         $this->options = $this->getDefaultOptions()->resolve($options);
-        $this->httpAdapter = new HttpAdapter($servers, $this->options['base_uri'], $httpClient, $uriFactory);
         $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
     }
 
@@ -101,10 +78,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      */
     protected function getDefaultOptions()
     {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults(['base_uri' => null]);
-
-        return $resolver;
+        return new OptionsResolver();
     }
 
     /**

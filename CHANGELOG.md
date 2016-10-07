@@ -6,6 +6,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.0.0 (unreleased)
 ------------------
 
+### Proxy Clients
+
+* Abstracted proxy clients from HTTP protocol. All existing clients still use
+  HTTP to send invalidation requests.
+
 ### HTTP
 
 * Replaced hard coupling on Guzzle HTTP client with HTTP adapter. You now need
