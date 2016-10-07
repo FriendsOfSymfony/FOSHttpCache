@@ -20,9 +20,9 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Testing the HTTP Adapter
+ * Testing the HTTP Adapter.
  */
-class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
+class HttpAdapterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Mock client.

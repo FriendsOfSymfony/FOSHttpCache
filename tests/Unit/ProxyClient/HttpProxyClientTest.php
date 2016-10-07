@@ -11,13 +11,9 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Mock\Client;
-use Http\Client\Exception\RequestException;
-use Http\Discovery\MessageFactoryDiscovery;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * Testing the base methods of the proxy client, using the Varnish client as concrete class.
@@ -25,7 +21,7 @@ use Psr\Http\Message\RequestInterface;
 class HttpProxyClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Mock HttpAdapter
+     * Mock HttpAdapter.
      *
      * @var HttpAdapter|\PHPUnit_Framework_MockObject_MockObject
      */

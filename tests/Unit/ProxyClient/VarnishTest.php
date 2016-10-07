@@ -34,7 +34,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testBanEverything()
     {
-
         $varnish = new Varnish($this->client);
         $this->client->expects($this->once())
             ->method('invalidate')
