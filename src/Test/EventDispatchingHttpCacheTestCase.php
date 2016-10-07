@@ -48,7 +48,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
             ->getMock()
         ;
 
-        $this->assertInstanceOf('FOS\HttpCache\SymfonyCache\CacheInvalidationInterface', $mock);
+        $this->assertInstanceOf(CacheInvalidationInterface::class, $mock);
 
         // Force setting options property since we can't use original constructor.
         $options = [

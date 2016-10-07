@@ -53,7 +53,7 @@ class Noop implements ProxyClientInterface, BanInterface, PurgeInterface, Refres
      */
     public function getTagsHeaderValue(array $tags)
     {
-        return [];
+        return '';
     }
 
     /**

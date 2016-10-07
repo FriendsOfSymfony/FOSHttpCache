@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Test;
 
+use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Test\Proxy\VarnishProxy;
 
@@ -174,10 +175,11 @@ trait VarnishTest
     protected function getProxyClient()
     {
         if (null === $this->proxyClient) {
-            $this->proxyClient = new Varnish(
-                ['http://127.0.0.1:'.$this->getProxy()->getPort()],
-                ['base_uri' => $this->getHostName().':'.$this->getProxy()->getPort()]
+            $httpDispatcher = new HttpDispatcher(
+                ['http://127.0.0.1:'.$this->getCachingProxyPort()],
+                $this->getHostName().':'.$this->getCachingProxyPort()
             );
+            $this->proxyClient = new Varnish($httpDispatcher);
         }
 
         return $this->proxyClient;

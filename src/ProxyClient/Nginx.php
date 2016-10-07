@@ -17,31 +17,17 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 /**
  * NGINX HTTP cache invalidator.
  *
+ * Additional constructor options:
+ * - purge_location: Path location that triggers purging. String, or set to
+ *   boolean false for same location purging.
+ *
  * @author Simone Fumagalli <simone@iliveinperego.com>
  */
-class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterface
+class Nginx extends HttpProxyClient implements PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_PURGE = 'PURGE';
     const HTTP_METHOD_REFRESH = 'GET';
     const HTTP_HEADER_REFRESH = 'X-Refresh';
-
-    /**
-     * Path location that triggers purging. If false, same location purging is
-     * assumed.
-     *
-     * @var string|false
-     */
-    private $purgeLocation;
-
-    /**
-     * Set path that triggers purge.
-     *
-     * @param string $purgeLocation
-     */
-    public function setPurgeLocation($purgeLocation = '')
-    {
-        $this->purgeLocation = (string) $purgeLocation;
-    }
 
     /**
      * {@inheritdoc}
@@ -66,8 +52,18 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function configureOptions()
+    {
+        $resolver = parent::configureOptions();
+        $resolver->setDefaults(['purge_location' => false]);
+
+        return $resolver;
+    }
+
+    /**
      * Create the correct URL to purge a resource.
-     *
      *
      * @param string $url URL
      *
@@ -75,7 +71,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
      */
     private function buildPurgeUrl($url)
     {
-        if (empty($this->purgeLocation)) {
+        if (!$this->options['purge_location']) {
             return $url;
         }
 
@@ -83,9 +79,9 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
 
         if (isset($urlParts['host'])) {
             $pathStartAt = strpos($url, $urlParts['path']);
-            $purgeUrl = substr($url, 0, $pathStartAt).$this->purgeLocation.substr($url, $pathStartAt);
+            $purgeUrl = substr($url, 0, $pathStartAt).$this->options['purge_location'].substr($url, $pathStartAt);
         } else {
-            $purgeUrl = $this->purgeLocation.$url;
+            $purgeUrl = $this->options['purge_location'].$url;
         }
 
         return $purgeUrl;

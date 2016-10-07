@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Test;
 
+use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\Test\Proxy\SymfonyProxy;
 
@@ -111,10 +112,12 @@ trait SymfonyTest
     protected function getProxyClient()
     {
         if (null === $this->proxyClient) {
-            $this->proxyClient = new Symfony(
+            $httpDispatcher = new HttpDispatcher(
                 ['http://127.0.0.1:'.$this->getCachingProxyPort()],
-                [
-                    'base_uri' => $this->getHostName().':'.$this->getCachingProxyPort(),
+                $this->getHostName().':'.$this->getCachingProxyPort()
+            );
+
+            $this->proxyClient = new Symfony($httpDispatcher, [
                     'purge_method' => 'NOTIFY',
                 ]
             );

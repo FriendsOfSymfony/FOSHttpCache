@@ -27,7 +27,7 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->kernel = $this->getMock('FOS\HttpCache\SymfonyCache\CacheInvalidationInterface');
+        $this->kernel = $this->getMock(CacheInvalidationInterface::class);
     }
 
     public function testRefreshAllowed()

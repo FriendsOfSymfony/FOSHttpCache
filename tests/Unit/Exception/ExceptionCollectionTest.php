@@ -15,7 +15,24 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 
 class ExceptionCollectionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCollection()
+    public function testCollectionConstructor()
+    {
+        $e1 = new \RuntimeException();
+        $e2 = new \RuntimeException('Message');
+        $collection = new ExceptionCollection([$e1, $e2]);
+
+        $this->assertEquals('Message', $collection->getMessage());
+        $this->assertCount(2, $collection);
+        $this->assertSame($e1, $collection->getFirst());
+
+        $actual = [];
+        foreach ($collection as $e) {
+            $actual[] = $e;
+        }
+        $this->assertEquals([$e1, $e2], $actual);
+    }
+
+    public function testCollectionAdd()
     {
         $collection = new ExceptionCollection();
         $this->assertNull($collection->getFirst());

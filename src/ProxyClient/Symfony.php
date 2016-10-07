@@ -24,7 +24,7 @@ use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInterface
+class Symfony extends HttpProxyClient implements PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_REFRESH = 'GET';
 
@@ -49,9 +49,9 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
         return $this;
     }
 
-    protected function getDefaultOptions()
+    protected function configureOptions()
     {
-        $resolver = parent::getDefaultOptions();
+        $resolver = parent::configureOptions();
         $resolver->setDefaults([
             'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
         ]);

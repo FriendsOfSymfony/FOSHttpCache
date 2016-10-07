@@ -9,27 +9,32 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\ProxyClient\Http;
+namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\Exception\InvalidUrlException;
+use FOS\HttpCache\Exception\MissingHostException;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
+use Http\Client\Common\Plugin\ErrorPlugin;
+use Http\Client\Common\PluginClient;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
+use Http\Discovery\HttpAsyncClientDiscovery;
+use Http\Discovery\UriFactoryDiscovery;
 use Http\Message\UriFactory;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * An adapter to work with the Httplug asynchronous client.
+ * Queue and send HTTP requests with a Httplug asynchronous client.
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-class HttpAdapter
+class HttpDispatcher
 {
     /**
      * @var HttpAsyncClient
@@ -63,21 +68,36 @@ class HttpAdapter
     private $baseUri;
 
     /**
-     * @param string[]        $servers    Caching proxy server hostnames or IP
-     *                                    addresses, including port if not port 80.
-     *                                    E.g. ['127.0.0.1:6081']
-     * @param string          $baseUri    Default application hostname, optionally
-     *                                    including base URL, for purge and refresh
-     *                                    requests (optional). This is required if
-     *                                    you purge and refresh paths instead of
-     *                                    absolute URLs
-     * @param HttpAsyncClient $httpClient
-     * @param UriFactory      $uriFactory
+     * If you specify a custom HTTP client, make sure that it converts HTTP
+     * errors to exceptions.
+     *
+     * @param string[]             $servers    Caching proxy server hostnames or IP
+     *                                         addresses, including port if not port 80.
+     *                                         E.g. ['127.0.0.1:6081']
+     * @param string               $baseUri    Default application hostname, optionally
+     *                                         including base URL, for purge and refresh
+     *                                         requests (optional). This is required if
+     *                                         you purge and refresh paths instead of
+     *                                         absolute URLs
+     * @param HttpAsyncClient|null $httpClient Client capable of sending HTTP requests. If no
+     *                                         client is supplied, a default one is created
+     * @param UriFactory|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
+     *                                         default one is created
      */
-    public function __construct(array $servers, $baseUri, HttpAsyncClient $httpClient, UriFactory $uriFactory)
-    {
+    public function __construct(
+        array $servers,
+        $baseUri = '',
+        HttpAsyncClient $httpClient = null,
+        UriFactory $uriFactory = null
+    ) {
+        if (!$httpClient) {
+            $httpClient = new PluginClient(
+                HttpAsyncClientDiscovery::find(),
+                [new ErrorPlugin()]
+            );
+        }
         $this->httpClient = $httpClient;
-        $this->uriFactory = $uriFactory;
+        $this->uriFactory = $uriFactory ?: UriFactoryDiscovery::find();
 
         $this->setServers($servers);
         $this->setBaseUri($baseUri);
@@ -90,6 +110,10 @@ class HttpAdapter
      */
     public function invalidate(RequestInterface $invalidationRequest)
     {
+        if (!$this->baseUri && !$invalidationRequest->getUri()->getHost()) {
+            throw MissingHostException::missingHost((string) $invalidationRequest->getUri());
+        }
+
         $signature = $this->getRequestSignature($invalidationRequest);
 
         if (isset($this->queue[$signature])) {
@@ -117,23 +141,25 @@ class HttpAdapter
 
         foreach ($queue as $request) {
             foreach ($this->fanOut($request) as $proxyRequest) {
-                $promises[] = $this->httpClient->sendAsyncRequest($proxyRequest);
+                try {
+                    $promises[] = $this->httpClient->sendAsyncRequest($proxyRequest);
+                } catch (\Exception $e) {
+                    $exceptions->add(new InvalidArgumentException($e));
+                }
             }
-        }
-
-        if (count($exceptions)) {
-            throw new ExceptionCollection($exceptions);
         }
 
         foreach ($promises as $promise) {
             try {
                 $promise->wait();
             } catch (HttpException $exception) {
-                $exceptions->add(ProxyResponseException::proxyResponse($exception->getResponse()));
+                $exceptions->add(ProxyResponseException::proxyResponse($exception));
             } catch (RequestException $exception) {
                 $exceptions->add(ProxyUnreachableException::proxyUnreachable($exception));
             } catch (\Exception $exception) {
+                // @codeCoverageIgnoreStart
                 $exceptions->add(new InvalidArgumentException($exception));
+                // @codeCoverageIgnoreEnd
             }
         }
 
@@ -229,7 +255,7 @@ class HttpAdapter
      */
     private function setBaseUri($uriString = null)
     {
-        if (null === $uriString) {
+        if (!$uriString) {
             $this->baseUri = null;
 
             return;
@@ -254,6 +280,13 @@ class HttpAdapter
      */
     private function filterUri($uriString, array $allowedParts = [])
     {
+        if (!is_string($uriString)) {
+            throw new \InvalidArgumentException(sprintf(
+                'URI parameter must be a string, %s given',
+                gettype($uriString)
+            ));
+        }
+
         // Creating a PSR-7 URI without scheme (with parse_url) results in the
         // original hostname to be seen as path. So first add a scheme if none
         // is given.

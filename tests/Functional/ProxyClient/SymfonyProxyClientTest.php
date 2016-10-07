@@ -9,9 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Functional;
+namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\Test\SymfonyTestCase;
 
 /**
@@ -52,7 +51,7 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
     public function testPurgeHost()
     {
-        $symfony = new Symfony(['http://127.0.0.1:'.$this->getCachingProxyPort()], ['purge_method' => 'NOTIFY']);
+        $symfony = $this->getProxyClient();
 
         $this->getResponse('/symfony.php/cache');
 

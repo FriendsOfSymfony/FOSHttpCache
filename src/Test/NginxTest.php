@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Test;
 
+use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Nginx;
 use FOS\HttpCache\Test\Proxy\NginxProxy;
 
@@ -157,12 +158,14 @@ trait NginxTest
     protected function getProxyClient($purgeLocation = '')
     {
         if (null === $this->proxyClient) {
-            $this->proxyClient = new Nginx(
+            $httpDispatcher = new HttpDispatcher(
                 ['http://127.0.0.1:'.$this->getCachingProxyPort()],
-                ['base_uri' => $this->getHostName()]
+                $this->getHostName().':'.$this->getCachingProxyPort()
             );
 
-            $this->proxyClient->setPurgeLocation($purgeLocation);
+            $this->proxyClient = new Nginx($httpDispatcher, [
+                'purge_location' => $purgeLocation,
+            ]);
         }
 
         return $this->proxyClient;
