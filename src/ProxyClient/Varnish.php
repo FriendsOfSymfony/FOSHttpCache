@@ -147,9 +147,9 @@ class Varnish extends HttpProxyClient implements BanInterface, PurgeInterface, R
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultOptions()
+    protected function configureOptions()
     {
-        $resolver = parent::getDefaultOptions();
+        $resolver = parent::configureOptions();
         $resolver->setDefaults([
             'tags_header' => self::DEFAULT_HTTP_HEADER_CACHE_TAGS,
             'header_length' => 7500,

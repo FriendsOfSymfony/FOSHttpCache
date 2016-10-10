@@ -54,9 +54,9 @@ class Nginx extends HttpProxyClient implements PurgeInterface, RefreshInterface
     /**
      * {@inheritdoc}
      */
-    protected function getDefaultOptions()
+    protected function configureOptions()
     {
-        $resolver = parent::getDefaultOptions();
+        $resolver = parent::configureOptions();
         $resolver->setDefaults(['purge_location' => false]);
 
         return $resolver;

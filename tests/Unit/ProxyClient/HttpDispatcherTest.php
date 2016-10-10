@@ -12,17 +12,14 @@
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
-use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
+use FOS\HttpCache\ProxyClient\Http\HttpDispatcher;
 use Http\Message\MessageFactory;
 use Http\Mock\Client;
 use Http\Client\Exception\RequestException;
 use Http\Discovery\MessageFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * Testing the HTTP Adapter
- */
-class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
+class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Mock client.
@@ -52,15 +49,15 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
     public function testExceptions(\Exception $exception, $type, $message = null)
     {
         $this->client->addException($exception);
-        $httpAdapter = new HttpAdapter(
+        $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1:123'],
             'my_hostname.dev',
             $this->client
         );
-        $httpAdapter->invalidate($this->messageFactory->createRequest('PURGE', '/path'));
+        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/path'));
 
         try {
-            $httpAdapter->flush();
+            $httpDispatcher->flush();
             $this->fail('Should have aborted with an exception');
         } catch (ExceptionCollection $exceptions) {
             $this->assertCount(1, $exceptions);
@@ -74,8 +71,8 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
         }
 
         // Queue must now be empty, so exception above must not be thrown again.
-        $httpAdapter->invalidate($this->messageFactory->createRequest('GET', '/path'));
-        $httpAdapter->flush();
+        $httpDispatcher->invalidate($this->messageFactory->createRequest('GET', '/path'));
+        $httpDispatcher->flush();
     }
 
     public function exceptionProvider()
@@ -108,10 +105,10 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
         );
         $this->client->addResponse($response);
 
-        $httpAdapter = new HttpAdapter(['127.0.0.1:123'], ['base_uri' => 'my_hostname.dev'], $this->client);
-        $httpAdapter->invalidate($this->messageFactory->createRequest('PURGE', '/'));
+        $httpDispatcher = new HttpDispatcher(['127.0.0.1:123'], ['base_uri' => 'my_hostname.dev'], $this->client);
+        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/'));
         try {
-            $httpAdapter->flush();
+            $httpDispatcher->flush();
             $this->fail('Should have aborted with an exception');
         } catch (ExceptionCollection $exceptions) {
             $this->assertCount(1, $exceptions);
@@ -128,27 +125,27 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingHostExceptionIsThrown()
     {
-        $httpAdapter = new HttpAdapter(
+        $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1:123'],
             '',
             $this->client
         );
 
         $request = $this->messageFactory->createRequest('PURGE', '/path/without/hostname');
-        $httpAdapter->invalidate($request);
+        $httpDispatcher->invalidate($request);
     }
 
     public function testSetBasePathWithHost()
     {
-        $httpAdapter = new HttpAdapter(
+        $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1'],
             'fos.lo',
             $this->client
         );
 
         $request = $this->messageFactory->createRequest('PURGE', '/path');
-        $httpAdapter->invalidate($request);
-        $httpAdapter->flush();
+        $httpDispatcher->invalidate($request);
+        $httpDispatcher->flush();
 
         $requests = $this->getRequests();
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
@@ -156,14 +153,14 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
 
     public function testSetBasePathWithPath()
     {
-        $httpAdapter = new HttpAdapter(
+        $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1'],
             'http://fos.lo/my/path',
             $this->client
         );
         $request = $this->messageFactory->createRequest('PURGE', 'append');
-        $httpAdapter->invalidate($request);
-        $httpAdapter->flush();
+        $httpDispatcher->invalidate($request);
+        $httpDispatcher->flush();
 
         $requests = $this->getRequests();
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
@@ -172,10 +169,10 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
 
     public function testSetServersDefaultSchemeIsAdded()
     {
-        $httpAdapter = new HttpAdapter(['127.0.0.1'], 'fos.lo', $this->client);
+        $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->client);
         $request = $this->messageFactory->createRequest('PURGE', '/some/path');
-        $httpAdapter->invalidate($request);
-        $httpAdapter->flush();
+        $httpDispatcher->invalidate($request);
+        $httpDispatcher->flush();
 
         $requests = $this->getRequests();
         $this->assertEquals('http://127.0.0.1/some/path', $requests[0]->getUri());
@@ -187,7 +184,7 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetServersThrowsInvalidUrlException()
     {
-        new HttpAdapter(['http:///this is no url']);
+        new HttpDispatcher(['http:///this is no url']);
     }
 
     /**
@@ -196,7 +193,7 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetServersThrowsWeirdInvalidUrlException()
     {
-        new HttpAdapter(['this ://is no url']);
+        new HttpDispatcher(['this ://is no url']);
     }
 
     /**
@@ -205,15 +202,15 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetServersThrowsInvalidServerException()
     {
-        new HttpAdapter(['http://127.0.0.1:80/some/path']);
+        new HttpDispatcher(['http://127.0.0.1:80/some/path']);
     }
 
     public function testFlushEmpty()
     {
-        $httpAdapter = new HttpAdapter(
+        $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1', '127.0.0.2'], 'fos.lo', $this->client
         );
-        $this->assertEquals(0, $httpAdapter->flush());
+        $this->assertEquals(0, $httpDispatcher->flush());
 
         $this->assertCount(0, $this->client->getRequests());
     }
@@ -244,17 +241,17 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
             )
             ->getMock();
 
-        $httpAdapter = new HttpAdapter(
+        $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1', '127.0.0.2'],
             'fos.lo',
             $httpClient
         );
-        $httpAdapter->invalidate($this->messageFactory->createRequest('PURGE', '/a'));
-        $httpAdapter->invalidate($this->messageFactory->createRequest('PURGE', '/b'));
+        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/a'));
+        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/b'));
 
         $this->assertEquals(
             2,
-            $httpAdapter->flush()
+            $httpDispatcher->flush()
         );
     }
 
@@ -280,21 +277,21 @@ class HttpAdaptertTest extends \PHPUnit_Framework_TestCase
             )
             ->getMock();
 
-        $httpAdapter = new HttpAdapter(['127.0.0.1', '127.0.0.2'], 'fos.lo', $httpClient);
-        $httpAdapter->invalidate(
+        $httpDispatcher = new HttpDispatcher(['127.0.0.1', '127.0.0.2'], 'fos.lo', $httpClient);
+        $httpDispatcher->invalidate(
             $this->messageFactory->createRequest('PURGE', '/c', ['a' => 'b', 'c' => 'd'])
         );
-        $httpAdapter->invalidate(
+        $httpDispatcher->invalidate(
             // same request (header order is not significant)
             $this->messageFactory->createRequest('PURGE', '/c', ['c' => 'd', 'a' => 'b'])
         );
         // different request as headers different
-        $httpAdapter->invalidate($this->messageFactory->createRequest('PURGE', '/c'));
-        $httpAdapter->invalidate($this->messageFactory->createRequest('PURGE', '/c'));
+        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/c'));
+        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/c'));
 
         $this->assertEquals(
             2,
-            $httpAdapter->flush()
+            $httpDispatcher->flush()
         );
     }
 

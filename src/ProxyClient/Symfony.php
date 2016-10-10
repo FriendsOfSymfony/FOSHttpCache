@@ -49,9 +49,9 @@ class Symfony extends HttpProxyClient implements PurgeInterface, RefreshInterfac
         return $this;
     }
 
-    protected function getDefaultOptions()
+    protected function configureOptions()
     {
-        $resolver = parent::getDefaultOptions();
+        $resolver = parent::configureOptions();
         $resolver->setDefaults([
             'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
         ]);

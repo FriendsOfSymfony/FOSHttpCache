@@ -11,68 +11,60 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
+use FOS\HttpCache\ProxyClient\Http\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Symfony;
-use Http\Mock\Client;
+use Mockery\MockInterface;
 use Psr\Http\Message\RequestInterface;
 
 class SymfonyTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Mock client.
-     *
-     * @var Client
+     * @var HttpDispatcher|MockInterface
      */
-    protected $client;
+    private $httpDispatcher;
+
+    protected function setUp()
+    {
+        $this->httpDispatcher = \Mockery::mock(HttpDispatcher::class);
+    }
 
     public function testPurge()
     {
-        $httpAdapter = new HttpAdapter(['127.0.0.1:8080', '123.123.123.2'], 'my_hostname.dev', $this->client);
-        $symfony = new Symfony($httpAdapter);
+        $symfony = new Symfony($this->httpDispatcher);
 
-        $count = $symfony->purge('/url/one')
-            ->purge('/url/two', ['X-Foo' => 'bar'])
-            ->flush()
-        ;
-        $this->assertEquals(2, $count);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('PURGE', $request->getMethod());
 
-        $requests = $this->getRequests();
-        $this->assertCount(4, $requests);
-        foreach ($requests as $request) {
-            $this->assertEquals('PURGE', $request->getMethod());
-            $this->assertEquals('my_hostname.dev', $request->getHeaderLine('Host'));
-        }
+                    $this->assertEquals('/url', $request->getUri());
+                    $this->assertEquals('bar', $request->getHeaderLine('X-Foo'));
 
-        $this->assertEquals('http://127.0.0.1:8080/url/one', $requests[0]->getUri());
-        $this->assertEquals('http://123.123.123.2/url/one', $requests[1]->getUri());
-        $this->assertEquals('http://127.0.0.1:8080/url/two', $requests[2]->getUri());
-        $this->assertEquals('bar', $requests[2]->getHeaderLine('X-Foo'));
-        $this->assertEquals('http://123.123.123.2/url/two', $requests[3]->getUri());
-        $this->assertEquals('bar', $requests[3]->getHeaderLine('X-Foo'));
+                    return true;
+                }
+            )
+        );
+
+        $symfony->purge('/url', ['X-Foo' => 'bar']);
     }
 
     public function testRefresh()
     {
-        $httpAdapter = new HttpAdapter(['127.0.0.1:123'], 'fos.lo', $this->client);
-        $symfony = new Symfony($httpAdapter);
-        $symfony->refresh('/fresh')->flush();
+        $symfony = new Symfony($this->httpDispatcher);
 
-        $requests = $this->getRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('GET', $requests[0]->getMethod());
-        $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUri());
-    }
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('GET', $request->getMethod());
 
-    protected function setUp()
-    {
-        $this->client = new Client();
-    }
+                    $this->assertEquals('/fresh', $request->getUri());
+                    $this->assertContains('no-cache', $request->getHeaderLine('Cache-Control'));
 
-    /**
-     * @return array|RequestInterface[]
-     */
-    protected function getRequests()
-    {
-        return $this->client->getRequests();
+                    return true;
+                }
+            )
+        );
+
+        $symfony->refresh('/fresh');
     }
 }

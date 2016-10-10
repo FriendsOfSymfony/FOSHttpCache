@@ -28,11 +28,11 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
- * An adapter to work with the Httplug asynchronous client.
+ * Queue and send HTTP requests with a Httplug asynchronous client.
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-class HttpAdapter
+class HttpDispatcher
 {
     /**
      * @var HttpAsyncClient
@@ -272,7 +272,7 @@ class HttpAdapter
     {
         if (!is_string($uriString)) {
             throw new \InvalidArgumentException(sprintf(
-                'Uri parameter must be a string, %s given',
+                'URI parameter must be a string, %s given',
                 gettype($uriString)
             ));
         }

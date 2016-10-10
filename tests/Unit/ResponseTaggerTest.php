@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit;
 
-use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
+use FOS\HttpCache\ProxyClient\Http\HttpDispatcher;
 use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Exception\InvalidTagException;
@@ -59,7 +59,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testStrictEmptyTag()
     {
-        $httpAdapter = new HttpAdapter(['localhost'], 'localhost');
+        $httpAdapter = new HttpDispatcher(['localhost'], 'localhost');
         $proxyClient = new Varnish($httpAdapter);
 
         $tagHandler = new ResponseTagger($proxyClient, array('strict' => true));

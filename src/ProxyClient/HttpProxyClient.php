@@ -11,9 +11,9 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
+use FOS\HttpCache\ProxyClient\Http\HttpDispatcher;
 use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\MessageFactory;
+use Http\Message\RequestFactory;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,16 +25,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 abstract class HttpProxyClient implements ProxyClientInterface
 {
     /**
-     * HTTP client adapter.
+     * Dispatcher for invalidation HTTP requests.
      *
-     * @var HttpAdapter
+     * @var HttpDispatcher
      */
-    protected $httpAdapter;
+    private $httpDispatcher;
 
     /**
-     * @var MessageFactory
+     * @var RequestFactory
      */
-    protected $messageFactory;
+    private $requestFactory;
 
     /**
      * The options configured in the constructor argument or default values.
@@ -48,19 +48,19 @@ abstract class HttpProxyClient implements ProxyClientInterface
      *
      * The base class has no options.
      *
-     * @param HttpAdapter         $httpAdapter    Helper to send HTTP requests to caching proxy
+     * @param HttpDispatcher      $httpDispatcher Helper to send HTTP requests to caching proxy
      * @param array               $options        Options for this client
-     * @param MessageFactory|null $messageFactory Factory for PSR-7 messages. If none supplied,
+     * @param RequestFactory|null $messageFactory Factory for PSR-7 messages. If none supplied,
      *                                            a default one is created
      */
     public function __construct(
-        HttpAdapter $httpAdapter,
+        HttpDispatcher $httpDispatcher,
         array $options = [],
-        MessageFactory $messageFactory = null
+        RequestFactory $messageFactory = null
     ) {
-        $this->httpAdapter = $httpAdapter;
-        $this->options = $this->getDefaultOptions()->resolve($options);
-        $this->messageFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+        $this->httpDispatcher = $httpDispatcher;
+        $this->options = $this->configureOptions()->resolve($options);
+        $this->requestFactory = $messageFactory ?: MessageFactoryDiscovery::find();
     }
 
     /**
@@ -68,7 +68,7 @@ abstract class HttpProxyClient implements ProxyClientInterface
      */
     public function flush()
     {
-        return $this->httpAdapter->flush();
+        return $this->httpDispatcher->flush();
     }
 
     /**
@@ -76,13 +76,13 @@ abstract class HttpProxyClient implements ProxyClientInterface
      *
      * @return OptionsResolver
      */
-    protected function getDefaultOptions()
+    protected function configureOptions()
     {
         return new OptionsResolver();
     }
 
     /**
-     * Create a request and queue it with the HttpAdapter.
+     * Create a request and queue it with the HTTP dispatcher.
      *
      * @param string              $method
      * @param string|UriInterface $url
@@ -90,8 +90,8 @@ abstract class HttpProxyClient implements ProxyClientInterface
      */
     protected function queueRequest($method, $url, array $headers)
     {
-        $this->httpAdapter->invalidate(
-            $this->messageFactory->createRequest($method, $url, $headers)
+        $this->httpDispatcher->invalidate(
+            $this->requestFactory->createRequest($method, $url, $headers)
         );
     }
 

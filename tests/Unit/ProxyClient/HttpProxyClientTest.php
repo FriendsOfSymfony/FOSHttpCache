@@ -11,13 +11,8 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
-use FOS\HttpCache\ProxyClient\Http\HttpAdapter;
+use FOS\HttpCache\ProxyClient\Http\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Varnish;
-use Http\Mock\Client;
-use Http\Client\Exception\RequestException;
-use Http\Discovery\MessageFactoryDiscovery;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * Testing the base methods of the proxy client, using the Varnish client as concrete class.
@@ -25,29 +20,27 @@ use Psr\Http\Message\RequestInterface;
 class HttpProxyClientTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Mock HttpAdapter
-     *
-     * @var HttpAdapter|\PHPUnit_Framework_MockObject_MockObject
+     * @var HttpDispatcher|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $httpAdapter;
+    private $httpDispatcher;
 
     protected function setUp()
     {
-        $this->httpAdapter = $this
-            ->getMockBuilder(HttpAdapter::class)
+        $this->httpDispatcher = $this
+            ->getMockBuilder(HttpDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
 
     public function testFlush()
     {
-        $this->httpAdapter
+        $this->httpDispatcher
             ->expects($this->once())
             ->method('flush')
-            ->will($this->returnValue(1));
+            ->will($this->returnValue(42));
 
-        $varnish = new Varnish($this->httpAdapter);
+        $varnish = new Varnish($this->httpDispatcher);
 
-        $this->assertEquals(1, $varnish->flush());
+        $this->assertEquals(42, $varnish->flush());
     }
 }
