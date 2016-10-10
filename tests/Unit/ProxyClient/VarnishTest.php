@@ -122,7 +122,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
     public function testTagsHeadersEscapingAndCustomHeader()
     {
         $options = [
-            'tags_header' => 'X-Tags-TRex'
+            'tags_header' => 'X-Tags-TRex',
         ];
 
         $varnish = new Varnish($this->httpDispatcher, $options);

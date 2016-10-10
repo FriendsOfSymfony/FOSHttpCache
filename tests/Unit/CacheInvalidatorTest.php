@@ -26,7 +26,6 @@ use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Client\Exception\RequestException;
 use Mockery\Mock;
 use Mockery\MockInterface;
-use Prophecy\Doubler\Generator\ReflectionInterface;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -91,7 +90,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testRefreshPath()
     {
-        /** @var MockInterface|RefreshInterface $refresh */
+        /* @var MockInterface|RefreshInterface $refresh */
         $headers = ['X' => 'Y'];
         $refresh = \Mockery::mock(RefreshInterface::class)
             ->shouldReceive('refresh')->once()->with('/my/route', $headers)
