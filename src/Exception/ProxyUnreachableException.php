@@ -20,22 +20,22 @@ use Http\Client\Exception\RequestException;
 class ProxyUnreachableException extends \RuntimeException implements HttpCacheExceptionInterface
 {
     /**
-     * @param RequestException $adapterException
+     * @param RequestException $requestException
      *
      * @return ProxyUnreachableException
      */
-    public static function proxyUnreachable(RequestException $adapterException)
+    public static function proxyUnreachable(RequestException $requestException)
     {
         $message = sprintf(
             'Request to caching proxy at %s failed with message "%s"',
-            $adapterException->getRequest()->getHeaderLine('Host'),
-            $adapterException->getMessage()
+            $requestException->getRequest()->getHeaderLine('Host'),
+            $requestException->getMessage()
         );
 
         return new self(
             $message,
             0,
-            $adapterException
+            $requestException
         );
     }
 }

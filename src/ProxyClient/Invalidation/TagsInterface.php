@@ -16,6 +16,9 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 /**
  * An HTTP cache that supports invalidation by a cache tag, that is, removing, or expiring
  * objects from the cache tagged with a given tag or set of tags.
+ *
+ * Responses must carry the tags header name with the tags header value for the
+ * invalidation to work.
  */
 interface TagsInterface extends ProxyClientInterface
 {
@@ -29,16 +32,19 @@ interface TagsInterface extends ProxyClientInterface
     public function invalidateTags(array $tags);
 
     /**
-     * Get escaped tags.
+     * Get value for the tags header as it should be included in the response.
+     *
+     * This does all necessary escaping and concatenates the tags in a way that
+     * individual tags can be invalidated by this client.
      *
      * @param array $tags
      *
-     * @return array
+     * @return string
      */
     public function getTagsHeaderValue(array $tags);
 
     /**
-     * Get the HTTP header name that will hold cache tags.
+     * Get the HTTP header name for the cache tags.
      *
      * @return string
      */

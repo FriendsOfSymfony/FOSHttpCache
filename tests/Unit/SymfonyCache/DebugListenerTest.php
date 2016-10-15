@@ -27,7 +27,7 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->kernel = $this
-            ->getMockBuilder('FOS\HttpCache\SymfonyCache\CacheInvalidationInterface')
+            ->getMockBuilder(CacheInvalidationInterface::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;

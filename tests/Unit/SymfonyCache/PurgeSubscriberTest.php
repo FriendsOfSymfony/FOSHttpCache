@@ -16,6 +16,7 @@ use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
 class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +28,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->kernel = $this
-            ->getMockBuilder('FOS\HttpCache\SymfonyCache\CacheInvalidationInterface')
+            ->getMockBuilder(CacheInvalidationInterface::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -35,7 +36,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testPurgeAllowed()
     {
-        $store = $this->getMock('Symfony\Component\HttpKernel\HttpCache\StoreInterface');
+        $store = $this->getMock(StoreInterface::class);
         $store->expects($this->once())
             ->method('purge')
             ->with('http://example.com/foo')
@@ -60,7 +61,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testPurgeAllowedMiss()
     {
-        $store = $this->getMock('Symfony\Component\HttpKernel\HttpCache\StoreInterface');
+        $store = $this->getMock(StoreInterface::class);
         $store->expects($this->once())
             ->method('purge')
             ->with('http://example.com/foo')
@@ -126,7 +127,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->kernel->expects($this->never())
             ->method('getStore')
         ;
-        $matcher = $this->getMock('Symfony\Component\HttpFoundation\RequestMatcher');
+        $matcher = $this->getMock(RequestMatcher::class);
         $matcher->expects($this->never())
             ->method('isRequestAllowed')
         ;

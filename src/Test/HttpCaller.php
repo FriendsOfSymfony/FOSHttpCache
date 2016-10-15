@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 trait HttpCaller
 {
     /**
-     * HTTP adapter for requests to the application.
+     * HTTP client for requests to the application.
      *
      * @var HttpClient
      */

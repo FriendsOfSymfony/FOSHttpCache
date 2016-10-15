@@ -2,10 +2,12 @@ Proxy Client Setup
 ==================
 
 This library ships with clients for the Varnish and NGINX caching servers and
-the Symfony built-in HTTP cache. A Noop client that implements the interfaces
-but does nothing at all is provided for local development and testing purposes.
+the Symfony built-in HTTP cache.
 
-A Multiplexer client is also available to forward calls to multiple proxy clients.
+A Multiplexer client that forwards calls to multiple proxy clients is
+available, mainly for transition scenarios of your applications. A Noop client
+that implements the interfaces but does nothing at all is provided for local
+development and testing purposes.
 
 The recommended usage is to have your application interact with the
 :doc:`cache invalidator <cache-invalidator>` which you set up with the proxy
@@ -16,81 +18,101 @@ client suitable for the proxy server you use.
 Setup
 -----
 
-The proxy client uses a HTTP client to send requests to the proxy server.
-FOSHttpCache uses the Httplug_ abstraction to not tie itself to a specific
-client implementation.
+Most proxy clients use the ``HttpDispatcher`` to send requests to the proxy
+server. The ``HttpDispatcher`` is built on top of the Httplug_ abstraction to
+be independent of specific HTTP client implementations.
 
-The proxy client uses `Httplug discovery_` to find a suitable HTTP client. If
-you need more control, see the section on :ref:`HTTP Client Configuration <HTTP client configuration>`
-at the end of this chapter.
+.. _HTTP client configuration:
+
+Basic HTTP setup with HttpDispatcher
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The dispatcher needs to know the IP addresses or hostnames of your proxy
+servers. If your proxy servers do not run on the default port (80 for HTTP,
+443 for HTTPS), you need to specify the port with the server name. Make sure to
+provide the direct access to the web server without any other proxies that
+might block invalidation requests.
+
+The server IPs are sufficient for invalidating absolute URLs. If you want to
+use relative paths in invalidation requests, supply the hostname and possibly
+a base path to your website with the ``$baseUri`` parameter::
+
+    use FOS\HttpCache\ProxyClient\HttpDispatcher;
+
+    $servers = ['10.0.0.1', '10.0.0.2:6081']; // Port 80 assumed for 10.0.0.1
+    $baseUri = 'my-cool-app.com';
+    $httpDispatcher = new HttpDispatcher($servers, $baseUri);
+
+If your web application is accessed on a port other than the default port, make
+sure to include that port in the base URL::
+
+    $baseUri = 'my-cool-app.com:8080';
+
+You can additionally specify the HTTP client and URI factory that should be
+used. If you specify a custom HTTP client, you need to configure the client to
+convert HTTP error status into exceptions. This can either be done in a client
+specific way or with the HTTPlug ``PluginClient`` and the ``ErrorPlugin``.
+If client and/or URI factory are not specified, the dispatcher uses
+`Httplug discovery_` to find available implementations.
+
+Learn more about available HTTP clients `in the Httplug documentation`_. To
+customize the behavior of the HTTP client, you can use `Httplug plugins`_.
 
 .. _varnish client:
 
 Varnish Client
 ~~~~~~~~~~~~~~
 
-At minimum, supply an array containing IPs or hostnames of the Varnish servers
-that you want to send invalidation requests to. Make sure to include the port
-Varnish runs on if it is not port 80::
+The Varnish client sends HTTP requests with the ``HttpDispatcher``. Create the
+dispatcher as explained above and pass it to the Varnish client::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 
-    $servers = ['10.0.0.1', '10.0.0.2:6081']; // Port 80 assumed for 10.0.0.1
-    $varnish = new Varnish($servers);
+    $varnish = new Varnish($httpDispatcher);
 
-This is sufficient for invalidating absolute URLs. If you want to use relative
-paths in invalidation requests, supply the hostname and possibly a base path to
-your website as ``base_uri`` option::
+.. note::
 
-    $varnish = new Varnish($servers, ['base_uri' => 'my-cool-app.com']);
-
-Again, if your web application is accessed on a port other than 80, make sure to
-include that port in the base URL::
-
-    $varnish = new Varnish($servers, ['base_uri' => 'my-cool-app.com:8080']);
+    To make invalidation work, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
 
 .. _varnish_custom_tags_header:
 
-The other options for the Varnish client are:
+You can also pass some options to the Varnish client:
 
 * ``tags_header`` (X-Cache-Tags): Allows you to change the HTTP header used for
   tagging. If you change this, make sure to use the correct header name in your
   :doc:`proxy server configuration <proxy-configuration>`;
 * ``header_length`` (7500): Control the maximum header size when invalidating
   tags. If there are more tags to invalidate than fit into the header, the
-  invalidation request is split into several requests.
+  invalidation request is split into several requests;
+* ``default_ban_headers`` Map of headers that are set on each ban request,
+  merged with the built-in headers.
+
+Additionally, you can specify the request factory used to build the
+invalidation HTTP requests. If not specified, auto discovery is used - which
+usually is fine.
 
 A full example could look like this::
 
     $options = [
-        'base_uri' => 'example.com',
         'tags_header' => 'X-Custom-Tags-Header',
         'header_length' => 4000,
+        'default_ban_headers' => [
+            'EXTRA-HEADER' => 'header-value',
+        ]
     ];
+    $requestFactory = new MyRequestFactory();
 
-    $varnish = new Varnish($servers, $options, $adapter);
-
-.. note::
-
-    To make invalidation work, you need to :doc:`configure Varnish <varnish-configuration>` accordingly.
+    $varnish = new Varnish($httpDispatcher, $options, $requestFactory);
 
 NGINX Client
 ~~~~~~~~~~~~
 
-At minimum, supply an array containing IPs or hostnames of the NGINX servers
-that you want to send invalidation requests to. Make sure to include the port
-NGINX runs on if it is not the default::
+The NGINX client sends HTTP requests with the ``HttpDispatcher``. Create the
+dispatcher as explained above and pass it to the NGINX client::
 
     use FOS\HttpCache\ProxyClient\Nginx;
 
-    $servers = ['10.0.0.1', '10.0.0.2:8088']; // Port 80 assumed for 10.0.0.1
-    $nginx = new Nginx($servers);
-
-This is sufficient for invalidating absolute URLs. If you also wish to
-invalidate relative paths, supply the hostname (or base URL) where your website
-is available as the second parameter::
-
-    $nginx = new Nginx($servers, 'my-cool-app.com');
+    $nginx = new Nginx($httpDispatcher);
 
 If you have configured NGINX to support purge requests at a separate location,
 call `setPurgeLocation()`::
@@ -100,7 +122,6 @@ call `setPurgeLocation()`::
     $nginx = new Nginx($servers, $baseUri);
     $nginx->setPurgeLocation('/purge');
 
-
 .. note::
 
     To use the client, you need to :doc:`configure NGINX <nginx-configuration>` accordingly.
@@ -108,21 +129,12 @@ call `setPurgeLocation()`::
 Symfony Client
 ~~~~~~~~~~~~~~
 
-At minimum, supply an array containing IPs or hostnames of your web servers
-running Symfony. Provide the direct access to the web server without any other
-proxies that might block invalidation requests. Make sure to include the port
-the web server runs on if it is not the default::
+The Symfony client sends HTTP requests with the ``HttpDispatcher``. Create the
+dispatcher as explained above and pass it to the Symfony client::
 
     use FOS\HttpCache\ProxyClient\Symfony;
 
-    $servers = ['10.0.0.1', '10.0.0.2:8088']; // Port 80 assumed for 10.0.0.1
-    $client = new Symfony($servers);
-
-This is sufficient for invalidating absolute URLs. If you also wish to
-invalidate relative paths, supply the hostname (or base URL) where your website
-is available as the second parameter::
-
-    $client = new Symfony($servers, 'my-cool-app.com');
+    $symfony = new Symfony($httpDispatcher);
 
 .. note::
 
@@ -170,29 +182,6 @@ Using the Proxy Client
 The recommended usage of the proxy client is to create an instance of
 ``CacheInvalidator`` with the correct client for your setup. See
 :doc:`cache-invalidator` for more information.
-
-.. _HTTP client configuration:
-
-HTTP Client Configuration
--------------------------
-
-To avoid automatic `Httplug discovery`_, you can pass a HTTP client instance
-to the proxy client. Learn more about available HTTP clients `in the Httplug documentation`_.
-To customize the behavior of the HTTP client, you can use `Httplug plugins`_
-
-The proxy client also uses the Httplug `message factory and URI factory`_. You
-can pass those to the constructor as well, if you don't want it to use discovery.
-
-The full constructor looks like this (for Varnish, NGINX and Symfony client
-have the same constructor)::
-
-    use FOS\HttpCache\ProxyClient\Varnish;
-
-    $httpClient = ...
-    $messageFactory = ...
-    $streamFactory = ...
-
-    $proxyClient = new Varnish($servers, $options, $httpClient, $messageFactory, $streamFactory);
 
 Implementation Notes
 --------------------

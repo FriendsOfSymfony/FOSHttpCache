@@ -71,7 +71,7 @@ class HttpClient
     }
 
     /**
-     * Get HTTP adapter for your application.
+     * Get HTTP client for your application.
      *
      * @return PhpHttpClient
      */

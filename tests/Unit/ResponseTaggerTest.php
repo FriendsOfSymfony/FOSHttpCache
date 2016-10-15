@@ -11,15 +11,18 @@
 
 namespace FOS\HttpCache\Tests\Unit;
 
+use FOS\HttpCache\ProxyClient\HttpDispatcher;
+use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
 use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Exception\InvalidTagException;
+use Psr\Http\Message\ResponseInterface;
 
 class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetTagsHeaderValue()
     {
-        $proxyClient = \Mockery::mock('FOS\HttpCache\ProxyClient\Invalidation\TagsInterface')
+        $proxyClient = \Mockery::mock(TagsInterface::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1', 'test,post'])
             ->once()
@@ -33,13 +36,13 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('post-1,test_post', $tagger->getTagsHeaderValue());
     }
 
-    public function testTagResponse()
+    public function testTagResponseReplace()
     {
-        $proxyClient = \Mockery::mock('FOS\HttpCache\ProxyClient\Invalidation\TagsInterface')
+        $proxyClient = \Mockery::mock(TagsInterface::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
-            ->andReturn(['tag-1', 'tag-2'])
+            ->andReturn('tag-1,tag-2')
             ->shouldReceive('getTagsHeaderName')
             ->once()
             ->andReturn('FOS-Tags')
@@ -47,18 +50,42 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
         $tagger = new ResponseTagger($proxyClient);
 
-        $response = \Mockery::mock('Psr\Http\Message\ResponseInterface')
+        $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withHeader')
-            ->with('FOS-Tags', ['tag-1', 'tag-2'])
+            ->with('FOS-Tags', 'tag-1,tag-2')
             ->getMock();
 
         $tagger->addTags(['tag-1', 'tag-2']);
         $tagger->tagResponse($response, true);
     }
 
+    public function testTagResponseAdd()
+    {
+        $proxyClient = \Mockery::mock(TagsInterface::class)
+            ->shouldReceive('getTagsHeaderValue')
+            ->with(['tag-1', 'tag-2'])
+            ->once()
+            ->andReturn('tag-1,tag-2')
+            ->shouldReceive('getTagsHeaderName')
+            ->once()
+            ->andReturn('FOS-Tags')
+            ->getMock();
+
+        $tagger = new ResponseTagger($proxyClient);
+
+        $response = \Mockery::mock(ResponseInterface::class)
+            ->shouldReceive('withAddedHeader')
+            ->with('FOS-Tags', 'tag-1,tag-2')
+            ->getMock();
+
+        $tagger->addTags(['tag-1', 'tag-2']);
+        $tagger->tagResponse($response);
+    }
+
     public function testStrictEmptyTag()
     {
-        $proxyClient = new Varnish(['localhost']);
+        $httpAdapter = new HttpDispatcher(['localhost'], 'localhost');
+        $proxyClient = new Varnish($httpAdapter);
 
         $tagHandler = new ResponseTagger($proxyClient, array('strict' => true));
 
@@ -72,7 +99,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testNonStrictEmptyTag()
     {
-        $proxyClient = \Mockery::mock('FOS\HttpCache\ProxyClient\Invalidation\TagsInterface')
+        $proxyClient = \Mockery::mock(TagsInterface::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1'])
             ->once()

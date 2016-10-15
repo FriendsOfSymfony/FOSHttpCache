@@ -11,81 +11,73 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
+use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Varnish;
-use Http\Mock\Client;
+use Mockery\MockInterface;
 use Psr\Http\Message\RequestInterface;
 
 class VarnishTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var MockHttpClient
+     * @var HttpDispatcher|MockInterface
      */
-    protected $client;
+    private $httpDispatcher;
 
-    public function testBanEverything()
+    protected function setUp()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
-        $varnish->ban([])->flush();
-
-        $requests = $this->getRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('BAN', $requests[0]->getMethod());
-
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Host'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Url'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Content-Type'));
-        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
-    }
-
-    public function testBanEverythingNoBaseUrl()
-    {
-        $varnish = new Varnish(['127.0.0.1:123'], [], $this->client);
-        $varnish->ban([])->flush();
-
-        $requests = $this->getRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('BAN', $requests[0]->getMethod());
-
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Host'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Url'));
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('X-Content-Type'));
-
-        // Ensure host header matches the Varnish server one.
-        $this->assertEquals('http://127.0.0.1:123/', $requests[0]->getUri());
+        $this->httpDispatcher = \Mockery::mock(HttpDispatcher::class);
     }
 
     public function testBanHeaders()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
-        $varnish->setDefaultBanHeaders(
-            ['A' => 'B']
+        $options = [
+            'default_ban_headers' => [
+                'A' => 'B',
+                'Test' => '.*',
+            ],
+        ];
+
+        $varnish = new Varnish($this->httpDispatcher, $options);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('BAN', $request->getMethod());
+                    $this->assertEquals('.*', $request->getHeaderLine('X-Host'));
+                    $this->assertEquals('.*', $request->getHeaderLine('X-Url'));
+                    $this->assertEquals('.*', $request->getHeaderLine('X-Content-Type'));
+
+                    $this->assertEquals('Toast', $request->getHeaderLine('Test'));
+                    $this->assertEquals('value', $request->getHeaderLine('additional'));
+                    $this->assertEquals('B', $request->getHeaderLine('A'));
+
+                    return true;
+                }
+            )
         );
-        $varnish->setDefaultBanHeader('Test', '.*');
-        $varnish->ban([])->flush();
 
-        $requests = $this->getRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('BAN', $requests[0]->getMethod());
-
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('Test'));
-        $this->assertEquals('B', $requests[0]->getHeaderLine('A'));
-        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
+        $varnish->ban([
+            'Test' => 'Toast',
+            'additional' => 'value',
+        ]);
     }
 
     public function testBanPath()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
+        $varnish = new Varnish($this->httpDispatcher);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('BAN', $request->getMethod());
+                    $this->assertEquals('^(fos.lo|fos2.lo)$', $request->getHeaderLine('X-Host'));
+                    $this->assertEquals('/articles/.*', $request->getHeaderLine('X-Url'));
+                    $this->assertEquals('text/html', $request->getHeaderLine('X-Content-Type'));
 
+                    return true;
+                }
+            )
+        );
         $hosts = ['fos.lo', 'fos2.lo'];
-        $varnish->banPath('/articles/.*', 'text/html', $hosts)->flush();
-
-        $requests = $this->getRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('BAN', $requests[0]->getMethod());
-
-        $this->assertEquals('^(fos.lo|fos2.lo)$', $requests[0]->getHeaderLine('X-Host'));
-        $this->assertEquals('/articles/.*', $requests[0]->getHeaderLine('X-Url'));
-        $this->assertEquals('text/html', $requests[0]->getHeaderLine('X-Content-Type'));
+        $varnish->banPath('/articles/.*', 'text/html', $hosts);
     }
 
     /**
@@ -93,7 +85,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
      */
     public function testBanPathEmptyHost()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
+        $varnish = new Varnish($this->httpDispatcher);
 
         $hosts = [];
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
@@ -101,104 +93,115 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
     public function testTagsHeaders()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
-        $varnish->setDefaultBanHeaders(
-            ['A' => 'B']
+        $options = [
+            'default_ban_headers' => [
+                'A' => 'B',
+                'Test' => '.*',
+            ],
+        ];
+
+        $varnish = new Varnish($this->httpDispatcher, $options);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('BAN', $request->getMethod());
+                    $this->assertEquals('(mytag|othertag)(,.+)?$', $request->getHeaderLine('X-Cache-Tags'));
+
+                    // That default BANs is taken into account also for tags as they are powered by BAN in this client.
+                    $this->assertEquals('.*', $request->getHeaderLine('Test'));
+                    $this->assertEquals('B', $request->getHeaderLine('A'));
+
+                    return true;
+                }
+            )
         );
-        $varnish->setDefaultBanHeader('Test', '.*');
-        $varnish->invalidateTags(['post-1', 'post-type-3'])->flush();
 
-        $requests = $this->getRequests();
-
-        $this->assertCount(1, $requests);
-        $this->assertEquals('BAN', $requests[0]->getMethod());
-
-        $this->assertEquals('(post\-1|post\-type\-3)(,.+)?$', $requests[0]->getHeaderLine('X-Cache-Tags'));
-        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
-
-        // That default BANs is taken into account also for tags as they are powered by BAN in this client.
-        $this->assertEquals('.*', $requests[0]->getHeaderLine('Test'));
-        $this->assertEquals('B', $requests[0]->getHeaderLine('A'));
+        $varnish->invalidateTags(['mytag', 'othertag']);
     }
 
     public function testTagsHeadersEscapingAndCustomHeader()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'X-Tags-TRex'], $this->client);
-        $varnish->invalidateTags(['post-1', 'post,type-3'])->flush();
+        $options = [
+            'tags_header' => 'X-Tags-TRex',
+        ];
 
-        $requests = $this->getRequests();
+        $varnish = new Varnish($this->httpDispatcher, $options);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('BAN', $request->getMethod());
+                    $this->assertEquals('(post\-1|post_type\-3)(,.+)?$', $request->getHeaderLine('X-Tags-TRex'));
 
-        $this->assertCount(1, $requests);
-        $this->assertEquals('BAN', $requests[0]->getMethod());
+                    return true;
+                }
+            )
+        );
 
-        $this->assertEquals('(post\-1|post_type\-3)(,.+)?$', $requests[0]->getHeaderLine('X-Tags-TRex'));
-        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
+        $varnish->invalidateTags(['post-1', 'post,type-3']);
+    }
+
+    public function testTagsHeaderName()
+    {
+        $options = [
+            'tags_header' => 'X-Tags-TRex',
+        ];
+
+        $varnish = new Varnish($this->httpDispatcher, $options);
+        $this->assertEquals('X-Tags-TRex', $varnish->getTagsHeaderName());
+    }
+
+    public function testTagsHeaderValue()
+    {
+        $varnish = new Varnish($this->httpDispatcher);
+        $this->assertEquals(
+            'tag-1_,tag_2',
+            $varnish->getTagsHeaderValue(["tag-1\n", 'tag,2'])
+        );
+    }
+
+    public function testTagsHeadersSplit()
+    {
+        $varnish = new Varnish($this->httpDispatcher, ['header_length' => 7]);
+        $this->httpDispatcher->shouldReceive('invalidate')->twice();
+
+        $varnish->invalidateTags(['post-1', 'post-2']);
     }
 
     public function testPurge()
     {
-        $ips = ['127.0.0.1:8080', '123.123.123.2'];
-        $varnish = new Varnish($ips, ['base_uri' => 'my_hostname.dev'], $this->client);
+        $varnish = new Varnish($this->httpDispatcher);
 
-        $count = $varnish->purge('/url/one')
-            ->purge('/url/two', ['X-Foo' => 'bar'])
-            ->flush()
-        ;
-        $this->assertEquals(2, $count);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('PURGE', $request->getMethod());
 
-        $requests = $this->getRequests();
-        $this->assertCount(4, $requests);
-        foreach ($requests as $request) {
-            $this->assertEquals('PURGE', $request->getMethod());
-            $this->assertEquals('my_hostname.dev', $request->getHeaderLine('Host'));
-        }
+                    $this->assertEquals('/url', $request->getUri());
+                    $this->assertEquals('bar', $request->getHeaderLine('X-Foo'));
 
-        $this->assertEquals('http://127.0.0.1:8080/url/one', $requests[0]->getUri());
-        $this->assertEquals('http://123.123.123.2/url/one', $requests[1]->getUri());
-        $this->assertEquals('http://127.0.0.1:8080/url/two', $requests[2]->getUri());
-        $this->assertEquals('bar', $requests[2]->getHeaderLine('X-Foo'));
-        $this->assertEquals('http://123.123.123.2/url/two', $requests[3]->getUri());
-        $this->assertEquals('bar', $requests[3]->getHeaderLine('X-Foo'));
+                    return true;
+                }
+            )
+        );
+
+        $varnish->purge('/url', ['X-Foo' => 'bar']);
     }
 
     public function testRefresh()
     {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo'], $this->client);
-        $varnish->refresh('/fresh')->flush();
+        $varnish = new Varnish($this->httpDispatcher);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('GET', $request->getMethod());
+                    $this->assertEquals('/fresh', $request->getUri());
+                    $this->assertContains('no-cache', $request->getHeaderLine('Cache-Control'));
 
-        $requests = $this->getRequests();
-        $this->assertCount(1, $requests);
-        $this->assertEquals('GET', $requests[0]->getMethod());
-        $this->assertEquals('http://127.0.0.1:123/fresh', $requests[0]->getUri());
-    }
+                    return true;
+                }
+            )
+        );
 
-    public function testInvalidateTwice()
-    {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'header_length' => 7], $this->client);
-        $varnish->invalidateTags(['post-1', 'post-2'])->flush();
-
-        $requests = $this->getRequests();
-        $this->assertCount(2, $requests);
-    }
-
-    public function testAdditionalContructorOptions()
-    {
-        $varnish = new Varnish(['127.0.0.1:123'], ['base_uri' => 'fos.lo', 'tags_header' => 'X-Tags-TRex', 'header_length' => 8000], $this->client);
-
-        $this->assertEquals('X-Tags-TRex', $varnish->getTagsHeaderName());
-        $this->assertEquals(8000, $varnish->getHeaderLength());
-    }
-
-    protected function setUp()
-    {
-        $this->client = new Client();
-    }
-
-    /**
-     * @return array|RequestInterface[]
-     */
-    protected function getRequests()
-    {
-        return $this->client->getRequests();
+        $varnish->refresh('/fresh');
     }
 }

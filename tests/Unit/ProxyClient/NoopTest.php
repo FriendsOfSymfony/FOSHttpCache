@@ -52,7 +52,7 @@ class NoopTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTagsHeaderValue()
     {
-        $this->assertTrue(is_array($this->noop->getTagsHeaderValue(['tag123'])));
+        $this->assertEquals('', $this->noop->getTagsHeaderValue(['tag123']));
     }
 
     public function testPurge()

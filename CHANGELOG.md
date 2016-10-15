@@ -8,9 +8,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### HTTP
 
-* Replaced hard coupling on Guzzle HTTP client with HTTP adapter. You now need
-  to explicitly specify the adapter you want, see [installation instructions]
+* Replaced hard coupling on Guzzle HTTP client with HTTPlug. You now need
+  to explicitly specify a supported HTTP adapter in composer.json, see [installation instructions]
   (http://foshttpcache.readthedocs.org/en/stable/installation.html)
+* BC Break: Separated the HttpDispatcher from the proxy clients. All existing
+  clients still use HTTP to send invalidation requests.
 * Added support and documentation for setting a custom TTL specifically for the
   caching proxy.
 

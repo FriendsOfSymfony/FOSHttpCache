@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Test\Proxy;
 
-class NginxProxy extends Abstractproxy
+class NginxProxy extends AbstractProxy
 {
     protected $binary = 'nginx';
     protected $configFile;
