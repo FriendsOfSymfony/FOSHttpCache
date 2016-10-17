@@ -26,11 +26,7 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->kernel = $this
-            ->getMockBuilder(CacheInvalidationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $this->kernel = \Mockery::mock(CacheInvalidationInterface::class);
     }
 
     public function testDebugHit()

@@ -14,23 +14,20 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
 use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
+use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CacheInvalidationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInvalidationInterface|MockInterface
      */
     private $kernel;
 
     public function setUp()
     {
-        $this->kernel = $this
-            ->getMockBuilder(CacheInvalidationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $this->kernel = \Mockery::mock(CacheInvalidationInterface::class);
     }
 
     /**
@@ -151,24 +148,26 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
         $that = $this;
-        $this->kernel
-            ->expects($this->once())
-            ->method('handle')
+        $kernel = $this->kernel
+            ->shouldReceive('handle')
+            ->once()
             ->with(
-                $this->callback(function (Request $request) use ($that, $hashRequest) {
-                    // we need to call some methods to get the internal fields initialized
-                    $request->getMethod();
-                    $request->getPathInfo();
-                    $that->assertEquals($hashRequest, $request);
-                    $that->assertCount(2, $request->cookies->all());
+                \Mockery::on(
+                    function (Request $request) use ($that, $hashRequest) {
+                        // we need to call some methods to get the internal fields initialized
+                        $request->getMethod();
+                        $request->getPathInfo();
+                        $that->assertEquals($hashRequest, $request);
+                        $that->assertCount(2, $request->cookies->all());
 
-                    return true;
-                }),
-                $catch
+                        return true;
+                    }
+                )
             )
-            ->will($this->returnValue($hashResponse));
+            ->andReturn($hashResponse)
+            ->getMock();
 
-        $event = new CacheEvent($this->kernel, $request);
+        $event = new CacheEvent($kernel, $request);
 
         $userContextSubscriber->preHandle($event);
         $response = $event->getResponse();
@@ -201,11 +200,12 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
         $that = $this;
-        $this->kernel
-            ->expects($this->once())
-            ->method('handle')
+        $kernel = $this->kernel
+            ->shouldReceive('handle')
+            ->once()
             ->with(
-                $this->callback(function (Request $request) use ($that, $hashRequest) {
+                \Mockery::on(
+                    function (Request $request) use ($that, $hashRequest) {
                     // we need to call some methods to get the internal fields initialized
                     $request->getMethod();
                     $request->getPathInfo();
@@ -215,9 +215,10 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
                     return true;
                 })
             )
-            ->will($this->returnValue($hashResponse));
+            ->andReturn($hashResponse)
+            ->getMock();
 
-        $event = new CacheEvent($this->kernel, $request);
+        $event = new CacheEvent($kernel, $request);
 
         $userContextSubscriber->preHandle($event);
         $response = $event->getResponse();

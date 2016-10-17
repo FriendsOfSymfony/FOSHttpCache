@@ -23,18 +23,17 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
     {
         $headers = ['Header1' => 'Header1-Value'];
 
-        $mockClient1 = $this->getMock(BanInterface::class);
-        $mockClient1
-            ->expects($this->once())
-            ->method('ban')
+        $mockClient1 = \Mockery::mock(BanInterface::class)
+            ->shouldReceive('ban')
+            ->once()
             ->with($headers)
-        ;
-        $mockClient2 = $this->getMock(BanInterface::class);
-        $mockClient2
-            ->expects($this->once())
-            ->method('ban')
+            ->getMock();
+
+        $mockClient2 = \Mockery::mock(BanInterface::class)
+            ->shouldReceive('ban')
+            ->once()
             ->with($headers)
-        ;
+            ->getMock();
 
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2]);
 
@@ -47,18 +46,16 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $contentType = 'text/css';
         $hosts = 'example.com';
 
-        $mockClient1 = $this->getMock(BanInterface::class);
-        $mockClient1
-            ->expects($this->once())
-            ->method('banPath')
+        $mockClient1 = \Mockery::mock(BanInterface::class)
+            ->shouldReceive('banPath')
+            ->once()
             ->with($path, $contentType, $hosts)
-        ;
-        $mockClient2 = $this->getMock(BanInterface::class);
-        $mockClient2
-            ->expects($this->once())
-            ->method('banPath')
+            ->getMock();
+        $mockClient2 = \Mockery::mock(BanInterface::class)
+            ->shouldReceive('banPath')
+            ->once()
             ->with($path, $contentType, $hosts)
-        ;
+            ->getMock();
 
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2]);
 
@@ -67,18 +64,16 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
 
     public function testFlush()
     {
-        $mockClient1 = $this->getMock(ProxyClientInterface::class);
-        $mockClient1
-            ->expects($this->once())
-            ->method('flush')
-            ->willReturn(4)
-        ;
-        $mockClient2 = $this->getMock(ProxyClientInterface::class);
-        $mockClient2
-            ->expects($this->once())
-            ->method('flush')
-            ->willReturn(6)
-        ;
+        $mockClient1 = \Mockery::mock(ProxyClientInterface::class)
+            ->shouldReceive('flush')
+            ->once()
+            ->andReturn(4)
+            ->getMock();
+        $mockClient2 = \Mockery::mock(ProxyClientInterface::class)
+            ->shouldReceive('flush')
+            ->once()
+            ->andReturn(6)
+            ->getMock();
 
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2]);
 
@@ -90,17 +85,17 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $url = 'example.com';
         $headers = ['Header1' => 'Header1-Value'];
 
-        $mockClient1 = $this->getMock(RefreshInterface::class);
-        $mockClient1
-            ->expects($this->once())
-            ->method('refresh')
-            ->with($url, $headers);
-        $mockClient2 = $this->getMock(RefreshInterface::class);
-        $mockClient2
-            ->expects($this->once())
-            ->method('refresh')
-            ->with($url, $headers);
-        $mockClient3 = $this->getMock(ProxyClientInterface::class);
+        $mockClient1 = \Mockery::mock(RefreshInterface::class)
+            ->shouldReceive('refresh')
+            ->once()
+            ->with($url, $headers)
+            ->getMock();
+        $mockClient2 = \Mockery::mock(RefreshInterface::class)
+            ->shouldReceive('refresh')
+            ->once()
+            ->with($url, $headers)
+            ->getMock();
+        $mockClient3 = \Mockery::mock(ProxyClientInterface::class);
 
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2, $mockClient3]);
 
@@ -112,17 +107,16 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $url = 'example.com';
         $headers = ['Header1' => 'Header1-Value'];
 
-        $mockClient1 = $this->getMock(PurgeInterface::class);
-        $mockClient1
-            ->expects($this->once())
-            ->method('purge')
-            ->with($url, $headers);
-        $mockClient2 = $this->getMock(PurgeInterface::class);
-        $mockClient2
-            ->expects($this->once())
-            ->method('purge')
-            ->with($url, $headers);
-        $mockClient3 = $this->getMock(ProxyClientInterface::class);
+        $mockClient1 = \Mockery::mock(PurgeInterface::class)
+            ->shouldReceive('purge')
+            ->once()
+            ->with($url, $headers)
+            ->getMock();
+        $mockClient2 = \Mockery::mock(PurgeInterface::class)
+            ->shouldReceive('purge')
+            ->with($url, $headers)
+            ->getMock();
+        $mockClient3 = \Mockery::mock(ProxyClientInterface::class);
 
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2, $mockClient3]);
 
@@ -138,7 +132,7 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $clients
+     * @param ProxyClientInterface[] $clients
      *
      * @dataProvider provideInvalidClient
      * @expectedException \FOS\HttpCache\Exception\InvalidArgumentException

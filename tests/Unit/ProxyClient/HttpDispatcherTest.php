@@ -31,11 +31,11 @@ use Psr\Http\Message\ResponseInterface;
 class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Mock client.
+     * Mock HTTP client.
      *
      * @var Client
      */
-    private $client;
+    private $httpClient;
 
     /**
      * @var MessageFactory
@@ -49,7 +49,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->client = new Client();
+        $this->httpClient = new Client();
         $this->messageFactory = MessageFactoryDiscovery::find();
         $this->uriFactory = UriFactoryDiscovery::find();
     }
@@ -60,7 +60,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
      */
     public function testInstantiateWithNonUri()
     {
-        $httpDispatcher = new HttpDispatcher(
+        new HttpDispatcher(
             ['127.0.0.1:123'],
             $this
         );
@@ -75,11 +75,11 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
      */
     public function testExceptions(\Exception $exception, $type, $message = null)
     {
-        $this->client->addException($exception);
+        $this->httpClient->addException($exception);
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1:123'],
             'my_hostname.dev',
-            $this->client
+            $this->httpClient
         );
         $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/path'));
 
@@ -150,7 +150,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1:123'],
             '',
-            $this->client
+            $this->httpClient
         );
 
         $request = $this->messageFactory->createRequest('PURGE', '/path/without/hostname');
@@ -162,7 +162,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1'],
             'fos.lo',
-            $this->client
+            $this->httpClient
         );
 
         $request = $this->messageFactory->createRequest('PURGE', '/path');
@@ -178,7 +178,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1:8080'],
             'http://fos.lo/my/path',
-            $this->client
+            $this->httpClient
         );
         $request = $this->messageFactory->createRequest('PURGE', 'append');
         $httpDispatcher->invalidate($request);
@@ -191,7 +191,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testSetServersDefaultSchemeIsAdded()
     {
-        $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->client);
+        $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->httpClient);
         $request = $this->messageFactory->createRequest('PURGE', '/some/path');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
@@ -202,7 +202,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testSchemeIsAdded()
     {
-        $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->client);
+        $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->httpClient);
         $uri = $this->uriFactory->createUri('/some/path')->withHost('goo.bar');
         $request = $this->messageFactory->createRequest('PURGE', $uri);
         $httpDispatcher->invalidate($request);
@@ -214,7 +214,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testPortIsAdded()
     {
-        $httpDispatcher = new HttpDispatcher(['127.0.0.1:8080'], 'fos.lo', $this->client);
+        $httpDispatcher = new HttpDispatcher(['127.0.0.1:8080'], 'fos.lo', $this->httpClient);
         $request = $this->messageFactory->createRequest('PURGE', '/some/path');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
@@ -253,11 +253,11 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
     public function testFlushEmpty()
     {
         $httpDispatcher = new HttpDispatcher(
-            ['127.0.0.1', '127.0.0.2'], 'fos.lo', $this->client
+            ['127.0.0.1', '127.0.0.2'], 'fos.lo', $this->httpClient
         );
         $this->assertEquals(0, $httpDispatcher->flush());
 
-        $this->assertCount(0, $this->client->getRequests());
+        $this->assertCount(0, $this->httpClient->getRequests());
     }
 
     public function testFlushCountSuccess()
@@ -345,6 +345,6 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRequests()
     {
-        return $this->client->getRequests();
+        return $this->httpClient->getRequests();
     }
 }

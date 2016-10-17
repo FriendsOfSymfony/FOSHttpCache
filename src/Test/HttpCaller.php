@@ -23,7 +23,7 @@ trait HttpCaller
      *
      * @var HttpClient
      */
-    private $client;
+    private $httpClient;
 
     /**
      * Call a HTTP resource from your test.
@@ -36,11 +36,11 @@ trait HttpCaller
      */
     protected function getResponse($uri, array $headers = [], $method = 'GET')
     {
-        if (!$this->client) {
-            $this->client = new HttpClient($this->getHostName(), $this->getCachingProxyPort());
+        if (!$this->httpClient) {
+            $this->httpClient = new HttpClient($this->getHostName(), $this->getCachingProxyPort());
         }
 
-        return $this->client->getResponse($uri, $headers, $method);
+        return $this->httpClient->getResponse($uri, $headers, $method);
     }
 
     /**
