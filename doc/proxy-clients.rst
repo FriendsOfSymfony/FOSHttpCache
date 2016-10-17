@@ -13,6 +13,22 @@ The recommended usage is to have your application interact with the
 :doc:`cache invalidator <cache-invalidator>` which you set up with the proxy
 client suitable for the proxy server you use.
 
+Supported invalidation methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Not all clients support all operations. This table provides an overview what
+each proxy client supports:
+
+============= ======= ======= =======
+Client        Purge   Refresh Ban
+============= ======= ======= =======
+Varnish       ✓       ✓       ✓
+NGINX         ✓       ✓
+Symfony Cache ✓       ✓
+Noop          ✓       ✓       ✓
+Multiplexer   ✓       ✓       ✓
+============= ======= ======= =======
+
 .. _client setup:
 
 Setup

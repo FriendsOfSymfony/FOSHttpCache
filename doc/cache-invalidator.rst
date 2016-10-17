@@ -24,21 +24,14 @@ Create the cache invalidator by passing a proxy client as
 
     $cacheInvalidator = new CacheInvalidator($client);
 
-Supported invalidation methods
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Depending on the capabilities of the proxy client, some invalidation methods
+may not work. If you try to call an invalidation method that is not supported,
+an ``UnsupportedProxyOperationException`` is thrown. You can check for support
+by calling ``CacheInvalidator::support`` with the constant of the operation you
+need.
 
-============= ======= ======= =======
-Client        Purge   Refresh Ban
-============= ======= ======= =======
-Varnish       ✓       ✓       ✓
-NGINX         ✓       ✓
-Symfony Cache ✓       ✓
-Noop          ✓       ✓       ✓
-============= ======= ======= =======
-
-.. note::
-
-    See :ref:`proxy client setup <client setup>` for more on constructing a client.
+See :doc:`proxy clients <proxy-clients>` for the details on setting up the
+proxy client and an overview of the supported operations of each client.
 
 .. _cache invalidate:
 
@@ -71,7 +64,7 @@ Invalidate a URL with added header(s)::
 
 .. include:: includes/custom-headers.rst
 
-Please note that purge will invalidate all variants, so you do not have to
+Please note that purge will invalidate all variants, so you do not need to
 send any headers that you vary on, such as ``Accept``.
 
 .. _cache refresh:
@@ -167,9 +160,9 @@ You can also invalidate the cache based on any headers.
 Proxy client implementations should fill up the headers to at least have the
 default headers always present to simplify the cache configuration rules.
 
-To invalidate on a custom header ``X-My-Header``, you would do::
+To invalidate on a custom header ``My-Header``, you would do::
 
-    $cacheInvalidator->invalidate(['X-My-Header' => 'my-value'])->flush();
+    $cacheInvalidator->invalidate(['My-Header' => 'my-value'])->flush();
 
 .. _flush:
 
