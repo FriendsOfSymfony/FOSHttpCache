@@ -44,7 +44,7 @@ class CacheInvalidator
     const REFRESH = 'refresh';
 
     /**
-     * Value to check support of invalidate operation.
+     * Value to check support of invalidate and invalidateRegex operations.
      */
     const INVALIDATE = 'invalidate';
 
@@ -78,8 +78,8 @@ class CacheInvalidator
      * operation.
      *
      * Support for PATH means invalidatePath will work, REFRESH means
-     * refreshPath works and INVALIDATE is about all other invalidation
-     * methods.
+     * refreshPath works, TAGS means that invalidateTags works and
+     * INVALIDATE is for the invalidate and invalidateRegex methods.
      *
      * @param string $operation one of the class constants
      *
@@ -104,7 +104,7 @@ class CacheInvalidator
     }
 
     /**
-     * Set event dispatcher.
+     * Set event dispatcher - may only be called once.
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -123,7 +123,7 @@ class CacheInvalidator
     }
 
     /**
-     * Get event dispatcher.
+     * Get the event dispatcher used by the cache invalidator.
      *
      * @return EventDispatcherInterface
      */
