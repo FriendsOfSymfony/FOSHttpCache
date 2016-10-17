@@ -62,7 +62,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
         $purgeSubscriber->handlePurge($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(200, $response->getStatusCode());
     }
 
@@ -78,7 +78,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
         $purgeSubscriber->handlePurge($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
     }
 
@@ -93,7 +93,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
         $purgeSubscriber->handlePurge($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
     }
 

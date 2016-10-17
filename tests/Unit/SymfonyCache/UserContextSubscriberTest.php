@@ -70,7 +70,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $userContextSubscriber->preHandle($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
     }
 
@@ -88,7 +88,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
         $userContextSubscriber->preHandle($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
     }
 
@@ -206,14 +206,15 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
             ->with(
                 \Mockery::on(
                     function (Request $request) use ($that, $hashRequest) {
-                    // we need to call some methods to get the internal fields initialized
-                    $request->getMethod();
-                    $request->getPathInfo();
-                    $that->assertEquals($hashRequest, $request);
-                    $that->assertCount(0, $request->cookies->all());
+                        // we need to call some methods to get the internal fields initialized
+                        $request->getMethod();
+                        $request->getPathInfo();
+                        $that->assertEquals($hashRequest, $request);
+                        $that->assertCount(0, $request->cookies->all());
 
-                    return true;
-                })
+                        return true;
+                    }
+                )
             )
             ->andReturn($hashResponse)
             ->getMock();

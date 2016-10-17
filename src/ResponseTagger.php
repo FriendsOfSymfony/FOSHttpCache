@@ -42,13 +42,14 @@ class ResponseTagger
     private $tags = [];
 
     /**
-     * Options for the constructor are:
+     * Create the response tagger with a tag capable proxy client and options.
+     *
+     * Supported options are:
      *
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      *
      * @param TagsInterface $proxyClient
      * @param array         $options
-     *
      */
     public function __construct(TagsInterface $proxyClient, array $options = array())
     {

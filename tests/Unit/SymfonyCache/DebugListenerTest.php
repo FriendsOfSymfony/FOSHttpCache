@@ -41,7 +41,7 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
         $debugListener->handleDebug($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame('HIT', $response->headers->get('X-Cache'));
     }
 
@@ -57,7 +57,7 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
         $debugListener->handleDebug($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame('MISS', $response->headers->get('X-Cache'));
     }
 
@@ -73,7 +73,7 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
         $debugListener->handleDebug($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame('UNDETERMINED', $response->headers->get('X-Cache'));
     }
 
@@ -87,7 +87,7 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
         $debugListener->handleDebug($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertFalse($response->headers->has('X-Cache'));
     }
 }

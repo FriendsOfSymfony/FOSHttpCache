@@ -42,7 +42,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener->useCustomTtl($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame('120', $response->headers->getCacheControlDirective('s-maxage'));
         $this->assertSame('60', $response->headers->get(CustomTtlListener::SMAXAGE_BACKUP));
     }
@@ -60,7 +60,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener->useCustomTtl($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame('120', $response->headers->getCacheControlDirective('s-maxage'));
         $this->assertSame('false', $response->headers->get(CustomTtlListener::SMAXAGE_BACKUP));
     }
@@ -79,7 +79,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener->cleanResponse($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertTrue($response->headers->hasCacheControlDirective('s-maxage'));
         $this->assertSame('60', $response->headers->getCacheControlDirective('s-maxage'));
         $this->assertFalse($response->headers->has('X-Reverse-Proxy-TTL'));
@@ -100,7 +100,7 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
         $ttlListener->cleanResponse($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertFalse($response->headers->hasCacheControlDirective('s_maxage'));
         $this->assertFalse($response->headers->has('X-Reverse-Proxy-TTL'));
         $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
