@@ -35,7 +35,7 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
      */
     public function add(\Exception $e)
     {
-        if (null == $this->message) {
+        if (!$this->message) {
             $this->message = $e->getMessage();
         }
 

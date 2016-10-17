@@ -21,11 +21,17 @@ use FOS\HttpCache\Test\VarnishTestCase;
  */
 class UserContextFailureTest extends VarnishTestCase
 {
-    private $mode;
+    /**
+     * Can be "cache" or "failure" and is used to determine the correct .vcl file.
+     *
+     * @var string
+     */
+    private $mode = 'cache';
 
     public function setUp()
     {
-        $this->mode = 'testHashRequestFailure' == $this->getName() ? 'failure' : 'cache';
+        // needs to be decided before doing the setup
+        $this->mode = 'testHashRequestFailure' === $this->getName() ? 'failure' : 'cache';
 
         parent::setUp();
     }

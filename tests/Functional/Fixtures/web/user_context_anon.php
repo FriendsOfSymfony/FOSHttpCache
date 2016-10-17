@@ -17,7 +17,7 @@ header('Vary: X-User-Context-Hash');
 if (!isset($_COOKIE[0])) {
     header('X-HashTest: anonymous');
     echo 'anonymous';
-} elseif ($_COOKIE[0] == 'foo') {
+} elseif ('foo' === $_COOKIE[0]) {
     header('X-HashTest: foo');
     echo 'foo';
 } else {
