@@ -34,7 +34,7 @@ abstract class AbstractProxy implements ProxyInterface
         if (!$this->wait(
             $timeout,
             function () use ($ip, $port) {
-                return true == @fsockopen($ip, $port);
+                return false !== @fsockopen($ip, $port);
             }
         )) {
             throw new \RuntimeException(
@@ -61,8 +61,7 @@ abstract class AbstractProxy implements ProxyInterface
         if (!$this->wait(
             $timeout,
             function () use ($ip, $port) {
-                // This doesn't seem to work
-                return false == @fsockopen($ip, $port);
+                return false === @fsockopen($ip, $port);
             }
         )) {
             throw new \RuntimeException(

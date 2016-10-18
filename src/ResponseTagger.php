@@ -34,7 +34,7 @@ class ResponseTagger
     /**
      * @var TagsInterface
      */
-    private $client;
+    private $proxyClient;
 
     /**
      * @var array
@@ -42,15 +42,18 @@ class ResponseTagger
     private $tags = [];
 
     /**
-     * Constructor.
+     * Create the response tagger with a tag capable proxy client and options.
      *
-     * @param TagsInterface $client
-     * @param array         $options supported options:
-     *                               - strict (bool) Default: false. If set to true, throws exception when adding empty tags
+     * Supported options are:
+     *
+     * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
+     *
+     * @param TagsInterface $proxyClient
+     * @param array         $options
      */
-    public function __construct(TagsInterface $client, array $options = array())
+    public function __construct(TagsInterface $proxyClient, array $options = array())
     {
-        $this->client = $client;
+        $this->proxyClient = $proxyClient;
 
         $resolver = new OptionsResolver();
         $resolver->setDefaults(array(
@@ -69,7 +72,7 @@ class ResponseTagger
      */
     public function getTagsHeaderName()
     {
-        return $this->client->getTagsHeaderName();
+        return $this->proxyClient->getTagsHeaderName();
     }
 
     /**
@@ -81,7 +84,7 @@ class ResponseTagger
      */
     public function getTagsHeaderValue()
     {
-        return $this->client->getTagsHeaderValue($this->tags);
+        return $this->proxyClient->getTagsHeaderValue($this->tags);
     }
 
     /**

@@ -13,33 +13,23 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Varnish;
+use Mockery\MockInterface;
 
 /**
  * Testing the base methods of the proxy client, using the Varnish client as concrete class.
  */
 class HttpProxyClientTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var HttpDispatcher|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $httpDispatcher;
-
-    protected function setUp()
-    {
-        $this->httpDispatcher = $this
-            ->getMockBuilder(HttpDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
     public function testFlush()
     {
-        $this->httpDispatcher
-            ->expects($this->once())
-            ->method('flush')
-            ->will($this->returnValue(42));
+        /** @var HttpDispatcher|MockInterface $httpDispatcher */
+        $httpDispatcher = \Mockery::mock(HttpDispatcher::class)
+            ->shouldReceive('flush')
+            ->once()
+            ->andReturn(42)
+            ->getMock();
 
-        $varnish = new Varnish($this->httpDispatcher);
+        $varnish = new Varnish($httpDispatcher);
 
         $this->assertEquals(42, $varnish->flush());
     }

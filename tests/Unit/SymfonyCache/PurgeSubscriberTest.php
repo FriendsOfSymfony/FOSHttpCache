@@ -14,108 +14,86 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
 use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
+use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
 class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var CacheInvalidationInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $kernel;
-
-    public function setUp()
-    {
-        $this->kernel = $this
-            ->getMockBuilder(CacheInvalidationInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-    }
-
     public function testPurgeAllowed()
     {
-        $store = $this->getMock(StoreInterface::class);
-        $store->expects($this->once())
-            ->method('purge')
+        /** @var StoreInterface $store */
+        $store = \Mockery::mock(StoreInterface::class)
+            ->shouldReceive('purge')
+            ->once()
             ->with('http://example.com/foo')
-            ->will($this->returnValue(true))
-        ;
-        $this->kernel->expects($this->once())
-            ->method('getStore')
-            ->with()
-            ->will($this->returnValue($store))
-        ;
+            ->andReturn(true)
+            ->getMock();
+        $kernel = $this->getKernelMock($store);
 
         $purgeSubscriber = new PurgeSubscriber();
         $request = Request::create('http://example.com/foo', 'PURGE');
-        $event = new CacheEvent($this->kernel, $request);
+        $event = new CacheEvent($kernel, $request);
 
         $purgeSubscriber->handlePurge($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(200, $response->getStatusCode());
     }
 
     public function testPurgeAllowedMiss()
     {
-        $store = $this->getMock(StoreInterface::class);
-        $store->expects($this->once())
-            ->method('purge')
+        /** @var StoreInterface $store */
+        $store = \Mockery::mock(StoreInterface::class)
+            ->shouldReceive('purge')
+            ->once()
             ->with('http://example.com/foo')
-            ->will($this->returnValue(false))
-        ;
-        $this->kernel->expects($this->once())
-            ->method('getStore')
-            ->with()
-            ->will($this->returnValue($store))
-        ;
+            ->andReturn(false)
+            ->getMock();
+        $kernel = $this->getKernelMock($store);
 
         $purgeSubscriber = new PurgeSubscriber();
         $request = Request::create('http://example.com/foo', 'PURGE');
-        $event = new CacheEvent($this->kernel, $request);
+        $event = new CacheEvent($kernel, $request);
 
         $purgeSubscriber->handlePurge($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(200, $response->getStatusCode());
     }
 
     public function testPurgeForbiddenMatcher()
     {
-        $this->kernel->expects($this->never())
-            ->method('getStore')
-        ;
+        $kernel = $this->getUnusedKernelMock();
 
         $matcher = new RequestMatcher('/forbidden');
         $purgeSubscriber = new PurgeSubscriber(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo', 'PURGE');
-        $event = new CacheEvent($this->kernel, $request);
+        $event = new CacheEvent($kernel, $request);
 
         $purgeSubscriber->handlePurge($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
     }
 
     public function testPurgeForbiddenIp()
     {
-        $this->kernel->expects($this->never())
-            ->method('getStore')
-        ;
+        $kernel = $this->getUnusedKernelMock();
 
         $purgeSubscriber = new PurgeSubscriber(['client_ips' => '1.2.3.4']);
         $request = Request::create('http://example.com/foo', 'PURGE');
-        $event = new CacheEvent($this->kernel, $request);
+        $event = new CacheEvent($kernel, $request);
 
         $purgeSubscriber->handlePurge($event);
         $response = $event->getResponse();
 
-        $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
     }
 
@@ -124,20 +102,17 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testOtherMethod()
     {
-        $this->kernel->expects($this->never())
-            ->method('getStore')
-        ;
-        $matcher = $this->getMock(RequestMatcher::class);
-        $matcher->expects($this->never())
-            ->method('isRequestAllowed')
-        ;
+        $kernel = $this->getUnusedKernelMock();
+        $matcher = \Mockery::mock(RequestMatcher::class)
+            ->shouldNotReceive('isRequestAllowed')
+            ->getMock();
 
         $purgeSubscriber = new PurgeSubscriber([
             'client_matcher' => $matcher,
             'purge_method' => 'FOO',
         ]);
         $request = Request::create('http://example.com/foo', 'PURGE');
-        $event = new CacheEvent($this->kernel, $request);
+        $event = new CacheEvent($kernel, $request);
 
         $purgeSubscriber->handlePurge($event);
         $this->assertNull($event->getResponse());
@@ -150,5 +125,27 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testInvalidConfiguration()
     {
         new PurgeSubscriber(['stuff' => '1.2.3.4']);
+    }
+
+    /**
+     * @return CacheInvalidationInterface|MockInterface
+     */
+    private function getKernelMock(StoreInterface $store)
+    {
+        return \Mockery::mock(CacheInvalidationInterface::class)
+            ->shouldReceive('getStore')
+            ->once()
+            ->andReturn($store)
+            ->getMock();
+    }
+
+    /**
+     * @return CacheInvalidationInterface|MockInterface
+     */
+    private function getUnusedKernelMock()
+    {
+        return \Mockery::mock(CacheInvalidationInterface::class)
+            ->shouldNotReceive('getStore')
+            ->getMock();
     }
 }
