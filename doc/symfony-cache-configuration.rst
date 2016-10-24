@@ -182,6 +182,8 @@ options through the constructor:
 
 * **anonymous_hash**: Hash used for anonymous user. This is a performance
   optimization to not do a backend request for users that are not logged in.
+  By default, the header is skipped. If you specify a header, that header is
+  used.
 
 * **user_hash_accept_header**: Accept header value to be used to request the
   user hash to the backend application. Must match the setup of the backend

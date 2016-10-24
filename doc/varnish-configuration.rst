@@ -55,7 +55,7 @@ Purge removes a specific URL (including query strings) in all its variants (as
 specified by the ``Vary`` header).
 
 Subroutines are provided in ``resources/config/varnish-[version]/fos_purge.vcl``.
-To enable support add the following to ``your_varnish.vcl``:
+To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
@@ -96,7 +96,7 @@ Refreshing applies only to a specific URL including the query string, but *not*
 its variants.
 
 Subroutines are provided in ``resources/config/varnish-[version]/fos_refresh.vcl``.
-To enable support, add the following to ``your_varnish.vcl``:
+To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
@@ -125,7 +125,7 @@ Ban
 Banning invalidates whole groups of cached entries with regular expressions.
 
 Subroutines are provided in ``resources/config/varnish-[version]/fos_ban.vcl``
-To enable support add the following to ``your_varnish.vcl``:
+To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
@@ -202,11 +202,14 @@ User Context
 
 Feature: :doc:`user context hashing <user-context>`
 
-The ``fos_user_context.vcl`` needs the ``user_context_hash_url`` subroutine that sets a URL to the request lookup URL. The default URL is ``/_fos_user_context_hash`` and you can simply include ``resources/config/varnish-[version]/fos_user_context_url.vcl`` in your configuration to provide this. If you need a different URL, include a custom file implementing the ``user_context_hash_url`` subroutine.
+The ``fos_user_context.vcl`` needs the ``user_context_hash_url`` subroutine
+that sets a URL to the request lookup URL. The default URL is
+``/_fos_user_context_hash`` and you can simply include
+``resources/config/varnish-[version]/fos_user_context_url.vcl`` in your
+configuration to provide this. If you need a different URL, include a custom
+file implementing the ``user_context_hash_url`` subroutine.
 
-
-To enable support add the following to ``your_varnish.vcl``:
-
+To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
@@ -358,7 +361,7 @@ sends an ``X-Cache-Debug`` header:
 
 Subroutines are provided in ``fos_debug.vcl``.
 
-To enable support add the following to ``your_varnish.vcl``:
+To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
