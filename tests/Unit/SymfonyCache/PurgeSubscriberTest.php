@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * This tests a sanity check in the AbstractControlledListener
+     * This tests a sanity check in the AbstractControlledListener.
      *
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage You may not set both a request matcher and an IP

@@ -45,7 +45,7 @@ class VarnishProxyTest extends \PHPUnit_Framework_TestCase
         $proxy->start();
 
         $this->assertEquals('/usr/sbin/varnishd', $proxy->command);
-        $arguments =             [
+        $arguments = [
             '-a', '192.168.0.1:6181',
             '-T', '192.168.0.1:1331',
             '-f', 'config.vcl',

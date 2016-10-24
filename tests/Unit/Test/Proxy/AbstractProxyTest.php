@@ -43,8 +43,13 @@ class ProxyPartial extends AbstractProxy
         $this->waitUntil('localhost', 6666, 0);
     }
 
-    public function stop() {}
-    public function clear() {}
+    public function stop()
+    {
+    }
+
+    public function clear()
+    {
+    }
 
     public function run()
     {
