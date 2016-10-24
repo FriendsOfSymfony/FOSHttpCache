@@ -70,12 +70,14 @@ trait NginxTest
      */
     protected function getConfigFile()
     {
+        // @codeCoverageIgnoreStart
         if (!defined('NGINX_FILE')) {
             throw new \Exception(
                 'Specify the NGINX'
                 .' configuration file path in phpunit.xml or override getConfigFile()'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         // NGINX needs an absolute path
         return realpath(NGINX_FILE);
@@ -118,11 +120,13 @@ trait NginxTest
      */
     protected function getHostName()
     {
+        // @codeCoverageIgnoreStart
         if (!defined('WEB_SERVER_HOSTNAME')) {
             throw new \Exception(
                 'To use this test, you need to define the WEB_SERVER_HOSTNAME constant in your phpunit.xml'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         return WEB_SERVER_HOSTNAME;
     }

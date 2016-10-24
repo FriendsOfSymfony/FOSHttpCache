@@ -18,6 +18,8 @@ use FOS\HttpCache\SymfonyCache\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -61,15 +63,10 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
             'stale_if_error' => 60,
         ];
 
-        $refHttpCache = new \ReflectionClass('Symfony\Component\HttpKernel\HttpCache\HttpCache');
-        // Workaround for Symfony 2.3 where $options property is not defined.
-        if (!$refHttpCache->hasProperty('options')) {
-            $mock->options = $options;
-        } else {
-            $refOptions = $refHttpCache->getProperty('options');
-            $refOptions->setAccessible(true);
-            $refOptions->setValue($mock, $options);
-        }
+        $refHttpCache = new \ReflectionClass(HttpCache::class);
+        $refOptions = $refHttpCache->getProperty('options');
+        $refOptions->setAccessible(true);
+        $refOptions->setValue($mock, $options);
 
         return $mock;
     }
@@ -83,13 +80,13 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
      */
     protected function setStoreMock(CacheInvalidationInterface $httpCache, Request $request, Response $response)
     {
-        $store = $this->getMock('Symfony\Component\HttpKernel\HttpCache\StoreInterface');
+        $store = $this->getMock(StoreInterface::class);
         $store
             ->expects($this->once())
             ->method('write')
             ->with($request, $response)
         ;
-        $refHttpCache = new \ReflectionClass('Symfony\Component\HttpKernel\HttpCache\HttpCache');
+        $refHttpCache = new \ReflectionClass(HttpCache::class);
         $refStore = $refHttpCache->getProperty('store');
         $refStore->setAccessible(true);
         $refStore->setValue($httpCache, $store);

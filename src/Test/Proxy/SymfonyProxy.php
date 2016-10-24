@@ -26,7 +26,12 @@ class SymfonyProxy implements ProxyInterface
      */
     public function getCacheDir()
     {
-        return defined('SYMFONY_CACHE_DIR') ? SYMFONY_CACHE_DIR : sys_get_temp_dir().'/foshttpcache-symfony';
+        $path = defined('SYMFONY_CACHE_DIR') ? SYMFONY_CACHE_DIR : sys_get_temp_dir().'/foshttpcache-symfony';
+        if (!$path || '/' === $path) {
+            throw new \RuntimeException('Invalid test setup, the cache dir is '.$path);
+        }
+
+        return $path;
     }
 
     /**
@@ -50,16 +55,20 @@ class SymfonyProxy implements ProxyInterface
      */
     public function clear()
     {
-        if (is_dir($this->getCacheDir())) {
-            $path = realpath($this->getCacheDir());
-            if (!$this->getCacheDir() || '/' == $path) {
-                throw new \Exception('Invalid test setup, the cache dir is '.$path);
-            }
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                system('DEL /S '.$path);
-            } else {
-                system('rm -r '.$path);
-            }
+        $path = realpath($this->getCacheDir());
+
+        // false means the directory does not exist yet - it surely is empty then
+        if (!is_dir($path)) {
+            return;
+        }
+
+        $path = $this->getCacheDir();
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            // @codeCoverageIgnoreStart
+            system('DEL /S '.$path);
+        } else {
+            // @codeCoverageIgnoreEnd
+            system('rm -r '.$path);
         }
     }
 }
