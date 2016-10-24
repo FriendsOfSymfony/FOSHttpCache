@@ -118,7 +118,6 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $userContextSubscriber = new UserContextSubscriber($arg);
 
-        $catch = true;
         $sessionId1 = 'my_session_id';
         $sessionId2 = 'another_session_id';
         $cookies = [

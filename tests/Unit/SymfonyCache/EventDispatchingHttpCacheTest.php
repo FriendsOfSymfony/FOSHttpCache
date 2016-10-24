@@ -24,7 +24,7 @@ class EventDispatchingHttpCacheTest extends EventDispatchingHttpCacheTestCase
 {
     protected function getCacheClass()
     {
-        return '\FOS\HttpCache\Tests\Unit\SymfonyCache\AppCache';
+        return AppCache::class;
     }
 }
 
