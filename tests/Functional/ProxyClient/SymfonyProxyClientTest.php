@@ -19,70 +19,31 @@ use FOS\HttpCache\Test\SymfonyTestCase;
  */
 class SymfonyProxyClientTest extends SymfonyTestCase
 {
+    use RefreshAssertions;
+    use PurgeAssertions;
+
     public function testPurge()
     {
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
-        $this->assertHit($this->getResponse('/symfony.php/cache'));
-
-        $this->getProxyClient()->purge('/symfony.php/cache')->flush();
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
+        $this->assertPurge($this->getProxyClient(), '/symfony.php/cache');
     }
 
     public function testPurgeContentType()
     {
-        $json = ['Accept' => 'application/json'];
-        $html = ['Accept' => 'text/html'];
-
-        $response = $this->getResponse('/symfony.php/negotiation', $json);
-        $this->assertMiss($response);
-        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
-        $this->assertHit($this->getResponse('/symfony.php/negotiation', $json));
-
-        $response = $this->getResponse('/symfony.php/negotiation', $html);
-        $this->assertContains('text/html', $response->getHeaderLine('Content-Type'));
-        $this->assertMiss($response);
-        $this->assertHit($this->getResponse('/symfony.php/negotiation', $html));
-
-        $this->getResponse('/symfony.php/negotiation');
-        $this->getProxyClient()->purge('/symfony.php/negotiation')->flush();
-        $this->assertMiss($this->getResponse('/symfony.php/negotiation', $json));
-        $this->assertMiss($this->getResponse('/symfony.php/negotiation', $html));
+        $this->assertPurge($this->getProxyClient(), '/symfony.php/negotiation');
     }
 
     public function testPurgeHost()
     {
-        $symfony = $this->getProxyClient();
-
-        $this->getResponse('/symfony.php/cache');
-
-        $symfony->purge('http://localhost:8080/symfony.php/cache')->flush();
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
+        $this->assertPurgeHost($this->getProxyClient(), 'http://localhost:8080', '/symfony.php/cache');
     }
 
     public function testRefresh()
     {
-        $this->assertMiss($this->getResponse('/symfony.php/cache'));
-        $response = $this->getResponse('/symfony.php/cache');
-        $this->assertHit($response);
-
-        $this->getProxyClient()->refresh('/symfony.php/cache')->flush();
-        usleep(100);
-        $refreshed = $this->getResponse('/symfony.php/cache');
-
-        $originalTimestamp = (float) (string) $response->getBody();
-        $refreshedTimestamp = (float) (string) $refreshed->getBody();
-
-        $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
+        $this->assertRefresh($this->getProxyClient(), '/symfony.php/cache');
     }
 
     public function testRefreshContentType()
     {
-        $json = ['Accept' => 'application/json'];
-        $html = ['Accept' => 'text/html'];
-
-        $this->getProxyClient()->refresh('/symfony.php/negotiation', $json)->flush();
-
-        $this->assertHit($this->getResponse('/symfony.php/negotiation', $json));
-        $this->assertMiss($this->getResponse('/symfony.php/negotiation', $html));
+        $this->assertRefresh($this->getProxyClient(), '/symfony.php/negotiation');
     }
 }
