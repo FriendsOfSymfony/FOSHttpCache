@@ -81,11 +81,13 @@ trait VarnishTest
      */
     protected function getConfigFile()
     {
+        // @codeCoverageIgnoreStart
         if (!defined('VARNISH_FILE')) {
             throw new \Exception(
                 'Specify the varnish configuration file path in phpunit.xml or override getConfigFile()'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         return VARNISH_FILE;
     }
@@ -194,11 +196,13 @@ trait VarnishTest
      */
     protected function getHostName()
     {
+        // @codeCoverageIgnoreStart
         if (!defined('WEB_SERVER_HOSTNAME')) {
             throw new \Exception(
                 'To use this test, you need to define the WEB_SERVER_HOSTNAME constant in your phpunit.xml'
             );
         }
+        // @codeCoverageIgnoreEnd
 
         return WEB_SERVER_HOSTNAME;
     }

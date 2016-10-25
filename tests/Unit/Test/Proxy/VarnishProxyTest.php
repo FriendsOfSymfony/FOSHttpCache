@@ -24,7 +24,15 @@ class VarnishProxyTest extends \PHPUnit_Framework_TestCase
         new VarnishProxy('nope.vcl');
     }
 
-    public function testStart()
+    public function allowInlineFlagProvider()
+    {
+        return [[true], [false]];
+    }
+
+    /**
+     * @dataProvider allowInlineFlagProvider
+     */
+    public function testStart($inlineC)
     {
         $proxy = new VarnishProxyMock('config.vcl');
         $proxy->setBinary('/usr/sbin/varnishd');
@@ -32,20 +40,25 @@ class VarnishProxyTest extends \PHPUnit_Framework_TestCase
         $proxy->setIp('192.168.0.1');
         $proxy->setManagementPort(1331);
         $proxy->setCacheDir('/tmp/cache/dir');
+        $proxy->setAllowInlineC($inlineC);
+        $this->assertEquals($inlineC, $proxy->getAllowInlineC());
         $proxy->start();
 
         $this->assertEquals('/usr/sbin/varnishd', $proxy->command);
-        $this->assertEquals(
-            [
-                '-a', '192.168.0.1:6181',
-                '-T', '192.168.0.1:1331',
-                '-f', 'config.vcl',
-                '-n', '/tmp/cache/dir',
-                '-p', 'vcl_dir=/my/varnish/dir',
-                '-P', '/tmp/foshttpcache-varnish.pid',
-            ],
-            $proxy->arguments
-        );
+        $arguments = [
+            '-a', '192.168.0.1:6181',
+            '-T', '192.168.0.1:1331',
+            '-f', 'config.vcl',
+            '-n', '/tmp/cache/dir',
+            '-p', 'vcl_dir=/my/varnish/dir',
+            '-P', '/tmp/foshttpcache-varnish.pid',
+        ];
+        if ($inlineC) {
+            $arguments[] = '-p';
+            $arguments[] = 'vcc_allow_inline_c=on';
+        }
+
+        $this->assertEquals($arguments, $proxy->arguments);
     }
 
     /**

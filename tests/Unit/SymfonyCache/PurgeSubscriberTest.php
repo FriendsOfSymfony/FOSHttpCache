@@ -22,6 +22,20 @@ use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
 class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * This tests a sanity check in the AbstractControlledListener.
+     *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage You may not set both a request matcher and an IP
+     */
+    public function testConstructorOverspecified()
+    {
+        new PurgeSubscriber([
+            'client_matcher' => new RequestMatcher('/forbidden'),
+            'client_ips' => ['1.2.3.4'],
+        ]);
+    }
+
     public function testPurgeAllowed()
     {
         /** @var StoreInterface $store */
