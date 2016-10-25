@@ -20,120 +20,52 @@ use FOS\HttpCache\Test\VarnishTestCase;
  */
 class VarnishProxyClientTest extends VarnishTestCase
 {
+    use RefreshAssertions;
+    use PurgeAssertions;
+    use BanAssertions;
+
     public function testBanAll()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->assertMiss($this->getResponse('/json.php'));
-        $this->assertHit($this->getResponse('/json.php'));
-
-        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_URL => '.*'])->flush();
-
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertMiss($this->getResponse('/json.php'));
+        $this->assertBanAll($this->getProxyClient(), Varnish::HTTP_HEADER_URL);
     }
 
     public function testBanHost()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => 'wrong-host.lo'])->flush();
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->getProxyClient()->ban([Varnish::HTTP_HEADER_HOST => $this->getHostname()])->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertBanHost($this->getProxyClient(), Varnish::HTTP_HEADER_HOST, $this->getHostName());
     }
 
     public function testBanPathAll()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->assertMiss($this->getResponse('/json.php'));
-        $this->assertHit($this->getResponse('/json.php'));
-
-        $this->getProxyClient()->banPath('.*')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertMiss($this->getResponse('/json.php'));
+        $this->assertBanPath($this->getProxyClient());
     }
 
     public function testBanPathContentType()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->assertMiss($this->getResponse('/json.php'));
-        $this->assertHit($this->getResponse('/json.php'));
-
-        $this->getProxyClient()->banPath('.*', 'text/html')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/json.php'));
+        $this->assertBanPathContentType($this->getProxyClient());
     }
 
     public function testPurge()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $this->getProxyClient()->purge('/cache.php')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertPurge($this->getProxyClient());
     }
 
     public function testPurgeContentType()
     {
-        $json = ['Accept' => 'application/json'];
-        $html = ['Accept' => 'text/html'];
-
-        $response = $this->getResponse('/negotation.php', $json);
-        $this->assertMiss($response);
-        $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
-        $this->assertHit($this->getResponse('/negotation.php', $json));
-
-        $response = $this->getResponse('/negotation.php', $html);
-        $this->assertContains('text/html', $response->getHeaderLine('Content-Type'));
-        $this->assertMiss($response);
-        $this->assertHit($this->getResponse('/negotation.php', $html));
-
-        $this->getResponse('/negotation.php');
-        $this->getProxyClient()->purge('/negotation.php')->flush();
-        $this->assertMiss($this->getResponse('/negotation.php', $json));
-        $this->assertMiss($this->getResponse('/negotation.php', $html));
+        $this->assertPurgeContentType($this->getProxyClient());
     }
 
     public function testPurgeHost()
     {
-        $this->getResponse('/cache.php');
-
-        $this->getProxyClient()->purge('http://localhost:6181/cache.php')->flush();
-        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertPurgeHost($this->getProxyClient(), 'http://localhost:6181');
     }
 
     public function testRefresh()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $response = $this->getResponse('/cache.php');
-        $this->assertHit($response);
-
-        $this->getProxyClient()->refresh('/cache.php')->flush();
-        usleep(1000);
-        $refreshed = $this->getResponse('/cache.php');
-
-        $originalTimestamp = (float) (string) $response->getBody();
-        $refreshedTimestamp = (float) (string) $refreshed->getBody();
-
-        $this->assertGreaterThan($originalTimestamp, $refreshedTimestamp);
+        $this->assertRefresh($this->getProxyClient());
     }
 
     public function testRefreshContentType()
     {
-        $json = ['Accept' => 'application/json'];
-        $html = ['Accept' => 'text/html'];
-
-        $this->getProxyClient()->refresh('/negotation.php', $json)->flush();
-
-        $this->assertHit($this->getResponse('/negotation.php', $json));
-        $this->assertMiss($this->getResponse('/negotation.php', $html));
+        $this->assertRefreshContentType($this->getProxyClient());
     }
 }

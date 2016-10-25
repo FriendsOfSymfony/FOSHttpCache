@@ -19,81 +19,45 @@ use FOS\HttpCache\Test\NginxTestCase;
  */
 class NginxProxyClientTest extends NginxTestCase
 {
-    public function testPurgeSeparateLocationPath()
-    {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $nginx = $this->getProxyClient('/purge');
-        $nginx->purge('/cache.php')->flush();
-
-        $this->assertMiss($this->getResponse('/cache.php'));
-    }
+    use RefreshAssertions;
+    use PurgeAssertions;
 
     public function testPurgeSeparateLocation()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $nginx = $this->getProxyClient('/purge');
-
-        $nginx->purge(sprintf('http://%s/cache.php', $this->getHostName()))->flush();
-
-        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertPurge($this->getProxyClient('/purge'));
     }
 
     public function testPurgeSameLocation()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
-
-        $nginx = $this->getProxyClient();
-        $nginx->purge(sprintf('http://%s/cache.php', $this->getHostName()))->flush();
-
-        $this->assertMiss($this->getResponse('/cache.php'));
+        $this->assertPurge($this->getProxyClient());
     }
 
-    public function testPurgeSameLocationPath()
+    public function testPurgeContentType()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $this->assertHit($this->getResponse('/cache.php'));
+        $this->markTestSkipped('Not working with nginx, it can only purge one type');
 
-        $nginx = $this->getProxyClient();
-        $nginx->purge('/cache.php')->flush();
+        $this->assertPurgeContentType($this->getProxyClient());
+    }
 
-        $this->assertMiss($this->getResponse('/cache.php'));
+    public function testPurgeSeparateLocationHost()
+    {
+        $this->assertPurgeHost($this->getProxyClient('/purge'), sprintf('http://%s', $this->getHostName()));
+    }
+
+    public function testPurgeSameLocationHost()
+    {
+        $this->assertPurgeHost($this->getProxyClient(), sprintf('http://%s', $this->getHostName()));
     }
 
     public function testRefresh()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $response = $this->getResponse('/cache.php');
-        $this->assertHit($response);
-
-        $nginx = $this->getProxyClient();
-        $nginx->refresh('/cache.php')->flush();
-        usleep(1000);
-        $refreshed = $this->getResponse('/cache.php');
-        $this->assertGreaterThan(
-            (float) (string) $response->getBody(),
-            (float) (string) $refreshed->getBody()
-        );
+        $this->assertRefresh($this->getProxyClient());
     }
 
-    public function testRefreshPath()
+    public function testRefreshContentType()
     {
-        $this->assertMiss($this->getResponse('/cache.php'));
-        $response = $this->getResponse('/cache.php');
-        $this->assertHit($response);
+        $this->markTestSkipped('TODO: is nginx mixing up variants?');
 
-        $nginx = $this->getProxyClient();
-        $nginx->refresh('/cache.php')->flush();
-        usleep(1000);
-        $refreshed = $this->getResponse('/cache.php');
-
-        $this->assertGreaterThan(
-            (float) (string) $response->getBody(),
-            (float) (string) $refreshed->getBody()
-        );
+        $this->assertRefreshContentType($this->getProxyClient());
     }
 }
