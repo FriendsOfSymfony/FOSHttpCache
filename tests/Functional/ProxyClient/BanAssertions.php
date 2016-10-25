@@ -32,7 +32,7 @@ trait BanAssertions
             $this->assertHit($this->getResponse($path));
         }
 
-        $proxyClient->ban([$header  => '.*'])->flush();
+        $proxyClient->ban([$header => '.*'])->flush();
 
         foreach ($paths as $path) {
             $this->assertMiss($this->getResponse($path));
@@ -45,7 +45,7 @@ trait BanAssertions
      * @param BanInterface $proxyClient The client to send ban instructions to the cache
      * @param string       $header      The header that holds the URLs
      * @param string       $hostname    Name of the host so we can invalidate that host
-     * @param string       $path       The path to get, defaults to[/cache.php
+     * @param string       $path        The path to get, defaults to[/cache.php
      */
     protected function assertBanHost(BanInterface $proxyClient, $header, $hostname, $path = '/cache.php')
     {
@@ -57,7 +57,6 @@ trait BanAssertions
 
         $proxyClient->ban([$header => $hostname])->flush();
         $this->assertMiss($this->getResponse($path));
-
     }
 
     /**
@@ -79,7 +78,6 @@ trait BanAssertions
             $this->assertMiss($this->getResponse($path));
         }
     }
-
 
     /**
      * Asserting that banPath leads to content getting invalidated.
