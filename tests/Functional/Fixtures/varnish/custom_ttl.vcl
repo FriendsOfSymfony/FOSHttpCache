@@ -1,7 +1,7 @@
 vcl 4.0;
 
-include "../../../../resources/config/varnish-4/fos_debug.vcl";
-include "../../../../resources/config/varnish-4/fos_custom_ttl.vcl";
+include "../../../../resources/config/varnish/fos_debug.vcl";
+include "../../../../resources/config/varnish/fos_custom_ttl.vcl";
 
 backend default {
     .host = "127.0.0.1";

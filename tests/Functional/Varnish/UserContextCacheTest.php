@@ -23,7 +23,7 @@ class UserContextCacheTest extends UserContextTestCase
             case 3:
                 return './tests/Functional/Fixtures/varnish-3/user_context_cache.vcl';
             default:
-                return './tests/Functional/Fixtures/varnish-4/user_context_cache.vcl';
+                return './tests/Functional/Fixtures/varnish/user_context_cache.vcl';
         }
     }
 

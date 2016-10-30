@@ -27,7 +27,7 @@ Features
   with minimal impact on performance.
 * Cache tagging abstraction, uses BAN with Varnish and allows tagging support for other caching proxies in the future.
 * Use the built-in support for [Varnish](http://foshttpcache.readthedocs.org/en/stable/varnish-configuration.html)
-  3 and 4, [NGINX](http://foshttpcache.readthedocs.org/en/stable/nginx-configuration.html), the
+  3, 4 and 5, [NGINX](http://foshttpcache.readthedocs.org/en/stable/nginx-configuration.html), the
   [Symfony reverse proxy from the http-kernel component](http://foshttpcache.readthedocs.org/en/stable/symfony-cache-configuration.html)
   or easily implement your own caching proxy client.
 * [Test your application](http://foshttpcache.readthedocs.org/en/stable/testing-your-application.html)
