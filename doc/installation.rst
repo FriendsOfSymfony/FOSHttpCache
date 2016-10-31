@@ -57,7 +57,7 @@ Overview
 This library mainly consists of:
 
 * low-level clients for communicating with a proxy server (Varnish, NGINX and
-  Symfony `HttpCache`)
+  Symfony HttpCache)
 * a cache invalidator that acts as an abstraction layer for the proxy
   client
 * test classes that you can use for integration testing your application

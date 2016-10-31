@@ -52,7 +52,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'FOSHttpCache'
-copyright = '2014, FriendsOfSymfony'
+copyright = u'2014–2016, FriendsOfSymfony'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -263,5 +263,5 @@ extlinks = {'source': ('https://github.com/FriendsOfSymfony/FOSHttpCache/blob/ma
 
 config_block = {
     'varnish3': 'Varnish 3',
-    'varnish4': 'Varnish 4'
+    'varnish4': 'Varnish 4 & 5'
 }

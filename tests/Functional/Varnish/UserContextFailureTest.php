@@ -99,7 +99,7 @@ class UserContextFailureTest extends VarnishTestCase
             case 3:
                 return sprintf('./tests/Functional/Fixtures/varnish-3/user_context_%s.vcl', $this->mode);
             default:
-                return sprintf('./tests/Functional/Fixtures/varnish-4/user_context_%s.vcl', $this->mode);
+                return sprintf('./tests/Functional/Fixtures/varnish/user_context_%s.vcl', $this->mode);
         }
     }
 }

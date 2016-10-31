@@ -20,7 +20,7 @@ if (!defined('VARNISH_FILE')) {
     ) {
         define('VARNISH_FILE', './tests/Functional/Fixtures/varnish-3/fos.vcl');
     } else {
-        define('VARNISH_FILE', './tests/Functional/Fixtures/varnish-4/fos.vcl');
+        define('VARNISH_FILE', './tests/Functional/Fixtures/varnish/fos.vcl');
     }
 }
 

@@ -4,8 +4,8 @@ Varnish Configuration
 ---------------------
 
 Below you will find detailed Varnish configuration recommendations for the
-features provided by this library. The configuration is provided for Varnish 3
-and 4.
+features provided by this library. The configuration is provided for Varnish 3,
+4 and 5.
 
 Basic Varnish Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -14,7 +14,7 @@ To invalidate cached objects in Varnish, begin by adding an `ACL`_ (for Varnish
 3 see `ACL for Varnish 3`_) to your Varnish configuration. This ACL determines
 which IPs are allowed to issue invalidation requests. To use the provided
 configuration fragments, this ACL has to be named ``invalidators``. The most
-simple ACL, valid for both Varnish 4 and Varnish 3, looks as follows:
+simple ACL, valid for all Varnish versions from 3 onwards, looks as follows:
 
 .. code-block:: varnish4
 
@@ -61,7 +61,7 @@ To enable support add the following to ``your_varnish.vcl``:
 
     .. code-block:: varnish4
 
-        include "path-to-config/varnish-4/fos_purge.vcl";
+        include "path-to-config/varnish/fos_purge.vcl";
 
         sub vcl_recv {
             call fos_purge_recv;
@@ -102,7 +102,7 @@ To enable support, add the following to ``your_varnish.vcl``:
 
     .. code-block:: varnish4
 
-        include "path-to-config/varnish-4/fos_refresh.vcl";
+        include "path-to-config/varnish/fos_refresh.vcl";
 
         sub vcl_recv {
             call fos_refresh_recv;
@@ -131,7 +131,7 @@ To enable support add the following to ``your_varnish.vcl``:
 
     .. code-block:: varnish4
 
-        include "path-to-config/varnish-4/fos_ban.vcl";
+        include "path-to-config/varnish/fos_ban.vcl";
 
         sub vcl_recv {
             call fos_ban_recv;
@@ -185,7 +185,7 @@ VCL will look like this:
 
 .. configuration-block::
 
-    .. literalinclude:: ../resources/config/varnish-4/fos_ban.vcl
+    .. literalinclude:: ../resources/config/varnish/fos_ban.vcl
         :language: varnish4
         :emphasize-lines: 17-22,49-50
         :linenos:
@@ -212,8 +212,8 @@ To enable support add the following to ``your_varnish.vcl``:
 
     .. code-block:: varnish4
 
-        include "path-to-config/varnish-4/fos_user_context.vcl";
-        include "path-to-config/varnish-4/fos_user_context_url.vcl";
+        include "path-to-config/varnish/fos_user_context.vcl";
+        include "path-to-config/varnish/fos_user_context_url.vcl";
 
         sub vcl_recv {
             call fos_user_context_recv;
@@ -230,7 +230,7 @@ To enable support add the following to ``your_varnish.vcl``:
     .. code-block:: varnish3
 
         include "path-to-config/varnish-3/fos_user_context.vcl";
-        include "path-to-config/varnish-4/fos_user_context_url.vcl";
+        include "path-to-config/varnish/fos_user_context_url.vcl";
 
         sub vcl_recv {
             call fos_user_context_recv;
@@ -291,7 +291,7 @@ values are different for each request. Because of this, the hash request would
 not be cached, but multiple hashes would be generated for one and the same user.
 
 To make the hash request cacheable, you must extract a stable user session id
-*before calling ``fos_user_context_recv``*. You can do this as
+*before* calling ``fos_user_context_recv``. You can do this as
 `explained in the Varnish documentation`_:
 
 .. code-block:: varnish4
@@ -331,7 +331,7 @@ inline C enabled: ``-p vcc_allow_inline_c=on``. Then add the following to
 
     .. code-block:: varnish4
 
-        include "path-to-config/varnish-4/fos_custom_ttl.vcl";
+        include "path-to-config/varnish/fos_custom_ttl.vcl";
 
         sub vcl_backend_response {
             call fos_custom_ttl_backend_response;
@@ -364,7 +364,7 @@ To enable support add the following to ``your_varnish.vcl``:
 
     .. code-block:: varnish4
 
-        include "path-to-config/varnish-4/fos_debug.vcl";
+        include "path-to-config/varnish/fos_debug.vcl";
 
         sub vcl_deliver {
             call fos_debug_deliver;

@@ -1,17 +1,17 @@
 vcl 4.0;
 
-include "../../../../resources/config/varnish-4/fos_debug.vcl";
-include "../../../../resources/config/varnish-4/fos_refresh.vcl";
-include "../../../../resources/config/varnish-4/fos_purge.vcl";
-include "../../../../resources/config/varnish-4/fos_ban.vcl";
+acl invalidators {
+    "127.0.0.1";
+}
+
+include "../../../../resources/config/varnish/fos_debug.vcl";
+include "../../../../resources/config/varnish/fos_refresh.vcl";
+include "../../../../resources/config/varnish/fos_purge.vcl";
+include "../../../../resources/config/varnish/fos_ban.vcl";
 
 backend default {
     .host = "127.0.0.1";
     .port = "8080";
-}
-
-acl invalidators {
-    "127.0.0.1";
 }
 
 sub vcl_recv {

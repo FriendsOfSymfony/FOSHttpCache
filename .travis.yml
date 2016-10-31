@@ -1,3 +1,5 @@
+dist: trusty
+group: edge
 language: php
 
 php:
@@ -7,12 +9,14 @@ php:
   - 7
 
 env:
-  - VARNISH_VERSION=4.0
+  - VARNISH_VERSION=5.0.0
 
 matrix:
   include:
     - php: 5.5
       env: SYMFONY_VERSION=2.7.* VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
+    - php: 7.0
+      env: VARNISH_VERSION=4.1
 
 branches:
   only:
@@ -25,10 +29,19 @@ install:
 
 before_script:
   # Install Varnish
-  - curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add -
-  - echo "deb http://repo.varnish-cache.org/ubuntu/ precise varnish-${VARNISH_VERSION}" | sudo tee -a /etc/apt/sources.list
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq varnish python-sphinx enchant
+  - |
+    if [ "$VARNISH_VERSION" = "5.0.0" ]; then
+      wget https://repo.varnish-cache.org/pkg/${VARNISH_VERSION}/varnish_${VARNISH_VERSION}-1_amd64.deb
+      sudo dpkg -i varnish_${VARNISH_VERSION}-1_amd64.deb
+      sudo apt-get update -qq
+      sudo apt-get -f install
+    else
+      curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add -
+      echo "deb http://repo.varnish-cache.org/ubuntu/ precise varnish-${VARNISH_VERSION}" | sudo tee -a /etc/apt/sources.list
+      sudo apt-get update -qq
+      sudo apt-get install -qq varnish
+    fi
+  - sudo apt-get install -qq python-sphinx enchant
   - sudo pip install -r doc/requirements.txt
   # Install NGINX
   - sh ./tests/install-nginx.sh

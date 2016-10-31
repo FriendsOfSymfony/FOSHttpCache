@@ -29,7 +29,9 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Varnish configuration are now files that you can directly include from your
   .vcl and call custom functions to avoid copy-pasting VCL code.
-* Changed default Varnish version to 4.
+* Moved Varnish 4 and 5 configuration files from `resources/config/varnish-4/` 
+  to `resources/config/varnish/`.
+* Changed default Varnish version to 5.
 
 ### NGINX
 
