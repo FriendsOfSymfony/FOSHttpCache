@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit;
 
 use FOS\HttpCache\CacheInvalidator;
-use FOS\HttpCache\EventListener\LogSubscriber;
+use FOS\HttpCache\EventListener\LogListener;
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
@@ -237,7 +237,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             )
             ->getMock();
 
-        $cacheInvalidator->getEventDispatcher()->addSubscriber(new LogSubscriber($logger));
+        $cacheInvalidator->getEventDispatcher()->addSubscriber(new LogListener($logger));
 
         $cacheInvalidator
             ->flush()

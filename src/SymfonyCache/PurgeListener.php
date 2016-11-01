@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * {@inheritdoc}
  */
-class PurgeSubscriber extends AccessControlledSubscriber
+class PurgeListener extends AccessControlledListener
 {
     const DEFAULT_PURGE_METHOD = 'PURGE';
 
@@ -33,15 +33,15 @@ class PurgeSubscriber extends AccessControlledSubscriber
     private $purgeMethod;
 
     /**
-     * When creating the purge subscriber, you can configure an additional option.
+     * When creating the purge listener, you can configure an additional option.
      *
-     * - purge_method:         HTTP method that identifies purge requests.
+     * - purge_method: HTTP method that identifies purge requests.
      *
      * @param array $options Options to overwrite the default options
      *
      * @throws \InvalidArgumentException if unknown keys are found in $options
      *
-     * @see AccessControlledSubscriber::__construct
+     * @see AccessControlledListener::__construct
      */
     public function __construct(array $options = [])
     {

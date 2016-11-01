@@ -224,7 +224,7 @@ So, to catch exceptions::
 Logging errors
 ~~~~~~~~~~~~~~
 
-You can log any exceptions with the help of the ``LogSubscriber`` provided in
+You can log any exceptions with the help of the ``LogListener`` provided in
 this library. First construct a logger that implements
 ``\Psr\Log\LoggerInterface``. For instance, when using Monolog_::
 
@@ -233,12 +233,12 @@ this library. First construct a logger that implements
     $monolog = new Logger(...);
     $monolog->pushHandler(...);
 
-Then add the logger as a subscriber to the cache invalidator::
+Then add the logger as a listener to the cache invalidator::
 
-    use FOS\HttpCache\EventListener\LogSubscriber;
+    use FOS\HttpCache\EventListener\LogListener;
 
-    $subscriber = new LogSubscriber($monolog);
-    $cacheInvalidator->getEventDispatcher()->addSubscriber($subscriber);
+    $logListener = new LogListener($monolog);
+    $cacheInvalidator->getEventDispatcher()->addSubscriber($logListener);
 
 Now, if you flush the invalidator, errors will be logged::
 

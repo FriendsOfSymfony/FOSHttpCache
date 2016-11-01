@@ -40,7 +40,7 @@ trait ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``::
         use EventDispatchingHttpCache;
 
         /**
-         * Made public to allow event subscribers to do refresh operations.
+         * Made public to allow event listeners to do refresh operations.
          *
          * {@inheritDoc}
          */
@@ -86,14 +86,14 @@ the listeners you need there::
 
     use FOS\HttpCache\SymfonyCache\DebugListener();
     use FOS\HttpCache\SymfonyCache\CustomTtlListener();
-    use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-    use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
-    use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
+    use FOS\HttpCache\SymfonyCache\PurgeListener;
+    use FOS\HttpCache\SymfonyCache\RefreshListener;
+    use FOS\HttpCache\SymfonyCache\UserContextListener;
 
     // ...
 
     /**
-     * Overwrite constructor to register event subscribers for FOSHttpCache.
+     * Overwrite constructor to register event listeners for FOSHttpCache.
      */
     public function __construct(
         HttpKernelInterface $kernel,
@@ -104,9 +104,9 @@ the listeners you need there::
         parent::__construct($kernel, $store, $surrogate, $options);
 
         $this->addSubscriber(new CustomTtlListener());
-        $this->addSubscriber(new PurgeSubscriber());
-        $this->addSubscriber(new RefreshSubscriber());
-        $this->addSubscriber(new UserContextSubscriber());
+        $this->addSubscriber(new PurgeListener());
+        $this->addSubscriber(new RefreshListener());
+        $this->addSubscriber(new UserContextListener());
         if (isset($options['debug']) && $options['debug']) {
             $this->addSubscriber(new DebugListener());
         }
@@ -120,7 +120,7 @@ Purge
 ~~~~~
 
 To support :ref:`cache invalidation <cache invalidate>`, register the
-``PurgeSubscriber``. If the default settings are right for you, you don't
+``PurgeListener``. If the default settings are right for you, you don't
 need to do anything more.
 
 Purging is only allowed from the same machine by default. To purge data from
@@ -146,14 +146,14 @@ Refresh
 ~~~~~~~
 
 To support :ref:`cache refresh <cache refresh>`, register the
-``RefreshSubscriber``. You can pass the constructor an option to specify
+``RefreshListener``. You can pass the constructor an option to specify
 what clients are allowed to refresh cache entries. Refreshing is only allowed
 from the same machine by default. To refresh from other hosts, provide the
 IPs of the machines allowed to refresh, or provide a RequestMatcher that
 checks for an Authorization header or similar. *Only set one of
 ``client_ips`` or ``client_matcher``*.
 
-The refresh subscriber needs to access the ``HttpCache::fetch`` method which
+The refresh listener needs to access the ``HttpCache::fetch`` method which
 is protected on the base HttpCache class. The ``EventDispatchingHttpCache``
 exposes the method as public, but if you implement your own kernel, you need
 to overwrite the method to make it public.
@@ -174,7 +174,7 @@ User Context
 ~~~~~~~~~~~~
 
 To support :doc:`user context hashing <user-context>` you need to register the
-``UserContextSubscriber``. The user context is then automatically recognized
+``UserContextListener``. The user context is then automatically recognized
 based on session cookies or authorization headers. If the default settings are
 right for you, you don't need to do anything more. You can customize a number of
 options through the constructor:
@@ -230,9 +230,9 @@ options through the constructor:
 Cleaning the Cookie Header
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default, the UserContextSubscriber only sets the session cookie (according to
+By default, the UserContextListener only sets the session cookie (according to
 the ``session_name_prefix`` option) in the requests to the backend. If you need
-a different behavior, overwrite ``UserContextSubscriber::cleanupHashLookupRequest``
+a different behavior, overwrite ``UserContextListener::cleanupHashLookupRequest``
 with your own logic.
 
 .. _symfonycache_customttl:
@@ -242,11 +242,11 @@ Custom TTL
 
 .. include:: includes/custom-ttl.rst
 
-The ``CustomTtlSubscriber`` looks at a specific header to determine the TTL,
+The ``CustomTtlListener`` looks at a specific header to determine the TTL,
 preferring that over ``s-maxage``. The default header is ``X-Reverse-Proxy-TTL``
-but you can customize that in the subscriber constructor::
+but you can customize that in the listener constructor::
 
-    new CustomTtlSubscriber('My-TTL-Header');
+    new CustomTtlListener('My-TTL-Header');
 
 The custom header is removed before sending the response to the client.
 

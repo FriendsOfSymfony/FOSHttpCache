@@ -26,7 +26,7 @@ interface CacheInvalidationInterface extends HttpKernelInterface
      *
      * This methods is triggered when the cache missed or a reload is required.
      *
-     * This method is present on HttpCache but must be public to allow event subscribers to do
+     * This method is present on HttpCache but must be public to allow event listeners to do
      * refresh operations.
      *
      * @param Request $request A Request instance

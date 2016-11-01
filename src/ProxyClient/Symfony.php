@@ -13,7 +13,7 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
-use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
+use FOS\HttpCache\SymfonyCache\PurgeListener;
 
 /**
  * Symfony HttpCache invalidator.
@@ -53,7 +53,7 @@ class Symfony extends HttpProxyClient implements PurgeInterface, RefreshInterfac
     {
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
-            'purge_method' => PurgeSubscriber::DEFAULT_PURGE_METHOD,
+            'purge_method' => PurgeListener::DEFAULT_PURGE_METHOD,
         ]);
 
         return $resolver;

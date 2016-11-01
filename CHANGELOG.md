@@ -16,6 +16,10 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Added support and documentation for setting a custom TTL specifically for the
   caching proxy.
 
+### Logging
+
+* BC BREAK: Renamed the log event listener from Logsubscriber to LogListener.
+
 ### Tagging
 
 * Abstracting tags by adding new `TagsInterface` for ProxyClients, as part of
@@ -29,7 +33,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Varnish configuration are now files that you can directly include from your
   .vcl and call custom functions to avoid copy-pasting VCL code.
-* Moved Varnish 4 and 5 configuration files from `resources/config/varnish-4/` 
+* Moved Varnish 4 and 5 configuration files from `resources/config/varnish-4/`
   to `resources/config/varnish/`.
 * Changed default Varnish version to 5.
 
@@ -40,7 +44,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### Symfony HttpCache
 
-* BC BREAK: Constructors for PurgeSubscriber and RefreshSubscriber now use an
+* BC BREAK: Renamed all event listeners to XxListener instead of XxSubscriber.
+* BC BREAK: Constructors for PurgeListener and RefreshListener now use an
   options array for customization.
 
 ### Testing

@@ -13,12 +13,12 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
-use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
+use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
+class UserContextListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CacheInvalidationInterface|MockInterface
@@ -31,17 +31,17 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * UserContextSubscriber default options to simulate the correct headers.
+     * UserContextListener default options to simulate the correct headers.
      *
      * @return array
      */
     public function provideConfigOptions()
     {
-        $subscriber = new UserContextSubscriber();
-        $ref = new \ReflectionObject($subscriber);
+        $userContextListener = new UserContextListener();
+        $ref = new \ReflectionObject($userContextListener);
         $prop = $ref->getProperty('options');
         $prop->setAccessible(true);
-        $options = $prop->getValue($subscriber);
+        $options = $prop->getValue($userContextListener);
 
         $custom = [
             'user_hash_uri' => '/test-uri',
@@ -61,13 +61,13 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testGenerateUserHashNotAllowed($arg, $options)
     {
-        $userContextSubscriber = new UserContextSubscriber($arg);
+        $userContextListener = new UserContextListener($arg);
 
         $request = new Request();
         $request->headers->set('accept', $options['user_hash_accept_header']);
         $event = new CacheEvent($this->kernel, $request);
 
-        $userContextSubscriber->preHandle($event);
+        $userContextListener->preHandle($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -79,13 +79,13 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testPassingUserHashNotAllowed($arg, $options)
     {
-        $userContextSubscriber = new UserContextSubscriber($arg);
+        $userContextListener = new UserContextListener($arg);
 
         $request = new Request();
         $request->headers->set($options['user_hash_header'], 'foo');
         $event = new CacheEvent($this->kernel, $request);
 
-        $userContextSubscriber->preHandle($event);
+        $userContextListener->preHandle($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -97,13 +97,13 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testUserHashAnonymous($arg, $options)
     {
-        $userContextSubscriber = new UserContextSubscriber($arg);
+        $userContextListener = new UserContextListener($arg);
 
         $request = new Request();
 
         $event = new CacheEvent($this->kernel, $request);
 
-        $userContextSubscriber->preHandle($event);
+        $userContextListener->preHandle($event);
         $response = $event->getResponse();
 
         $this->assertNull($response);
@@ -116,7 +116,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testUserHashUserWithSession($arg, $options)
     {
-        $userContextSubscriber = new UserContextSubscriber($arg);
+        $userContextListener = new UserContextListener($arg);
 
         $sessionId1 = 'my_session_id';
         $sessionId2 = 'another_session_id';
@@ -168,7 +168,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $event = new CacheEvent($kernel, $request);
 
-        $userContextSubscriber->preHandle($event);
+        $userContextListener->preHandle($event);
         $response = $event->getResponse();
 
         $this->assertNull($response);
@@ -181,7 +181,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testUserHashUserWithAuthorizationHeader($arg, $options)
     {
-        $userContextSubscriber = new UserContextSubscriber($arg);
+        $userContextListener = new UserContextListener($arg);
 
         // The foo cookie should not be available in the eventual hash request anymore
         $request = Request::create('/foo', 'GET', [], ['foo' => 'bar'], [], ['HTTP_AUTHORIZATION' => 'foo']);
@@ -220,7 +220,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $event = new CacheEvent($kernel, $request);
 
-        $userContextSubscriber->preHandle($event);
+        $userContextListener->preHandle($event);
         $response = $event->getResponse();
 
         $this->assertNull($response);
@@ -234,6 +234,6 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidConfiguration()
     {
-        new UserContextSubscriber(['foo' => 'bar']);
+        new UserContextListener(['foo' => 'bar']);
     }
 }

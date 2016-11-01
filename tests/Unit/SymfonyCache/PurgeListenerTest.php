@@ -13,14 +13,14 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
-use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
+use FOS\HttpCache\SymfonyCache\PurgeListener;
 use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
-class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
+class PurgeListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * This tests a sanity check in the AbstractControlledListener.
@@ -30,7 +30,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorOverspecified()
     {
-        new PurgeSubscriber([
+        new PurgeListener([
             'client_matcher' => new RequestMatcher('/forbidden'),
             'client_ips' => ['1.2.3.4'],
         ]);
@@ -47,11 +47,11 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $kernel = $this->getKernelMock($store);
 
-        $purgeSubscriber = new PurgeSubscriber();
+        $purgeListener = new PurgeListener();
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeSubscriber->handlePurge($event);
+        $purgeListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -69,11 +69,11 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $kernel = $this->getKernelMock($store);
 
-        $purgeSubscriber = new PurgeSubscriber();
+        $purgeListener = new PurgeListener();
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeSubscriber->handlePurge($event);
+        $purgeListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -85,11 +85,11 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
         $kernel = $this->getUnusedKernelMock();
 
         $matcher = new RequestMatcher('/forbidden');
-        $purgeSubscriber = new PurgeSubscriber(['client_matcher' => $matcher]);
+        $purgeListener = new PurgeListener(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeSubscriber->handlePurge($event);
+        $purgeListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -100,11 +100,11 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $kernel = $this->getUnusedKernelMock();
 
-        $purgeSubscriber = new PurgeSubscriber(['client_ips' => '1.2.3.4']);
+        $purgeListener = new PurgeListener(['client_ips' => '1.2.3.4']);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeSubscriber->handlePurge($event);
+        $purgeListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -112,7 +112,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Configuring the method to something else should make this subscriber skip the request.
+     * Configuring the method to something else should make this listener skip the request.
      */
     public function testOtherMethod()
     {
@@ -121,14 +121,14 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
             ->shouldNotReceive('isRequestAllowed')
             ->getMock();
 
-        $purgeSubscriber = new PurgeSubscriber([
+        $purgeListener = new PurgeListener([
             'client_matcher' => $matcher,
             'purge_method' => 'FOO',
         ]);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeSubscriber->handlePurge($event);
+        $purgeListener->handlePurge($event);
         $this->assertNull($event->getResponse());
     }
 
@@ -138,7 +138,7 @@ class PurgeSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidConfiguration()
     {
-        new PurgeSubscriber(['stuff' => '1.2.3.4']);
+        new PurgeListener(['stuff' => '1.2.3.4']);
     }
 
     /**

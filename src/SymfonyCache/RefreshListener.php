@@ -21,7 +21,7 @@ namespace FOS\HttpCache\SymfonyCache;
  *
  * {@inheritdoc}
  */
-class RefreshSubscriber extends AccessControlledSubscriber
+class RefreshListener extends AccessControlledListener
 {
     /**
      * {@inheritdoc}

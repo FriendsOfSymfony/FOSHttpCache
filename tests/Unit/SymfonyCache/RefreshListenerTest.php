@@ -13,12 +13,12 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
-use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
+use FOS\HttpCache\SymfonyCache\RefreshListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 
-class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
+class RefreshListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CacheInvalidationInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -43,8 +43,8 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($response))
         ;
 
-        $refreshSubscriber = new RefreshSubscriber();
-        $refreshSubscriber->handleRefresh($event);
+        $refreshListener = new RefreshListener();
+        $refreshListener->handleRefresh($event);
 
         $this->assertSame($response, $event->getResponse());
     }
@@ -56,12 +56,12 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
         ;
 
         $matcher = new RequestMatcher('/forbidden');
-        $refreshSubscriber = new RefreshSubscriber(['client_matcher' => $matcher]);
+        $refreshListener = new RefreshListener(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo');
         $request->headers->addCacheControlDirective('no-cache');
         $event = new CacheEvent($this->kernel, $request);
 
-        $refreshSubscriber->handleRefresh($event);
+        $refreshListener->handleRefresh($event);
 
         $this->assertNull($event->getResponse());
     }
@@ -72,17 +72,17 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('fetch')
         ;
 
-        $refreshSubscriber = new RefreshSubscriber(['client_ips' => '1.2.3.4']);
+        $refreshListener = new RefreshListener(['client_ips' => '1.2.3.4']);
         $request = Request::create('http://example.com/foo');
         $request->headers->addCacheControlDirective('no-cache');
         $event = new CacheEvent($this->kernel, $request);
 
-        $refreshSubscriber->handleRefresh($event);
+        $refreshListener->handleRefresh($event);
         $this->assertNull($event->getResponse());
     }
 
     /**
-     * Configuring the method to something else should make this subscriber skip the request.
+     * Configuring the method to something else should make this listener skip the request.
      */
     public function testUnsafe()
     {
@@ -90,12 +90,12 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('fetch')
         ;
 
-        $refreshSubscriber = new RefreshSubscriber();
+        $refreshListener = new RefreshListener();
         $request = Request::create('http://example.com/foo', 'POST');
         $request->headers->addCacheControlDirective('no-cache');
         $event = new CacheEvent($this->kernel, $request);
 
-        $refreshSubscriber->handleRefresh($event);
+        $refreshListener->handleRefresh($event);
 
         $this->assertNull($event->getResponse());
     }
@@ -109,11 +109,11 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('fetch')
         ;
 
-        $refreshSubscriber = new RefreshSubscriber();
+        $refreshListener = new RefreshListener();
         $request = Request::create('http://example.com/foo');
         $event = new CacheEvent($this->kernel, $request);
 
-        $refreshSubscriber->handleRefresh($event);
+        $refreshListener->handleRefresh($event);
 
         $this->assertNull($event->getResponse());
     }
@@ -124,6 +124,6 @@ class RefreshSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidConfiguration()
     {
-        new RefreshSubscriber(['stuff' => '1.2.3.4']);
+        new RefreshListener(['stuff' => '1.2.3.4']);
     }
 }
