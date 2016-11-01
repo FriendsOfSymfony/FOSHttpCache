@@ -45,9 +45,7 @@ Invalidating Paths and URLs
 
 Invalidate a path::
 
-    $cacheInvalidator->invalidatePath('/users')
-        ->flush()
-    ;
+    $cacheInvalidator->invalidatePath('/users')->flush();
 
 See below for the :ref:`flush() <flush>` method.
 

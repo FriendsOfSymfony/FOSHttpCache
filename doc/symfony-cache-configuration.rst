@@ -3,7 +3,7 @@
 Symfony HttpCache Configuration
 -------------------------------
 
-The ``symfony/http-kernel`` component provides a reverse proxy implemented
+Symfony’s `HttpKernel`_ component provides a reverse proxy implemented
 completely in PHP, called `HttpCache`_. While it is certainly less efficient
 than using Varnish or NGINX, it can still provide considerable performance
 gains over an installation that is not cached at all. It can be useful for
@@ -264,3 +264,4 @@ something went really wrong in the kernel. Have a look at ``X-Symfony-Cache``
 and at the HTML body of the response.
 
 .. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
+.. _HttpKernel: http://symfony.com/doc/current/components/http_kernel.html

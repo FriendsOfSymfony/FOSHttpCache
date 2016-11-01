@@ -1,9 +1,9 @@
 Contributing
 ============
 
-We are happy for contributions. Before you invest a lot of time however, best
-open an issue on GitHub_ to discuss your idea. Then we can coordinate efforts
-if somebody is already working on the same thing.
+We warmly welcome contributions to FOSHttpCache. Before you invest a lot of time
+however, please open an issue on GitHub_ to discuss your idea. Then we can
+coordinate efforts if somebody is already working on the same thing.
 
 Testing the Library
 -------------------
