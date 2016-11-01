@@ -25,7 +25,7 @@ div.configuration-block ul.simple li.selected a {
     color: white;
 }
 
-div.highlight-varnish3, div.highlight-varnish4 {
+div.highlight-varnish3, div.highlight-varnish {
     border: none !important;
 }
 
@@ -55,10 +55,10 @@ div.highlight pre {
     color: white !important;
 }
 
-div.highlight pre span.n, 
-div.highlight pre span.na, 
-div.highlight pre span.nb, 
-div.highlight pre span.nc, 
+div.highlight pre span.n,
+div.highlight pre span.na,
+div.highlight pre span.nb,
+div.highlight pre span.nc,
 div.highlight pre span.nf,
 div.highlight pre span.nx,
 div.highlight pre span.kn {
@@ -74,8 +74,8 @@ div.highlight pre span.k, div.highlight pre span.o {
 }
 
 div.highlight pre span.mi,
-div.highlight pre span.s, 
-div.highlight pre span.s1, 
+div.highlight pre span.s,
+div.highlight pre span.s1,
 div.highlight pre span.s2,
 div.highlight pre span.sr {
     color: #56db3a;

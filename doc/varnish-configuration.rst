@@ -16,7 +16,7 @@ which IPs are allowed to issue invalidation requests. To use the provided
 configuration fragments, this ACL has to be named ``invalidators``. The most
 simple ACL, valid for all Varnish versions from 3 onwards, looks as follows:
 
-.. code-block:: varnish4
+.. code-block:: varnish
 
     # /etc/varnish/your_varnish.vcl
 
@@ -59,7 +59,7 @@ To enable support add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish4
+    .. code-block:: varnish
 
         include "path-to-config/varnish/fos_purge.vcl";
 
@@ -100,7 +100,7 @@ To enable support, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish4
+    .. code-block:: varnish
 
         include "path-to-config/varnish/fos_refresh.vcl";
 
@@ -129,7 +129,7 @@ To enable support add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish4
+    .. code-block:: varnish
 
         include "path-to-config/varnish/fos_ban.vcl";
 
@@ -186,7 +186,7 @@ VCL will look like this:
 .. configuration-block::
 
     .. literalinclude:: ../resources/config/varnish/fos_ban.vcl
-        :language: varnish4
+        :language: varnish
         :emphasize-lines: 17-22,49-50
         :linenos:
 
@@ -210,7 +210,7 @@ To enable support add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish4
+    .. code-block:: varnish
 
         include "path-to-config/varnish/fos_user_context.vcl";
         include "path-to-config/varnish/fos_user_context_url.vcl";
@@ -294,7 +294,7 @@ To make the hash request cacheable, you must extract a stable user session id
 *before* calling ``fos_user_context_recv``. You can do this as
 `explained in the Varnish documentation`_:
 
-.. code-block:: varnish4
+.. code-block:: varnish
     :linenos:
 
     sub vcl_recv {
@@ -329,7 +329,7 @@ inline C enabled: ``-p vcc_allow_inline_c=on``. Then add the following to
 
 .. configuration-block::
 
-    .. code-block:: varnish4
+    .. code-block:: varnish
 
         include "path-to-config/varnish/fos_custom_ttl.vcl";
 
@@ -362,7 +362,7 @@ To enable support add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish4
+    .. code-block:: varnish
 
         include "path-to-config/varnish/fos_debug.vcl";
 
