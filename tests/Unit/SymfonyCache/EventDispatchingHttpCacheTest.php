@@ -33,7 +33,7 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
     use EventDispatchingHttpCache;
 
     /**
-     * Made public to allow event subscribers to do refresh operations.
+     * Made public to allow event listeners to do refresh operations.
      *
      * {@inheritdoc}
      */

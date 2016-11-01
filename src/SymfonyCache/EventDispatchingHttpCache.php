@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  * public does not satisfy the interface for whatever reason. See also
  * http://stackoverflow.com/questions/31877844/php-trait-exposing-a-method-and-interfaces )
  *
- * CacheInvalidator kernels support event subscribers that can act on the
+ * CacheInvalidator kernels support event listeners that can act on the
  * events defined in FOS\HttpCache\SymfonyCache\Events and may alter the
  * request flow.
  *
@@ -62,7 +62,7 @@ trait EventDispatchingHttpCache
     }
 
     /**
-     * Add subscriber.
+     * Add an event subscriber.
      *
      * @param EventSubscriberInterface $subscriber
      */

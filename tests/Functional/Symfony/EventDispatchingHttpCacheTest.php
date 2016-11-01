@@ -15,9 +15,9 @@ use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
 use FOS\HttpCache\SymfonyCache\CustomTtlListener;
 use FOS\HttpCache\SymfonyCache\DebugListener;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
-use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
-use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
+use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\RefreshListener;
+use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
 {
-    public function testSubscribers()
+    public function testEventListeners()
     {
         $request = new Request();
         $expectedResponse = new Response();
@@ -48,9 +48,9 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $kernel = new AppCache($httpKernel, $store);
         $kernel->addSubscriber(new CustomTtlListener());
         $kernel->addSubscriber(new DebugListener());
-        $kernel->addSubscriber(new PurgeSubscriber());
-        $kernel->addSubscriber(new RefreshSubscriber());
-        $kernel->addSubscriber(new UserContextSubscriber());
+        $kernel->addSubscriber(new PurgeListener());
+        $kernel->addSubscriber(new RefreshListener());
+        $kernel->addSubscriber(new UserContextListener());
 
         $response = $kernel->handle($request);
         $this->assertSame($expectedResponse, $response);
@@ -63,7 +63,7 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
     use EventDispatchingHttpCache;
 
     /**
-     * Made public to allow event subscribers to do refresh operations.
+     * Made public to allow event listeners to do refresh operations.
      *
      * {@inheritdoc}
      */

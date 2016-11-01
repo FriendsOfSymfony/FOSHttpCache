@@ -107,8 +107,8 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $response = new Response();
 
         $httpCache = $this->getHttpCachePartialMock(['lookup']);
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->any())
             ->method('lookup')
@@ -117,8 +117,8 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         ;
 
         $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
-        $this->assertEquals(1, $subscriber->preHandleCalls);
-        $this->assertEquals(1, $subscriber->postHandleCalls);
+        $this->assertEquals(1, $testListener->preHandleCalls);
+        $this->assertEquals(1, $testListener->postHandleCalls);
     }
 
     /**
@@ -133,17 +133,17 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $response = new Response();
 
         $httpCache = $this->getHttpCachePartialMock(['lookup']);
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $subscriber->preHandleResponse = $response;
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $testListener->preHandleResponse = $response;
+        $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->never())
             ->method('lookup')
         ;
 
         $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
-        $this->assertEquals(1, $subscriber->preHandleCalls);
-        $this->assertEquals(1, $subscriber->postHandleCalls);
+        $this->assertEquals(1, $testListener->preHandleCalls);
+        $this->assertEquals(1, $testListener->postHandleCalls);
     }
 
     /**
@@ -159,9 +159,9 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $postResponse = new Response();
 
         $httpCache = $this->getHttpCachePartialMock(['lookup']);
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $subscriber->postHandleResponse = $postResponse;
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $testListener->postHandleResponse = $postResponse;
+        $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->any())
             ->method('lookup')
@@ -170,8 +170,8 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         ;
 
         $this->assertSame($postResponse, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
-        $this->assertEquals(1, $subscriber->preHandleCalls);
-        $this->assertEquals(1, $subscriber->postHandleCalls);
+        $this->assertEquals(1, $testListener->preHandleCalls);
+        $this->assertEquals(1, $testListener->postHandleCalls);
     }
 
     /**
@@ -187,18 +187,18 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $postResponse = new Response();
 
         $httpCache = $this->getHttpCachePartialMock(['lookup']);
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $subscriber->preHandleResponse = $preResponse;
-        $subscriber->postHandleResponse = $postResponse;
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $testListener->preHandleResponse = $preResponse;
+        $testListener->postHandleResponse = $postResponse;
+        $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->never())
             ->method('lookup')
         ;
 
         $this->assertSame($postResponse, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
-        $this->assertEquals(1, $subscriber->preHandleCalls);
-        $this->assertEquals(1, $subscriber->postHandleCalls);
+        $this->assertEquals(1, $testListener->preHandleCalls);
+        $this->assertEquals(1, $testListener->postHandleCalls);
     }
 
     /**
@@ -210,8 +210,8 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $response = new Response();
 
         $httpCache = $this->getHttpCachePartialMock();
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $httpCache->addSubscriber($testListener);
 
         $this->setStoreMock($httpCache, $request, $response);
 
@@ -219,7 +219,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $method = $refHttpCache->getMethod('store');
         $method->setAccessible(true);
         $method->invokeArgs($httpCache, [$request, $response]);
-        $this->assertEquals(1, $subscriber->preStoreCalls);
+        $this->assertEquals(1, $testListener->preStoreCalls);
     }
 
     /**
@@ -232,9 +232,9 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $preStoreResponse = new Response();
 
         $httpCache = $this->getHttpCachePartialMock();
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $subscriber->preStoreResponse = $preStoreResponse;
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $testListener->preStoreResponse = $preStoreResponse;
+        $httpCache->addSubscriber($testListener);
 
         $this->setStoreMock($httpCache, $request, $preStoreResponse);
 
@@ -242,7 +242,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $method = $refHttpCache->getMethod('store');
         $method->setAccessible(true);
         $method->invokeArgs($httpCache, [$request, $regularResponse]);
-        $this->assertEquals(1, $subscriber->preStoreCalls);
+        $this->assertEquals(1, $testListener->preStoreCalls);
     }
 
     /**
@@ -255,8 +255,8 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $response = new Response('', 500);
 
         $httpCache = $this->getHttpCachePartialMock(['pass']);
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->any())
             ->method('pass')
@@ -268,7 +268,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $method->setAccessible(true);
 
         $this->assertSame($response, $method->invokeArgs($httpCache, [$request, $catch]));
-        $this->assertEquals(1, $subscriber->preInvalidateCalls);
+        $this->assertEquals(1, $testListener->preInvalidateCalls);
     }
 
     /**
@@ -283,9 +283,9 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $response = new Response('', 400);
 
         $httpCache = $this->getHttpCachePartialMock(['pass']);
-        $subscriber = new TestSubscriber($this, $httpCache, $request);
-        $subscriber->preInvalidateResponse = $response;
-        $httpCache->addSubscriber($subscriber);
+        $testListener = new TestListener($this, $httpCache, $request);
+        $testListener->preInvalidateResponse = $response;
+        $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->never())
             ->method('pass')
@@ -295,11 +295,11 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $method->setAccessible(true);
 
         $this->assertSame($response, $method->invokeArgs($httpCache, [$request, $catch]));
-        $this->assertEquals(1, $subscriber->preInvalidateCalls);
+        $this->assertEquals(1, $testListener->preInvalidateCalls);
     }
 }
 
-class TestSubscriber implements EventSubscriberInterface
+class TestListener implements EventSubscriberInterface
 {
     /**
      * @var int Count how many times preHandle has been called

@@ -17,7 +17,10 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class LogSubscriber implements EventSubscriberInterface
+/**
+ * Log when the caching proxy client can't  send requests to the caching server.
+ */
+class LogListener implements EventSubscriberInterface
 {
     /**
      * @var LoggerInterface

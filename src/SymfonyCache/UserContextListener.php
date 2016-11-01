@@ -24,7 +24,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * {@inheritdoc}
  */
-class UserContextSubscriber implements EventSubscriberInterface
+class UserContextListener implements EventSubscriberInterface
 {
     /**
      * The options configured in the constructor argument or default values.
@@ -41,7 +41,7 @@ class UserContextSubscriber implements EventSubscriberInterface
     private $userHash;
 
     /**
-     * When creating this subscriber, you can configure a number of options.
+     * When creating this listener, you can configure a number of options.
      *
      * - anonymous_hash:          Hash used for anonymous user.
      * - user_hash_accept_header: Accept header value to be used to request the user hash to the

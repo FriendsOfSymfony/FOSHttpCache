@@ -17,9 +17,9 @@ use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use FOS\HttpCache\SymfonyCache\DebugListener;
-use FOS\HttpCache\SymfonyCache\PurgeSubscriber;
-use FOS\HttpCache\SymfonyCache\RefreshSubscriber;
-use FOS\HttpCache\SymfonyCache\UserContextSubscriber;
+use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\RefreshListener;
+use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -33,16 +33,16 @@ class AppCache extends HttpCache implements CacheInvalidationInterface
         parent::__construct($kernel, $store, $surrogate, $options);
 
         $this->addSubscriber(new CustomTtlListener());
-        $this->addSubscriber(new PurgeSubscriber(['purge_method' => 'NOTIFY']));
-        $this->addSubscriber(new RefreshSubscriber());
-        $this->addSubscriber(new UserContextSubscriber());
+        $this->addSubscriber(new PurgeListener(['purge_method' => 'NOTIFY']));
+        $this->addSubscriber(new RefreshListener());
+        $this->addSubscriber(new UserContextListener());
         if (isset($options['debug']) && $options['debug']) {
             $this->addSubscriber(new DebugListener());
         }
     }
 
     /**
-     * Made public to allow event subscribers to do refresh operations.
+     * Made public to allow event listeners to do refresh operations.
      *
      * {@inheritdoc}
      */

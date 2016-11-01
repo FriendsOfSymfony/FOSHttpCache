@@ -25,7 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * {@inheritdoc}
  */
-abstract class AccessControlledSubscriber implements EventSubscriberInterface
+abstract class AccessControlledListener implements EventSubscriberInterface
 {
     /**
      * @var RequestMatcher
@@ -33,7 +33,7 @@ abstract class AccessControlledSubscriber implements EventSubscriberInterface
     private $clientMatcher;
 
     /**
-     * When creating this subscriber, you can configure a number of options.
+     * When creating this event listener, you can configure a number of options.
      *
      * - client_matcher: RequestMatcherInterface to identify clients that are allowed to send request.
      * - client_ips:     IP or array of IPs of clients that are allowed to send requests.
