@@ -47,6 +47,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * BC BREAK: Renamed all event listeners to XxListener instead of XxSubscriber.
 * BC BREAK: Constructors for PurgeListener and RefreshListener now use an
   options array for customization.
+* Provide a trait for the event dispatching kernel, instead of a base class.
+  The trait offers both the addSubscriber and the addListener methods.
 
 ### Testing
 
