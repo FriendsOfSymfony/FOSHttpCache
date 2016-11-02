@@ -143,7 +143,7 @@ to test both Varnish 3 and 4 on a continuous integration system). See the
 ==================== ========================= ======= ===========================================
 Environment Variable Getter                    Default Description
 ==================== ========================= ======= ===========================================
-``VARNISH_VERSION``  ``getVarnishVersion()``   ``4``   version of varnish application that is used
+``VARNISH_VERSION``  ``getVarnishVersion()``   ``4``   version of Varnish application that is used
 ==================== ========================= ======= ===========================================
 
 See ``tests/bootstrap.php`` for an example how this repository uses the version
@@ -224,7 +224,7 @@ CacheAssertions Trait
 
 Provides cache hit/miss assertions to your tests. To enable the these
 ``assertHit`` and ``assertMiss`` assertions, you need to configure your proxy
-server to set an `X-Cache` header with the cache status:
+server to set an ``X-Cache`` header with the cache status:
 
 * :ref:`Varnish <varnish_debugging>`
 * :ref:`NGINX <nginx_debugging>`

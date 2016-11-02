@@ -33,7 +33,7 @@ simple ACL, valid for all Varnish versions from 3 onwards, looks as follows:
     trigger invalidation are whitelisted here. Otherwise, lost cache invalidation
     requests will lead to lots of confusion.
 
-Provided Vcl Subroutines
+Provided VCL Subroutines
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to ease configuration we provide a set of VCL subroutines in the

@@ -4,8 +4,8 @@ Getting started
 Installation
 ------------
 
-The FOSHttpCache library is available on Packagist_. You can install it using
-Composer_.
+The FOSHttpCache library is available on Packagist_. You can install the library
+and its dependencies using Composer_.
 
 The library relies on HTTPlug_ for sending invalidation requests over HTTP, so
 you need to install an HTTPlug-compatible client or adapter first:
@@ -37,10 +37,7 @@ Then install the FOSHttpCache library itself:
 .. note::
 
     This library follows `Semantic Versioning`_.  Except for major versions, we
-    aim to not introduce BC breaks in new releases. You should still test your
-    application after upgrading though. What is a bug fix for somebody could
-    break something for others when they where (probably unawares) relying on
-    that bug.
+    aim to not introduce BC breaks in new releases.
 
 Configuration
 -------------

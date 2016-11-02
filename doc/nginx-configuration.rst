@@ -8,21 +8,21 @@ features provided by this library. The examples are tested with NGINX version
 1.4.6.
 
 NGINX cache is a set of key/value pairs. The key is built with elements taken from the requests
-(URI, cookies, http headers etc) as specified by `proxy_cache_key` directive.
+(URI, cookies, http headers etc) as specified by ``proxy_cache_key`` directive.
 
 When we interact with the cache to purge/refresh entries we must send to NGINX a request which has
 the very same values, for the elements used for building the key, as the request that create the entry.
 In this way NGINX can build the correct key and apply the required operation to the entry.
 
-By default NGINX key is built with `$scheme$proxy_host$request_uri`. For a full list of the elements
-you can use in the key see `this page from the official documentation <http://nginx.org/en/docs/http/ngx_http_core_module.html#variables>`_
+By default NGINX key is built with ``$scheme$proxy_host$request_uri``. For a full list of the elements
+you can use in the key see `this page from the official documentation <http://nginx.org/en/docs/http/ngx_http_core_module.html#variables>`_.
 
 Purge
 ~~~~~
 
 NGINX does not support :term:`purge` functionality out of the box but you can easily add it with
 `ngx_cache_purge <https://github.com/FRiCKLE/ngx_cache_purge>`_ module. You just need to compile
-NGINX from sources adding `ngx_cache_purge` with `--add-module`
+NGINX from sources adding ``ngx_cache_purge`` with ``--add-module``.
 
 You can check the script :source:`install-nginx.sh <tests/install-nginx.sh>` to get an idea
 about the steps you need to perform.
@@ -55,7 +55,7 @@ so add a line like the following to your config:
 Debugging
 ~~~~~~~~~
 
-Configure your Nginx to set a custom header (`X-Cache`) that shows whether a
+Configure your Nginx to set a custom header (``X-Cache``) that shows whether a
 cache hit or miss occurred:
 
 .. code-block:: none

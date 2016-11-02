@@ -16,8 +16,8 @@ client suitable for the proxy server you use.
 Supported invalidation methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Not all clients support all operations. This table provides an overview what
-each proxy client supports:
+Not all clients support all :ref:`invalidation methods <invalidation methods>`.
+This table provides of methods supported by each proxy client:
 
 ============= ======= ======= =======
 Client        Purge   Refresh Ban
@@ -35,7 +35,7 @@ Setup
 -----
 
 Most proxy clients use the ``HttpDispatcher`` to send requests to the proxy
-server. The ``HttpDispatcher`` is built on top of the Httplug_ abstraction to
+server. The ``HttpDispatcher`` is built on top of the HTTPlug_ abstraction to
 be independent of specific HTTP client implementations.
 
 .. _HTTP client configuration:
@@ -69,10 +69,10 @@ used. If you specify a custom HTTP client, you need to configure the client to
 convert HTTP error status into exceptions. This can either be done in a client
 specific way or with the HTTPlug ``PluginClient`` and the ``ErrorPlugin``.
 If client and/or URI factory are not specified, the dispatcher uses
-`Httplug discovery_` to find available implementations.
+`HTTPlug discovery`_ to find available implementations.
 
-Learn more about available HTTP clients `in the Httplug documentation`_. To
-customize the behavior of the HTTP client, you can use `Httplug plugins`_.
+Learn more about available HTTP clients `in the HTTPlug documentation`_. To
+customize the behavior of the HTTP client, you can use `HTTPlug plugins`_.
 
 .. _varnish client:
 
@@ -104,7 +104,7 @@ You can also pass some options to the Varnish client:
   merged with the built-in headers.
 
 Additionally, you can specify the request factory used to build the
-invalidation HTTP requests. If not specified, auto discovery is used - which
+invalidation HTTP requests. If not specified, auto discovery is used – which
 usually is fine.
 
 A full example could look like this::
@@ -175,7 +175,7 @@ The Multiplexer client allows multiple Proxy clients to be used during the stand
 cache invalidation, thus enabling multiple caches to be handled at once.
 It is useful when multiple caches exist in the environment and they need to be handled
 at the same time; the Multiplexer proxy client will forward the cache invalidation calls
-to all Proxy clients provided at creation time.::
+to all proxy clients provided at creation time::
 
     use FOS\HttpCache\ProxyClient\MultiplexerClient;
     use FOS\HttpCache\ProxyClient\Nginx;
@@ -215,8 +215,8 @@ requests to the proxy server. This is on purpose: this way, we can send
 all requests together, reducing the performance impact of sending invalidation
 requests.
 
-.. _Httplug: http://httplug.io/
-.. _Httplug discovery: http://php-http.readthedocs.io/en/latest/discovery.html
-.. _in the Httplug documentation: http://php-http.readthedocs.io/en/latest/clients.html
-.. _Httplug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
+.. _HTTPlug: http://httplug.io/
+.. _HTTPlug discovery: http://php-http.readthedocs.io/en/latest/discovery.html
+.. _in the HTTPlug documentation: http://php-http.readthedocs.io/en/latest/clients.html
+.. _HTTPlug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
 .. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html

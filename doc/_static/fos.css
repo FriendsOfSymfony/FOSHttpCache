@@ -1,3 +1,7 @@
 .versionmodified {
     font-weight: bold;
 }
+
+span.pre {
+    color: #404040;
+}
