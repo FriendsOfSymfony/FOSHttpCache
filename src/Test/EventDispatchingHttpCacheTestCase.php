@@ -297,6 +297,26 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
         $this->assertSame($response, $method->invokeArgs($httpCache, [$request, $catch]));
         $this->assertEquals(1, $testListener->preInvalidateCalls);
     }
+
+    public function testAddListener()
+    {
+        $request = Request::create('/foo', 'GET');
+        $response = new Response();
+
+        $httpCache = $this->getHttpCachePartialMock(['lookup']);
+        $simpleListener = new SimpleListener($this, $httpCache, $request);
+        $httpCache->addListener(Events::PRE_HANDLE, [$simpleListener, 'callback']);
+
+        $httpCache
+            ->expects($this->any())
+            ->method('lookup')
+            ->with($request)
+            ->will($this->returnValue($response))
+        ;
+
+        $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST));
+        $this->assertEquals(1, $simpleListener->calls);
+    }
 }
 
 class TestListener implements EventSubscriberInterface
@@ -414,5 +434,42 @@ class TestListener implements EventSubscriberInterface
             $event->setResponse($this->preInvalidateResponse);
         }
         ++$this->preInvalidateCalls;
+    }
+}
+
+class SimpleListener
+{
+    public $calls = 0;
+
+    /**
+     * @var EventDispatchingHttpCacheTestCase To do assertions
+     */
+    private $test;
+
+    /**
+     * @var CacheInvalidationInterface The kernel to ensure the event carries the correct kernel
+     */
+    private $kernel;
+
+    /**
+     * @var Request The request to ensure the event carries the correct request
+     */
+    private $request;
+
+    public function __construct(
+        EventDispatchingHttpCacheTestCase $test,
+        CacheInvalidationInterface $kernel,
+        Request $request
+    ) {
+        $this->test = $test;
+        $this->kernel = $kernel;
+        $this->request = $request;
+    }
+
+    public function callback(CacheEvent $event)
+    {
+        $this->test->assertSame($this->kernel, $event->getKernel());
+        $this->test->assertSame($this->request, $event->getRequest());
+        ++$this->calls;
     }
 }

@@ -64,11 +64,21 @@ trait EventDispatchingHttpCache
     /**
      * Add an event subscriber.
      *
-     * @param EventSubscriberInterface $subscriber
+     * @see EventDispatcherInterface::addSubscriber
      */
     public function addSubscriber(EventSubscriberInterface $subscriber)
     {
         $this->getEventDispatcher()->addSubscriber($subscriber);
+    }
+
+    /**
+     * Add an event listener to this HttpCache.
+     *
+     * @see EventDispatcherInterface::addListener
+     */
+    public function addListener($eventName, $listener, $priority = 0)
+    {
+        $this->getEventDispatcher()->addListener($eventName, $listener, $priority);
     }
 
     /**

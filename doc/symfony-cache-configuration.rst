@@ -50,14 +50,15 @@ trait ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``::
         }
     }
 
-The trait is adding events before and/or after kernel methods to let the
-listeners interfere. If you need to overwrite core ``HttpCache`` functionality
-in your kernel, one option is to provide your own event listeners. If you need
-to implement functionality directly on the methods, be careful to always call
-the trait methods rather than going directly to the parent, or events will not
-be triggered anymore. You might also need to copy a method from the trait and
-add your own logic between the events to not be too early or too late for the
-event.
+The trait adds the ``addSubscriber`` and ``addListener`` methods as defined in
+the ``EventDispatcherInterface`` to your cache kernel. In addition, it triggers
+events before and/or after kernel methods to let the listeners interact. If you
+need to overwrite core ``HttpCache`` functionality in your kernel, you can
+provide your own event listeners. If you need to implement functionality
+directly on the methods, be careful to always call the trait methods rather
+than going directly to the parent, or events will not be triggered anymore. You
+might also need to copy a method from the trait and add your own logic between
+the events to not be too early or too late for the event.
 
 When starting to extend your ``AppCache``, it is recommended to use the
 ``EventDispatchingHttpCacheTestCase`` to run tests with your kernel to be sure
