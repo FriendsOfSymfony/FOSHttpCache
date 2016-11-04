@@ -10,7 +10,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Replaced hard coupling on Guzzle HTTP client with HTTPlug. You now need
   to explicitly specify a supported HTTP adapter in composer.json, see [installation instructions]
-  (http://foshttpcache.readthedocs.org/en/stable/installation.html)
+  (http://foshttpcache.readthedocs.io/en/stable/installation.html)
 * BC Break: Separated the HttpDispatcher from the proxy clients. All existing
   clients still use HTTP to send invalidation requests.
 * Added support and documentation for setting a custom TTL specifically for the
@@ -72,8 +72,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 1.4.0
 -----
 
-* Added symfony/http-kernel [HttpCache client](http://foshttpcache.readthedocs.org/en/stable/proxy-clients.html#symfony-client).
-* Added [SymfonyTestCase](http://foshttpcache.readthedocs.org/en/stable/testing-your-application.html#symfonytestcase).
+* Added symfony/http-kernel [HttpCache client](http://foshttpcache.readthedocs.io/en/stable/proxy-clients.html#symfony-client).
+* Added [SymfonyTestCase](http://foshttpcache.readthedocs.io/en/stable/testing-your-application.html#symfonytestcase).
 * Removed unneeded files from dist packages.
 
 1.3.2
@@ -91,7 +91,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 1.3.0
 -----
 
-* Added [TagHandler](http://foshttpcache.readthedocs.org/en/stable/invalidation-handlers.html#tag-handler).
+* Added [TagHandler](http://foshttpcache.readthedocs.io/en/stable/invalidation-handlers.html#tag-handler).
 * It is no longer possible to change the event dispatcher of the
   CacheInvalidator once its instantiated. If you need a custom dispatcher, set
   it right after creating the invalidator instance.

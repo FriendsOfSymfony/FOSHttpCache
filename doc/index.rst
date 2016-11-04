@@ -34,4 +34,4 @@ Contents:
     testing-your-application
     contributing
 
-.. _stable documentation: http://foshttpcache.readthedocs.org/en/stable/
+.. _stable documentation: http://foshttpcache.readthedocs.io/en/stable/

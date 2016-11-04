@@ -36,7 +36,7 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
     public function testClientError()
     {
         $requestFactory = MessageFactoryDiscovery::find();
-        $dispatcher = new HttpDispatcher(['http://foshttpcache.readthedocs.org']);
+        $dispatcher = new HttpDispatcher(['http://foshttpcache.readthedocs.io']);
         $dispatcher->invalidate($requestFactory->createRequest('GET', 'http://fos.test/this-url-should-not-exist'));
 
         try {
