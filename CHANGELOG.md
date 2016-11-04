@@ -60,8 +60,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 1.4.2
 -----
 
-* The TagHandler constructor now accepts a ``headerLenght`` argument which will
-  cause it's ``invalidateTags`` function to invalidate in batches if the header
+* The TagHandler constructor now accepts a ``headerLength`` argument which will
+  cause its ``invalidateTags`` function to invalidate in batches if the header
   length exceeds this value.
 
 1.4.1
