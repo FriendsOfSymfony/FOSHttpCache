@@ -3,36 +3,41 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-2.0.0 (unreleased)
-------------------
+2.0.0
+-----
+
+### PHP
+
+* Raised minimum PHP version to 5.5.
 
 ### HTTP
 
-* Replaced hard coupling on Guzzle HTTP client with HTTPlug. You now need
-  to explicitly specify a supported HTTP adapter in composer.json, see [installation instructions]
-  (http://foshttpcache.readthedocs.io/en/stable/installation.html)
-* BC Break: Separated the HttpDispatcher from the proxy clients. All existing
-  clients still use HTTP to send invalidation requests.
+* **BC break:** Replaced hard coupling on Guzzle HTTP client with HTTPlug. 
+  You now need to explicitly specify a supported HTTP adapter in composer.json;
+  see [installation instructions](http://foshttpcache.readthedocs.io/en/stable/installation.html).
+* **BC break:** Separated the HttpDispatcher from the proxy clients. All 
+  existing clients still use HTTP to send invalidation requests.
 * Added support and documentation for setting a custom TTL specifically for the
   caching proxy.
 
 ### Logging
 
-* BC BREAK: Renamed the log event listener from Logsubscriber to LogListener.
+* **BC break:** Renamed the log event listener from `LogSubscriber` to 
+  `LogListener`.
 
 ### Tagging
 
-* Abstracting tags by adding new `TagsInterface` for ProxyClients, as part of
-  that also:
-  BC break: Moved tag invalidation to `CacheInvalidator`, and rename TagHandler
-  to ResponseTagger.
-* The ResponseTagger validates that no tags are empty. It can skip empty tags
-  or throw exceptions
+* **BC break:** Moved tag invalidation to `CacheInvalidator`, and renamed 
+  `TagHandler` to `ResponseTagger`.
+* Abstracting tags by adding new `TagsInterface` for ProxyClients.
+* Added `strict` option to `ResponseTagger` that throws an exception when empty
+  tags are added. By default, empty tags are ignored.
 
 ### Varnish
 
 * Varnish configuration are now files that you can directly include from your
   .vcl and call custom functions to avoid copy-pasting VCL code.
+* Added support for and changed default to Varnish version 5.  
 * Moved Varnish 4 and 5 configuration files from `resources/config/varnish-4/`
   to `resources/config/varnish/`.
 * Changed default Varnish version to 5.
@@ -46,20 +51,23 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### Symfony HttpCache
 
-* BC BREAK: Renamed all event listeners to XxListener instead of XxSubscriber.
-* BC BREAK: Constructors for PurgeListener and RefreshListener now use an
-  options array for customization.
-* Provide a trait for the event dispatching kernel, instead of a base class.
-  The trait offers both the addSubscriber and the addListener methods.
+* **BC break:** Renamed all event listeners to `XxListener` instead of 
+  `XxSubscriber`.
+* **BC break:** Constructors for `PurgeListener` and `RefreshListener` now use 
+  an options array for customization.
+* **BC break:** Converted abstract event dispatching kernel class 
+  `EventDispatchingHttpCache` to a trait, which now provides the `addSubscriber`
+  and `addListener` methods. In your `AppCache`, replace 
+  `AppCache extends EventDispatchingHttpInterface` with a 
+  `use EventDispatchingHttpCache;` statement. 
 * The user context by default does not use a hardcoded hash for anonymous users
-  but does a hash lookup. You can still configure a hardcoded hash.
+  but does a hash lookup. You can still configure a hardcoded hash.  
 
 ### Testing
 
-* In ProxyTestCase, `getHttpClient()` has been replaced with `getHttpAdapter()`;
-  added HTTP method parameter to `getResponse()`.
-* Refactored the proxy client test system into traits. Removed ProxyTestCase,
-  use the traits `CacheAssertions` and `HttpCaller` instead.
+* **BC break:** Refactored the proxy client test system into traits. Removed 
+  `ProxyTestCase`; use the traits `CacheAssertions` and `HttpCaller` instead.
+* Added HTTP method parameter to `HttpCaller::getResponse()`.
 
 1.4.2
 -----
