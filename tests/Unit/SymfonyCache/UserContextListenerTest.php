@@ -107,8 +107,12 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
         $response = $event->getResponse();
 
         $this->assertNull($response);
-        $this->assertTrue($request->headers->has($options['user_hash_header']));
-        $this->assertSame($options['anonymous_hash'], $request->headers->get($options['user_hash_header']));
+        if ($options['anonymous_hash']) {
+            $this->assertTrue($request->headers->has($options['user_hash_header']));
+            $this->assertSame($options['anonymous_hash'], $request->headers->get($options['user_hash_header']));
+        } else {
+            $this->assertFalse($request->headers->has($options['user_hash_header']));
+        }
     }
 
     /**

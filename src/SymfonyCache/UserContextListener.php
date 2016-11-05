@@ -60,7 +60,7 @@ class UserContextListener implements EventSubscriberInterface
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
-            'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
+            'anonymous_hash' => null,
             'user_hash_accept_header' => 'application/vnd.fos.user-context-hash',
             'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
@@ -104,8 +104,8 @@ class UserContextListener implements EventSubscriberInterface
                 return;
             }
 
-            if ($request->isMethodSafe()) {
-                $request->headers->set($this->options['user_hash_header'], $this->getUserHash($event->getKernel(), $request));
+            if ($request->isMethodSafe() && $hash = $this->getUserHash($event->getKernel(), $request)) {
+                $request->headers->set($this->options['user_hash_header'], $hash);
             }
         }
 

@@ -62,6 +62,19 @@ client, moving step 2-4 into the cache. After the page is in cache, subsequent
 requests from clients that got the same hash can be served from the cache as
 well.
 
+.. note::
+
+    If your application starts sessions for anonymous users, you will get one
+    hash lookup request for each of those users. Your application can return
+    the same hash for authenticated users with no special privileges as for
+    anonymous users with a session cookie.
+
+    If there is no cookie and no authentication information, the hash lookup is
+    skipped and no hash header added to the request. However, we can not avoid
+    the initial hash lookup request per different cookie, as the caching proxy
+    can not know which session cookies indicate a logged in user and which an
+    anonymous session.
+
 Proxy Client Configuration
 --------------------------
 

@@ -49,6 +49,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   options array for customization.
 * Provide a trait for the event dispatching kernel, instead of a base class.
   The trait offers both the addSubscriber and the addListener methods.
+* By default, no hash header is sent for anonymous users anymore, to sync
+  behaviour with Varnish behaviour.
 
 ### Testing
 
