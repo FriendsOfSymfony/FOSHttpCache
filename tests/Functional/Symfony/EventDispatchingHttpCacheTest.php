@@ -50,7 +50,11 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
         $kernel->addSubscriber(new DebugListener());
         $kernel->addSubscriber(new PurgeListener());
         $kernel->addSubscriber(new RefreshListener());
-        $kernel->addSubscriber(new UserContextListener());
+        $kernel->addSubscriber(new UserContextListener([
+            // avoid having to provide mocking for the hash lookup
+            // we already test anonymous hash lookup in the UserContextListener unit test
+            'anonymous_hash' => 'abcdef',
+        ]));
 
         $response = $kernel->handle($request);
         $this->assertSame($expectedResponse, $response);

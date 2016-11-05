@@ -98,21 +98,60 @@ class UserContextListenerTest extends \PHPUnit_Framework_TestCase
     public function testUserHashAnonymous($arg, $options)
     {
         $userContextListener = new UserContextListener($arg);
-
         $request = new Request();
 
-        $event = new CacheEvent($this->kernel, $request);
-
-        $userContextListener->preHandle($event);
-        $response = $event->getResponse();
-
-        $this->assertNull($response);
         if ($options['anonymous_hash']) {
+            $event = new CacheEvent($this->kernel, $request);
+            $userContextListener->preHandle($event);
+
             $this->assertTrue($request->headers->has($options['user_hash_header']));
             $this->assertSame($options['anonymous_hash'], $request->headers->get($options['user_hash_header']));
         } else {
-            $this->assertFalse($request->headers->has($options['user_hash_header']));
+            $hashRequest = Request::create($options['user_hash_uri'], $options['user_hash_method'], [], [], [], $request->server->all());
+            $hashRequest->attributes->set('internalRequest', true);
+            $hashRequest->headers->set('Accept', $options['user_hash_accept_header']);
+            // Ensure request properties have been filled up.
+            $hashRequest->getPathInfo();
+            $hashRequest->getMethod();
+
+            $expectedContextHash = 'my_generated_hash';
+            // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
+            /** @var \Symfony\Component\HttpFoundation\Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
+            $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
+                ->setMethods(['prepare'])
+                ->getMock();
+            $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
+
+            $that = $this;
+            $kernel = $this->kernel
+                ->shouldReceive('handle')
+                ->once()
+                ->with(
+                    \Mockery::on(
+                        function (Request $request) use ($that, $hashRequest) {
+                            // we need to call some methods to get the internal fields initialized
+                            $request->getMethod();
+                            $request->getPathInfo();
+                            $that->assertEquals($hashRequest, $request);
+                            $that->assertCount(0, $request->cookies->all());
+
+                            return true;
+                        }
+                    )
+                )
+                ->andReturn($hashResponse)
+                ->getMock();
+
+            $event = new CacheEvent($kernel, $request);
+            $userContextListener->preHandle($event);
+
+            $this->assertTrue($request->headers->has($options['user_hash_header']));
+            $this->assertSame($expectedContextHash, $request->headers->get($options['user_hash_header']));
         }
+
+        $response = $event->getResponse();
+
+        $this->assertNull($response);
     }
 
     /**

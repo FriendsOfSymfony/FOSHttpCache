@@ -180,10 +180,10 @@ based on session cookies or authorization headers. If the default settings are
 right for you, you don't need to do anything more. You can customize a number of
 options through the constructor:
 
-* **anonymous_hash**: Hash used for anonymous user. This is a performance
-  optimization to not do a backend request for users that are not logged in.
-  By default, the header is skipped. If you specify a header, that header is
-  used.
+* **anonymous_hash**: Hard-coded hash to use for anonymous users. This is a
+  performance optimization to not do a backend request for users that are not
+  logged in. If you specify a non-empty value for this field, that is used as
+  context hash header instead of doing a hash lookup for anonymous users.
 
 * **user_hash_accept_header**: Accept header value to be used to request the
   user hash to the backend application. Must match the setup of the backend

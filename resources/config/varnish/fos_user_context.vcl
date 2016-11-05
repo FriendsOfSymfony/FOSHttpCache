@@ -19,10 +19,9 @@ sub fos_user_context_recv {
     }
 
     # Lookup the context hash if there are credentials on the request
-    # Only do this for cacheable requests. Returning a hash lookup discards the request body.
+    # Note that the hash lookup discards the request body.
     # https://www.varnish-cache.org/trac/ticket/652
     if (req.restarts == 0
-        && (req.http.cookie || req.http.authorization)
         && (req.method == "GET" || req.method == "HEAD")
     ) {
         # Backup accept header, if set
@@ -31,9 +30,15 @@ sub fos_user_context_recv {
         }
         set req.http.accept = "application/vnd.fos.user-context-hash";
 
-        # Backup original URL
+        # Backup original URL.
+        #
+        # We do not use X-Original-Url here, as the header will be sent to the
+        # backend and X-Original-Url has semantical meaning for some applications.
+        # For example, the Microsoft IIS rewriting module uses it, and thus
+        # frameworks like Symfony also have to handle that header to integrate with IIS.
+
         set req.http.X-Fos-Original-Url = req.url;
-        
+
         call user_context_hash_url;
 
         # Force the lookup, the backend must tell not to cache or vary on all

@@ -43,7 +43,7 @@ class UserContextListener implements EventSubscriberInterface
     /**
      * When creating this listener, you can configure a number of options.
      *
-     * - anonymous_hash:          Hash used for anonymous user.
+     * - anonymous_hash:          Hash used for anonymous user. Hash lookup skipped for anonymous if this is set.
      * - user_hash_accept_header: Accept header value to be used to request the user hash to the
      *                            backend application. Must match the setup of the backend application.
      * - user_hash_header:        Name of the header the user context hash will be stored into. Must
@@ -162,7 +162,7 @@ class UserContextListener implements EventSubscriberInterface
             return $this->userHash;
         }
 
-        if ($this->isAnonymous($request)) {
+        if ($this->options['anonymous_hash'] && $this->isAnonymous($request)) {
             return $this->userHash = $this->options['anonymous_hash'];
         }
 

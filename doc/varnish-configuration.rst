@@ -203,11 +203,23 @@ User Context
 Feature: :doc:`user context hashing <user-context>`
 
 The ``fos_user_context.vcl`` needs the ``user_context_hash_url`` subroutine
-that sets a URL to the request lookup URL. The default URL is
+that sets the URL to do the hash lookup. The default URL is
 ``/_fos_user_context_hash`` and you can simply include
 ``resources/config/varnish-[version]/fos_user_context_url.vcl`` in your
-configuration to provide this. If you need a different URL, include a custom
-file implementing the ``user_context_hash_url`` subroutine.
+configuration to provide this. If you need a different URL, write your own
+``user_context_hash_url`` subroutine instead.
+
+.. tip::
+
+    The provided VCL to fetch the user hash restarts GET/HEAD requests. It
+    would be more efficient to do the hash lookup request with curl, using the
+    `curl Varnish plugin`_. If you can enable curl support, the recommended way
+    is to implement your own VCL to do a curl request for the hash lookup
+    instead of using the VCL provided here.
+
+    Also note that restarting a GET request leads to Varnish discarding the
+    body of the request. If you have some special case where you have GET
+    requests with a body, use curl.
 
 To enable this feature, add the following to ``your_varnish.vcl``:
 
@@ -264,13 +276,6 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 Your backend application needs to respond to the ``application/vnd.fos.user-context-hash``
 request with :ref:`a proper user hash <return context hash>`.
-
-.. note::
-
-    We do not use ``X-Original-Url`` here, as the header will be sent to the
-    backend and the header has semantical meaning for some applications, which
-    would lead to problems. For example, the Microsoft IIS rewriting module
-    uses it, and consequently Symfony also looks into it to support IIS.
 
 .. tip::
 
@@ -391,5 +396,6 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 .. _banning for Varnish 3: https://www.varnish-software.com/book/3/Cache_invalidation.html#banning
 .. _ban lurker: https://www.varnish-software.com/blog/ban-lurker
 .. _explained in the Varnish documentation: https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies
-.. _`builtin VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/builtin.vcl?rev=4.0
-.. _`default VCL`: https://www.varnish-cache.org/trac/browser/bin/varnishd/default.vcl?rev=3.0
+.. _curl Varnish plugin: https://github.com/varnish/libvmod-curl
+.. _`builtin VCL`: https://github.com/varnishcache/varnish-cache/blob/5.0/bin/varnishd/builtin.vcl
+.. _`default VCL`: https://github.com/varnishcache/varnish-cache/blob/3.0/bin/varnishd/default.vcl
