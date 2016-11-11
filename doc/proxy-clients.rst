@@ -101,11 +101,23 @@ You can also pass some options to the Varnish client:
   which tags to invalidate when sending invalidation requests to the caching
   proxy. Make sure that your :ref:`Varnish configuration <varnish_tagging>`
   corresponds to the header used here;
+* ``tag_mode`` (default: ban): Makes it possible to invalidate tags
+  using `PURGEKEYS` with xkey instead of normal `BAN`. Supported
+  modes: ``ban`` and ``purgekeys``.
 * ``header_length`` (default: 7500): Control the maximum header length when
   invalidating tags. If there are more tags to invalidate than fit into the
   header, the invalidation request is split into several requests;
 * ``default_ban_headers`` (default: []): Map of headers that are set on each
   ban request, merged with the built-in headers.
+
+Example for configuring xkey::
+
+    $options = [
+        'tags_header' => 'xkey-softpurge',// Or 'xkey-purge' if you can not use grace, see VCL
+        'tag_mode' => 'purgekeys'
+    ];
+
+    $varnish = new Varnish($httpDispatcher, $options);
 
 Additionally, you can specify the request factory used to build the
 invalidation HTTP requests. If not specified, auto discovery is used – which

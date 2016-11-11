@@ -21,14 +21,19 @@ class CacheInvalidatorTest extends VarnishTestCase
 {
     public function testInvalidateTags()
     {
+        $uri = '/tags.php';
+        if (getenv('VARNISH_MODULES_VERSION')) {
+            $uri .= '?tags_header=xkey';
+        }
+
         $cacheInvalidator = new CacheInvalidator($this->getProxyClient());
 
-        $this->assertMiss($this->getResponse('/tags.php'));
-        $this->assertHit($this->getResponse('/tags.php'));
+        $this->assertMiss($this->getResponse($uri));
+        $this->assertHit($this->getResponse($uri));
 
         $cacheInvalidator->invalidateTags(['tag1']);
         $cacheInvalidator->flush();
 
-        $this->assertMiss($this->getResponse('/tags.php'));
+        $this->assertMiss($this->getResponse($uri));
     }
 }

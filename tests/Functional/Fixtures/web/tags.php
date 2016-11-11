@@ -9,7 +9,13 @@
  * file that was distributed with this source code.
  */
 
+$tagHeader = empty($_GET['tags_header']) ? 'X-Cache-Tags' : $_GET['tags_header'];
+
 header('Cache-Control: max-age=3600');
 header('Content-Type: text/html');
-header('X-Cache-Tags: tag1,tag2');
+if ($tagHeader === 'xkey') {
+    header($tagHeader . ': tag1 tag2');
+} else {
+    header($tagHeader . ': tag1,tag2');
+}
 header('X-Cache-Debug: 1');
