@@ -43,7 +43,7 @@ class UserContextListener implements EventSubscriberInterface
     /**
      * When creating this listener, you can configure a number of options.
      *
-     * - anonymous_hash:          Hash used for anonymous user.
+     * - anonymous_hash:          Hash used for anonymous user. Hash lookup skipped for anonymous if this is set.
      * - user_hash_accept_header: Accept header value to be used to request the user hash to the
      *                            backend application. Must match the setup of the backend application.
      * - user_hash_header:        Name of the header the user context hash will be stored into. Must
@@ -60,7 +60,7 @@ class UserContextListener implements EventSubscriberInterface
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
-            'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
+            'anonymous_hash' => null,
             'user_hash_accept_header' => 'application/vnd.fos.user-context-hash',
             'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
@@ -104,8 +104,8 @@ class UserContextListener implements EventSubscriberInterface
                 return;
             }
 
-            if ($request->isMethodSafe()) {
-                $request->headers->set($this->options['user_hash_header'], $this->getUserHash($event->getKernel(), $request));
+            if ($request->isMethodSafe() && $hash = $this->getUserHash($event->getKernel(), $request)) {
+                $request->headers->set($this->options['user_hash_header'], $hash);
             }
         }
 
@@ -162,7 +162,7 @@ class UserContextListener implements EventSubscriberInterface
             return $this->userHash;
         }
 
-        if ($this->isAnonymous($request)) {
+        if ($this->options['anonymous_hash'] && $this->isAnonymous($request)) {
             return $this->userHash = $this->options['anonymous_hash'];
         }
 

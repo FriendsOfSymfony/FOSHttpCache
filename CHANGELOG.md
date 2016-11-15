@@ -36,6 +36,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Moved Varnish 4 and 5 configuration files from `resources/config/varnish-4/`
   to `resources/config/varnish/`.
 * Changed default Varnish version to 5.
+* Removed special case for anonymous users in user context behaviour. Varnish
+  now does a hash lookup for anonymous users as well.
 
 ### NGINX
 
@@ -49,6 +51,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   options array for customization.
 * Provide a trait for the event dispatching kernel, instead of a base class.
   The trait offers both the addSubscriber and the addListener methods.
+* The user context by default does not use a hardcoded hash for anonymous users
+  but does a hash lookup. You can still configure a hardcoded hash.
 
 ### Testing
 
