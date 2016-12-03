@@ -21,9 +21,9 @@ trait BanAssertions
     /**
      * Asserting that banning everything leads to all content getting invalidated.
      *
-     * @param Ban $proxyClient The client to send ban instructions to the cache
-     * @param string       $header      The header that holds the URLs
-     * @param array        $paths       The paths to get, defaults to [/cache.php, json.php]
+     * @param Ban    $proxyClient The client to send ban instructions to the cache
+     * @param string $header      The header that holds the URLs
+     * @param array  $paths       The paths to get, defaults to [/cache.php, json.php]
      */
     protected function assertBanAll(Ban $proxyClient, $header, array $paths = ['/cache.php', '/json.php'])
     {
@@ -42,10 +42,10 @@ trait BanAssertions
     /**
      * Asserting that only banning the right host leads to content getting invalidated.
      *
-     * @param Ban $proxyClient The client to send ban instructions to the cache
-     * @param string       $header      The header that holds the URLs
-     * @param string       $hostname    Name of the host so we can invalidate that host
-     * @param string       $path        The path to get, defaults to[/cache.php
+     * @param Ban    $proxyClient The client to send ban instructions to the cache
+     * @param string $header      The header that holds the URLs
+     * @param string $hostname    Name of the host so we can invalidate that host
+     * @param string $path        The path to get, defaults to[/cache.php
      */
     protected function assertBanHost(Ban $proxyClient, $header, $hostname, $path = '/cache.php')
     {
@@ -62,8 +62,8 @@ trait BanAssertions
     /**
      * Asserting that banPath leads to content getting invalidated.
      *
-     * @param Ban $proxyClient The client to send ban instructions to the cache
-     * @param array        $paths       The paths to get, defaults to [/cache.php, json.php]
+     * @param Ban   $proxyClient The client to send ban instructions to the cache
+     * @param array $paths       The paths to get, defaults to [/cache.php, json.php]
      */
     protected function assertBanPath(Ban $proxyClient, array $paths = ['/cache.php', '/json.php'])
     {
@@ -82,9 +82,9 @@ trait BanAssertions
     /**
      * Asserting that banPath leads to content getting invalidated.
      *
-     * @param Ban $proxyClient The client to send ban instructions to the cache
-     * @param string       $htmlPath    Path to a HTML content, defaults to /cache.php
-     * @param string       $otherPath   Path to a non-HTML content, defaults to json.php
+     * @param Ban    $proxyClient The client to send ban instructions to the cache
+     * @param string $htmlPath    Path to a HTML content, defaults to /cache.php
+     * @param string $otherPath   Path to a non-HTML content, defaults to json.php
      */
     protected function assertBanPathContentType(Ban $proxyClient, $htmlPath = '/cache.php', $otherPath = '/json.php')
     {

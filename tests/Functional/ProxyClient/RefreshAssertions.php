@@ -22,7 +22,7 @@ trait RefreshAssertions
      * Asserting that refreshing leads to updated content that is already cached.
      *
      * @param Refresh $proxyClient The client to send refresh instructions to the cache
-     * @param string           $path        The path to get and refresh, defaults to /cache.php
+     * @param string  $path        The path to get and refresh, defaults to /cache.php
      */
     protected function assertRefresh(Refresh $proxyClient, $path = '/cache.php')
     {
@@ -47,7 +47,7 @@ trait RefreshAssertions
      * Asserting that refreshing one variant does not touch the other variants.
      *
      * @param Refresh $proxyClient The client to send refresh instructions to the cache
-     * @param string           $path        The path to get and refresh, defaults to /negotiation.php
+     * @param string  $path        The path to get and refresh, defaults to /negotiation.php
      */
     protected function assertRefreshContentType(Refresh $proxyClient, $path = '/negotiation.php')
     {

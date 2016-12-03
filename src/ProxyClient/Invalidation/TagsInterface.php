@@ -20,7 +20,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
  * HTTP responses must carry the tags header name with the tags header value
  * for tag invalidation to work.
  */
-interface Tags extends ProxyClient
+interface TagsInterface extends ProxyClient
 {
     /**
      * Remove/Expire cache objects based on cache tags.

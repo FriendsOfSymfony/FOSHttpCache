@@ -16,7 +16,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
 /**
  * An HTTP cache that supports invalidation by purging: Remove one URL from the cache.
  */
-interface Purge extends ProxyClient
+interface PurgeInterface extends ProxyClient
 {
     /**
      * Purge a URL.

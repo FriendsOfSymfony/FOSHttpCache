@@ -48,8 +48,8 @@ class ResponseTagger
      *
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      *
-     * @param Tags $proxyClient
-     * @param array         $options
+     * @param Tags  $proxyClient
+     * @param array $options
      */
     public function __construct(Tags $proxyClient, array $options = array())
     {

@@ -80,8 +80,8 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
      * Set the store property on a HttpCache to a StoreInterface expecting one write with request and response.
      *
      * @param CacheInvalidation $httpCache
-     * @param Request                    $request
-     * @param Response                   $response
+     * @param Request           $request
+     * @param Response          $response
      */
     protected function setStoreMock(CacheInvalidation $httpCache, Request $request, Response $response)
     {

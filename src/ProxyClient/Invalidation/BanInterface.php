@@ -17,7 +17,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
  * An HTTP cache that supports invalidation by banning, that is, removing
  * objects from the cache that match a regular expression.
  */
-interface Ban extends ProxyClient
+interface BanInterface extends ProxyClient
 {
     const REGEX_MATCH_ALL = '.*';
     const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;

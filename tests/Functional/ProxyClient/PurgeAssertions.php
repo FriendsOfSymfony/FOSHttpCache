@@ -21,8 +21,8 @@ trait PurgeAssertions
     /**
      * Asserting that purging leads to invalidated content.
      *
-     * @param Purge $proxyClient The client to send purge instructions to the cache
-     * @param string         $path        The path to get and purge, defaults to /cache.php
+     * @param Purge  $proxyClient The client to send purge instructions to the cache
+     * @param string $path        The path to get and purge, defaults to /cache.php
      */
     protected function assertPurge(Purge $proxyClient, $path = '/cache.php')
     {
@@ -36,9 +36,9 @@ trait PurgeAssertions
     /**
      * Asserting that purging including the domain leads to invalidated content.
      *
-     * @param Purge $proxyClient The client to send purge instructions to the cache
-     * @param string         $host        The host name to use in the purge request
-     * @param string         $path        The path to get and purge, defaults to /cache.php
+     * @param Purge  $proxyClient The client to send purge instructions to the cache
+     * @param string $host        The host name to use in the purge request
+     * @param string $path        The path to get and purge, defaults to /cache.php
      */
     protected function assertPurgeHost(Purge $proxyClient, $host, $path = '/cache.php')
     {

@@ -42,8 +42,8 @@ class CacheEvent extends Event
      * Make sure your $kernel implements CacheInvalidationInterface.
      *
      * @param CacheInvalidation $kernel   The kernel raising with this event
-     * @param Request                    $request  The request being processed
-     * @param Response                   $response The response, if available
+     * @param Request           $request  The request being processed
+     * @param Response          $response The response, if available
      */
     public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null)
     {
