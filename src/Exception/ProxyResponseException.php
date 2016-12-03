@@ -17,7 +17,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Wrapping an error response from the caching proxy.
  */
-class ProxyResponseException extends \RuntimeException implements HttpCacheExceptionInterface
+class ProxyResponseException extends \RuntimeException implements HttpCacheException
 {
     /**
      * @param ResponseInterface $response HTTP response

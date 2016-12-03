@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\Test\EventDispatchingHttpCacheTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ class EventDispatchingHttpCacheTest extends EventDispatchingHttpCacheTestCase
     }
 }
 
-class AppCache extends HttpCache implements CacheInvalidationInterface
+class AppCache extends HttpCache implements CacheInvalidation
 {
     use EventDispatchingHttpCache;
 

@@ -11,10 +11,10 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 
 /**
  * This is a no operation client, its only purpose is to provide an implementation for use in an enviroments that
@@ -22,7 +22,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
  *
  * @author Gavin Staniforth <gavin@gsdev.me>
  */
-class Noop implements ProxyClientInterface, BanInterface, PurgeInterface, RefreshInterface, TagsInterface
+class Noop implements ProxyClient, BanCapable, PurgeCapable, RefreshCapable, TagCapable
 {
     /**
      * {@inheritdoc}

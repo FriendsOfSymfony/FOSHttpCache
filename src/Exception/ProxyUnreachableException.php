@@ -17,7 +17,7 @@ use Http\Client\Exception\RequestException;
  * Thrown when a request to the reverse caching proxy fails to establish a
  * connection.
  */
-class ProxyUnreachableException extends \RuntimeException implements HttpCacheExceptionInterface
+class ProxyUnreachableException extends \RuntimeException implements HttpCacheException
 {
     /**
      * @param RequestException $requestException

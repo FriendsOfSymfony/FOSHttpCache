@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 
 /**
  * Assertions that do the purge operations.
@@ -21,10 +21,10 @@ trait PurgeAssertions
     /**
      * Asserting that purging leads to invalidated content.
      *
-     * @param PurgeInterface $proxyClient The client to send purge instructions to the cache
-     * @param string         $path        The path to get and purge, defaults to /cache.php
+     * @param PurgeCapable $proxyClient The client to send purge instructions to the cache
+     * @param string       $path        The path to get and purge, defaults to /cache.php
      */
-    protected function assertPurge(PurgeInterface $proxyClient, $path = '/cache.php')
+    protected function assertPurge(PurgeCapable $proxyClient, $path = '/cache.php')
     {
         $this->assertMiss($this->getResponse($path));
         $this->assertHit($this->getResponse($path));
@@ -36,11 +36,11 @@ trait PurgeAssertions
     /**
      * Asserting that purging including the domain leads to invalidated content.
      *
-     * @param PurgeInterface $proxyClient The client to send purge instructions to the cache
-     * @param string         $host        The host name to use in the purge request
-     * @param string         $path        The path to get and purge, defaults to /cache.php
+     * @param PurgeCapable $proxyClient The client to send purge instructions to the cache
+     * @param string       $host        The host name to use in the purge request
+     * @param string       $path        The path to get and purge, defaults to /cache.php
      */
-    protected function assertPurgeHost(PurgeInterface $proxyClient, $host, $path = '/cache.php')
+    protected function assertPurgeHost(PurgeCapable $proxyClient, $host, $path = '/cache.php')
     {
         $this->assertMiss($this->getResponse($path));
         $this->assertHit($this->getResponse($path));
@@ -49,7 +49,7 @@ trait PurgeAssertions
         $this->assertMiss($this->getResponse($path));
     }
 
-    protected function assertPurgeContentType(PurgeInterface $proxyClient, $path = '/negotiation.php')
+    protected function assertPurgeContentType(PurgeCapable $proxyClient, $path = '/negotiation.php')
     {
         $json = ['Accept' => 'application/json'];
         $html = ['Accept' => 'text/html'];

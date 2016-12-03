@@ -183,7 +183,7 @@ to all proxy clients provided at creation time::
 
     $nginxClient = new Nginx($servers);
     $symfonyClient = new Symfony([...]);
-    // Expects an array of ProxyClientInterface in the constructor
+    // Expects an array of ProxyClient in the constructor
     $client = new MultiplexerClient([$nginxClient, $symfonyClient]);
 
 .. note::
@@ -202,14 +202,14 @@ The recommended usage of the proxy client is to create an instance of
 Implementation Notes
 --------------------
 
-Each client is an implementation of :source:`ProxyClientInterface <src/ProxyClient/ProxyClientInterface.php>`.
-All other interfaces, ``PurgeInterface``, ``RefreshInterface`` and ``BanInterface``
-extend this ``ProxyClientInterface``. So each client implements at least one of
-the three :ref:`invalidation methods <invalidation methods>` depending on the
-proxy server’s abilities. To interact with a proxy client directly, refer to the
-doc comments on the interfaces.
+Each client is an implementation of :source:`ProxyClient <src/ProxyClient/ProxyClient.php>`.
+All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable`` and
+``TagCapable``, extend this ``ProxyClient``. So each client implements at least
+one of the three :ref:`invalidation methods <invalidation methods>` depending on
+the proxy server’s abilities. To interact with a proxy client directly, refer to
+the doc comments on the interfaces.
 
-The ``ProxyClientInterface`` has one method: ``flush()``. After collecting
+The ``ProxyClient`` has one method: ``flush()``. After collecting
 invalidation requests, ``flush()`` needs to be called to actually send the
 requests to the proxy server. This is on purpose: this way, we can send
 all requests together, reducing the performance impact of sending invalidation

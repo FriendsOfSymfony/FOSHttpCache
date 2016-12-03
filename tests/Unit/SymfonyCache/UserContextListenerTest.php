@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,13 +21,13 @@ use Symfony\Component\HttpFoundation\Response;
 class UserContextListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CacheInvalidationInterface|MockInterface
+     * @var CacheInvalidation|MockInterface
      */
     private $kernel;
 
     public function setUp()
     {
-        $this->kernel = \Mockery::mock(CacheInvalidationInterface::class);
+        $this->kernel = \Mockery::mock(CacheInvalidation::class);
     }
 
     /**

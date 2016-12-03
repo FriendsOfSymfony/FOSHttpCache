@@ -19,7 +19,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * Interface for a HttpCache that supports active cache invalidation.
  */
-interface CacheInvalidationInterface extends HttpKernelInterface
+interface CacheInvalidation extends HttpKernelInterface
 {
     /**
      * Forwards the Request to the backend and determines whether the response should be stored.

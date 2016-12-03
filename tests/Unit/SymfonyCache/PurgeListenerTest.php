@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use Mockery\MockInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -142,11 +142,11 @@ class PurgeListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return CacheInvalidationInterface|MockInterface
+     * @return CacheInvalidation|MockInterface
      */
     private function getKernelMock(StoreInterface $store)
     {
-        return \Mockery::mock(CacheInvalidationInterface::class)
+        return \Mockery::mock(CacheInvalidation::class)
             ->shouldReceive('getStore')
             ->once()
             ->andReturn($store)
@@ -154,11 +154,11 @@ class PurgeListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return CacheInvalidationInterface|MockInterface
+     * @return CacheInvalidation|MockInterface
      */
     private function getUnusedKernelMock()
     {
-        return \Mockery::mock(CacheInvalidationInterface::class)
+        return \Mockery::mock(CacheInvalidation::class)
             ->shouldNotReceive('getStore')
             ->getMock();
     }

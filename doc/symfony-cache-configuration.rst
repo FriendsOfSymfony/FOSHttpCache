@@ -27,15 +27,15 @@ Using the trait
     The trait is available since version 2.0.0. Version 1.* of this library
     instead provided a base ``HttpCache`` class to extend.
 
-Your ``AppCache`` needs to implement ``CacheInvalidationInterface`` and use the
+Your ``AppCache`` needs to implement ``CacheInvalidation`` and use the
 trait ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``::
 
-    use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+    use FOS\HttpCache\SymfonyCache\CacheInvalidation;
     use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
-    class AppCache extends HttpCache implements CacheInvalidationInterface
+    class AppCache extends HttpCache implements CacheInvalidation
     {
         use EventDispatchingHttpCache;
 

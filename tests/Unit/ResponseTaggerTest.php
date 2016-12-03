@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
-use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Exception\InvalidTagException;
@@ -22,7 +22,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetTagsHeaderValue()
     {
-        $proxyClient = \Mockery::mock(TagsInterface::class)
+        $proxyClient = \Mockery::mock(TagCapable::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1', 'test,post'])
             ->once()
@@ -38,7 +38,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseReplace()
     {
-        $proxyClient = \Mockery::mock(TagsInterface::class)
+        $proxyClient = \Mockery::mock(TagCapable::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
@@ -61,7 +61,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseAdd()
     {
-        $proxyClient = \Mockery::mock(TagsInterface::class)
+        $proxyClient = \Mockery::mock(TagCapable::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
@@ -85,7 +85,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
     public function testTagResponseNoTags()
     {
         /** @var TagsInterface $proxyClient */
-        $proxyClient = \Mockery::mock(TagsInterface::class)
+        $proxyClient = \Mockery::mock(TagCapable::class)
             ->shouldReceive('getTagsHeaderValue')->never()
             ->getMock();
 
@@ -116,7 +116,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testNonStrictEmptyTag()
     {
-        $proxyClient = \Mockery::mock(TagsInterface::class)
+        $proxyClient = \Mockery::mock(TagCapable::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1'])
             ->once()

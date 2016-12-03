@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 
 /**
  * Assertions that do the ban operations.
@@ -21,11 +21,11 @@ trait BanAssertions
     /**
      * Asserting that banning everything leads to all content getting invalidated.
      *
-     * @param BanInterface $proxyClient The client to send ban instructions to the cache
-     * @param string       $header      The header that holds the URLs
-     * @param array        $paths       The paths to get, defaults to [/cache.php, json.php]
+     * @param BanCapable $proxyClient The client to send ban instructions to the cache
+     * @param string     $header      The header that holds the URLs
+     * @param array      $paths       The paths to get, defaults to [/cache.php, json.php]
      */
-    protected function assertBanAll(BanInterface $proxyClient, $header, array $paths = ['/cache.php', '/json.php'])
+    protected function assertBanAll(BanCapable $proxyClient, $header, array $paths = ['/cache.php', '/json.php'])
     {
         foreach ($paths as $path) {
             $this->assertMiss($this->getResponse($path));
@@ -42,12 +42,12 @@ trait BanAssertions
     /**
      * Asserting that only banning the right host leads to content getting invalidated.
      *
-     * @param BanInterface $proxyClient The client to send ban instructions to the cache
-     * @param string       $header      The header that holds the URLs
-     * @param string       $hostname    Name of the host so we can invalidate that host
-     * @param string       $path        The path to get, defaults to[/cache.php
+     * @param BanCapable $proxyClient The client to send ban instructions to the cache
+     * @param string     $header      The header that holds the URLs
+     * @param string     $hostname    Name of the host so we can invalidate that host
+     * @param string     $path        The path to get, defaults to /cache.php
      */
-    protected function assertBanHost(BanInterface $proxyClient, $header, $hostname, $path = '/cache.php')
+    protected function assertBanHost(BanCapable $proxyClient, $header, $hostname, $path = '/cache.php')
     {
         $this->assertMiss($this->getResponse($path));
         $this->assertHit($this->getResponse($path));
@@ -62,10 +62,10 @@ trait BanAssertions
     /**
      * Asserting that banPath leads to content getting invalidated.
      *
-     * @param BanInterface $proxyClient The client to send ban instructions to the cache
-     * @param array        $paths       The paths to get, defaults to [/cache.php, json.php]
+     * @param BanCapable $proxyClient The client to send ban instructions to the cache
+     * @param array      $paths       The paths to get, defaults to [/cache.php, json.php]
      */
-    protected function assertBanPath(BanInterface $proxyClient, array $paths = ['/cache.php', '/json.php'])
+    protected function assertBanPath(BanCapable $proxyClient, array $paths = ['/cache.php', '/json.php'])
     {
         foreach ($paths as $path) {
             $this->assertMiss($this->getResponse($path));
@@ -82,11 +82,11 @@ trait BanAssertions
     /**
      * Asserting that banPath leads to content getting invalidated.
      *
-     * @param BanInterface $proxyClient The client to send ban instructions to the cache
-     * @param string       $htmlPath    Path to a HTML content, defaults to /cache.php
-     * @param string       $otherPath   Path to a non-HTML content, defaults to json.php
+     * @param BanCapable $proxyClient The client to send ban instructions to the cache
+     * @param string     $htmlPath    Path to a HTML content, defaults to /cache.php
+     * @param string     $otherPath   Path to a non-HTML content, defaults to json.php
      */
-    protected function assertBanPathContentType(BanInterface $proxyClient, $htmlPath = '/cache.php', $otherPath = '/json.php')
+    protected function assertBanPathContentType(BanCapable $proxyClient, $htmlPath = '/cache.php', $otherPath = '/json.php')
     {
         $this->assertMiss($this->getResponse($htmlPath));
         $this->assertHit($this->getResponse($htmlPath));

@@ -15,7 +15,7 @@ namespace FOS\HttpCache\Exception;
  * Thrown when there is no default host configured and an invalidation request
  * with just a path is made.
  */
-class MissingHostException extends \RuntimeException implements HttpCacheExceptionInterface
+class MissingHostException extends \RuntimeException implements HttpCacheException
 {
     /**
      * @param string $path The path that was asked to be invalidated

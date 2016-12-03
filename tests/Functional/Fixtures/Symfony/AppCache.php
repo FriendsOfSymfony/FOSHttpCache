@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional\Fixtures\Symfony;
 
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\CustomTtlListener;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class AppCache extends HttpCache implements CacheInvalidationInterface
+class AppCache extends HttpCache implements CacheInvalidation
 {
     use EventDispatchingHttpCache;
 

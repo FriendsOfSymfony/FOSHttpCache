@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 
 /**
  * Assertions that do the refresh operations.
@@ -21,10 +21,10 @@ trait RefreshAssertions
     /**
      * Asserting that refreshing leads to updated content that is already cached.
      *
-     * @param RefreshInterface $proxyClient The client to send refresh instructions to the cache
-     * @param string           $path        The path to get and refresh, defaults to /cache.php
+     * @param RefreshCapable $proxyClient The client to send refresh instructions to the cache
+     * @param string         $path        The path to get and refresh, defaults to /cache.php
      */
-    protected function assertRefresh(RefreshInterface $proxyClient, $path = '/cache.php')
+    protected function assertRefresh(RefreshCapable $proxyClient, $path = '/cache.php')
     {
         $this->assertMiss($this->getResponse($path));
         $response = $this->getResponse($path);
@@ -46,10 +46,10 @@ trait RefreshAssertions
     /**
      * Asserting that refreshing one variant does not touch the other variants.
      *
-     * @param RefreshInterface $proxyClient The client to send refresh instructions to the cache
-     * @param string           $path        The path to get and refresh, defaults to /negotiation.php
+     * @param RefreshCapable $proxyClient The client to send refresh instructions to the cache
+     * @param string         $path        The path to get and refresh, defaults to /negotiation.php
      */
-    protected function assertRefreshContentType(RefreshInterface $proxyClient, $path = '/negotiation.php')
+    protected function assertRefreshContentType(RefreshCapable $proxyClient, $path = '/negotiation.php')
     {
         $json = ['Accept' => 'application/json'];
         $html = ['Accept' => 'text/html'];
