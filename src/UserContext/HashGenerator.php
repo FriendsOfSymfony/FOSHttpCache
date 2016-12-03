@@ -19,14 +19,14 @@ use FOS\HttpCache\Exception\InvalidArgumentException;
 class HashGenerator
 {
     /**
-     * @var ContextProviderInterface[]
+     * @var ContextProvider[]
      */
     private $providers = [];
 
     /**
      * Constructor.
      *
-     * @param ContextProviderInterface[] $providers
+     * @param ContextProvider[] $providers
      *
      * @throws InvalidArgumentException If no providers are supplied
      */
@@ -65,9 +65,9 @@ class HashGenerator
     /**
      * Register a provider to be called for updating a UserContext before generating the Hash.
      *
-     * @param ContextProviderInterface $provider A context provider to be called to get context information about the current request
+     * @param ContextProvider $provider A context provider to be called to get context information about the current request
      */
-    private function registerProvider(ContextProviderInterface $provider)
+    private function registerProvider(ContextProvider $provider)
     {
         $this->providers[] = $provider;
     }

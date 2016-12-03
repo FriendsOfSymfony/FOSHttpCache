@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\UserContext;
 
-use FOS\HttpCache\UserContext\ContextProviderInterface;
+use FOS\HttpCache\UserContext\ContextProvider;
 use FOS\HttpCache\UserContext\HashGenerator;
 use FOS\HttpCache\UserContext\UserContext;
 
@@ -35,7 +35,7 @@ class HashGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class FooProvider implements ContextProviderInterface
+class FooProvider implements ContextProvider
 {
     public function updateUserContext(UserContext $context)
     {

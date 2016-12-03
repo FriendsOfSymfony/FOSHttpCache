@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Functional\Varnish;
 
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\CustomTtlListener;
 use FOS\HttpCache\SymfonyCache\DebugListener;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
@@ -62,7 +62,7 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class AppCache extends HttpCache implements CacheInvalidationInterface
+class AppCache extends HttpCache implements CacheInvalidation
 {
     use EventDispatchingHttpCache;
 

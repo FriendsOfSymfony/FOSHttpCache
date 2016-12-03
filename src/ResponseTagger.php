@@ -12,7 +12,7 @@
 namespace FOS\HttpCache;
 
 use FOS\HttpCache\Exception\InvalidTagException;
-use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\Tags;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,7 +32,7 @@ class ResponseTagger
     private $options;
 
     /**
-     * @var TagsInterface
+     * @var Tags
      */
     private $proxyClient;
 
@@ -48,10 +48,10 @@ class ResponseTagger
      *
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      *
-     * @param TagsInterface $proxyClient
+     * @param Tags $proxyClient
      * @param array         $options
      */
-    public function __construct(TagsInterface $proxyClient, array $options = array())
+    public function __construct(Tags $proxyClient, array $options = array())
     {
         $this->proxyClient = $proxyClient;
 

@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\RefreshListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
@@ -21,13 +21,13 @@ use Symfony\Component\HttpFoundation\Response;
 class RefreshListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CacheInvalidationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInvalidation|\PHPUnit_Framework_MockObject_MockObject
      */
     private $kernel;
 
     public function setUp()
     {
-        $this->kernel = $this->getMock(CacheInvalidationInterface::class);
+        $this->kernel = $this->getMock(CacheInvalidation::class);
     }
 
     public function testRefreshAllowed()

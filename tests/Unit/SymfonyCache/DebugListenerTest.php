@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\DebugListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,13 +20,13 @@ use Symfony\Component\HttpFoundation\Response;
 class DebugListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CacheInvalidationInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInvalidation|\PHPUnit_Framework_MockObject_MockObject
      */
     private $kernel;
 
     public function setUp()
     {
-        $this->kernel = \Mockery::mock(CacheInvalidationInterface::class);
+        $this->kernel = \Mockery::mock(CacheInvalidation::class);
     }
 
     public function testDebugHit()

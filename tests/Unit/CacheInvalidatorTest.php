@@ -17,11 +17,11 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
-use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\Ban;
+use FOS\HttpCache\ProxyClient\Invalidation\Purge;
+use FOS\HttpCache\ProxyClient\Invalidation\Refresh;
+use FOS\HttpCache\ProxyClient\Invalidation\Tags;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\RequestException;
@@ -49,8 +49,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testSupportsFalse()
     {
-        /** @var MockInterface|ProxyClientInterface $proxyClient */
-        $proxyClient = \Mockery::mock(ProxyClientInterface::class);
+        /** @var MockInterface|ProxyClient $proxyClient */
+        $proxyClient = \Mockery::mock(ProxyClient::class);
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
 
@@ -65,8 +65,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupportsInvalid()
     {
-        /** @var MockInterface|ProxyClientInterface $proxyClient */
-        $proxyClient = \Mockery::mock(ProxyClientInterface::class);
+        /** @var MockInterface|ProxyClient $proxyClient */
+        $proxyClient = \Mockery::mock(ProxyClient::class);
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
 
@@ -75,8 +75,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidatePath()
     {
-        /** @var MockInterface|PurgeInterface $purge */
-        $purge = \Mockery::mock(PurgeInterface::class)
+        /** @var MockInterface|Purge $purge */
+        $purge = \Mockery::mock(Purge::class)
             ->shouldReceive('purge')->once()->with('/my/route', [])
             ->shouldReceive('purge')->once()->with('/my/route', ['X-Test-Header' => 'xyz'])
             ->shouldReceive('flush')->once()
@@ -94,8 +94,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
     public function testRefreshPath()
     {
         $headers = ['X' => 'Y'];
-        /** @var MockInterface|RefreshInterface $refresh */
-        $refresh = \Mockery::mock(RefreshInterface::class)
+        /** @var MockInterface|Refresh $refresh */
+        $refresh = \Mockery::mock(Refresh::class)
             ->shouldReceive('refresh')->once()->with('/my/route', $headers)
             ->shouldReceive('flush')->never()
             ->getMock();
@@ -114,8 +114,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             'Other-Header' => '^a|b|c$',
         ];
 
-        /** @var MockInterface|BanInterface $ban */
-        $ban = \Mockery::mock(BanInterface::class)
+        /** @var MockInterface|Ban $ban */
+        $ban = \Mockery::mock(Ban::class)
             ->shouldReceive('ban')
             ->with($headers)
             ->once()
@@ -132,8 +132,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
             'post-type-2',
         ];
 
-        /** @var MockInterface|TagsInterface $tagHandler */
-        $tagHandler = \Mockery::mock(TagsInterface::class)
+        /** @var MockInterface|Tags $tagHandler */
+        $tagHandler = \Mockery::mock(Tags::class)
             ->shouldReceive('invalidateTags')
             ->with($tags)
             ->once()
@@ -145,8 +145,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidateRegex()
     {
-        /** @var MockInterface|BanInterface $ban */
-        $ban = \Mockery::mock(BanInterface::class)
+        /** @var MockInterface|Ban $ban */
+        $ban = \Mockery::mock(Ban::class)
             ->shouldReceive('banPath')
             ->with('/a', 'b', ['example.com'])
             ->once()
@@ -158,8 +158,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testMethodException()
     {
-        /** @var MockInterface|ProxyClientInterface $proxyClient */
-        $proxyClient = \Mockery::mock(ProxyClientInterface::class);
+        /** @var MockInterface|ProxyClient $proxyClient */
+        $proxyClient = \Mockery::mock(ProxyClient::class);
         $cacheInvalidator = new CacheInvalidator($proxyClient);
         try {
             $cacheInvalidator->invalidatePath('/');
@@ -215,8 +215,8 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         $exceptions = new ExceptionCollection();
         $exceptions->add($unreachableException)->add($responseException);
 
-        /** @var MockInterface|ProxyClientInterface $proxyClient */
-        $proxyClient = \Mockery::mock(ProxyClientInterface::class)
+        /** @var MockInterface|ProxyClient $proxyClient */
+        $proxyClient = \Mockery::mock(ProxyClient::class)
             ->shouldReceive('flush')->once()->andThrow($exceptions)
             ->getMock();
 

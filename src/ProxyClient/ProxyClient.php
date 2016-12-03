@@ -18,7 +18,7 @@ use FOS\HttpCache\Exception\ExceptionCollection;
  *
  * Implementations should implement at least one of the Invalidation interfaces.
  */
-interface ProxyClientInterface
+interface ProxyClient
 {
     /**
      * Send all pending invalidation requests.

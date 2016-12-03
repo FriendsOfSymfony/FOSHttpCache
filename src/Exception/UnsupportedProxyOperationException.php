@@ -15,7 +15,7 @@ namespace FOS\HttpCache\Exception;
  * Thrown when the CacheInvalidator is asked for an operation the underlying
  * cache proxy does not support.
  */
-class UnsupportedProxyOperationException extends \RuntimeException implements HttpCacheExceptionInterface
+class UnsupportedProxyOperationException extends \RuntimeException implements HttpCacheException
 {
     /**
      * @param string $method Name of the HTTP method that would be required

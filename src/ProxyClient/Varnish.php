@@ -12,10 +12,10 @@
 namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\InvalidArgumentException;
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\Ban;
+use FOS\HttpCache\ProxyClient\Invalidation\Purge;
+use FOS\HttpCache\ProxyClient\Invalidation\Refresh;
+use FOS\HttpCache\ProxyClient\Invalidation\Tags;
 
 /**
  * Varnish HTTP cache invalidator.
@@ -28,7 +28,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagsInterface;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish extends HttpProxyClient implements BanInterface, PurgeInterface, RefreshInterface, TagsInterface
+class Varnish extends HttpProxyClient implements Ban, Purge, Refresh, Tags
 {
     const HTTP_METHOD_BAN = 'BAN';
     const HTTP_METHOD_PURGE = 'PURGE';

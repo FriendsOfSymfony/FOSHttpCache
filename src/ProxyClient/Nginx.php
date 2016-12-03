@@ -11,8 +11,8 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\Purge;
+use FOS\HttpCache\ProxyClient\Invalidation\Refresh;
 
 /**
  * NGINX HTTP cache invalidator.
@@ -23,7 +23,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
  *
  * @author Simone Fumagalli <simone@iliveinperego.com>
  */
-class Nginx extends HttpProxyClient implements PurgeInterface, RefreshInterface
+class Nginx extends HttpProxyClient implements Purge, Refresh
 {
     const HTTP_METHOD_PURGE = 'PURGE';
     const HTTP_METHOD_REFRESH = 'GET';

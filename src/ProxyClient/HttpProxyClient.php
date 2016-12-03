@@ -21,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @author David de Boer <david@driebit.nl>
  */
-abstract class HttpProxyClient implements ProxyClientInterface
+abstract class HttpProxyClient implements ProxyClient
 {
     /**
      * Dispatcher for invalidation HTTP requests.
