@@ -82,6 +82,23 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
         $tagger->tagResponse($response);
     }
 
+    public function testTagResponseNoTags()
+    {
+        /** @var TagsInterface $proxyClient */
+        $proxyClient = \Mockery::mock(TagsInterface::class)
+            ->shouldReceive('getTagsHeaderValue')->never()
+            ->getMock();
+
+        $tagger = new ResponseTagger($proxyClient);
+
+        $response = \Mockery::mock(ResponseInterface::class)
+            ->shouldReceive('withHeader')->never()
+            ->shouldReceive('withAddedHeader')->never()
+            ->getMock();
+
+        $tagger->tagResponse($response, true);
+    }
+
     public function testStrictEmptyTag()
     {
         $httpAdapter = new HttpDispatcher(['localhost'], 'localhost');

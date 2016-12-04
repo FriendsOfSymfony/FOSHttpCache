@@ -132,6 +132,10 @@ class ResponseTagger
      */
     public function tagResponse(ResponseInterface $response, $replace = false)
     {
+        if (!$this->hasTags()) {
+            return $response;
+        }
+
         if ($replace) {
             return $response->withHeader($this->getTagsHeaderName(), $this->getTagsHeaderValue());
         }
