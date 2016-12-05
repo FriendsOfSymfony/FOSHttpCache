@@ -27,7 +27,7 @@ class HttpClient
     /**
      * HTTP client for requests to the application.
      *
-     * @var HttpClient
+     * @var PhpHttpClient
      */
     private $httpClient;
 
