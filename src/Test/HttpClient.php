@@ -62,10 +62,23 @@ class HttpClient
      */
     public function getResponse($uri, array $headers, $method)
     {
+        $request = $this->createRequest($method, $uri, $headers);
+
+        return $this->sendRequest($request);
+    }
+
+    /**
+     * Send PSR HTTP request to your application.
+     *
+     * @param RequestInterface $request
+     *
+     * @return ResponseInterface
+     */
+    public function sendRequest(RequestInterface $request)
+    {
         // Close connections to make sure invalidation (PURGE/BAN) requests will
         // not interfere with content (GET) requests.
-        $headers['Connection'] = 'Close';
-        $request = $this->createRequest($method, $uri, $headers);
+        $request = $request->withHeader('Connection', 'Close');
 
         return $this->getHttpClient()->sendRequest($request);
     }
