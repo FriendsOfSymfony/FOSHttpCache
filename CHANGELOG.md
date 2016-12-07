@@ -9,6 +9,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 ### PHP
 
 * Raised minimum PHP version to 5.5.
+* **BC break:** Removed the `Interface` suffix from all interfaces.
 
 ### HTTP
 
@@ -24,6 +25,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * **BC break:** Renamed the log event listener from `LogSubscriber` to 
   `LogListener`.
+  
+### Proxy clients
+
+* **BC break**: Renamed the `Ban`, `Purge`, `Refresh` and `Tag` interfaces to 
+  `BanCapable`, `PurgeCapable`, `RefreshCapable` and `TagCapable`.
 
 ### Tagging
 

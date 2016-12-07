@@ -11,8 +11,8 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 
 /**
@@ -24,7 +24,7 @@ use FOS\HttpCache\SymfonyCache\PurgeListener;
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class Symfony extends HttpProxyClient implements PurgeInterface, RefreshInterface
+class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable
 {
     const HTTP_METHOD_REFRESH = 'GET';
 

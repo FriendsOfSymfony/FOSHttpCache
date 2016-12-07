@@ -13,31 +13,31 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidArgumentException;
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 
 /**
  * This class forwards invalidation to all attached clients.
  *
  * @author Emanuele Panzeri <thepanz@gmail.com>
  */
-class MultiplexerClient implements BanInterface, PurgeInterface, RefreshInterface
+class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable
 {
     /**
-     * @var ProxyClientInterface[]
+     * @var ProxyClient[]
      */
     private $proxyClients;
 
     /**
      * MultiplexerClient constructor.
      *
-     * @param ProxyClientInterface[] $proxyClients The list of Proxy clients
+     * @param ProxyClient[] $proxyClients The list of Proxy clients
      */
     public function __construct(array $proxyClients)
     {
         foreach ($proxyClients as $proxyClient) {
-            if (!$proxyClient instanceof ProxyClientInterface) {
+            if (!$proxyClient instanceof ProxyClient) {
                 throw new InvalidArgumentException('Expected ProxyClientInterface, got: '.
                     (is_object($proxyClient) ? get_class($proxyClient) : gettype($proxyClient))
                 );
@@ -56,7 +56,7 @@ class MultiplexerClient implements BanInterface, PurgeInterface, RefreshInterfac
      */
     public function ban(array $headers)
     {
-        $this->invoke(BanInterface::class, 'ban', [$headers]);
+        $this->invoke(BanCapable::class, 'ban', [$headers]);
 
         return $this;
     }
@@ -73,7 +73,7 @@ class MultiplexerClient implements BanInterface, PurgeInterface, RefreshInterfac
      */
     public function banPath($path, $contentType = null, $hosts = null)
     {
-        $this->invoke(BanInterface::class, 'banPath', [$path, $contentType, $hosts]);
+        $this->invoke(BanCapable::class, 'banPath', [$path, $contentType, $hosts]);
 
         return $this;
     }
@@ -105,7 +105,7 @@ class MultiplexerClient implements BanInterface, PurgeInterface, RefreshInterfac
      */
     public function purge($url, array $headers = array())
     {
-        $this->invoke(PurgeInterface::class, 'purge', [$url, $headers]);
+        $this->invoke(PurgeCapable::class, 'purge', [$url, $headers]);
 
         return $this;
     }
@@ -120,7 +120,7 @@ class MultiplexerClient implements BanInterface, PurgeInterface, RefreshInterfac
      */
     public function refresh($url, array $headers = [])
     {
-        $this->invoke(RefreshInterface::class, 'refresh', [$url, $headers]);
+        $this->invoke(RefreshCapable::class, 'refresh', [$url, $headers]);
 
         return $this;
     }

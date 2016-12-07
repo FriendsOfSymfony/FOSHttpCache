@@ -11,11 +11,11 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\BanInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeInterface;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
+use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\MultiplexerClient;
-use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 
 class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,13 +23,13 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
     {
         $headers = ['Header1' => 'Header1-Value'];
 
-        $mockClient1 = \Mockery::mock(BanInterface::class)
+        $mockClient1 = \Mockery::mock(BanCapable::class)
             ->shouldReceive('ban')
             ->once()
             ->with($headers)
             ->getMock();
 
-        $mockClient2 = \Mockery::mock(BanInterface::class)
+        $mockClient2 = \Mockery::mock(BanCapable::class)
             ->shouldReceive('ban')
             ->once()
             ->with($headers)
@@ -46,12 +46,12 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $contentType = 'text/css';
         $hosts = 'example.com';
 
-        $mockClient1 = \Mockery::mock(BanInterface::class)
+        $mockClient1 = \Mockery::mock(BanCapable::class)
             ->shouldReceive('banPath')
             ->once()
             ->with($path, $contentType, $hosts)
             ->getMock();
-        $mockClient2 = \Mockery::mock(BanInterface::class)
+        $mockClient2 = \Mockery::mock(BanCapable::class)
             ->shouldReceive('banPath')
             ->once()
             ->with($path, $contentType, $hosts)
@@ -64,12 +64,12 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
 
     public function testFlush()
     {
-        $mockClient1 = \Mockery::mock(ProxyClientInterface::class)
+        $mockClient1 = \Mockery::mock(ProxyClient::class)
             ->shouldReceive('flush')
             ->once()
             ->andReturn(4)
             ->getMock();
-        $mockClient2 = \Mockery::mock(ProxyClientInterface::class)
+        $mockClient2 = \Mockery::mock(ProxyClient::class)
             ->shouldReceive('flush')
             ->once()
             ->andReturn(6)
@@ -85,17 +85,17 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $url = 'example.com';
         $headers = ['Header1' => 'Header1-Value'];
 
-        $mockClient1 = \Mockery::mock(RefreshInterface::class)
+        $mockClient1 = \Mockery::mock(RefreshCapable::class)
             ->shouldReceive('refresh')
             ->once()
             ->with($url, $headers)
             ->getMock();
-        $mockClient2 = \Mockery::mock(RefreshInterface::class)
+        $mockClient2 = \Mockery::mock(RefreshCapable::class)
             ->shouldReceive('refresh')
             ->once()
             ->with($url, $headers)
             ->getMock();
-        $mockClient3 = \Mockery::mock(ProxyClientInterface::class);
+        $mockClient3 = \Mockery::mock(ProxyClient::class);
 
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2, $mockClient3]);
 
@@ -107,16 +107,16 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $url = 'example.com';
         $headers = ['Header1' => 'Header1-Value'];
 
-        $mockClient1 = \Mockery::mock(PurgeInterface::class)
+        $mockClient1 = \Mockery::mock(PurgeCapable::class)
             ->shouldReceive('purge')
             ->once()
             ->with($url, $headers)
             ->getMock();
-        $mockClient2 = \Mockery::mock(PurgeInterface::class)
+        $mockClient2 = \Mockery::mock(PurgeCapable::class)
             ->shouldReceive('purge')
             ->with($url, $headers)
             ->getMock();
-        $mockClient3 = \Mockery::mock(ProxyClientInterface::class);
+        $mockClient3 = \Mockery::mock(ProxyClient::class);
 
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2, $mockClient3]);
 
@@ -132,7 +132,7 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param ProxyClientInterface[] $clients
+     * @param ProxyClient[] $clients
      *
      * @dataProvider provideInvalidClient
      * @expectedException \FOS\HttpCache\Exception\InvalidArgumentException

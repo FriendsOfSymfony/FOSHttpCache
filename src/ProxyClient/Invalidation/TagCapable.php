@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\ProxyClient\Invalidation;
 
-use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 
 /**
  * An HTTP cache that supports invalidation by a cache tag, that is, removing
@@ -20,7 +20,7 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
  * HTTP responses must carry the tags header name with the tags header value
  * for tag invalidation to work.
  */
-interface TagsInterface extends ProxyClientInterface
+interface TagCapable extends ProxyClient
 {
     /**
      * Remove/Expire cache objects based on cache tags.

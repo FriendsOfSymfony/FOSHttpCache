@@ -121,10 +121,10 @@ and updates that with parameters which influence the varied response.
 
 A provider that looks at whether the user is authenticated could look like this::
 
-    use FOS\HttpCache\UserContext\ContextProviderInterface;
+    use FOS\HttpCache\UserContext\ContextProvider;
     use FOS\HttpCache\UserContext\UserContext;
 
-    class IsAuthenticatedProvider implements ContextProviderInterface
+    class IsAuthenticatedProvider implements ContextProvider
     {
         protected $userService;
 

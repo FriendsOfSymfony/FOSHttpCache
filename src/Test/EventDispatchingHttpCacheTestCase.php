@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Test;
 
-use FOS\HttpCache\SymfonyCache\CacheInvalidationInterface;
+use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\Events;
@@ -39,7 +39,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
      *
      * @param array $mockedMethods List of methods to mock
      *
-     * @return CacheInvalidationInterface|EventDispatchingHttpCache|\PHPUnit_Framework_MockObject_MockObject
+     * @return CacheInvalidation|EventDispatchingHttpCache|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getHttpCachePartialMock(array $mockedMethods = null)
     {
@@ -50,7 +50,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
             ->getMock()
         ;
 
-        $this->assertInstanceOf(CacheInvalidationInterface::class, $mock);
+        $this->assertInstanceOf(CacheInvalidation::class, $mock);
 
         // Force setting options property since we can't use original constructor.
         $options = [
@@ -79,11 +79,11 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
     /**
      * Set the store property on a HttpCache to a StoreInterface expecting one write with request and response.
      *
-     * @param CacheInvalidationInterface $httpCache
-     * @param Request                    $request
-     * @param Response                   $response
+     * @param CacheInvalidation $httpCache
+     * @param Request           $request
+     * @param Response          $response
      */
-    protected function setStoreMock(CacheInvalidationInterface $httpCache, Request $request, Response $response)
+    protected function setStoreMock(CacheInvalidation $httpCache, Request $request, Response $response)
     {
         $store = $this->getMock(StoreInterface::class);
         $store
@@ -367,7 +367,7 @@ class TestListener implements EventSubscriberInterface
     private $test;
 
     /**
-     * @var CacheInvalidationInterface The kernel to ensure the event carries the correct kernel
+     * @var CacheInvalidation The kernel to ensure the event carries the correct kernel
      */
     private $kernel;
 
@@ -378,7 +378,7 @@ class TestListener implements EventSubscriberInterface
 
     public function __construct(
         EventDispatchingHttpCacheTestCase $test,
-        CacheInvalidationInterface $kernel,
+        CacheInvalidation $kernel,
         Request $request
     ) {
         $this->test = $test;
@@ -447,7 +447,7 @@ class SimpleListener
     private $test;
 
     /**
-     * @var CacheInvalidationInterface The kernel to ensure the event carries the correct kernel
+     * @var CacheInvalidation The kernel to ensure the event carries the correct kernel
      */
     private $kernel;
 
@@ -458,7 +458,7 @@ class SimpleListener
 
     public function __construct(
         EventDispatchingHttpCacheTestCase $test,
-        CacheInvalidationInterface $kernel,
+        CacheInvalidation $kernel,
         Request $request
     ) {
         $this->test = $test;

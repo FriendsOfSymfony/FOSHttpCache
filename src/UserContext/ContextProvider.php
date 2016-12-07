@@ -14,7 +14,7 @@ namespace FOS\HttpCache\UserContext;
 /**
  * Allow a class to update a user context.
  */
-interface ContextProviderInterface
+interface ContextProvider
 {
     /**
      * This function is called before generating the hash of a UserContext.

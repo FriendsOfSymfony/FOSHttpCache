@@ -15,11 +15,11 @@ Setup
     Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first.
 
 The response tagger is a decorator around a proxy client that implements
-the ``TagsInterface``, handling adding tags to responses::
+the ``TagCapable`` interface, handling adding tags to responses::
 
     use FOS\HttpCache\ResponseTagger;
 
-    // $proxyClient already created, implementing FOS\HttpCache\ProxyClient\Invalidation\TagsInterface
+    // $proxyClient already created, implementing FOS\HttpCache\ProxyClient\Invalidation\TagCapable
     $responseTagger = new ResponseTagger($proxyClient);
 
 .. _response_tagger_optional_parameters:

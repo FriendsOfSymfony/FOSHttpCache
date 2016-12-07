@@ -11,13 +11,13 @@
 
 namespace FOS\HttpCache\ProxyClient\Invalidation;
 
-use FOS\HttpCache\ProxyClient\ProxyClientInterface;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 
 /**
  * An HTTP cache that supports invalidation by refresh requests that force a
  * cache miss for one specific URL.
  */
-interface RefreshInterface extends ProxyClientInterface
+interface RefreshCapable extends ProxyClient
 {
     /**
      * Refresh a URL.
