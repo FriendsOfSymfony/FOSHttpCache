@@ -99,19 +99,24 @@ or the accept header to detect that a hash was requested.
 Calculating the User Context Hash
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The user context hash calculation (step 3 above) is managed by the HashGenerator.
+The user context hash calculation (step 3 above) is managed by a HashGenerator.
 Because the calculation itself will be different per application, you need to
-implement at least one ContextProvider and register that with the HashGenerator::
+implement at least one ContextProvider and register that with the DefaultHashGenerator::
 
-    use FOS\HttpCache\UserContext\HashGenerator;
+    use FOS\HttpCache\UserContext\DefaultHashGenerator;
 
-    $hashGenerator = new HashGenerator([
+    $hashGenerator = new DefaultHashGenerator([
         new IsAuthenticatedProvider(),
         new RoleProvider(),
     ]);
 
 Once all providers are registered, call ``generateHash()`` to get the hash for
 the current user context.
+
+.. note::
+
+    If you need custom logic in the hash generator you can create your own class
+    implementing the HashGenerator interface.
 
 Context Providers
 ~~~~~~~~~~~~~~~~~
