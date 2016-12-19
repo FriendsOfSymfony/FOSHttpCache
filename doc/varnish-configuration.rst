@@ -353,7 +353,7 @@ inline C enabled: ``-p vcc_allow_inline_c=on``. Then add the following to
             call fos_custom_ttl_fetch;
         }
 
-The custom ttl header is removed before sending the response to the client.
+The custom TTL header is removed before sending the response to the client.
 
 .. _varnish_debugging:
 
