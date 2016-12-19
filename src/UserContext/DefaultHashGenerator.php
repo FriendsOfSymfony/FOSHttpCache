@@ -16,7 +16,7 @@ use FOS\HttpCache\Exception\InvalidArgumentException;
 /**
  * Generate a hash for a UserContext by getting all the parameters needed across all registered services.
  */
-class DefaultHashGenerator
+class DefaultHashGenerator implements HashGenerator
 {
     /**
      * @var ContextProvider[]
