@@ -10,6 +10,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Raised minimum PHP version to 5.5.
 * **BC break:** Removed the `Interface` suffix from all interfaces.
+* **BC break:** Renamed ``HashGenerator`` to ``DefaultHashGenerator``.
+* Added interface ``HashGenerator``
 
 ### HTTP
 

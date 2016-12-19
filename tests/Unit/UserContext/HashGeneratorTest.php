@@ -12,14 +12,14 @@
 namespace FOS\HttpCache\Tests\Unit\UserContext;
 
 use FOS\HttpCache\UserContext\ContextProvider;
-use FOS\HttpCache\UserContext\HashGenerator;
+use FOS\HttpCache\UserContext\DefaultHashGenerator;
 use FOS\HttpCache\UserContext\UserContext;
 
 class HashGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     public function testGenerateHash()
     {
-        $hashGenerator = new HashGenerator([new FooProvider()]);
+        $hashGenerator = new DefaultHashGenerator([new FooProvider()]);
 
         $expectedHash = hash('sha256', serialize(['foo' => 'bar']));
 
@@ -31,7 +31,7 @@ class HashGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorError()
     {
-        new HashGenerator([]);
+        new DefaultHashGenerator([]);
     }
 }
 
