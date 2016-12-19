@@ -1,7 +1,7 @@
 Changelog
 =========
 
-See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).q
+See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
 2.0.0
 -----
