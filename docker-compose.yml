@@ -1,0 +1,10 @@
+version: '2'
+services:
+  app:
+    image: friendsofsymfony/fos-http-cache
+    volumes:
+      - .:/foshttpcache
+    working_dir: /foshttpcache
+    environment:
+      - VARNISH_VERSION=$VARNISH_VERSION
+    command: sh
