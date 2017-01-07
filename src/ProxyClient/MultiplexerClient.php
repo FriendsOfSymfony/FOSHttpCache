@@ -13,16 +13,18 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidArgumentException;
+use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 
 /**
  * This class forwards invalidation to all attached clients.
  *
  * @author Emanuele Panzeri <thepanz@gmail.com>
  */
-class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable
+class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, TagCapable
 {
     /**
      * @var ProxyClient[]
@@ -38,7 +40,8 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable
     {
         foreach ($proxyClients as $proxyClient) {
             if (!$proxyClient instanceof ProxyClient) {
-                throw new InvalidArgumentException('Expected ProxyClientInterface, got: '.
+                throw new InvalidArgumentException(
+                    'Expected ProxyClientInterface, got: '.
                     (is_object($proxyClient) ? get_class($proxyClient) : gettype($proxyClient))
                 );
             }
@@ -96,6 +99,38 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getTagsHeaderValue(array $tags)
+    {
+        return $this->invokeFirst(TagCapable::class, 'getTagsHeaderValue', [$tags]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTagsHeaderName()
+    {
+        return $this->invokeFirst(TagCapable::class, 'getTagsHeaderName', []);
+    }
+
+    /**
+     * Forwards tag invalidation request to all clients.
+     *
+     * {@inheritdoc}
+     *
+     * @param array $tags
+     *
+     * @return $this
+     */
+    public function invalidateTags(array $tags)
+    {
+        $this->invoke(TagCapable::class, 'invalidateTags', [$tags]);
+
+        return $this;
+    }
+
+    /**
      * Forwards to all clients.
      *
      * @param string $url     Path or URL to purge
@@ -126,7 +161,8 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable
     }
 
     /**
-     * Helper function to invoke the given $method on all available ProxyClients implementing the given $interface.
+     * Invoke the given $method on all available ProxyClients implementing the
+     * given $interface.
      *
      * @param string $interface The FQN of the interface
      * @param string $method    The method to invoke
@@ -134,10 +170,46 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable
      */
     private function invoke($interface, $method, array $arguments)
     {
-        foreach ($this->proxyClients as $proxyClient) {
-            if (is_subclass_of($proxyClient, $interface)) {
-                call_user_func_array([$proxyClient, $method], $arguments);
-            }
+        foreach ($this->getProxyClients($interface) as $proxyClient) {
+            call_user_func_array([$proxyClient, $method], $arguments);
         }
+    }
+
+    /**
+     * Invoke the given $method on the first available ProxyClient implementing
+     * the given $interface.
+     *
+     * @param string $interface The FQN of the interface
+     * @param string $method    The method to invoke
+     * @param array  $arguments The arguments to be passed to the method
+     *
+     * @return mixed Return value of ProxyClient method call
+     *
+     * @throws UnsupportedProxyOperationException
+     */
+    private function invokeFirst($interface, $method, array $arguments)
+    {
+        foreach ($this->getProxyClients($interface) as $proxyClient) {
+            return call_user_func_array([$proxyClient, $method], $arguments);
+        }
+
+        throw UnsupportedProxyOperationException::cacheDoesNotImplement($interface);
+    }
+
+    /**
+     * Get proxy clients that implement a feature interface.
+     *
+     * @param string $interface
+     *
+     * @return ProxyClient[]
+     */
+    private function getProxyClients($interface)
+    {
+        return array_filter(
+            $this->proxyClients,
+            function ($proxyClient) use ($interface) {
+                return is_subclass_of($proxyClient, $interface);
+            }
+        );
     }
 }

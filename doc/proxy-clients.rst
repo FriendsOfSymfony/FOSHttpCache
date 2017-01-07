@@ -187,6 +187,12 @@ invalidation calls to all proxy clients supporting the operation in question::
     // Expects an array of ProxyClient in the constructor
     $client = new MultiplexerClient([$nginxClient, $symfonyClient]);
 
+Invalidation calls on ``MultiplexerClient`` will be forwarded to all proxy
+clients that support the :ref:`invalidation method <invalidation methods>` and
+be ignored if none do. Calling ``getTagsHeaderValue`` and ``getTagsHeaderName``
+will throw an ``UnsupportedProxyOperationException`` if none of the proxy
+clients support tagging (i.e., implement ``TagCapable``).
+
 .. note::
 
     Having multiple layers of HTTP caches in place is not a good idea in
