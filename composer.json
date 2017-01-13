@@ -20,8 +20,6 @@
             "homepage": "https://github.com/friendsofsymfony/FOSHttpCache/contributors"
         }
     ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require": {
         "php": "^5.5.9||^7.0.0",
         "symfony/event-dispatcher": "^2.3||^3.0",
