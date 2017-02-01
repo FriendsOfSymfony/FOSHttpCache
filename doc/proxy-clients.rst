@@ -171,11 +171,12 @@ application then does not need to worry about the environment.
 Multiplexer Client
 ~~~~~~~~~~~~~~~~~~
 
-The Multiplexer client allows multiple Proxy clients to be used during the standard
-cache invalidation, thus enabling multiple caches to be handled at once.
-It is useful when multiple caches exist in the environment and they need to be handled
-at the same time; the Multiplexer proxy client will forward the cache invalidation calls
-to all proxy clients provided at creation time::
+The ``MultiplexerClient`` allows to send invalidation requests to multiple
+proxy clients.
+
+It is useful when multiple caches exist in the environment and they need to be
+handled at the same time; the Multiplexer proxy client will forward the cache
+invalidation calls to all proxy clients supporting the operation in question::
 
     use FOS\HttpCache\ProxyClient\MultiplexerClient;
     use FOS\HttpCache\ProxyClient\Nginx;
@@ -188,9 +189,19 @@ to all proxy clients provided at creation time::
 
 .. note::
 
-    Having multiple layers of HTTP caches in place is not a good idea in general. The
-    MultiplexerClient is provided for special situations, for example during a transition
-    phase of an application where an old and a new system run in parallel.
+    Having multiple layers of HTTP caches in place is not a good idea in
+    general. The ``MultiplexerClient`` is provided for special situations, for
+    example during a transition phase of an application where an old and a new
+    system run in parallel.
+
+.. note::
+
+    When using the multiplexer, code relying on ``instanceof`` checks on the
+    client and also the ``CacheInvalidator::supports`` method will not work, as
+    the ``MultiplexerClient`` implements all interfaces, but the attached
+    clients might not. Make sure that none of the code you use relies on such
+    checks - or write your own multiplexer that only implements the interfaces
+    supported by the clients you use.
 
 Using the Proxy Client
 ----------------------
