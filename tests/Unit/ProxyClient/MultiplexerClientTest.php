@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ProxyClient\MultiplexerClient;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 
@@ -80,6 +81,50 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(10, $multiplexer->flush());
     }
 
+    public function testGetTagsHeaderValue()
+    {
+        $tags = ['tag-1', 'tag-2', 'tag-3'];
+        $mockClient = \Mockery::mock(TagCapable::class)
+            ->shouldReceive('getTagsHeaderValue')
+            ->once()
+            ->with($tags)
+            ->andReturn('tag-1,tag-2,tag-3')
+            ->getMock();
+
+        $multiplexer = new MultiplexerClient([$mockClient]);
+
+        $this->assertEquals('tag-1,tag-2,tag-3', $multiplexer->getTagsHeaderValue($tags));
+    }
+
+    public function testGetTagsHeaderName()
+    {
+        $mockClient = \Mockery::mock(TagCapable::class)
+            ->shouldReceive('getTagsHeaderName')
+            ->once()
+            ->withNoArgs()
+            ->andReturn('X-Cache-Tags')
+            ->getMock();
+
+        $multiplexer = new MultiplexerClient([$mockClient]);
+
+        $this->assertEquals('X-Cache-Tags', $multiplexer->getTagsHeaderName());
+    }
+
+    public function testInvalidateTags()
+    {
+        $tags = ['tag-1', 'tag-2'];
+
+        $mockClient = \Mockery::mock(TagCapable::class)
+            ->shouldReceive('invalidateTags')
+            ->once()
+            ->with($tags)
+            ->getMock();
+
+        $multiplexer = new MultiplexerClient([$mockClient]);
+
+        $this->assertSame($multiplexer, $multiplexer->invalidateTags($tags));
+    }
+
     public function testRefresh()
     {
         $url = 'example.com';
@@ -121,6 +166,15 @@ class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2, $mockClient3]);
 
         $this->assertSame($multiplexer, $multiplexer->purge($url, $headers));
+    }
+
+    /**
+     * @expectedException \FOS\HttpCache\Exception\UnsupportedProxyOperationException
+     */
+    public function testGetTagsHeaderNameThrowsException()
+    {
+        $multiplexer = new MultiplexerClient([]);
+        $multiplexer->getTagsHeaderName();
     }
 
     public function provideInvalidClient()
