@@ -84,7 +84,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseNoTags()
     {
-        /** @var TagsInterface $proxyClient */
+        /** @var TagCapable $proxyClient */
         $proxyClient = \Mockery::mock(TagCapable::class)
             ->shouldReceive('getTagsHeaderValue')->never()
             ->getMock();
