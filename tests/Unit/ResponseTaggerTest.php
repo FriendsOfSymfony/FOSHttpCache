@@ -11,11 +11,11 @@
 
 namespace FOS\HttpCache\Tests\Unit;
 
+use FOS\HttpCache\Exception\InvalidTagException;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
-use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\ProxyClient\Varnish;
-use FOS\HttpCache\Exception\InvalidTagException;
+use FOS\HttpCache\ResponseTagger;
 use Psr\Http\Message\ResponseInterface;
 
 class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
@@ -104,10 +104,10 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
         $httpAdapter = new HttpDispatcher(['localhost'], 'localhost');
         $proxyClient = new Varnish($httpAdapter);
 
-        $tagHandler = new ResponseTagger($proxyClient, array('strict' => true));
+        $tagHandler = new ResponseTagger($proxyClient, ['strict' => true]);
 
         try {
-            $tagHandler->addTags(array('post-1', false));
+            $tagHandler->addTags(['post-1', false]);
             $this->fail('Expected exception');
         } catch (InvalidTagException $e) {
             // success
@@ -124,7 +124,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $tagHandler = new ResponseTagger($proxyClient);
-        $tagHandler->addTags(array('post-1', false, null, ''));
+        $tagHandler->addTags(['post-1', false, null, '']);
         $this->assertTrue($tagHandler->hasTags());
         $this->assertEquals('post-1', $tagHandler->getTagsHeaderValue());
     }

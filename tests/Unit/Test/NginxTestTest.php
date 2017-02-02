@@ -11,8 +11,8 @@
 
 namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
 
-use FOS\HttpCache\Test\Proxy\NginxProxy;
 use FOS\HttpCache\Test\NginxTest;
+use FOS\HttpCache\Test\Proxy\NginxProxy;
 
 class NginxTestTest extends \PHPUnit_Framework_TestCase
 {
