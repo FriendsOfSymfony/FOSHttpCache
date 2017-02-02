@@ -32,7 +32,6 @@ Features
   or easily implement your own caching proxy client.
 * [Test your application](http://foshttpcache.readthedocs.io/en/stable/testing-your-application.html)
   against your Varnish or NGINX setup.
-* This library is fully compatible with [HHVM](http://www.hhvm.com).
 
 Documentation
 -------------
