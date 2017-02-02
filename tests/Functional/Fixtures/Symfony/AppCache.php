@@ -13,13 +13,13 @@ namespace FOS\HttpCache\Tests\Functional\Fixtures\Symfony;
 
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\CustomTtlListener;
-use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use FOS\HttpCache\SymfonyCache\DebugListener;
+use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\RefreshListener;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -28,7 +28,7 @@ class AppCache extends HttpCache implements CacheInvalidation
 {
     use EventDispatchingHttpCache;
 
-    public function __construct(HttpKernelInterface $kernel, StoreInterface $store, SurrogateInterface $surrogate = null, array $options = array())
+    public function __construct(HttpKernelInterface $kernel, StoreInterface $store, SurrogateInterface $surrogate = null, array $options = [])
     {
         parent::__construct($kernel, $store, $surrogate, $options);
 
