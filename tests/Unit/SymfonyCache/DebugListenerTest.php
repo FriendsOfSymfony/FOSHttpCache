@@ -33,9 +33,9 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $debugListener = new DebugListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'X-Symfony-Cache' => '... fresh ...',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $debugListener->handleDebug($event);
@@ -49,9 +49,9 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $debugListener = new DebugListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'X-Symfony-Cache' => '... miss ...',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $debugListener->handleDebug($event);
@@ -65,9 +65,9 @@ class DebugListenerTest extends \PHPUnit_Framework_TestCase
     {
         $debugListener = new DebugListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'X-Symfony-Cache' => '... foobar ...',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $debugListener->handleDebug($event);

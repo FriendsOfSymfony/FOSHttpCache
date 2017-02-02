@@ -98,9 +98,9 @@ class CustomTtlListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             Events::PRE_STORE => 'useCustomTtl',
             Events::POST_HANDLE => 'cleanResponse',
-        );
+        ];
     }
 }

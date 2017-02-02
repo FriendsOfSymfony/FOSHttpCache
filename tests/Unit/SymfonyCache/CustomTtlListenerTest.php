@@ -34,10 +34,10 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'X-Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 's-maxage=60, max-age=30',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $ttlListener->useCustomTtl($event);
@@ -52,10 +52,10 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'X-Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 'max-age=30',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $ttlListener->useCustomTtl($event);
@@ -70,9 +70,9 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'Cache-Control' => 'max-age=30, s-maxage=33',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $ttlListener->useCustomTtl($event);
@@ -87,11 +87,11 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'X-Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 's-maxage=120, max-age=30',
             CustomTtlListener::SMAXAGE_BACKUP => '60',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $ttlListener->cleanResponse($event);
@@ -108,11 +108,11 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'X-Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 's-maxage=120, max-age=30',
             CustomTtlListener::SMAXAGE_BACKUP => 'false',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $ttlListener->cleanResponse($event);
@@ -128,9 +128,9 @@ class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
-        $response = new Response('', 200, array(
+        $response = new Response('', 200, [
             'Cache-Control' => 's-maxage=60, max-age=30',
-        ));
+        ]);
         $event = new CacheEvent($this->kernel, $request, $response);
 
         $ttlListener->cleanResponse($event);

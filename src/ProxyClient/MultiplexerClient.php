@@ -138,7 +138,7 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
      *
      * @return $this
      */
-    public function purge($url, array $headers = array())
+    public function purge($url, array $headers = [])
     {
         $this->invoke(PurgeCapable::class, 'purge', [$url, $headers]);
 

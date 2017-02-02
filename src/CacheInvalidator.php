@@ -16,11 +16,11 @@ use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
-use FOS\HttpCache\ProxyClient\ProxyClient;
-use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
+use FOS\HttpCache\ProxyClient\ProxyClient;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

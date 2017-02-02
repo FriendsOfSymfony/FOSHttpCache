@@ -11,10 +11,10 @@
 
 namespace FOS\HttpCache\Test;
 
+use Http\Client\HttpClient as PhpHttpClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
-use Http\Client\HttpClient as PhpHttpClient;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;

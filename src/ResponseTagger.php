@@ -51,14 +51,14 @@ class ResponseTagger
      * @param TagCapable $proxyClient
      * @param array      $options
      */
-    public function __construct(TagCapable $proxyClient, array $options = array())
+    public function __construct(TagCapable $proxyClient, array $options = [])
     {
         $this->proxyClient = $proxyClient;
 
         $resolver = new OptionsResolver();
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'strict' => false,
-        ));
+        ]);
 
         $resolver->setAllowedTypes('strict', 'bool');
 
