@@ -10,8 +10,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Raised minimum PHP version to 5.6.
 * **BC break:** Removed the `Interface` suffix from all interfaces.
-* **BC break:** Renamed ``HashGenerator`` to ``DefaultHashGenerator``.
-* Added interface ``HashGenerator``.
+* **BC break:** Renamed `HashGenerator` to `DefaultHashGenerator`.
+* Added `HashGenerator` interface.
 
 ### HTTP
 
@@ -37,7 +37,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * **BC break:** Moved tag invalidation to `CacheInvalidator`, and renamed 
   `TagHandler` to `ResponseTagger`.
-* Abstracting tags by adding new `TagsInterface` for ProxyClients.
+* Abstracting tags by adding new `TagCapable` for ProxyClients.
 * Added `strict` option to `ResponseTagger` that throws an exception when empty
   tags are added. By default, empty tags are ignored.
 
@@ -80,8 +80,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 1.4.2
 -----
 
-* The TagHandler constructor now accepts a ``headerLength`` argument which will
-  cause its ``invalidateTags`` function to invalidate in batches if the header
+* The TagHandler constructor now accepts a `headerLength` argument which will
+  cause its `invalidateTags` function to invalidate in batches if the header
   length exceeds this value.
 
 1.4.1
