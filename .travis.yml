@@ -1,3 +1,4 @@
+sudo: required
 dist: trusty
 group: edge
 language: php
@@ -5,23 +6,23 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
+services:
+  - docker
+
 php:
   - 5.6
   - 7.0
   - 7.1
-  - 7.2
 
 env:
-  - VARNISH_VERSION=5.0
+  - DOCKER_IMAGE="friendsofsymfony/http-cache-ci:php-${TRAVIS_PHP_VERSION}"
 
 matrix:
   include:
     - php: 5.6
-      env: SYMFONY_VERSION=2.7.* VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
+      env: SYMFONY_VERSION=2.7.* VARNISH_VERSION=3.0.0 COMPOSER_FLAGS="--prefer-lowest"
     - php: 7.0
-      env:
-        - VARNISH_VERSION=4.1
-        - DOCCHECK=true
+      env: VARNISH_VERSION=4.1.5 DOCCHECK=true
 
 branches:
   only:
@@ -29,35 +30,20 @@ branches:
     # Build maintenance branches for older releases if needed. such branches should be named like "1.2"
     - '/^\d+\.\d+$/'
 
-install:
-  - composer update $COMPOSER_FLAGS --prefer-dist --no-interaction
-
 before_script:
-  # Install Varnish
-  - |
-    set -e
-    curl -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey | sudo apt-key add -
-    curl -L "https://packagecloud.io/install/repositories/varnishcache/varnish${VARNISH_VERSION//./}/config_file.list?os=ubuntu&dist=trusty&source=script" | sudo tee -a /etc/apt/sources.list
-    cat /etc/apt/sources.list
-    sudo apt-get update -qq
-    sudo apt-get install -qq varnish
-  - if [ "$DOCCHECK" = true ]; then sudo apt-get install -qq python-sphinx enchant; fi
-  - if [ "$DOCCHECK" = true ]; then sudo pip install -r doc/requirements.txt; fi
-  # Install NGINX
-  - sh ./tests/install-nginx.sh
-  # Starting webserver
-  - if [ "$TRAVIS_PHP_VERSION" = 'hhvm' ]; then ./tests/ci/install-apache-hhvm.sh; fi
+  - env > docker/.env
+  - docker build --build-arg PHP_VERSION=$TRAVIS_PHP_VERSION -t $DOCKER_IMAGE docker/
+  - sudo apt-get install -qq python-sphinx enchant
+  - sudo pip install -r doc/requirements.txt
 
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.clover
+#  - docker run -v `pwd`:/app "friendsofsymfony/http-cache-ci:php-${TRAVIS_PHP_VERSION}" sh -c "varnishd -f /app/tests/Functional/Fixtures/varnish/fos.vcl -p vcl_dir=/app/tests/Functional/Fixtures/varnish/"
+  - docker run --rm -v `pwd`:/app $DOCKER_IMAGE sh -c "composer update $COMPOSER_FLAGS --prefer-source --no-interaction && vendor/bin/phpunit --coverage-clover=coverage.clover"
   - if [[ "$DOCCHECK" = true ]]; then make -C doc SPHINXOPTS='-nW' html; fi
   - if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
 
 after_script:
-  # avoid uploading the code coverage for HHVM as it cannot generate it (PHPUnit dropped the old HHVM driver and the
-  # XDebug API is not implemented in HHVM 3.5) and we don't want to cancel the Scrutinizer analysis by notifying
-  # it than no coverage data is available
-  - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
+  - wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 after_failure:
   - cat /tmp/fos_nginx_error.log
@@ -66,3 +52,4 @@ after_failure:
   - sudo cat /var/log/apache2/error.log
   - sudo cat /var/log/apache2/access.log
   - sudo cat /var/log/apache2/other_vhosts_access.log
+
