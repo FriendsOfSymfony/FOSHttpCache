@@ -71,6 +71,10 @@ class HttpDispatcher
      * If you specify a custom HTTP client, make sure that it converts HTTP
      * errors to exceptions.
      *
+     * If your proxy server IPs can not be statically configured, extend this
+     * class and overwrite getServers. Be sure to have some caching in
+     * getServers.
+     *
      * @param string[]             $servers    Caching proxy server hostnames or IP
      *                                         addresses, including port if not port 80.
      *                                         E.g. ['127.0.0.1:6081']
@@ -171,6 +175,16 @@ class HttpDispatcher
     }
 
     /**
+     * Get the list of servers to send invalidation requests to.
+     *
+     * @return UriInterface[]
+     */
+    protected function getServers()
+    {
+        return $this->servers;
+    }
+
+    /**
      * Duplicate a request for each caching server.
      *
      * @param RequestInterface $request The request to duplicate for each configured server
@@ -214,7 +228,7 @@ class HttpDispatcher
         $request = $request->withUri($uri)->withHeader('Connection', 'Close');
 
         // Create a request to each caching proxy server
-        foreach ($this->servers as $server) {
+        foreach ($this->getServers() as $server) {
             $requests[] = $request->withUri(
                 $uri
                     ->withScheme($server->getScheme())
