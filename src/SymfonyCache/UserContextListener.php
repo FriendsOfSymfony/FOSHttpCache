@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * User context handler for the symfony built-in HttpCache.
+ * Caching proxy side of the user context handling for the symfony built-in HttpCache.
  *
  * @author Jérôme Vieilledent <lolautruche@gmail.com> (courtesy of eZ Systems AS)
  *
