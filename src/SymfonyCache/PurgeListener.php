@@ -80,8 +80,17 @@ class PurgeListener extends AccessControlledListener
             return;
         }
 
+        // because symfony cache respects the scheme when caching and purging, we need to invalidate both variants
+        $uri = $request->getUri();
+        $uri2 = 0 === strpos($uri, 'https://')
+            ? preg_replace('https', 'http', $uri, 1)
+            : preg_replace('http', 'https', $uri, 1);
+        $store = $event->getKernel()->getStore();
         $response = new Response();
-        if ($event->getKernel()->getStore()->purge($request->getUri())) {
+
+        if ($store->purge($uri)
+            || $store->purge($uri2)
+        ) {
             $response->setStatusCode(200, 'Purged');
         } else {
             $response->setStatusCode(200, 'Not found');
