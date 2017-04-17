@@ -1,3 +1,6 @@
+sudo: required
+group: edge
+
 language: php
 
 php:
@@ -17,6 +20,8 @@ matrix:
       env: VARNISH_VERSION=3.0
     - php: 5.3
       env: SYMFONY_VERSION=2.3.* VARNISH_VERSION=4.0 COMPOSER_FLAGS="--prefer-lowest"
+  allow_failures:
+    - php: hhvm
 
 branches:
   only:
@@ -51,3 +56,4 @@ after_script:
 after_failure:
   - cat /tmp/fos_nginx_error.log
   - cat /tmp/fos_nginx_access.log
+  - sudo cat /var/log/apache2/error.log
