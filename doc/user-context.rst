@@ -35,6 +35,10 @@ context hash mechanism.
     ``private`` cache control instruction instead, you need to adjust your
     proxy server configuration to cache content with a ``private`` instruction.
 
+    Put differently, if every user has their own hash, you probably don't want
+    to cache at all. If you still do, simply vary on the credentials and don't
+    use the context hash mechnism.
+
 Overview
 --------
 
