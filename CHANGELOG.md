@@ -11,6 +11,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Raised minimum PHP version to 5.6.
 * **BC break:** Removed the `Interface` suffix from all interfaces.
 * **BC break:** Renamed `HashGenerator` to `DefaultHashGenerator`.
+* **BC break:** The `ResponseTagger` now expects an instance of
+  `TagHeaderFormatterInterface` instead of `TagCapable` as first argument.
 * Added `HashGenerator` interface.
 
 ### HTTP

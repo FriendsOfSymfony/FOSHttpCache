@@ -12,24 +12,23 @@
 namespace FOS\HttpCache\Tests\Unit;
 
 use FOS\HttpCache\Exception\InvalidTagException;
-use FOS\HttpCache\ProxyClient\HttpDispatcher;
-use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
-use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\ResponseTagger;
+use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatterInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetTagsHeaderValue()
     {
-        $proxyClient = \Mockery::mock(TagCapable::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1', 'test,post'])
             ->once()
             ->andReturn('post-1,test_post')
             ->getMock();
 
-        $tagger = new ResponseTagger($proxyClient);
+        $tagger = new ResponseTagger($headerFormatter);
         $this->assertFalse($tagger->hasTags());
         $tagger->addTags(['post-1', 'test,post']);
         $this->assertTrue($tagger->hasTags());
@@ -38,7 +37,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseReplace()
     {
-        $proxyClient = \Mockery::mock(TagCapable::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
@@ -48,7 +47,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->andReturn('FOS-Tags')
             ->getMock();
 
-        $tagger = new ResponseTagger($proxyClient);
+        $tagger = new ResponseTagger($headerFormatter);
 
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withHeader')
@@ -61,7 +60,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseAdd()
     {
-        $proxyClient = \Mockery::mock(TagCapable::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
@@ -71,7 +70,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->andReturn('FOS-Tags')
             ->getMock();
 
-        $tagger = new ResponseTagger($proxyClient);
+        $tagger = new ResponseTagger($headerFormatter);
 
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withAddedHeader')
@@ -84,12 +83,12 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseNoTags()
     {
-        /** @var TagCapable $proxyClient */
-        $proxyClient = \Mockery::mock(TagCapable::class)
+        /** @var TagHeaderFormatterInterface $headerFormatter */
+        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
             ->shouldReceive('getTagsHeaderValue')->never()
             ->getMock();
 
-        $tagger = new ResponseTagger($proxyClient);
+        $tagger = new ResponseTagger($headerFormatter);
 
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withHeader')->never()
@@ -101,10 +100,9 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testStrictEmptyTag()
     {
-        $httpAdapter = new HttpDispatcher(['localhost'], 'localhost');
-        $proxyClient = new Varnish($httpAdapter);
+        $headerFormatter = new CommaSeparatedTagHeaderFormatter('FOS-Tags');
 
-        $tagHandler = new ResponseTagger($proxyClient, ['strict' => true]);
+        $tagHandler = new ResponseTagger($headerFormatter, ['strict' => true]);
 
         try {
             $tagHandler->addTags(['post-1', false]);
@@ -116,14 +114,14 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testNonStrictEmptyTag()
     {
-        $proxyClient = \Mockery::mock(TagCapable::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1'])
             ->once()
             ->andReturn('post-1')
             ->getMock();
 
-        $tagHandler = new ResponseTagger($proxyClient);
+        $tagHandler = new ResponseTagger($headerFormatter);
         $tagHandler->addTags(['post-1', false, null, '']);
         $this->assertTrue($tagHandler->hasTags());
         $this->assertEquals('post-1', $tagHandler->getTagsHeaderValue());
