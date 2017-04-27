@@ -11,9 +11,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Raised minimum PHP version to 5.6.
 * **BC break:** Removed the `Interface` suffix from all interfaces.
 * **BC break:** Renamed `HashGenerator` to `DefaultHashGenerator`.
-* **BC break:** The `ResponseTagger` now expects an instance of
-  `TagHeaderFormatterInterface` instead of `TagCapable` as first argument.
-* Added `HashGenerator` interface.
+
 
 ### HTTP
 
@@ -42,6 +40,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Abstracting tags by adding new `TagCapable` for ProxyClients.
 * Added `strict` option to `ResponseTagger` that throws an exception when empty
   tags are added. By default, empty tags are ignored.
+* Added a `TagHeaderFormatter` interface that is used within the `ResponseTagger`
+  to provide the header name and the formatted tags header value.
 
 ### Varnish
 
@@ -78,6 +78,13 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * **BC break:** Refactored the proxy client test system into traits. Removed 
   `ProxyTestCase`; use the traits `CacheAssertions` and `HttpCaller` instead.
 * Added HTTP method parameter to `HttpCaller::getResponse()`.
+
+2.0.0-beta3
+-----------
+
+* **BC break:** The `ResponseTagger` now expects an instance of
+  `TagHeaderFormatterInterface` instead of `TagCapable` as first argument.
+* Added `HashGenerator` interface.
 
 1.4.2
 -----
