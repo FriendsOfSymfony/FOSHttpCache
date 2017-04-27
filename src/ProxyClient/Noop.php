@@ -51,22 +51,6 @@ class Noop implements ProxyClient, BanCapable, PurgeCapable, RefreshCapable, Tag
     /**
      * {@inheritdoc}
      */
-    public function getTagsHeaderValue(array $tags)
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTagsHeaderName()
-    {
-        return 'X-Noop-Cache-Tags';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function purge($url, array $headers = [])
     {
         return $this;

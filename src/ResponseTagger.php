@@ -12,7 +12,7 @@
 namespace FOS\HttpCache;
 
 use FOS\HttpCache\Exception\InvalidTagException;
-use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -23,6 +23,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @author David Buchmann <mail@davidbu.ch>
  * @author André Rømcke <ar@ez.no>
  * @author Wicliff Wolda <wicliff.wolda@gmail.com>
+ * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
 class ResponseTagger
 {
@@ -32,9 +33,9 @@ class ResponseTagger
     private $options;
 
     /**
-     * @var TagCapable
+     * @var TagHeaderFormatter
      */
-    private $proxyClient;
+    private $headerFormatter;
 
     /**
      * @var array
@@ -48,12 +49,12 @@ class ResponseTagger
      *
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      *
-     * @param TagCapable $proxyClient
-     * @param array      $options
+     * @param TagHeaderFormatter $headerFormatter
+     * @param array              $options
      */
-    public function __construct(TagCapable $proxyClient, array $options = [])
+    public function __construct(TagHeaderFormatter $headerFormatter, array $options = [])
     {
-        $this->proxyClient = $proxyClient;
+        $this->headerFormatter = $headerFormatter;
 
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
@@ -72,7 +73,7 @@ class ResponseTagger
      */
     public function getTagsHeaderName()
     {
-        return $this->proxyClient->getTagsHeaderName();
+        return $this->headerFormatter->getTagsHeaderName();
     }
 
     /**
@@ -84,7 +85,7 @@ class ResponseTagger
      */
     public function getTagsHeaderValue()
     {
-        return $this->proxyClient->getTagsHeaderValue($this->tags);
+        return $this->headerFormatter->getTagsHeaderValue($this->tags);
     }
 
     /**

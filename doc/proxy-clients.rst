@@ -94,9 +94,11 @@ dispatcher as explained above and pass it to the Varnish client::
 
 You can also pass some options to the Varnish client:
 
-* ``tags_header`` (X-Cache-Tags): Allows you to change the HTTP header used for
-  tagging. If you change this, make sure to use the correct header name in your
-  :doc:`proxy server configuration <proxy-configuration>`;
+* ``tags_header`` (default: ``X-Cache-Tags``): Allows you to change the HTTP header
+  used for purge and ban requests. It is **NOT** related to response tagging! It
+  is possible to use different header names for both, the tagging process and the
+  ban/purge requests. If you change this, make sure to use the correct header name
+  in your :doc:`proxy server configuration <proxy-configuration>`;
 * ``header_length`` (7500): Control the maximum header size when invalidating
   tags. If there are more tags to invalidate than fit into the header, the
   invalidation request is split into several requests;
