@@ -14,14 +14,14 @@ namespace FOS\HttpCache\Tests\Unit;
 use FOS\HttpCache\Exception\InvalidTagException;
 use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
-use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatterInterface;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Psr\Http\Message\ResponseInterface;
 
 class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetTagsHeaderValue()
     {
-        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1', 'test,post'])
             ->once()
@@ -37,7 +37,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseReplace()
     {
-        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
@@ -60,7 +60,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseAdd()
     {
-        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
@@ -83,8 +83,8 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testTagResponseNoTags()
     {
-        /** @var TagHeaderFormatterInterface $headerFormatter */
-        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
+        /** @var TagHeaderFormatter $headerFormatter */
+        $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')->never()
             ->getMock();
 
@@ -114,7 +114,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
     public function testNonStrictEmptyTag()
     {
-        $headerFormatter = \Mockery::mock(TagHeaderFormatterInterface::class)
+        $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['post-1'])
             ->once()

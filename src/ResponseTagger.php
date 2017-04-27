@@ -12,7 +12,7 @@
 namespace FOS\HttpCache;
 
 use FOS\HttpCache\Exception\InvalidTagException;
-use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatterInterface;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,7 +33,7 @@ class ResponseTagger
     private $options;
 
     /**
-     * @var TagHeaderFormatterInterface
+     * @var TagHeaderFormatter
      */
     private $headerFormatter;
 
@@ -49,10 +49,10 @@ class ResponseTagger
      *
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      *
-     * @param TagHeaderFormatterInterface $headerFormatter
-     * @param array                       $options
+     * @param TagHeaderFormatter $headerFormatter
+     * @param array              $options
      */
-    public function __construct(TagHeaderFormatterInterface $headerFormatter, array $options = [])
+    public function __construct(TagHeaderFormatter $headerFormatter, array $options = [])
     {
         $this->headerFormatter = $headerFormatter;
 

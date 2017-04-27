@@ -16,7 +16,7 @@ namespace FOS\HttpCache\TagHeaderFormatter;
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
-interface TagHeaderFormatterInterface
+interface TagHeaderFormatter
 {
     /**
      * Get the HTTP header name that will hold cache tags.

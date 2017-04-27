@@ -16,7 +16,7 @@ namespace FOS\HttpCache\TagHeaderFormatter;
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
-class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatterInterface
+class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter
 {
     /**
      * @var string
