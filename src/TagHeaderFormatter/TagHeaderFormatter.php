@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\TagHeaderFormatter;
 
 /**
- * Interface for tag header formatting.
+ * The TagHeaderFormatter is used for cache tagging with HTTP headers.
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */

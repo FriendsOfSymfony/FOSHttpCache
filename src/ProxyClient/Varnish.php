@@ -67,22 +67,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
     /**
      * {@inheritdoc}
      */
-    public function getTagsHeaderValue(array $tags)
-    {
-        return implode(',', array_unique($this->escapeTags($tags)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTagsHeaderName()
-    {
-        return $this->options['tags_header'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function ban(array $headers)
     {
         $headers = array_merge(

@@ -30,23 +30,4 @@ interface TagCapable extends ProxyClient
      * @return $this
      */
     public function invalidateTags(array $tags);
-
-    /**
-     * Get value for the tags header as it should be included in the response.
-     *
-     * This does all necessary escaping and concatenates the tags in a way that
-     * individual tags can be invalidated by this client.
-     *
-     * @param array $tags
-     *
-     * @return string
-     */
-    public function getTagsHeaderValue(array $tags);
-
-    /**
-     * Get the HTTP header name for the cache tags.
-     *
-     * @return string
-     */
-    public function getTagsHeaderName();
 }
