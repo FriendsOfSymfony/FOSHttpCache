@@ -14,7 +14,7 @@ Setup
 
     Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first.
 
-The response tagger takes an instance of ``TagHeaderFormatterInterface`` as first
+The response tagger takes an instance of ``TagHeaderFormatter`` as first
 argument which is responsible for providing the header name as well as formatting
 the provided tags into a proper header value. This library ships with a
 ``CommaSeparatedTagHeaderFormatter`` which simply turns an array of tags into a

@@ -83,7 +83,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 -----------
 
 * **BC break:** The `ResponseTagger` now expects an instance of
-  `TagHeaderFormatterInterface` instead of `TagCapable` as first argument.
+  `TagHeaderFormatter` instead of `TagCapable` as first argument.
 * Added `HashGenerator` interface.
 
 1.4.2
