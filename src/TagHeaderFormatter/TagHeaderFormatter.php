@@ -18,6 +18,8 @@ namespace FOS\HttpCache\TagHeaderFormatter;
  */
 interface TagHeaderFormatter
 {
+    const DEFAULT_HEADER_NAME = 'X-Cache-Tags';
+
     /**
      * Get the HTTP header name that will hold cache tags.
      *

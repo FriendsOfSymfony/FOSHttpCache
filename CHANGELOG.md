@@ -85,6 +85,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * **BC break:** The `ResponseTagger` now expects an instance of
   `TagHeaderFormatter` instead of `TagCapable` as first argument.
+* **BC break:** The constant `Varnish::DEFAULT_HTTP_HEADER_CACHE_TAGS` has been
+  removed
 
 1.4.2
 -----

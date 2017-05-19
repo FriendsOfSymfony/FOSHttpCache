@@ -195,6 +195,12 @@ VCL will look like this:
         :emphasize-lines: 17-22,49-50
         :linenos:
 
+.. warning::
+
+    Note that by default, both, the header name for tagging using the response
+    tagger and the header name for Varnish's purge and ban requests are named
+    ``X-Cache-Tags``. You may, however, have different header names.
+
 .. _varnish user context:
 
 User Context
