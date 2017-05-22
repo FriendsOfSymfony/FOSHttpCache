@@ -99,22 +99,6 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getTagsHeaderValue(array $tags)
-    {
-        return $this->invokeFirst(TagCapable::class, 'getTagsHeaderValue', [$tags]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTagsHeaderName()
-    {
-        return $this->invokeFirst(TagCapable::class, 'getTagsHeaderName', []);
-    }
-
-    /**
      * Forwards tag invalidation request to all clients.
      *
      * {@inheritdoc}
