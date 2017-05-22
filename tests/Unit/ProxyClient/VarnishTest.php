@@ -140,25 +140,6 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
         $varnish->invalidateTags(['post-1', 'post,type-3']);
     }
 
-    public function testTagsHeaderName()
-    {
-        $options = [
-            'tags_header' => 'X-Tags-TRex',
-        ];
-
-        $varnish = new Varnish($this->httpDispatcher, $options);
-        $this->assertEquals('X-Tags-TRex', $varnish->getTagsHeaderName());
-    }
-
-    public function testTagsHeaderValue()
-    {
-        $varnish = new Varnish($this->httpDispatcher);
-        $this->assertEquals(
-            'tag-1_,tag_2',
-            $varnish->getTagsHeaderValue(["tag-1\n", 'tag,2'])
-        );
-    }
-
     public function testTagsHeadersSplit()
     {
         $varnish = new Varnish($this->httpDispatcher, ['header_length' => 7]);

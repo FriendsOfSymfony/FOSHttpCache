@@ -45,16 +45,6 @@ class NoopTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_int($this->noop->flush()));
     }
 
-    public function testGetTagsHeaderName()
-    {
-        $this->assertEquals('X-Noop-Cache-Tags', $this->noop->getTagsHeaderName());
-    }
-
-    public function testGetTagsHeaderValue()
-    {
-        $this->assertEquals('', $this->noop->getTagsHeaderValue(['tag123']));
-    }
-
     public function testPurge()
     {
         $this->assertSame($this->noop, $this->noop->purge('/123', ['x-123' => 'yes']));

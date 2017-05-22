@@ -14,13 +14,20 @@ Setup
 
     Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first.
 
-The response tagger is a decorator around a proxy client that implements
-the ``TagCapable`` interface, handling adding tags to responses::
+The response tagger takes an instance of ``TagHeaderFormatter`` as first
+argument which is responsible for providing the header name as well as formatting
+the provided tags into a proper header value. This library ships with a
+``CommaSeparatedTagHeaderFormatter`` which simply turns an array of tags into a
+comma-separated list. If you need a different behavior, provide your own implementation
+of the `TagHeaderFormatter`` interface.
+Just note: It's your responsibility to make sure, your proxy configuration matches
+the configuration of the ``ResponseTagger``::
 
     use FOS\HttpCache\ResponseTagger;
+    use FOS\HttpCache\TagHeaderFormatter;
 
-    // $proxyClient already created, implementing FOS\HttpCache\ProxyClient\Invalidation\TagCapable
-    $responseTagger = new ResponseTagger($proxyClient);
+    $tagHeaderFormatter = new CommaSeparatedTagHeaderFormatter('Header-Name');
+    $responseTagger = new ResponseTagger($tagHeaderFormatter);
 
 .. _response_tagger_optional_parameters:
 
