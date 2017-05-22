@@ -12,7 +12,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * **BC break:** Removed the `Interface` suffix from all interfaces.
 * **BC break:** Renamed `HashGenerator` to `DefaultHashGenerator`.
 * Added `HashGenerator` interface.
-__
+
 ### HTTP
 
 * **BC break:** Replaced hard coupling on Guzzle HTTP client with HTTPlug. 
