@@ -28,7 +28,7 @@ class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter
      *
      * @param string $headerName
      */
-    public function __construct($headerName)
+    public function __construct($headerName = TagHeaderFormatter::DEFAULT_HEADER_NAME)
     {
         $this->headerName = $headerName;
     }
