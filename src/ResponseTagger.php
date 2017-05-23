@@ -12,8 +12,10 @@
 namespace FOS\HttpCache;
 
 use FOS\HttpCache\Exception\InvalidTagException;
+use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
 use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -43,27 +45,31 @@ class ResponseTagger
     private $tags = [];
 
     /**
-     * Create the response tagger with a tag capable proxy client and options.
+     * Create the response tagger with a tag header formatter and options.
      *
      * Supported options are:
      *
+     * - header_formatter (TagHeaderFormatter) Default: CommaSeparatedTagHeaderFormatter with default header name
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      *
-     * @param TagHeaderFormatter $headerFormatter
-     * @param array              $options
+     * @param array $options
      */
-    public function __construct(TagHeaderFormatter $headerFormatter, array $options = [])
+    public function __construct(array $options = [])
     {
-        $this->headerFormatter = $headerFormatter;
-
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
+            // callback to avoid instantiating the formatter when its not needed
+            'header_formatter' => function (Options $options) {
+                return new CommaSeparatedTagHeaderFormatter();
+            },
             'strict' => false,
         ]);
 
+        $resolver->setAllowedTypes('header_formatter', TagHeaderFormatter::class);
         $resolver->setAllowedTypes('strict', 'bool');
 
         $this->options = $resolver->resolve($options);
+        $this->headerFormatter = $this->options['header_formatter'];
     }
 
     /**

@@ -19,6 +19,12 @@ use Psr\Http\Message\ResponseInterface;
 
 class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 {
+    public function testDefaultFormatter()
+    {
+        $tagger = new ResponseTagger();
+        $this->assertEquals('X-Cache-Tags', $tagger->getTagsHeaderName());
+    }
+
     public function testGetTagsHeaderValue()
     {
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
@@ -28,7 +34,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->andReturn('post-1,test_post')
             ->getMock();
 
-        $tagger = new ResponseTagger($headerFormatter);
+        $tagger = new ResponseTagger(['header_formatter' => $headerFormatter]);
         $this->assertFalse($tagger->hasTags());
         $tagger->addTags(['post-1', 'test,post']);
         $this->assertTrue($tagger->hasTags());
@@ -47,7 +53,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->andReturn('FOS-Tags')
             ->getMock();
 
-        $tagger = new ResponseTagger($headerFormatter);
+        $tagger = new ResponseTagger(['header_formatter' => $headerFormatter]);
 
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withHeader')
@@ -70,7 +76,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->andReturn('FOS-Tags')
             ->getMock();
 
-        $tagger = new ResponseTagger($headerFormatter);
+        $tagger = new ResponseTagger(['header_formatter' => $headerFormatter]);
 
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withAddedHeader')
@@ -88,7 +94,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->shouldReceive('getTagsHeaderValue')->never()
             ->getMock();
 
-        $tagger = new ResponseTagger($headerFormatter);
+        $tagger = new ResponseTagger(['header_formatter' => $headerFormatter]);
 
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withHeader')->never()
@@ -102,14 +108,10 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
     {
         $headerFormatter = new CommaSeparatedTagHeaderFormatter('FOS-Tags');
 
-        $tagHandler = new ResponseTagger($headerFormatter, ['strict' => true]);
+        $tagHandler = new ResponseTagger(['header_formatter' => $headerFormatter, 'strict' => true]);
 
-        try {
-            $tagHandler->addTags(['post-1', false]);
-            $this->fail('Expected exception');
-        } catch (InvalidTagException $e) {
-            // success
-        }
+        $this->setExpectedException(InvalidTagException::class);
+        $tagHandler->addTags(['post-1', false]);
     }
 
     public function testNonStrictEmptyTag()
@@ -121,7 +123,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
             ->andReturn('post-1')
             ->getMock();
 
-        $tagHandler = new ResponseTagger($headerFormatter);
+        $tagHandler = new ResponseTagger(['header_formatter' => $headerFormatter]);
         $tagHandler->addTags(['post-1', false, null, '']);
         $this->assertTrue($tagHandler->hasTags());
         $this->assertEquals('post-1', $tagHandler->getTagsHeaderValue());

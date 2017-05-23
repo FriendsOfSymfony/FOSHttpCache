@@ -16,7 +16,6 @@ use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
-use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 
 /**
  * Varnish HTTP cache invalidator.
@@ -37,6 +36,16 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
     const HTTP_HEADER_HOST = 'X-Host';
     const HTTP_HEADER_URL = 'X-Url';
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
+
+    /**
+     * Default name of the header used to invalidate content with specific tags.
+     *
+     * This happens to be the same as TagHeaderFormatter::DEFAULT_HEADER_NAME
+     * but does not technically need to be the same.
+     *
+     * @var string
+     */
+    const DEFAULT_HTTP_HEADER_CACHE_TAGS = 'X-Cache-Tags';
 
     /**
      * {@inheritdoc}
@@ -133,7 +142,7 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
     {
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
-            'tags_header' => TagHeaderFormatter::DEFAULT_HEADER_NAME,
+            'tags_header' => self::DEFAULT_HTTP_HEADER_CACHE_TAGS,
             'header_length' => 7500,
             'default_ban_headers' => [],
         ]);

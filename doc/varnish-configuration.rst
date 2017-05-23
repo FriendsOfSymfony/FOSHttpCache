@@ -175,31 +175,33 @@ Tagging
 Feature: :ref:`cache tagging <tags>`
 
 If you have included ``fos_ban.vcl``, tagging will be automatically enabled
-using an ``X-Cache-Tags`` header.
+with the ``X-Cache-Tags`` header for both marking the tags on the response and
+for the invalidation request to tell what tags to invalidate.
 
-If you need to use a different tag for the headers than the default
-``X-Cache-Tags`` used in ``fos_ban.vcl``, you will have to write your own VCL
-code for tag invalidation and change the tagging header
-:ref:`configured in the cache invalidator <varnish_custom_tags_header>`. Your custom
-VCL will look like this:
+If you use a different name for :doc:`response tagging <response-tagging>` than
+the default ``X-Cache-Tags`` or a different name for specifying which tags to
+invalidate in your :ref:`cache invalidator configuration <varnish_custom_tags_header>`
+you have to write your own VCL code for tag invalidation. Your custom VCL will
+look like this:
 
 .. configuration-block::
 
     .. literalinclude:: ../resources/config/varnish/fos_ban.vcl
         :language: varnish
-        :emphasize-lines: 17-22,49-50
+        :emphasize-lines: 17-23,50-51
         :linenos:
 
     .. literalinclude:: ../resources/config/varnish-3/fos_ban.vcl
         :language: varnish3
-        :emphasize-lines: 17-22,49-50
+        :emphasize-lines: 17-23,50-51
         :linenos:
 
-.. warning::
+.. hint::
 
-    Note that by default, both, the header name for tagging using the response
-    tagger and the header name for Varnish's purge and ban requests are named
-    ``X-Cache-Tags``. You may, however, have different header names.
+    The line you need to adjust from the code above is line 21. The left side
+    is the header used to tag the response, the right side is the header used
+    when sending invalidation requests. If you change one or the other header
+    name, make sure to adjust the configuration accordingly.
 
 .. _varnish user context:
 

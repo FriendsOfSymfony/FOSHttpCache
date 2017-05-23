@@ -18,6 +18,11 @@ namespace FOS\HttpCache\TagHeaderFormatter;
  */
 interface TagHeaderFormatter
 {
+    /**
+     * Default name of the header to mark tags on responses.
+     *
+     * @var string
+     */
     const DEFAULT_HEADER_NAME = 'X-Cache-Tags';
 
     /**
