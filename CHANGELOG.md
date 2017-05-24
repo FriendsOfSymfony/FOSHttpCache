@@ -40,6 +40,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Abstracting tags by adding new `TagCapable` for ProxyClients.
 * Added `strict` option to `ResponseTagger` that throws an exception when empty
   tags are added. By default, empty tags are ignored.
+* Added `TagHeaderFormatter` interface that is used within the `ResponseTagger`
+  to provide the header name and for formatting the tags header value.
 
 ### Varnish
 
@@ -76,6 +78,14 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * **BC break:** Refactored the proxy client test system into traits. Removed 
   `ProxyTestCase`; use the traits `CacheAssertions` and `HttpCaller` instead.
 * Added HTTP method parameter to `HttpCaller::getResponse()`.
+
+2.0.0-beta3
+-----------
+
+* **BC break:** The `ResponseTagger` no longer expects an instance of
+  `TagCapable` as first argument. To adjust the tag header name or the way the
+  tags are formatted, use the new `header_formatter` option with a
+  `TagHeaderFormatter`.
 
 1.4.2
 -----

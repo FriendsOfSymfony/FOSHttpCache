@@ -1,8 +1,8 @@
 Response Tagging
 ================
 
-The ``ResponseTagger`` helps you keep track tags for a response, which can be
-added to response headers that you can later use to invalidate all cache
+The ``ResponseTagger`` helps you keep track of tags for a response. It can add
+the tags as a response header that you can later use to invalidate all cache
 entries with that tag.
 
 .. _tags:
@@ -12,23 +12,40 @@ Setup
 
 .. note::
 
-    Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging first.
+    Make sure to :doc:`configure your proxy <proxy-configuration>` for tagging
+    first.
 
-The response tagger is a decorator around a proxy client that implements
-the ``TagCapable`` interface, handling adding tags to responses::
+The response tagger uses an instance of ``TagHeaderFormatter`` to know the
+header name used to mark tags on the content and to format the tags into the
+correct header value. This library ships with a
+``CommaSeparatedTagHeaderFormatter`` that formats an array of tags into a
+comma-separated list. This format is expected for invalidation with the
+Varnish reverse proxy. When using the default settings, everything is created
+automatically and the ``X-Cache-Tags`` header will be used::
 
     use FOS\HttpCache\ResponseTagger;
 
-    // $proxyClient already created, implementing FOS\HttpCache\ProxyClient\Invalidation\TagCapable
-    $responseTagger = new ResponseTagger($proxyClient);
+    $responseTagger = new ResponseTagger();
 
 .. _response_tagger_optional_parameters:
 
-The response tagger validates tags that you set. By default, it simply ignores
-empty strings. You can set the response tagger to strict mode to have it throw
-an ``InvalidTagException`` on empty tags::
+If you need a different behavior, you can provide your own implementation of
+the ``TagHeaderFormatter`` interface. But be aware that your
+:ref:`Varnish configuration <varnish_tagging>` has to match with the tag on the response.
+For example, to use a different header name::
 
-    $responseTagger = new ResponseTagger($proxyClient, ['strict' => true]);
+    use FOS\HttpCache\ResponseTagger;
+    use FOS\HttpCache\TagHeaderFormatter;
+
+    $formatter = new CommaSeparatedTagHeaderFormatter('Custom-Header-Name');
+    $responseTagger = new ResponseTagger(['header_formatter' => $formatter]);
+
+The response tagger validates tags that you set. By default, it simply ignores
+empty strings and does not add them to the list of tags. You can set the
+response tagger to strict mode to have it throw an ``InvalidTagException`` on
+empty tags::
+
+    $responseTagger = new ResponseTagger(['strict' => true]);
 
 Usage
 ~~~~~

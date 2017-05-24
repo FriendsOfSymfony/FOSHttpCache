@@ -12,8 +12,10 @@
 namespace FOS\HttpCache;
 
 use FOS\HttpCache\Exception\InvalidTagException;
-use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
+use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -23,6 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @author David Buchmann <mail@davidbu.ch>
  * @author André Rømcke <ar@ez.no>
  * @author Wicliff Wolda <wicliff.wolda@gmail.com>
+ * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
 class ResponseTagger
 {
@@ -32,9 +35,9 @@ class ResponseTagger
     private $options;
 
     /**
-     * @var TagCapable
+     * @var TagHeaderFormatter
      */
-    private $proxyClient;
+    private $headerFormatter;
 
     /**
      * @var array
@@ -42,27 +45,31 @@ class ResponseTagger
     private $tags = [];
 
     /**
-     * Create the response tagger with a tag capable proxy client and options.
+     * Create the response tagger with a tag header formatter and options.
      *
      * Supported options are:
      *
+     * - header_formatter (TagHeaderFormatter) Default: CommaSeparatedTagHeaderFormatter with default header name
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
      *
-     * @param TagCapable $proxyClient
-     * @param array      $options
+     * @param array $options
      */
-    public function __construct(TagCapable $proxyClient, array $options = [])
+    public function __construct(array $options = [])
     {
-        $this->proxyClient = $proxyClient;
-
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
+            // callback to avoid instantiating the formatter when its not needed
+            'header_formatter' => function (Options $options) {
+                return new CommaSeparatedTagHeaderFormatter();
+            },
             'strict' => false,
         ]);
 
+        $resolver->setAllowedTypes('header_formatter', TagHeaderFormatter::class);
         $resolver->setAllowedTypes('strict', 'bool');
 
         $this->options = $resolver->resolve($options);
+        $this->headerFormatter = $this->options['header_formatter'];
     }
 
     /**
@@ -72,7 +79,7 @@ class ResponseTagger
      */
     public function getTagsHeaderName()
     {
-        return $this->proxyClient->getTagsHeaderName();
+        return $this->headerFormatter->getTagsHeaderName();
     }
 
     /**
@@ -84,7 +91,7 @@ class ResponseTagger
      */
     public function getTagsHeaderValue()
     {
-        return $this->proxyClient->getTagsHeaderValue($this->tags);
+        return $this->headerFormatter->getTagsHeaderValue($this->tags);
     }
 
     /**

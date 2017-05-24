@@ -18,6 +18,7 @@ sub fos_ban_recv {
             ban("obj.http.X-Host ~ " + req.http.X-Host
                 + " && obj.http.X-Url ~ " + req.http.X-Url
                 + " && obj.http.content-type ~ " + req.http.X-Content-Type
+                // the left side is the response header, the right side the invalidation header
                 + " && obj.http.X-Cache-Tags ~ " + req.http.X-Cache-Tags
             );
         } else {

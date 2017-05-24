@@ -36,6 +36,15 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
     const HTTP_HEADER_HOST = 'X-Host';
     const HTTP_HEADER_URL = 'X-Url';
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
+
+    /**
+     * Default name of the header used to invalidate content with specific tags.
+     *
+     * This happens to be the same as TagHeaderFormatter::DEFAULT_HEADER_NAME
+     * but does not technically need to be the same.
+     *
+     * @var string
+     */
     const DEFAULT_HTTP_HEADER_CACHE_TAGS = 'X-Cache-Tags';
 
     /**
@@ -62,22 +71,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         }
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTagsHeaderValue(array $tags)
-    {
-        return implode(',', array_unique($this->escapeTags($tags)));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTagsHeaderName()
-    {
-        return $this->options['tags_header'];
     }
 
     /**
