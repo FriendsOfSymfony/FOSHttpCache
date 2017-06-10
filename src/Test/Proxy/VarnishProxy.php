@@ -67,7 +67,7 @@ class VarnishProxy extends AbstractProxy
     {
         if (file_exists($this->pid)) {
             try {
-                $this->runCommand('kill', ['-9', file_get_contents($this->pid)]);
+                $this->runCommand('kill', ['-9', trim(file_get_contents($this->pid))]);
             } catch (\RuntimeException $e) {
                 // Ignore if command fails when Varnish wasn't running
             }

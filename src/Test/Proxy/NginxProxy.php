@@ -52,7 +52,7 @@ class NginxProxy extends AbstractProxy
     public function stop()
     {
         if (file_exists($this->pid)) {
-            $this->runCommand('kill', [file_get_contents($this->pid)]);
+            $this->runCommand('kill', [trim(file_get_contents($this->pid))]);
         }
     }
 
