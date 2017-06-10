@@ -21,10 +21,14 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
  * Varnish HTTP cache invalidator.
  *
  * Additional constructor options:
- * - tags_header         Header for tagging responses, defaults to X-Cache-Tags
- * - header_length       Maximum header length, defaults to 7500 bytes
- * - default_ban_headers Map of headers that are set on each ban request,
- *                       merged with the built-in headers
+ * - tags_header         Header for sending tag invalidation requests to
+ *                       Varnish, defaults to X-Cache-Tags
+ * - header_length       Maximum header length when invalidating tags. If there
+ *                       are more tags to invalidate than fit into the header,
+ *                       the invalidation request is split into several requests.
+ *                       Defaults to 7500
+ * - default_ban_headers Map of header name => header value that have to be set
+ *                       on each ban request, merged with the built-in headers
  *
  * @author David de Boer <david@driebit.nl>
  */
