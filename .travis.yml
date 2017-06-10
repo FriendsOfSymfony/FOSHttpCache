@@ -1,4 +1,3 @@
-dist: trusty
 group: edge
 language: php
 
@@ -16,6 +15,8 @@ matrix:
       env: SYMFONY_VERSION=2.7.* VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
     - php: 7.0
       env: VARNISH_VERSION=4.1
+    - php: hhvm
+      dist: trusty
 
 branches:
   only:
