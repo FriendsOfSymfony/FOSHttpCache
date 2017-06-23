@@ -87,7 +87,7 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
             $headers
         );
 
-        $this->queueRequest(self::HTTP_METHOD_BAN, '/', $headers);
+        $this->queueRequest(self::HTTP_METHOD_BAN, '/', $headers, false);
 
         return $this;
     }

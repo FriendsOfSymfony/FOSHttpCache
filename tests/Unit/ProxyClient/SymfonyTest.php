@@ -42,7 +42,7 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ), true
         );
 
         $symfony->purge('/url', ['X-Foo' => 'bar']);
@@ -62,7 +62,8 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ),
+            true
         );
 
         $symfony->refresh('/fresh');

@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.0.1
+-----
+
+### Fixed
+
+* Ban requests now work even when no base URI is configured.
+
 2.0.0
 -----
 
