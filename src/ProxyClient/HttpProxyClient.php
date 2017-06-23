@@ -86,11 +86,13 @@ abstract class HttpProxyClient implements ProxyClient
      * @param string              $method
      * @param string|UriInterface $url
      * @param array               $headers
+     * @param bool                $validateHost see HttpDispatcher::invalidate
      */
-    protected function queueRequest($method, $url, array $headers)
+    protected function queueRequest($method, $url, array $headers, $validateHost = true)
     {
         $this->httpDispatcher->invalidate(
-            $this->requestFactory->createRequest($method, $url, $headers)
+            $this->requestFactory->createRequest($method, $url, $headers),
+            $validateHost
         );
     }
 

@@ -52,7 +52,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ), false
         );
 
         $varnish->ban([
@@ -74,7 +74,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ), false
         );
         $hosts = ['fos.lo', 'fos2.lo'];
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
@@ -113,7 +113,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ), false
         );
 
         $varnish->invalidateTags(['mytag', 'othertag']);
@@ -134,7 +134,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ), false
         );
 
         $varnish->invalidateTags(['post-1', 'post,type-3']);
@@ -162,7 +162,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ), true
         );
 
         $varnish->purge('/url', ['X-Foo' => 'bar']);
@@ -180,7 +180,7 @@ class VarnishTest extends \PHPUnit_Framework_TestCase
 
                     return true;
                 }
-            )
+            ), true
         );
 
         $varnish->refresh('/fresh');

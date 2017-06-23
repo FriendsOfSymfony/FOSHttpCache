@@ -157,6 +157,18 @@ class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
         $httpDispatcher->invalidate($request);
     }
 
+    public function testBanWithoutBaseUri()
+    {
+        $httpDispatcher = new HttpDispatcher(
+            ['127.0.0.1:123'],
+            '',
+            $this->httpClient
+        );
+
+        $request = $this->messageFactory->createRequest('BAN', '/', ['X-Url' => '/foo/.*']);
+        $httpDispatcher->invalidate($request, false);
+    }
+
     public function testSetBasePathWithHost()
     {
         $httpDispatcher = new HttpDispatcher(
