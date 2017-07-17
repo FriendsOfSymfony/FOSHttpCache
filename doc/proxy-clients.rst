@@ -19,15 +19,18 @@ Supported invalidation methods
 Not all clients support all :ref:`invalidation methods <invalidation methods>`.
 This table provides of methods supported by each proxy client:
 
-============= ======= ======= =======
-Client        Purge   Refresh Ban
-============= ======= ======= =======
-Varnish       ✓       ✓       ✓
+============= ======= ======= ======= =======
+Client        Purge   Refresh Ban     Tagging
+============= ======= ======= ======= =======
+Varnish       ✓       ✓       ✓       ✓
 NGINX         ✓       ✓
 Symfony Cache ✓       ✓
-Noop          ✓       ✓       ✓
-Multiplexer   ✓       ✓       ✓
-============= ======= ======= =======
+Noop          ✓       ✓       ✓       ✓
+Multiplexer   ✓       ✓       ✓       ✓
+============= ======= ======= ======= =======
+
+Of course, you can also implement your own client for other needs. Have a look
+at the interfaces in namespace ``FOS\HttpCache\ProxyClient\Invalidation``.
 
 .. _client setup:
 
