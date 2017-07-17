@@ -11,6 +11,7 @@ invalidator
 localhost
 middleware
 middlewares
+namespace
 nginx
 roundtrip
 symfony
