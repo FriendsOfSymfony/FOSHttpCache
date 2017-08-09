@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Test;
 
 /**
- * This fake trait is used to have the same code and behavior between WebServerListener and its legacy version
+ * This fake trait is used to have the same code and behavior between WebServerListener and its legacy version.
  */
 class WebServerListenerTrait
 {

@@ -14,7 +14,7 @@ namespace FOS\HttpCache\Test\PHPUnit;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * This trait is used to have the same code and behavior between AbstractCacheConstraint and its legacy version
+ * This trait is used to have the same code and behavior between AbstractCacheConstraint and its legacy version.
  */
 trait AbstractCacheConstraintTrait
 {

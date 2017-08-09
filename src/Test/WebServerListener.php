@@ -143,8 +143,8 @@ if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Ve
          * Wait for caching proxy to be started up and reachable.
          *
          * @param string $ip
-         * @param int $port
-         * @param int $timeout Timeout in milliseconds
+         * @param int    $port
+         * @param int    $timeout Timeout in milliseconds
          *
          * @throws \RuntimeException If proxy is not reachable within timeout
          */
