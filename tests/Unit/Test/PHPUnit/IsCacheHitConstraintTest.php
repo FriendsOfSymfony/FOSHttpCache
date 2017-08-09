@@ -26,7 +26,7 @@ class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_ExpectationFailedException
+     * @expectedException \PHPUnit\Framework\ExpectationFailedException
      * @expectedExceptionMessage Failed asserting that response (with status code 500) is a cache hit
      */
     public function testMatches()

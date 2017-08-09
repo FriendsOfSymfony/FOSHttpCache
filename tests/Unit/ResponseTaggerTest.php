@@ -114,7 +114,7 @@ class ResponseTaggerTest extends TestCase
 
         $tagHandler = new ResponseTagger(['header_formatter' => $headerFormatter, 'strict' => true]);
 
-        $this->setExpectedException(InvalidTagException::class);
+        $this->expectException(InvalidTagException::class);
         $tagHandler->addTags(['post-1', false]);
     }
 

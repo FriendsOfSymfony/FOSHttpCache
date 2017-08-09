@@ -28,7 +28,7 @@ class RefreshListenerTest extends TestCase
 
     public function setUp()
     {
-        $this->kernel = $this->getMock(CacheInvalidation::class);
+        $this->kernel = $this->createMock(CacheInvalidation::class);
     }
 
     public function testRefreshAllowed()

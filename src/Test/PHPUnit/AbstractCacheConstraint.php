@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Test\PHPUnit;
 
-use PHPUnit\Framework\Constraint;
+use PHPUnit\Framework\Constraint\Constraint;
 
 if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Version::id(), '6.0.0', '<')) {
     class_alias('FOS\HttpCache\Test\Legacy\PHPUnit\AbstractCacheConstraint', 'FOS\HttpCache\Test\PHPUnit\AbstractCacheConstraint');

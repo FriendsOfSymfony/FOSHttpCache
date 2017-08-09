@@ -86,7 +86,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      */
     protected function setStoreMock(CacheInvalidation $httpCache, Request $request, Response $response)
     {
-        $store = $this->getMock(StoreInterface::class);
+        $store = $this->createMock(StoreInterface::class);
         $store
             ->expects($this->once())
             ->method('write')

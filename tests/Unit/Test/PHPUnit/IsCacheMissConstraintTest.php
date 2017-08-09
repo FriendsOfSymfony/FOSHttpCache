@@ -26,7 +26,7 @@ class IsCacheMissConstraintTest extends AbstractCacheConstraintTest
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_ExpectationFailedException
+     * @expectedException \PHPUnit\Framework\ExpectationFailedException
      * @expectedExceptionMessage Failed asserting that response (with status code 200) is a cache miss
      */
     public function testMatches()

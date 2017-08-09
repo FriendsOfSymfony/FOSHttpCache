@@ -271,7 +271,7 @@ class CacheInvalidatorTest extends TestCase
         $cacheInvalidator = new CacheInvalidator($proxyClient);
         $eventDispatcher = new EventDispatcher();
         $cacheInvalidator->setEventDispatcher($eventDispatcher);
-        $this->setExpectedException(\Exception::class);
+        $this->expectException(\Exception::class);
         $cacheInvalidator->setEventDispatcher($eventDispatcher);
     }
 }
