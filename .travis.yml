@@ -1,6 +1,9 @@
 dist: trusty
 group: edge
 language: php
+cache:
+  directories:
+    - $HOME/.composer/cache/files
 
 php:
   - 5.6
