@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Test\Legacy;
 
 use FOS\HttpCache\Test\WebServerListenerTrait;
+use PHPUnit\Framework\TestListener;
 
 /**
  * A PHPUnit test listener that starts and stops the PHP built-in web server.
@@ -26,7 +27,7 @@ use FOS\HttpCache\Test\WebServerListenerTrait;
  * WEB_SERVER_PORT     port to listen on (required)
  * WEB_SERVER_DOCROOT  path to the document root for the server (required)
  */
-class WebServerListener implements \PHPUnit_Framework_TestListener
+class WebServerListener implements TestListener
 {
     /** @var WebServerListenerTrait */
     private $trait;
