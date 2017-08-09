@@ -17,10 +17,13 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ProxyClient\MultiplexerClient;
 use FOS\HttpCache\ProxyClient\ProxyClient;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 class MultiplexerClientTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testBan()
     {
         $headers = ['Header1' => 'Header1-Value'];

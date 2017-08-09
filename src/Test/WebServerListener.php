@@ -15,6 +15,7 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestSuite;
+use PHPUnit\Framework\Warning;
 
 if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Version::id(), '6.0.0', '<')) {
     class_alias('FOS\HttpCache\Test\Legacy\WebServerListener', 'FOS\HttpCache\Test\WebServerListener');
@@ -85,6 +86,10 @@ if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Ve
         }
 
         public function addRiskyTest(Test $test, \Exception $e, $time)
+        {
+        }
+
+        public function addWarning(Test $test, Warning $e, $time)
         {
         }
 

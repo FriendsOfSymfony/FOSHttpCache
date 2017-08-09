@@ -20,7 +20,6 @@
     </filter>
 
     <listeners>
-        <listener class="\Mockery\Adapter\Phpunit\TestListener" />
         <listener class="\FOS\HttpCache\Test\WebServerListener" />
     </listeners>
 

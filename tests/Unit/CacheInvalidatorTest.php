@@ -25,6 +25,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\RequestException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
@@ -34,6 +35,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class CacheInvalidatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testSupportsTrue()
     {
         /** @var MockInterface|Varnish $proxyClient */

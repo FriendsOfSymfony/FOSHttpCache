@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,8 @@ use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
 class PurgeListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * This tests a sanity check in the AbstractControlledListener.
      *

@@ -25,12 +25,15 @@ use Http\Message\MessageFactory;
 use Http\Message\UriFactory;
 use Http\Mock\Client;
 use Http\Promise\Promise;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class HttpDispatcherTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * Mock HTTP client.
      *
