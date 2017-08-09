@@ -11,10 +11,12 @@
 
 namespace FOS\HttpCache\Test;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Abstract test that contains traits necessary for running tests against Varnish.
  */
-abstract class VarnishTestCase extends \PHPUnit_Framework_TestCase
+abstract class VarnishTestCase extends TestCase
 {
     use CacheAssertions;
     use HttpCaller;

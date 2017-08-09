@@ -11,11 +11,13 @@
 
 namespace FOS\HttpCache\Test;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Abstract test that collects traits necessary for running tests against
  * NGINX.
  */
-abstract class NginxTestCase extends \PHPUnit_Framework_TestCase
+abstract class NginxTestCase extends TestCase
 {
     use CacheAssertions;
     use HttpCaller;

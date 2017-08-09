@@ -11,11 +11,13 @@
 
 namespace FOS\HttpCache\Test;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Abstract test that contains traits necessary for running tests against
  * Symfony HtptCache.
  */
-abstract class SymfonyTestCase extends \PHPUnit_Framework_TestCase
+abstract class SymfonyTestCase extends TestCase
 {
     use CacheAssertions;
     use HttpCaller;
