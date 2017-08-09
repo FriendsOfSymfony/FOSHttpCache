@@ -12,8 +12,9 @@
 namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
 
 use FOS\HttpCache\Test\Proxy\VarnishProxy;
+use PHPUnit\Framework\TestCase;
 
-class VarnishProxyTest extends \PHPUnit_Framework_TestCase
+class VarnishProxyTest extends TestCase
 {
     /**
      * @expectedException \InvalidArgumentException

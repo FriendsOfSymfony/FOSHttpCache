@@ -9,12 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
+namespace FOS\HttpCache\Tests\Unit\Test;
 
 use FOS\HttpCache\Test\Proxy\VarnishProxy;
 use FOS\HttpCache\Test\VarnishTest;
+use PHPUnit\Framework\TestCase;
 
-class VarnishTestTest extends \PHPUnit_Framework_TestCase
+class VarnishTestTest extends TestCase
 {
     use VarnishTest;
 

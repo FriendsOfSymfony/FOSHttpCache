@@ -17,8 +17,9 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ProxyClient\MultiplexerClient;
 use FOS\HttpCache\ProxyClient\ProxyClient;
+use PHPUnit\Framework\TestCase;
 
-class MultiplexerClientTest extends \PHPUnit_Framework_TestCase
+class MultiplexerClientTest extends TestCase
 {
     public function testBan()
     {

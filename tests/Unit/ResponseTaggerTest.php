@@ -15,9 +15,10 @@ use FOS\HttpCache\Exception\InvalidTagException;
 use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
 use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
-class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
+class ResponseTaggerTest extends TestCase
 {
     public function testDefaultFormatter()
     {

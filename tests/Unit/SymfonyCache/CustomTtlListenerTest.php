@@ -15,10 +15,11 @@ use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\CustomTtlListener;
 use Mockery\MockInterface;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class CustomTtlListenerTest extends \PHPUnit_Framework_TestCase
+class CustomTtlListenerTest extends TestCase
 {
     /**
      * @var CacheInvalidation|MockInterface

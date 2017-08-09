@@ -14,9 +14,10 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Symfony;
 use Mockery\MockInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-class SymfonyTest extends \PHPUnit_Framework_TestCase
+class SymfonyTest extends TestCase
 {
     /**
      * @var HttpDispatcher|MockInterface

@@ -12,8 +12,9 @@
 namespace FOS\HttpCache\Tests\Unit\TagHeaderFormatter;
 
 use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
+use PHPUnit\Framework\TestCase;
 
-class CommaSeparatedTagHeaderFormatterTest extends \PHPUnit_Framework_TestCase
+class CommaSeparatedTagHeaderFormatterTest extends TestCase
 {
     public function testGetTagsHeaderName()
     {

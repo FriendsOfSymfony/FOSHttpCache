@@ -12,8 +12,9 @@
 namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
 
 use FOS\HttpCache\Test\Proxy\AbstractProxy;
+use PHPUnit\Framework\TestCase;
 
-class AbstractProxyTest extends \PHPUnit_Framework_TestCase
+class AbstractProxyTest extends TestCase
 {
     /**
      * @expectedException \RuntimeException
