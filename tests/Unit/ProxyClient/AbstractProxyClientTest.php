@@ -76,8 +76,8 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider curlExceptionProvider
      *
-     * @param \Exception $exception The exception that curl should throw.
-     * @param string     $type      The returned exception class to be expected.
+     * @param \Exception $exception the exception that curl should throw
+     * @param string     $type      the returned exception class to be expected
      */
     public function testExceptions(\Exception $exception, $type)
     {
@@ -98,6 +98,7 @@ class AbstractProxyClientTest extends \PHPUnit_Framework_TestCase
         $varnish = new Varnish(array('127.0.0.1:123'), 'my_hostname.dev', $client);
 
         $varnish->ban(array());
+
         try {
             $varnish->flush();
             $this->fail('Should have aborted with an exception');

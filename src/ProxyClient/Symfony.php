@@ -41,7 +41,7 @@ class Symfony extends AbstractProxyClient implements PurgeInterface, RefreshInte
      *
      * - purge_method:         HTTP method that identifies purge requests.
      *
-     * @param array $options The purge_method that should be used.
+     * @param array $options the purge_method that should be used
      */
     public function __construct(array $servers, $baseUrl = null, ClientInterface $client = null, array $options = array())
     {

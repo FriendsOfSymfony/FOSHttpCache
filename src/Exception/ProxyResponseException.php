@@ -17,11 +17,11 @@ namespace FOS\HttpCache\Exception;
 class ProxyResponseException extends \RuntimeException implements HttpCacheExceptionInterface
 {
     /**
-     * @param string     $host          The host name that was contacted.
-     * @param string     $statusCode    The status code of the reply.
-     * @param string     $statusMessage The error message.
-     * @param string     $details       Further details about the request that caused the error.
-     * @param \Exception $previous      The exception from the HTTP client.
+     * @param string     $host          the host name that was contacted
+     * @param string     $statusCode    the status code of the reply
+     * @param string     $statusMessage the error message
+     * @param string     $details       further details about the request that caused the error
+     * @param \Exception $previous      the exception from the HTTP client
      *
      * @return ProxyUnreachableException
      */

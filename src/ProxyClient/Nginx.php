@@ -45,7 +45,7 @@ class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterf
      *                                       requests (optional). This is required
      *                                       if you purge relative URLs and the domain
      *                                       is not part of your `proxy_cache_key`
-     * @param string          $purgeLocation Path that triggers purge (optional).
+     * @param string          $purgeLocation path that triggers purge (optional)
      * @param ClientInterface $client        HTTP client (optional). If no HTTP client
      *                                       is supplied, a default one will be
      *                                       created.

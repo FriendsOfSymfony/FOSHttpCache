@@ -23,7 +23,7 @@ abstract class UserContextTestCase extends VarnishTestCase
     /**
      * Assert that the context cache status is as expected.
      *
-     * @param string $hashCache The cache status of the context request.
+     * @param string $hashCache the cache status of the context request
      */
     abstract protected function assertContextCache($hashCache);
 
