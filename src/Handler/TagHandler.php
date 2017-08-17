@@ -45,9 +45,9 @@ class TagHandler
     /**
      * Constructor.
      *
-     * @param CacheInvalidator $invalidator  The invalidator instance.
-     * @param string           $tagsHeader   Header to use for tags, defaults to X-Cache-Tags.
-     * @param int              $headerLength Maximum header size in bytes, defaults to 7500.
+     * @param CacheInvalidator $invalidator  the invalidator instance
+     * @param string           $tagsHeader   header to use for tags, defaults to X-Cache-Tags
+     * @param int              $headerLength maximum header size in bytes, defaults to 7500
      *
      * @throws UnsupportedProxyOperationException If CacheInvalidator does not support invalidate requests
      */
@@ -96,7 +96,7 @@ class TagHandler
     /**
      * Check whether the tag handler has any tags to set on the response.
      *
-     * @return bool True if this handler will set at least one tag.
+     * @return bool true if this handler will set at least one tag
      */
     public function hasTags()
     {
@@ -108,7 +108,7 @@ class TagHandler
      *
      * This must be called before any HTTP response is sent to the client.
      *
-     * @param array $tags List of tags to add.
+     * @param array $tags list of tags to add
      *
      * @return $this
      */
@@ -154,9 +154,9 @@ class TagHandler
     /**
      * Make sure that the tags are valid.
      *
-     * @param array $tags The tags to escape.
+     * @param array $tags the tags to escape
      *
-     * @return array Sane tags.
+     * @return array sane tags
      */
     protected function escapeTags(array $tags)
     {

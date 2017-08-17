@@ -18,7 +18,7 @@ namespace FOS\HttpCache\Exception;
 class UnsupportedProxyOperationException extends \RuntimeException implements HttpCacheExceptionInterface
 {
     /**
-     * @param string $method Name of the HTTP method that would be required.
+     * @param string $method name of the HTTP method that would be required
      *
      * @return UnsupportedProxyOperationException
      */

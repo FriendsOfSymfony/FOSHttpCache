@@ -31,7 +31,7 @@ interface RefreshInterface extends ProxyClientInterface
      * If the $url is just a path, the proxy client class will add a default
      * host name.
      *
-     * @param string $url     Path or URL to refresh.
+     * @param string $url     path or URL to refresh
      * @param array  $headers Extra HTTP headers to send to the caching proxy
      *                        (optional)
      *

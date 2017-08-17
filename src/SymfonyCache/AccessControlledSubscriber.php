@@ -39,10 +39,10 @@ abstract class AccessControlledSubscriber implements EventSubscriberInterface
      *
      * If neither parameter is set, the filter is IP 127.0.0.1
      *
-     * @param RequestMatcher|null  $requestMatcher Request matcher configured to only match allowed requests.
-     * @param string|string[]|null $ips            IP or list of IPs that are allowed to send requests.
+     * @param RequestMatcher|null  $requestMatcher request matcher configured to only match allowed requests
+     * @param string|string[]|null $ips            IP or list of IPs that are allowed to send requests
      *
-     * @throws \InvalidArgumentException If both $requestMatcher and $ips are set.
+     * @throws \InvalidArgumentException if both $requestMatcher and $ips are set
      */
     public function __construct(RequestMatcher $requestMatcher = null, $ips = null)
     {
@@ -59,9 +59,9 @@ abstract class AccessControlledSubscriber implements EventSubscriberInterface
     /**
      * Check whether the request is allowed.
      *
-     * @param Request $request The request to check.
+     * @param Request $request the request to check
      *
-     * @return bool Whether access is granted.
+     * @return bool whether access is granted
      */
     protected function isRequestAllowed(Request $request)
     {

@@ -96,7 +96,7 @@ class CacheInvalidator
      * refreshPath works and INVALIDATE is about all other invalidation
      * methods.
      *
-     * @param string $operation one of the class constants.
+     * @param string $operation one of the class constants
      *
      * @return bool
      *
@@ -123,7 +123,7 @@ class CacheInvalidator
      *
      * @return $this
      *
-     * @throws \Exception When trying to override the event dispatcher.
+     * @throws \Exception when trying to override the event dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
@@ -156,7 +156,7 @@ class CacheInvalidator
      *
      * @return $this
      *
-     * @deprecated Use getEventDispatcher()->addSubscriber($subscriber) instead.
+     * @deprecated use getEventDispatcher()->addSubscriber($subscriber) instead
      */
     public function addSubscriber(EventSubscriberInterface $subscriber)
     {
@@ -172,7 +172,7 @@ class CacheInvalidator
      *
      * @return $this
      *
-     * @deprecated Use constructor argument to TagHandler instead.
+     * @deprecated use constructor argument to TagHandler instead
      */
     public function setTagsHeader($tagsHeader)
     {
@@ -188,7 +188,7 @@ class CacheInvalidator
      *
      * @return string
      *
-     * @deprecated Use TagHandler::getTagsHeaderName instead.
+     * @deprecated use TagHandler::getTagsHeaderName instead
      */
     public function getTagsHeader()
     {
@@ -247,7 +247,7 @@ class CacheInvalidator
      *
      * @see BanInterface::ban()
      *
-     * @param array $headers HTTP headers that path must match to be banned.
+     * @param array $headers HTTP headers that path must match to be banned
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
@@ -275,12 +275,12 @@ class CacheInvalidator
      *
      * @see BanInterface::banPath()
      *
-     * @param string       $path        Regular expression pattern for URI to
-     *                                  invalidate.
-     * @param string       $contentType Regular expression pattern for the content
-     *                                  type to limit banning, for instance 'text'.
-     * @param array|string $hosts       Regular expression of a host name or list of
-     *                                  exact host names to limit banning.
+     * @param string       $path        regular expression pattern for URI to
+     *                                  invalidate
+     * @param string       $contentType regular expression pattern for the content
+     *                                  type to limit banning, for instance 'text'
+     * @param array|string $hosts       regular expression of a host name or list of
+     *                                  exact host names to limit banning
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
@@ -307,7 +307,7 @@ class CacheInvalidator
      *
      * @return $this
      *
-     * @deprecated Use TagHandler::invalidateTags instead.
+     * @deprecated use TagHandler::invalidateTags instead
      */
     public function invalidateTags(array $tags)
     {
@@ -323,9 +323,9 @@ class CacheInvalidator
     /**
      * Send all pending invalidation requests.
      *
-     * @return int The number of cache invalidations performed per caching server.
+     * @return int the number of cache invalidations performed per caching server
      *
-     * @throws ExceptionCollection If any errors occurred during flush.
+     * @throws ExceptionCollection if any errors occurred during flush
      */
     public function flush()
     {

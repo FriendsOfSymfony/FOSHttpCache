@@ -153,7 +153,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      * @param string $url     URL
      * @param array  $headers HTTP headers
      *
-     * @return string A hash value for this request.
+     * @return string a hash value for this request
      */
     private function getSignature($method, $url, array $headers)
     {
@@ -261,8 +261,8 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      * @param string   $url
      * @param string[] $allowedParts Array of allowed URL parts (optional)
      *
-     * @throws InvalidUrlException If URL is invalid, the scheme is not http or
-     *                             contains parts that are not expected.
+     * @throws InvalidUrlException if URL is invalid, the scheme is not http or
+     *                             contains parts that are not expected
      *
      * @return string The URL (with default scheme if there was no scheme)
      */

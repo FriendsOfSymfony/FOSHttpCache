@@ -219,7 +219,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      *
      * @param Request $request
      *
-     * @return Request The request that will return the user context hash value.
+     * @return Request the request that will return the user context hash value
      */
     private function generateHashLookupRequest(Request $request)
     {
