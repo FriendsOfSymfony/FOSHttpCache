@@ -161,30 +161,35 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         /** @var MockInterface|ProxyClient $proxyClient */
         $proxyClient = \Mockery::mock(ProxyClient::class);
         $cacheInvalidator = new CacheInvalidator($proxyClient);
+
         try {
             $cacheInvalidator->invalidatePath('/');
             $this->fail('Expected exception');
         } catch (UnsupportedProxyOperationException $e) {
             // success
         }
+
         try {
             $cacheInvalidator->refreshPath('/');
             $this->fail('Expected exception');
         } catch (UnsupportedProxyOperationException $e) {
             // success
         }
+
         try {
             $cacheInvalidator->invalidate([]);
             $this->fail('Expected exception');
         } catch (UnsupportedProxyOperationException $e) {
             // success
         }
+
         try {
             $cacheInvalidator->invalidateRegex('/');
             $this->fail('Expected exception');
         } catch (UnsupportedProxyOperationException $e) {
             // success
         }
+
         try {
             $cacheInvalidator->invalidateTags([]);
             $this->fail('Expected exception');
