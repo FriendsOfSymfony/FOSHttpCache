@@ -64,11 +64,11 @@ interface BanCapable extends ProxyClient
      *
      *    $client->banPath('*.png$', null, '^www.example.com$');
      *
-     * @param string       $path        Regular expression pattern for URI to
+     * @param string       $path        regular expression pattern for URI to
      *                                  invalidate
-     * @param string       $contentType Regular expression pattern for the content
+     * @param string       $contentType regular expression pattern for the content
      *                                  type to limit banning, for instance 'text'
-     * @param array|string $hosts       Regular expression of a host name or list
+     * @param array|string $hosts       regular expression of a host name or list
      *                                  of exact host names to limit banning
      *
      * @return $this

@@ -23,9 +23,9 @@ interface ProxyClient
     /**
      * Send all pending invalidation requests.
      *
-     * @return int The number of cache invalidations performed per caching server
+     * @return int the number of cache invalidations performed per caching server
      *
-     * @throws ExceptionCollection If any errors occurred during flush
+     * @throws ExceptionCollection if any errors occurred during flush
      */
     public function flush();
 }

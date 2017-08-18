@@ -17,7 +17,7 @@ namespace FOS\HttpCache\Exception;
 class InvalidUrlException extends InvalidArgumentException implements HttpCacheException
 {
     /**
-     * @param string $url    The invalid URL
+     * @param string $url    the invalid URL
      * @param string $reason Further explanation why the URL was invalid (optional)
      *
      * @return self
