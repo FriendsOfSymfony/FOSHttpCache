@@ -48,7 +48,7 @@ abstract class AbstractProxyClient implements ProxyClientInterface
      *
      * @var array|RequestInterface[]
      */
-    private $queue;
+    private $queue = array();
 
     /**
      * Constructor.
