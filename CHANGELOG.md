@@ -3,6 +3,12 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.0.2
+-----
+
+* Support PHP 7.2
+  Avoid warning about `count(null)` in PHP 7.2.
+
 2.0.1
 -----
 
