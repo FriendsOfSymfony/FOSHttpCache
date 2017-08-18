@@ -63,7 +63,7 @@ script:
   - if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
 
 after_script:
-  # avoid uploading the code coverage for HHVM as it cannot generate it (PHPUnit dropped the old HHVM driver and the 
+  # avoid uploading the code coverage for HHVM as it cannot generate it (PHPUnit dropped the old HHVM driver and the
   # XDebug API is not implemented in HHVM 3.5) and we don't want to cancel the Scrutinizer analysis by notifying
   # it than no coverage data is available
   - if [[ "$TRAVIS_PHP_VERSION" != "hhvm" ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi

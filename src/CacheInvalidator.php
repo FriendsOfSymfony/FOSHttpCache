@@ -110,7 +110,7 @@ class CacheInvalidator
      *
      * @return $this
      *
-     * @throws \Exception When trying to override the event dispatcher
+     * @throws \Exception when trying to override the event dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
@@ -262,9 +262,9 @@ class CacheInvalidator
     /**
      * Send all pending invalidation requests.
      *
-     * @return int The number of cache invalidations performed per caching server
+     * @return int the number of cache invalidations performed per caching server
      *
-     * @throws ExceptionCollection If any errors occurred during flush
+     * @throws ExceptionCollection if any errors occurred during flush
      */
     public function flush()
     {

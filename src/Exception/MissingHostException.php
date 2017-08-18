@@ -18,7 +18,7 @@ namespace FOS\HttpCache\Exception;
 class MissingHostException extends \RuntimeException implements HttpCacheException
 {
     /**
-     * @param string $path The path that was asked to be invalidated
+     * @param string $path the path that was asked to be invalidated
      *
      * @return MissingHostException
      */

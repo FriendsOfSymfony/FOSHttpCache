@@ -94,6 +94,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   tags are formatted, use the new `header_formatter` option with a
   `TagHeaderFormatter`.
 
+1.4.3
+-----
+
+* Avoid warning about `count(null)` in PHP 7.2.
+
 1.4.2
 -----
 
