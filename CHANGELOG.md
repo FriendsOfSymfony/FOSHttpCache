@@ -1,5 +1,11 @@
 Changelog
 =========
+
+1.4.3
+-----
+
+* Avoid warning about `count(null)` in PHP 7.2.
+
 1.4.2
 -----
 
