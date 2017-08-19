@@ -13,7 +13,7 @@ namespace FOS\HttpCache\Test;
 
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Test;
-use PHPUnit\Framework\TestListener;
+use PHPUnit\Framework\TestListener as TestListenerInterface;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
 
@@ -35,7 +35,7 @@ if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Ve
      * WEB_SERVER_PORT     port to listen on (required)
      * WEB_SERVER_DOCROOT  path to the document root for the server (required)
      */
-    class WebServerListener implements TestListener
+    class WebServerListener implements TestListenerInterface
     {
         /** @var WebServerListenerTrait */
         private $trait;
