@@ -25,15 +25,18 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\RequestException;
-use Mockery\Mock;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
+class CacheInvalidatorTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testSupportsTrue()
     {
         /** @var MockInterface|Varnish $proxyClient */
@@ -268,7 +271,7 @@ class CacheInvalidatorTest extends \PHPUnit_Framework_TestCase
         $cacheInvalidator = new CacheInvalidator($proxyClient);
         $eventDispatcher = new EventDispatcher();
         $cacheInvalidator->setEventDispatcher($eventDispatcher);
-        $this->setExpectedException(\Exception::class);
+        $this->expectException(\Exception::class);
         $cacheInvalidator->setEventDispatcher($eventDispatcher);
     }
 }

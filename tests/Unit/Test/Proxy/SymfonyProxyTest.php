@@ -12,8 +12,9 @@
 namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
 
 use FOS\HttpCache\Test\Proxy\SymfonyProxy;
+use PHPUnit\Framework\TestCase;
 
-class SymfonyProxyTest extends \PHPUnit_Framework_TestCase
+class SymfonyProxyTest extends TestCase
 {
     public function testStart()
     {

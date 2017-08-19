@@ -9,12 +9,13 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
+namespace FOS\HttpCache\Tests\Unit\Test;
 
 use FOS\HttpCache\Test\NginxTest;
 use FOS\HttpCache\Test\Proxy\NginxProxy;
+use PHPUnit\Framework\TestCase;
 
-class NginxTestTest extends \PHPUnit_Framework_TestCase
+class NginxTestTest extends TestCase
 {
     use NginxTest;
 

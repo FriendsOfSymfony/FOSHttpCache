@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Functional\Varnish;
+namespace FOS\HttpCache\Tests\Functional\Symfony;
 
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\CustomTtlListener;
@@ -18,6 +18,8 @@ use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\RefreshListener;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
@@ -27,8 +29,10 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * @group symfony
  */
-class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
+class EventDispatchingHttpCacheTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testEventListeners()
     {
         $request = new Request();

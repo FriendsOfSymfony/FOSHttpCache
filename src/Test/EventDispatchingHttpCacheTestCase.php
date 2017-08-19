@@ -15,6 +15,7 @@ use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\Events;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +26,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * This test ensures that the EventDispatchingHttpCache trait is correctly used.
  */
-abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_TestCase
+abstract class EventDispatchingHttpCacheTestCase extends TestCase
 {
     /**
      * Specify the CacheInvalidationInterface HttpCache class to test.
@@ -85,7 +86,7 @@ abstract class EventDispatchingHttpCacheTestCase extends \PHPUnit_Framework_Test
      */
     protected function setStoreMock(CacheInvalidation $httpCache, Request $request, Response $response)
     {
-        $store = $this->getMock(StoreInterface::class);
+        $store = $this->createMock(StoreInterface::class);
         $store
             ->expects($this->once())
             ->method('write')

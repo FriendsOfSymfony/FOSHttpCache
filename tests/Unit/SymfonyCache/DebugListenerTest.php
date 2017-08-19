@@ -14,11 +14,15 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\DebugListener;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DebugListenerTest extends \PHPUnit_Framework_TestCase
+class DebugListenerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var CacheInvalidation|\PHPUnit_Framework_MockObject_MockObject
      */

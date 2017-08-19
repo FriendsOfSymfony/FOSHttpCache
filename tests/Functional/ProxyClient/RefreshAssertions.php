@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
+use PHPUnit\Framework\Assert;
 
 /**
  * Assertions that do the refresh operations.
@@ -37,9 +38,9 @@ trait RefreshAssertions
         $originalTimestamp = (float) (string) $response->getBody();
         $refreshedTimestamp = (float) (string) $refreshed->getBody();
 
-        \PHPUnit_Framework_Assert::assertThat(
+        Assert::assertThat(
             $refreshedTimestamp,
-            \PHPUnit_Framework_Assert::greaterThan($originalTimestamp)
+            Assert::greaterThan($originalTimestamp)
         );
     }
 

@@ -16,8 +16,9 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use Http\Discovery\MessageFactoryDiscovery;
+use PHPUnit\Framework\TestCase;
 
-class HttpDispatcherTest extends \PHPUnit_Framework_TestCase
+class HttpDispatcherTest extends TestCase
 {
     public function testNetworkError()
     {
