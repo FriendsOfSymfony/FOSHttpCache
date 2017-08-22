@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestListener;
 
 /**
  * A PHPUnit test listener that starts and stops the PHP built-in web server.
+ * This legacy version is for PHPUnit 5.x (min 5.4.4 required, due to FC layer) 
  *
  * This listener is configured with a couple of constants from the phpunit.xml
  * file. To define constants in the phpunit file, use this syntax:
