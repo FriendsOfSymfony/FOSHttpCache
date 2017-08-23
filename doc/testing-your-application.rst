@@ -8,11 +8,17 @@ By running your tests against a live instance of your proxy server, you can
 validate the caching headers that your application sets, and the invalidation
 rules that it defines.
 
-The FOSHttpCache library provides traits and base test classes to help you write
-functional tests. Using the traits, you can extend your own (or your
-framework’s) base test classes. For convenience, you can also extend the
-FOSHttpCache base test class suitable for your proxy server, which includes
-a sensible set of traits.
+The FOSHttpCache library provides traits and base test classes to help you
+write functional tests with PHPUnit 5.7 and 6.*. Using the traits, you can
+extend your own (or yourframework’s) base test classes. For convenience, you
+can also extend the FOSHttpCache base test class suitable for your proxy
+server, which includes a sensible set of traits.
+
+.. versionadded:: 2.1
+
+    The testing has been updated to support PHPUnit 6 in version 2.1. If you
+    an older version of FOSHttpCache and want to use the features described in
+    this chapter, you need to use PHPUnit 5 to run the tests.
 
 By using the traits, you get:
 
@@ -200,8 +206,9 @@ Provides your tests with a ``getResponse`` method, which retrieves a URI from
 your application through a real HTTP call that goes through the HTTP proxy server::
 
     use FOS\HttpCache\Test\HttpCaller;
+    use PHPUnit\Framework\TestCase;
 
-    class YourTest extends \PHPUnit_Framework_TestCase
+    class YourTest extends TestCase
     {
         use HttpCaller;
 
@@ -233,8 +240,9 @@ server to set an ``X-Cache`` header with the cache status:
 Then use the assertions as follows::
 
     use FOS\HttpCache\Test\CacheAssertions;
+    use PHPUnit\Framework\TestCase;
 
-    class YourTest extends \PHPUnit_Framework_TestCase
+    class YourTest extends TestCase
     {
         public function testCacheHitOrMiss()
         {
@@ -264,8 +272,9 @@ application sets influence your proxy server as you expect them to::
     use FOS\HttpCache\Test\VarnishTest;
     // or FOS\HttpCache\Test\NginxTest;
     // or FOS\HttpCache\Test\SymfonyTest;
+    use PHPUnit\Framework\TestCase;
 
-    class YourTest extends \PHPUnit_Framework_TestCase
+    class YourTest extends TestCase
     {
         public function testCachingHeaders()
         {
@@ -297,8 +306,9 @@ correctly::
     use FOS\HttpCache\Test\VarnishTest;
     // or FOS\HttpCache\Test\NginxTest;
     // or FOS\HttpCache\Test\SymfonyTest;
+    use PHPUnit\Framework\TestCase;
 
-    class YourTest extends \PHPUnit_Framework_TestCase
+    class YourTest extends TestCase
     {
         public function testCachePurge()
         {
