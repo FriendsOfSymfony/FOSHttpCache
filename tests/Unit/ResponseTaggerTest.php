@@ -15,10 +15,14 @@ use FOS\HttpCache\Exception\InvalidTagException;
 use FOS\HttpCache\ResponseTagger;
 use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
 use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
-class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
+class ResponseTaggerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     public function testDefaultFormatter()
     {
         $tagger = new ResponseTagger();
@@ -110,7 +114,7 @@ class ResponseTaggerTest extends \PHPUnit_Framework_TestCase
 
         $tagHandler = new ResponseTagger(['header_formatter' => $headerFormatter, 'strict' => true]);
 
-        $this->setExpectedException(InvalidTagException::class);
+        $this->expectException(InvalidTagException::class);
         $tagHandler->addTags(['post-1', false]);
     }
 

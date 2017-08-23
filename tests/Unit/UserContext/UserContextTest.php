@@ -12,8 +12,9 @@
 namespace FOS\HttpCache\Tests\Unit\UserContext;
 
 use FOS\HttpCache\UserContext\UserContext;
+use PHPUnit\Framework\TestCase;
 
-class UserContextTest extends \PHPUnit_Framework_TestCase
+class UserContextTest extends TestCase
 {
     public function testAddParameter()
     {

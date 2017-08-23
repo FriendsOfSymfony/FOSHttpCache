@@ -9,11 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Tests\Unit\ProxyClient;
+namespace FOS\HttpCache\Tests\Unit\Exception;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
+use PHPUnit\Framework\TestCase;
 
-class ExceptionCollectionTest extends \PHPUnit_Framework_TestCase
+class ExceptionCollectionTest extends TestCase
 {
     public function testCollectionConstructor()
     {

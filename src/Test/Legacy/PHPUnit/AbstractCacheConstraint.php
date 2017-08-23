@@ -9,17 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Test;
+namespace FOS\HttpCache\Test\Legacy\PHPUnit;
 
-use PHPUnit\Framework\TestCase;
+use FOS\HttpCache\Test\PHPUnit\AbstractCacheConstraintTrait;
 
 /**
- * Abstract test that contains traits necessary for running tests against
- * Symfony HtptCache.
+ * Abstract cache constraint.
  */
-abstract class SymfonyTestCase extends TestCase
+abstract class AbstractCacheConstraint extends \PHPUnit_Framework_Constraint
 {
-    use CacheAssertions;
-    use HttpCaller;
-    use SymfonyTest;
+    use AbstractCacheConstraintTrait;
 }

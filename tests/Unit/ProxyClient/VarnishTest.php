@@ -13,11 +13,15 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Varnish;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-class VarnishTest extends \PHPUnit_Framework_TestCase
+class VarnishTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var HttpDispatcher|MockInterface
      */

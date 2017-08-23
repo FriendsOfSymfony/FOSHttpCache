@@ -12,8 +12,9 @@
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Noop;
+use PHPUnit\Framework\TestCase;
 
-class NoopTest extends \PHPUnit_Framework_TestCase
+class NoopTest extends TestCase
 {
     /**
      * @var Noop

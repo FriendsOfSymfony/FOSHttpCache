@@ -11,8 +11,13 @@
 
 namespace FOS\HttpCache\Tests\Unit\Test\PHPUnit;
 
-abstract class AbstractCacheConstraintTest extends \PHPUnit_Framework_TestCase
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\TestCase;
+
+abstract class AbstractCacheConstraintTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     protected function getResponseMock()
     {
         $mock = \Mockery::mock(

@@ -13,6 +13,7 @@ namespace FOS\HttpCache\Test;
 
 use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
 use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -35,7 +36,7 @@ trait CacheAssertions
      */
     public function assertMiss(ResponseInterface $response, $message = null)
     {
-        \PHPUnit_Framework_TestCase::assertThat($response, self::isCacheMiss(), $message);
+        TestCase::assertThat($response, self::isCacheMiss(), $message);
     }
 
     /**
@@ -46,7 +47,7 @@ trait CacheAssertions
      */
     public function assertHit(ResponseInterface $response, $message = null)
     {
-        \PHPUnit_Framework_TestCase::assertThat($response, self::isCacheHit(), $message);
+        TestCase::assertThat($response, self::isCacheHit(), $message);
     }
 
     public static function isCacheHit()
