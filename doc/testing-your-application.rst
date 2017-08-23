@@ -10,7 +10,7 @@ rules that it defines.
 
 The FOSHttpCache library provides traits and base test classes to help you
 write functional tests with PHPUnit 5.7 and 6.*. Using the traits, you can
-extend your own (or yourframework’s) base test classes. For convenience, you
+extend your own (or your framework’s) base test classes. For convenience, you
 can also extend the FOSHttpCache base test class suitable for your proxy
 server, which includes a sensible set of traits.
 
