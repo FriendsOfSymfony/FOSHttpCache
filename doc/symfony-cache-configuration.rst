@@ -129,6 +129,29 @@ other hosts, provide the IPs of the machines allowed to purge, or provide a
 RequestMatcher that checks for an Authorization header or similar. *Only set
 one of ``client_ips`` or ``client_matcher``*.
 
+Symfony's `HttpCache` does not support cache invalidation by tags by default.
+However, this library ships with a `TaggableStore` that provides exactly that.
+If you want to use this, adjust your `AppCache` as follows::
+
+    use FOS\HttpCache\SymfonyCache\TaggableStore();
+
+    // ...
+
+    /**
+     * Overwrite constructor to register the TaggableStore.
+     */
+    public function __construct(
+        HttpKernelInterface $kernel,
+        StoreInterface $store,
+        SurrogateInterface $surrogate = null,
+        array $options = []
+    ) {
+        $store = new TaggableStore($kernel->getCacheDir());
+
+        parent::__construct($kernel, $store, $surrogate, $options);
+    }
+
+
 * **client_ips**: String with IP or array of IPs that are allowed to
   purge the cache.
 
@@ -140,6 +163,8 @@ one of ``client_ips`` or ``client_matcher``*.
   **default**: ``null``
 
 * **purge_method**: HTTP Method used with purge requests.
+
+* **purge_tags_header**: HTTP Header used for purging tags. (must match the 2nd argument of `TaggableStore`)
 
   **default**: ``PURGE``
 
