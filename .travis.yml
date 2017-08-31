@@ -7,13 +7,14 @@ cache:
 env:
   global:
     - VARNISH_VERSION=5.0
+    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^1.0"
 
 matrix:
   fast_finish: true
   include:
       # Minimum supported versions
     - php: 5.6
-      env: VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
+      env: VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest" DEPENDENCIES=""
 
     - php: 5.6
     - php: 7.0
@@ -29,7 +30,7 @@ matrix:
     - php: 7.2
       env: DEPENDENCIES="symfony/lts:^2"
     - php: 7.2
-      env: DEPENDENCIES="symfony/lts:^3"
+      env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^1.0"
 
       # Latest commit to master
     - php: 7.2
@@ -47,7 +48,7 @@ branches:
 before_install:
     - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
     - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
-    - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
+    - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; echo ${DEPENDENCIES}; fi;
 
 install:
   - composer update $COMPOSER_FLAGS --prefer-dist --no-interaction

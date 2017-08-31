@@ -19,9 +19,16 @@ The response tagger uses an instance of ``TagHeaderFormatter`` to know the
 header name used to mark tags on the content and to format the tags into the
 correct header value. This library ships with a
 ``CommaSeparatedTagHeaderFormatter`` that formats an array of tags into a
-comma-separated list. This format is expected for invalidation with the
-Varnish reverse proxy. When using the default settings, everything is created
-automatically and the ``X-Cache-Tags`` header will be used::
+comma-separated list. The format for specifying the tags depends on the caching
+proxy you use and its configuration. The default settings are made to match and
+work out of the box. If you need to change anything, be aware that the caching
+proxy is configured separately from your PHP application and the
+``ResponseTagger`` - it is up to you to make sure the configurations match.
+
+For example, the :doc:`default configuration of Varnish <varnish-configuration>`
+provided in this library uses the header ``X-Cache-Tags`` with a
+comma-separated list of tags. If you don't change the ``TagHeaderFormatter`` nor
+the header name, just instantiate the response tagger with its default settings::
 
     use FOS\HttpCache\ResponseTagger;
 
@@ -29,10 +36,11 @@ automatically and the ``X-Cache-Tags`` header will be used::
 
 .. _response_tagger_optional_parameters:
 
-If you need a different behavior, you can provide your own implementation of
-the ``TagHeaderFormatter`` interface. But be aware that your
-:ref:`Varnish configuration <varnish_tagging>` has to match with the tag on the response.
-For example, to use a different header name::
+If you need a different behavior, you can provide your own
+``TagHeaderFormatter`` instance. Don't forget to also adjust your
+:doc:`proxy configuration <proxy-configuration>` to match the response. To use
+a different header name, instantiate the ``CommaSeparatedTagHeaderFormatter``
+yourself and pass it to the ``ResponseTagger``::
 
     use FOS\HttpCache\ResponseTagger;
     use FOS\HttpCache\TagHeaderFormatter;

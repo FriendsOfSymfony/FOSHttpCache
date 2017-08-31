@@ -24,7 +24,7 @@ Client        Purge   Refresh Ban     Tagging
 ============= ======= ======= ======= =======
 Varnish       ✓       ✓       ✓       ✓
 NGINX         ✓       ✓
-Symfony Cache ✓       ✓
+Symfony Cache ✓       ✓               ✓
 Noop          ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓
 ============= ======= ======= ======= =======

@@ -81,7 +81,9 @@ class PurgeListener extends AccessControlledListener
         }
 
         $response = new Response();
-        if ($event->getKernel()->getStore()->purge($request->getUri())) {
+        $store = $event->getKernel()->getStore();
+
+        if ($store->purge($request->getUri())) {
             $response->setStatusCode(200, 'Purged');
         } else {
             $response->setStatusCode(200, 'Not found');
