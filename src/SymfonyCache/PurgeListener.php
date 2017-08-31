@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use FOS\HttpCache\ProxyClient\Symfony;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -18,12 +19,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Purge handler for the symfony built-in HttpCache.
  *
  * @author David Buchmann <mail@davidbu.ch>
+ * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  *
  * {@inheritdoc}
  */
 class PurgeListener extends AccessControlledListener
 {
     const DEFAULT_PURGE_METHOD = 'PURGE';
+    const DEFAULT_PURGE_TAGS_HEADER = 'X-Cache-Tags';
 
     /**
      * The purge method to use.
@@ -33,9 +36,17 @@ class PurgeListener extends AccessControlledListener
     private $purgeMethod;
 
     /**
+     * The purge tags header to use.
+     *
+     * @var string
+     */
+    private $purgeTagsHeader;
+
+    /**
      * When creating the purge listener, you can configure an additional option.
      *
      * - purge_method: HTTP method that identifies purge requests.
+     * - purge_tags_header: HTTP header that contains cache tags to invalidate.
      *
      * @param array $options Options to overwrite the default options
      *
@@ -48,6 +59,7 @@ class PurgeListener extends AccessControlledListener
         parent::__construct($options);
 
         $this->purgeMethod = $this->getOptionsResolver()->resolve($options)['purge_method'];
+        $this->purgeTagsHeader = $this->getOptionsResolver()->resolve($options)['purge_tags_header'];
     }
 
     /**
@@ -81,7 +93,20 @@ class PurgeListener extends AccessControlledListener
         }
 
         $response = new Response();
-        if ($event->getKernel()->getStore()->purge($request->getUri())) {
+        $store = $event->getKernel()->getStore();
+
+        if ($request->headers->has($this->purgeTagsHeader)
+            && $store instanceof TaggableStore
+        ) {
+            // TODO: need to unescape again here
+            $tags = explode(',', $request->headers->get($this->purgeTagsHeader));
+
+            if ($store->invalidateTags($tags)) {
+                $response->setStatusCode(200, 'Purged');
+            } else {
+                $response->setStatusCode(200, 'Not found');
+            }
+        } elseif ($store->purge($request->getUri())) {
             $response->setStatusCode(200, 'Purged');
         } else {
             $response->setStatusCode(200, 'Not found');
@@ -99,6 +124,8 @@ class PurgeListener extends AccessControlledListener
         $resolver = parent::getOptionsResolver();
         $resolver->setDefault('purge_method', static::DEFAULT_PURGE_METHOD);
         $resolver->setAllowedTypes('purge_method', 'string');
+        $resolver->setDefault('purge_tags_header', static::DEFAULT_PURGE_TAGS_HEADER);
+        $resolver->setAllowedTypes('purge_tags_header', 'string');
 
         return $resolver;
     }

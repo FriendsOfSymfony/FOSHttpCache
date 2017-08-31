@@ -52,6 +52,28 @@ class SymfonyTest extends TestCase
         $symfony->purge('/url', ['X-Foo' => 'bar']);
     }
 
+
+    public function testInvalidateTags()
+    {
+        $symfony = new Symfony($this->httpDispatcher);
+
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('PURGE', $request->getMethod());
+
+                    $this->assertEquals('/', $request->getUri());
+                    $this->assertContains('foobar,other tag', $request->getHeaderLine('X-Cache-Tags'));
+
+                    return true;
+                }
+            ),
+            true
+        );
+
+        $symfony->invalidateTags(['foobar', 'other tag']);
+    }
+
     public function testRefresh()
     {
         $symfony = new Symfony($this->httpDispatcher);

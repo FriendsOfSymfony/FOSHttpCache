@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\TaggableStore;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
@@ -53,6 +54,31 @@ class PurgeListenerTest extends TestCase
 
         $purgeListener = new PurgeListener();
         $request = Request::create('http://example.com/foo', 'PURGE');
+        $event = new CacheEvent($kernel, $request);
+
+        $purgeListener->handlePurge($event);
+        $response = $event->getResponse();
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+
+    public function testPurgeWithTagsAllowed()
+    {
+        /** @var TaggableStore $store */
+        $store = \Mockery::mock(TaggableStore::class)
+            ->shouldReceive('invalidateTags')
+            ->once()
+            ->with(['foobar', 'other tag'])
+            ->andReturn(true)
+            ->getMock();
+
+        $kernel = $this->getKernelMock($store);
+
+        $purgeListener = new PurgeListener();
+        $request = Request::create('http://example.com/', 'PURGE');
+        $request->headers->set('X-Cache-Tags', 'foobar,other tag');
         $event = new CacheEvent($kernel, $request);
 
         $purgeListener->handlePurge($event);
