@@ -73,6 +73,6 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         // TODO: how should we escape best here?
         $escapedTags = $tags;
 
-        $this->purge('/', [$this->options['purge_tags_header'] => implode(',' , $escapedTags)]);
+        $this->purge('/', [$this->options['purge_tags_header'] => implode(',', $escapedTags)]);
     }
 }

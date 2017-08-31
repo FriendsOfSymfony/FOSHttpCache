@@ -52,7 +52,6 @@ class SymfonyTest extends TestCase
         $symfony->purge('/url', ['X-Foo' => 'bar']);
     }
 
-
     public function testInvalidateTags()
     {
         $symfony = new Symfony($this->httpDispatcher);

@@ -170,7 +170,6 @@ class TaggableStoreTest extends TestCase
         $this->assertTrue($this->store->getCache()->getItem($cacheKey)->isHit());
         $this->assertTrue($this->store->invalidateTags(['foobar']));
         $this->assertFalse($this->store->getCache()->getItem($cacheKey)->isHit());
-
     }
 
     public function testVaryResponseDropsNonVaryingOne()

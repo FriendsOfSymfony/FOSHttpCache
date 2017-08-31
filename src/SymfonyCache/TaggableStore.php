@@ -229,7 +229,8 @@ class TaggableStore implements StoreInterface
             return false;
         }
 
-        return true;    }
+        return true;
+    }
 
     /**
      * Returns whether or not a lock exists.
@@ -308,7 +309,6 @@ class TaggableStore implements StoreInterface
     }
 
     /**
-     *
      * @param array     $vary
      * @param HeaderBag $headerBag
      *
@@ -344,7 +344,7 @@ class TaggableStore implements StoreInterface
     /**
      * @param string $key
      * @param string $data
-     * @param array $tags
+     * @param array  $tags
      *
      * @return bool
      */

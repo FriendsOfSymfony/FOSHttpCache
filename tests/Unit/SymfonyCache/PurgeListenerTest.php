@@ -63,7 +63,6 @@ class PurgeListenerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
-
     public function testPurgeWithTagsAllowed()
     {
         /** @var TaggableStore $store */
