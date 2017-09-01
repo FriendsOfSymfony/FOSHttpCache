@@ -267,7 +267,9 @@ class TaggableStore implements StoreInterface
     }
 
     /**
-     * Cleanups storage.
+     * Release all locks.
+     *
+     * {@inheritDoc}
      */
     public function cleanup()
     {
