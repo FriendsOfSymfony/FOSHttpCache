@@ -56,8 +56,12 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         $resolver = parent::configureOptions();
         $resolver->setDefault('purge_method', PurgeListener::DEFAULT_PURGE_METHOD);
         $resolver->setAllowedTypes('purge_method', 'string');
+        $resolver->setDefault('purge_tags_method', PurgeTagsListener::DEFAULT_PURGE_TAGS_METHOD);
+        $resolver->setAllowedTypes('purge_tags_method', 'string');
         $resolver->setDefault('purge_tags_header', PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER);
         $resolver->setAllowedTypes('purge_tags_header', 'string');
+        $resolver->setDefault('purge_tags_header_length', 7500);
+        $resolver->setAllowedTypes('purge_tags_header_length', 'int');
 
         return $resolver;
     }
@@ -73,6 +77,14 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
     {
         $escapedTags = $this->escapeTags($tags);
 
-        $this->purge('/', [$this->options['purge_tags_header'] => implode(',', $escapedTags)]);
+        $chunks = $this->splitLongHeaderValue(implode(',', $escapedTags), $this->options['purge_tags_header_length']);
+
+        foreach ($chunks as $chunk) {
+            $this->queueRequest(
+                $this->options['purge_tags_method'],
+                '/',
+                [$this->options['purge_tags_header'] => $chunk]
+            );
+        }
     }
 }
