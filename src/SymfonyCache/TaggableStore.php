@@ -63,7 +63,7 @@ class TaggableStore implements StoreInterface
         }
 
         $this->purgeTagsHeader = $purgeTagsHeader;
-        $this->cache = $cache = new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir));
+        $this->cache = new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir));
 
         if (SemaphoreStore::isSupported(false)) {
             $store = new SemaphoreStore();
