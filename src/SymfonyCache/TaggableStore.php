@@ -233,6 +233,7 @@ class TaggableStore implements StoreInterface
 
         try {
             $this->locks[$cacheKey]->release();
+            unset($this->locks[$cacheKey]);
         } catch (LockReleasingException $e) {
             return false;
         }

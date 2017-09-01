@@ -94,6 +94,15 @@ class TaggableStoreTest extends TestCase
         $this->assertFalse($this->store->isLocked($request), 'Request is no longer locked.');
     }
 
+    public function testSameLockCanBeAquiredAgain()
+    {
+        $request = Request::create('/');
+
+        $this->assertTrue($this->store->lock($request));
+        $this->assertTrue($this->store->unlock($request));
+        $this->assertTrue($this->store->lock($request));
+    }
+
     public function testWriteStoresTheResponseContent()
     {
         $request = Request::create('/');
