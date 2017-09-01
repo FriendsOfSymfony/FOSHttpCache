@@ -150,9 +150,15 @@ one of ``client_ips`` or ``client_matcher``*.
 Purge tags (cache invalidation using tags)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning::
+
+    You need at least Symfony 3.4 (the lock component to be precise) to use
+    this feature!
+
+
 Symfony's `HttpCache` does not support cache invalidation by tags by default.
 However, this library ships with a `TaggableStore` and a `PurgeTagsListener`
-provide exactly that.
+which provide exactly that.
 
 Purging tags is only allowed from the same machine by default too.
 You can configure the listener just the same as the `PurgeListener` plus the
@@ -198,8 +204,6 @@ so your `AppCache` should end up looking like this::
 
         $this->addSubscriber(new PurgeTagsListener());
     }
-
-
 
 Refresh
 ~~~~~~~
