@@ -75,14 +75,6 @@ class TaggableStore implements StoreInterface
     }
 
     /**
-     * @return TagAwareAdapter
-     */
-    public function getCache()
-    {
-        return $this->cache;
-    }
-
-    /**
      * Locates a cached Response for the Request provided.
      *
      * @param Request $request A Request instance

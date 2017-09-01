@@ -31,7 +31,7 @@ class TaggableStoreTest extends TestCase
 
     protected function tearDown()
     {
-        $this->store->getCache()->clear();
+        $this->getCache()->clear();
         $this->store->cleanup();
     }
 
@@ -112,8 +112,8 @@ class TaggableStoreTest extends TestCase
 
         $this->store->write($request, $response);
 
-        $this->assertTrue($this->store->getCache()->hasItem($contentDigest), 'Response content is stored in cache.');
-        $this->assertSame($response->getContent(), $this->store->getCache()->getItem($contentDigest)->get(), 'Response content is stored in cache.');
+        $this->assertTrue($this->getCache()->hasItem($contentDigest), 'Response content is stored in cache.');
+        $this->assertSame($response->getContent(), $this->getCache()->getItem($contentDigest)->get(), 'Response content is stored in cache.');
         $this->assertSame($contentDigest, $response->headers->get('X-Content-Digest'), 'Content digest is stored in the response header.');
         $this->assertSame(strlen($response->getContent()), $response->headers->get('Content-Length'), 'Response content length is updated.');
     }
@@ -129,7 +129,7 @@ class TaggableStoreTest extends TestCase
 
         $this->store->write($request, $response);
 
-        $this->assertFalse($this->store->getCache()->hasItem($contentDigest), 'Response content is not stored in cache.');
+        $this->assertFalse($this->getCache()->hasItem($contentDigest), 'Response content is not stored in cache.');
         $this->assertFalse($response->headers->has('Content-Length'), 'Response content length is not updated.');
     }
 
@@ -154,7 +154,7 @@ class TaggableStoreTest extends TestCase
 
         $this->store->write($request, $response);
 
-        $cacheItem = $this->store->getCache()->getItem($cacheKey);
+        $cacheItem = $this->getCache()->getItem($cacheKey);
 
         $this->assertInstanceOf(CacheItemInterface::class, $cacheItem, 'Metadata is stored in cache.');
         $this->assertTrue($cacheItem->isHit(), 'Metadata is stored in cache.');
@@ -176,9 +176,9 @@ class TaggableStoreTest extends TestCase
 
         $this->store->write($request, $response);
 
-        $this->assertTrue($this->store->getCache()->getItem($cacheKey)->isHit());
+        $this->assertTrue($this->getCache()->getItem($cacheKey)->isHit());
         $this->assertTrue($this->store->invalidateTags(['foobar']));
-        $this->assertFalse($this->store->getCache()->getItem($cacheKey)->isHit());
+        $this->assertFalse($this->getCache()->getItem($cacheKey)->isHit());
     }
 
     public function testVaryResponseDropsNonVaryingOne()
@@ -190,7 +190,7 @@ class TaggableStoreTest extends TestCase
         $this->store->write($request, $nonVarying);
 
         $cacheKey = $this->store->getCacheKey($request);
-        $cacheItem = $this->store->getCache()->getItem($cacheKey);
+        $cacheItem = $this->getCache()->getItem($cacheKey);
         $entries = $cacheItem->get();
 
         $this->assertCount(1, $entries);
@@ -198,7 +198,7 @@ class TaggableStoreTest extends TestCase
 
         $this->store->write($request, $varying);
 
-        $cacheItem = $this->store->getCache()->getItem($cacheKey);
+        $cacheItem = $this->getCache()->getItem($cacheKey);
 
         $entries = $cacheItem->get();
 
@@ -319,12 +319,12 @@ class TaggableStoreTest extends TestCase
         $this->store->write($request, $response);
         $cacheKey = $this->store->getCacheKey($request);
 
-        $cacheItem = $this->store->getCache()->getItem($cacheKey);
+        $cacheItem = $this->getCache()->getItem($cacheKey);
         $this->assertTrue($cacheItem->isHit());
 
         $this->store->invalidate($request);
 
-        $cacheItem = $this->store->getCache()->getItem($cacheKey);
+        $cacheItem = $this->getCache()->getItem($cacheKey);
         $this->assertFalse($cacheItem->isHit());
     }
 
@@ -337,12 +337,21 @@ class TaggableStoreTest extends TestCase
         $this->store->write($request, $response);
         $cacheKey = $this->store->getCacheKey($request);
 
-        $cacheItem = $this->store->getCache()->getItem($cacheKey);
+        $cacheItem = $this->getCache()->getItem($cacheKey);
         $this->assertTrue($cacheItem->isHit());
 
         $this->store->purge('https://foobar.com/');
 
-        $cacheItem = $this->store->getCache()->getItem($cacheKey);
+        $cacheItem = $this->getCache()->getItem($cacheKey);
         $this->assertFalse($cacheItem->isHit());
+    }
+
+    private function getCache()
+    {
+        $reflection = new \ReflectionClass($this->store);
+        $cache = $reflection->getProperty('cache');
+        $cache->setAccessible(true);
+
+        return $cache->getValue($this->store);
     }
 }
