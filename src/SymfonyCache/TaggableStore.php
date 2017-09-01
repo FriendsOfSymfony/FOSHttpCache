@@ -434,11 +434,9 @@ class TaggableStore implements StoreInterface
     private function getBestLocalLockStore($cacheDir)
     {
         if (SemaphoreStore::isSupported(false)) {
-            $store = new SemaphoreStore();
+            return new SemaphoreStore();
         } else {
-            $store = new FlockStore($cacheDir);
+            return new FlockStore($cacheDir);
         }
-
-        return $store;
     }
 }
