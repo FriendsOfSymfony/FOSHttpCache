@@ -30,6 +30,8 @@ Using the trait
 Your ``AppCache`` needs to implement ``CacheInvalidation`` and use the
 trait ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``::
 
+    // app/AppCache.php
+
     use FOS\HttpCache\SymfonyCache\CacheInvalidation;
     use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
     use Symfony\Component\HttpFoundation\Request;
