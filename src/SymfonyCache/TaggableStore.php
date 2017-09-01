@@ -22,6 +22,7 @@ use Symfony\Component\Lock\Exception\LockReleasingException;
 use Symfony\Component\Lock\Factory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Lock\Store\FlockStore;
+use Symfony\Component\Lock\Store\SemaphoreStore;
 
 /**
  * Implements a storage for Symfony's HttpCache that supports tagging.
@@ -63,7 +64,14 @@ class TaggableStore implements StoreInterface
 
         $this->purgeTagsHeader = $purgeTagsHeader;
         $this->cache = $cache = new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir));
-        $this->lockFactory = new Factory(new FlockStore($cacheDir));
+
+        if (SemaphoreStore::isSupported(false)) {
+            $store = new SemaphoreStore();
+        } else {
+            $store = new FlockStore($cacheDir);
+        }
+
+        $this->lockFactory = new Factory($store);
     }
 
     /**
