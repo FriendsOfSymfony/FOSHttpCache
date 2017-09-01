@@ -56,7 +56,7 @@ class TaggableStore implements StoreInterface
     /**
      * @param string $cacheDir
      */
-    public function __construct($cacheDir, $purgeTagsHeader = PurgeListener::DEFAULT_PURGE_TAGS_HEADER)
+    public function __construct($cacheDir, $purgeTagsHeader = PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER)
     {
         if (!class_exists(Factory::class)) {
             throw new \RuntimeException('You need at least Symfony 3.4 to use the TaggableStore.');

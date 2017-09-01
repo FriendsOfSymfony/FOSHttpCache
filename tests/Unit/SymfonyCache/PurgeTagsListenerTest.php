@@ -13,7 +13,7 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
-use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 use FOS\HttpCache\SymfonyCache\TaggableStore;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 
-class PurgeListenerTest extends TestCase
+class PurgeTagsListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
@@ -35,28 +35,53 @@ class PurgeListenerTest extends TestCase
      */
     public function testConstructorOverspecified()
     {
-        new PurgeListener([
+        new PurgeTagsListener([
             'client_matcher' => new RequestMatcher('/forbidden'),
             'client_ips' => ['1.2.3.4'],
         ]);
     }
 
-    public function testPurgeAllowed()
+    public function testBadRequestIfWrongStore()
     {
         /** @var StoreInterface $store */
         $store = \Mockery::mock(StoreInterface::class)
             ->shouldReceive('purge')
-            ->once()
+            ->never()
             ->with('http://example.com/foo')
             ->andReturn(true)
             ->getMock();
         $kernel = $this->getKernelMock($store);
 
-        $purgeListener = new PurgeListener();
-        $request = Request::create('http://example.com/foo', 'PURGE');
+        $purgeTagsListener = new PurgeTagsListener();
+        $request = Request::create('http://example.com/foo', 'PURGETAGS');
+        $request->headers->set('X-Cache-Tags', 'foobar,other tag');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeListener->handlePurge($event);
+        $purgeTagsListener->handlePurge($event);
+        $response = $event->getResponse();
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('Store must be an instance of TaggableStore! Check your proxy configuration!', $response->getContent());
+    }
+
+    public function testPurgeAllowed()
+    {
+        /** @var StoreInterface $store */
+        $store = \Mockery::mock(TaggableStore::class)
+            ->shouldReceive('invalidateTags')
+            ->once()
+            ->with(['foobar', 'other tag'])
+            ->andReturn(true)
+            ->getMock();
+        $kernel = $this->getKernelMock($store);
+
+        $purgeTagsListener = new PurgeTagsListener();
+        $request = Request::create('http://example.com/foo', 'PURGETAGS');
+        $request->headers->set('X-Cache-Tags', 'foobar,other tag');
+        $event = new CacheEvent($kernel, $request);
+
+        $purgeTagsListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -66,19 +91,20 @@ class PurgeListenerTest extends TestCase
     public function testPurgeAllowedMiss()
     {
         /** @var StoreInterface $store */
-        $store = \Mockery::mock(StoreInterface::class)
-            ->shouldReceive('purge')
+        $store = \Mockery::mock(TaggableStore::class)
+            ->shouldReceive('invalidateTags')
             ->once()
-            ->with('http://example.com/foo')
+            ->with(['foobar', 'other tag'])
             ->andReturn(false)
             ->getMock();
         $kernel = $this->getKernelMock($store);
 
-        $purgeListener = new PurgeListener();
-        $request = Request::create('http://example.com/foo', 'PURGE');
+        $purgeTagsListener = new PurgeTagsListener();
+        $request = Request::create('http://example.com/foo', 'PURGETAGS');
+        $request->headers->set('X-Cache-Tags', 'foobar,other tag');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeListener->handlePurge($event);
+        $purgeTagsListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -90,11 +116,11 @@ class PurgeListenerTest extends TestCase
         $kernel = $this->getUnusedKernelMock();
 
         $matcher = new RequestMatcher('/forbidden');
-        $purgeListener = new PurgeListener(['client_matcher' => $matcher]);
-        $request = Request::create('http://example.com/foo', 'PURGE');
+        $purgeTagsListener = new PurgeTagsListener(['client_matcher' => $matcher]);
+        $request = Request::create('http://example.com/foo', 'PURGETAGS');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeListener->handlePurge($event);
+        $purgeTagsListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -105,11 +131,11 @@ class PurgeListenerTest extends TestCase
     {
         $kernel = $this->getUnusedKernelMock();
 
-        $purgeListener = new PurgeListener(['client_ips' => '1.2.3.4']);
-        $request = Request::create('http://example.com/foo', 'PURGE');
+        $purgeTagsListener = new PurgeTagsListener(['client_ips' => '1.2.3.4']);
+        $request = Request::create('http://example.com/foo', 'PURGETAGS');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeListener->handlePurge($event);
+        $purgeTagsListener->handlePurge($event);
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
@@ -126,14 +152,14 @@ class PurgeListenerTest extends TestCase
             ->shouldNotReceive('isRequestAllowed')
             ->getMock();
 
-        $purgeListener = new PurgeListener([
+        $purgeTagsListener = new PurgeTagsListener([
             'client_matcher' => $matcher,
-            'purge_method' => 'FOO',
+            'purge_tags_method' => 'FOO',
         ]);
-        $request = Request::create('http://example.com/foo', 'PURGE');
+        $request = Request::create('http://example.com/foo', 'PURGETAGS');
         $event = new CacheEvent($kernel, $request);
 
-        $purgeListener->handlePurge($event);
+        $purgeTagsListener->handlePurge($event);
         $this->assertNull($event->getResponse());
     }
 
@@ -143,7 +169,7 @@ class PurgeListenerTest extends TestCase
      */
     public function testInvalidConfiguration()
     {
-        new PurgeListener(['stuff' => '1.2.3.4']);
+        new PurgeTagsListener(['stuff' => '1.2.3.4']);
     }
 
     /**

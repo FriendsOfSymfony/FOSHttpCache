@@ -15,6 +15,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 
 /**
  * Symfony HttpCache invalidator.
@@ -55,7 +56,7 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         $resolver = parent::configureOptions();
         $resolver->setDefault('purge_method', PurgeListener::DEFAULT_PURGE_METHOD);
         $resolver->setAllowedTypes('purge_method', 'string');
-        $resolver->setDefault('purge_tags_header', PurgeListener::DEFAULT_PURGE_TAGS_HEADER);
+        $resolver->setDefault('purge_tags_header', PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER);
         $resolver->setAllowedTypes('purge_tags_header', 'string');
 
         return $resolver;

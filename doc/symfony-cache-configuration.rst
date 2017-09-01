@@ -131,28 +131,6 @@ other hosts, provide the IPs of the machines allowed to purge, or provide a
 RequestMatcher that checks for an Authorization header or similar. *Only set
 one of ``client_ips`` or ``client_matcher``*.
 
-Symfony's `HttpCache` does not support cache invalidation by tags by default.
-However, this library ships with a `TaggableStore` that provides exactly that.
-If you want to use this, adjust your `AppCache` as follows::
-
-    use FOS\HttpCache\SymfonyCache\TaggableStore();
-
-    // ...
-
-    /**
-     * Overwrite constructor to register the TaggableStore.
-     */
-    public function __construct(
-        HttpKernelInterface $kernel,
-        StoreInterface $store,
-        SurrogateInterface $surrogate = null,
-        array $options = []
-    ) {
-        $store = new TaggableStore($kernel->getCacheDir());
-
-        parent::__construct($kernel, $store, $surrogate, $options);
-    }
-
 
 * **client_ips**: String with IP or array of IPs that are allowed to
   purge the cache.
@@ -166,9 +144,62 @@ If you want to use this, adjust your `AppCache` as follows::
 
 * **purge_method**: HTTP Method used with purge requests.
 
-* **purge_tags_header**: HTTP Header used for purging tags. (must match the 2nd argument of `TaggableStore`)
-
   **default**: ``PURGE``
+
+
+Purge tags (cache invalidation using tags)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Symfony's `HttpCache` does not support cache invalidation by tags by default.
+However, this library ships with a `TaggableStore` and a `PurgeTagsListener`
+provide exactly that.
+
+Purging tags is only allowed from the same machine by default too.
+You can configure the listener just the same as the `PurgeListener` plus the
+`purge_tags_method` and `purge_tags_header`:
+
+* **client_ips**: String with IP or array of IPs that are allowed to
+  purge the cache.
+
+  **default**: ``127.0.0.1``
+
+* **client_matcher**: RequestMatcherInterface that only matches requests that are
+  allowed to purge.
+
+  **default**: ``null``
+
+* **purge_tags_method**: HTTP Method used with purge tags requests.
+
+  **default**: ``PURGETAGS``
+
+* **purge_tags_header**: HTTP Header that contains the comma-separated tags to purge.
+
+  **default**: ``X-Cache-Tags``
+
+For this to work, you have to use the `TaggableStore` as well as the `PurgeListener`
+so your `AppCache` should end up looking like this::
+
+    use FOS\HttpCache\SymfonyCache\TaggableStore();
+    use FOS\HttpCache\SymfonyCache\PurgeTagsListener();
+
+    // ...
+
+    /**
+     * Overwrite constructor to register the TaggableStore.
+     */
+    public function __construct(
+        HttpKernelInterface $kernel,
+        SurrogateInterface $surrogate = null,
+        array $options = []
+    ) {
+        $store = new TaggableStore($kernel->getCacheDir());
+
+        parent::__construct($kernel, $store, $surrogate, $options);
+
+        $this->addSubscriber(new PurgeTagsListener());
+    }
+
+
 
 Refresh
 ~~~~~~~
