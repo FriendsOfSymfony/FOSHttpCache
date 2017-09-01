@@ -98,7 +98,6 @@ class PurgeListener extends AccessControlledListener
         if ($request->headers->has($this->purgeTagsHeader)
             && $store instanceof TaggableStore
         ) {
-            // TODO: need to unescape again here
             $tags = explode(',', $request->headers->get($this->purgeTagsHeader));
 
             if ($store->invalidateTags($tags)) {
