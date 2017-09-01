@@ -14,6 +14,7 @@ namespace FOS\HttpCache\SymfonyCache;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,7 +40,7 @@ class TaggableStore implements StoreInterface
     private $purgeTagsHeader;
 
     /**
-     * @var TagAwareAdapter
+     * @var TagAwareAdapterInterface
      */
     private $cache;
 
@@ -63,15 +64,47 @@ class TaggableStore implements StoreInterface
         }
 
         $this->purgeTagsHeader = $purgeTagsHeader;
-        $this->cache = new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir));
 
-        if (SemaphoreStore::isSupported(false)) {
-            $store = new SemaphoreStore();
-        } else {
-            $store = new FlockStore($cacheDir);
-        }
+        $this->setCache(new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir)));
+        $this->setLockFactory(new Factory($this->getBestLocalLockStore($cacheDir)));
+    }
 
-        $this->lockFactory = new Factory($store);
+    /**
+     * Use this method if you want to use a different cache implementation than
+     * the one created in the constructor. Note that there are very good reasons
+     * that the local adapters are used by default and you do not inject them in
+     * the constructor but via setter injection instead. This is to protect you
+     * as a developer! Only use this method if you're really sure your cache
+     * implementation meets the needs of Symfony's HttpCache.
+     *
+     * @param TagAwareAdapterInterface $cache
+     *
+     * @return TaggableStore
+     */
+    public function setCache(TagAwareAdapterInterface $cache)
+    {
+        $this->cache = $cache;
+
+        return $this;
+    }
+
+    /**
+     * Use this method if you want to use a different lock implementation than
+     * the one created in the constructor. Note that there are very good reasons
+     * that the local adapters are used by default and you do not inject them in
+     * the constructor but via setter injection instead. This is to protect you
+     * as a developer! Only use this method if you're really sure your lock
+     * implementation meets the needs of Symfony's HttpCache.
+     *
+     * @param Factory $lockFactory
+     *
+     * @return TaggableStore
+     */
+    public function setLockFactory(Factory $lockFactory)
+    {
+        $this->lockFactory = $lockFactory;
+
+        return $this;
     }
 
     /**
@@ -391,5 +424,21 @@ class TaggableStore implements StoreInterface
             $cacheData['status'],
             $cacheData['headers']
         );
+    }
+
+    /**
+     * @param string $cacheDir
+     *
+     * @return \Symfony\Component\Lock\StoreInterface
+     */
+    private function getBestLocalLockStore($cacheDir)
+    {
+        if (SemaphoreStore::isSupported(false)) {
+            $store = new SemaphoreStore();
+        } else {
+            $store = new FlockStore($cacheDir);
+        }
+
+        return $store;
     }
 }
