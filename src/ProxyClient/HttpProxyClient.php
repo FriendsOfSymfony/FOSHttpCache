@@ -129,7 +129,6 @@ abstract class HttpProxyClient implements ProxyClient
     protected function splitLongHeaderValue($value, $length = 7500, $delimiter = ',')
     {
         if (mb_strlen($value) <= $length) {
-
             return [$value];
         }
 
@@ -139,15 +138,13 @@ abstract class HttpProxyClient implements ProxyClient
         $index = 0;
 
         foreach ($chunks as $chunk) {
-
             $chunkLength = mb_strlen($chunk) + 1;
 
             if (($currentLength + $chunkLength) <= $length) {
-
                 $tmp[$index][] = $chunk;
                 $currentLength += $chunkLength;
             } else {
-                $index++;
+                ++$index;
                 $currentLength = $chunkLength;
                 $tmp[$index][] = $chunk;
             }

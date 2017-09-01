@@ -87,7 +87,7 @@ class SymfonyTest extends TestCase
 
                         return true;
                     }),
-                    true
+                    true,
                 ],
                 [
                     $this->callback(function (RequestInterface $request) {
@@ -96,7 +96,7 @@ class SymfonyTest extends TestCase
 
                         return true;
                     }),
-                    true
+                    true,
                 ],
                 [
                     $this->callback(function (RequestInterface $request) {
@@ -105,7 +105,7 @@ class SymfonyTest extends TestCase
 
                         return true;
                     }),
-                    true
+                    true,
                 ]
             );
 
