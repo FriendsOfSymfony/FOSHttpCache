@@ -64,9 +64,9 @@ class TaggableStore implements StoreInterface
     /**
      * Constructor.
      *
-     * @param string $cacheDir          The cache directory.
-     * @param int    $pruneThreshold    The number of write operations until orphan data gets pruned (default: 500)
-     * @param string $purgeTagsHeader   The tags header name
+     * @param string $cacheDir        The cache directory
+     * @param int    $pruneThreshold  The number of write operations until orphan data gets pruned (default: 500)
+     * @param string $purgeTagsHeader The tags header name
      */
     public function __construct($cacheDir, $pruneThreshold = 500, $purgeTagsHeader = PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER)
     {

@@ -17,7 +17,6 @@ use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -366,8 +365,7 @@ class TaggableStoreTest extends TestCase
         $store->setCache($cache);
 
         foreach (range(1, 21) as $entry) {
-
-            $request = Request::create('https://foobar.com/' . $entry);
+            $request = Request::create('https://foobar.com/'.$entry);
             $response = new Response('hello world', 200);
 
             $store->write($request, $response);
