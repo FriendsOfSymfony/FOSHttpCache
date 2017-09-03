@@ -14,6 +14,10 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\TaggableStore;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -346,9 +350,44 @@ class TaggableStoreTest extends TestCase
         $this->assertFalse($cacheItem->isHit());
     }
 
-    private function getCache()
+    public function testPruneExpiredEntries()
     {
-        $reflection = new \ReflectionClass($this->store);
+        $innerCache = new ArrayAdapter();
+        $cache = $this->getMockBuilder(TagAwareAdapter::class)
+                    ->setConstructorArgs([$innerCache])
+                    ->setMethods(['prune'])
+                    ->getMock();
+
+        $cache
+            ->expects($this->exactly(3))
+            ->method('prune');
+
+        $store = new TaggableStore(sys_get_temp_dir(), 5);
+        $store->setCache($cache);
+
+        foreach (range(1, 21) as $entry) {
+
+            $request = Request::create('https://foobar.com/' . $entry);
+            $response = new Response('hello world', 200);
+
+            $store->write($request, $response);
+        }
+
+        $store->cleanup();
+    }
+
+    /**
+     * @param null $store
+     *
+     * @return TagAwareAdapterInterface
+     */
+    private function getCache($store = null)
+    {
+        if (null === $store) {
+            $store = $this->store;
+        }
+
+        $reflection = new \ReflectionClass($store);
         $cache = $reflection->getProperty('cache');
         $cache->setAccessible(true);
 

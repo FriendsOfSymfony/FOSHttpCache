@@ -15,6 +15,7 @@ use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Symfony\Component\Cache\PruneableInterface;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,11 +34,17 @@ use Symfony\Component\Lock\Store\SemaphoreStore;
 class TaggableStore implements StoreInterface
 {
     const NON_VARYING_KEY = 'non-varying';
+    const COUNTER_KEY = 'write-operations-counter';
 
     /**
      * @var string
      */
     private $purgeTagsHeader;
+
+    /**
+     * @var int
+     */
+    private $pruneThreshold;
 
     /**
      * @var TagAwareAdapterInterface
@@ -55,15 +62,20 @@ class TaggableStore implements StoreInterface
     private $locks = [];
 
     /**
-     * @param string $cacheDir
+     * Constructor.
+     *
+     * @param string $cacheDir          The cache directory.
+     * @param int    $pruneThreshold    The number of write operations until orphan data gets pruned (default: 500)
+     * @param string $purgeTagsHeader   The tags header name
      */
-    public function __construct($cacheDir, $purgeTagsHeader = PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER)
+    public function __construct($cacheDir, $pruneThreshold = 500, $purgeTagsHeader = PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER)
     {
         if (!class_exists(Factory::class)) {
             throw new \RuntimeException('You need at least Symfony 3.4 to use the TaggableStore.');
         }
 
         $this->purgeTagsHeader = $purgeTagsHeader;
+        $this->pruneThreshold = $pruneThreshold;
 
         // Default lifetime does not need to be configurable because we're working on a reverse proxy cache here
         // which means the cache entries (= responses) MUST have cache related headers so we have individual
@@ -206,6 +218,8 @@ class TaggableStore implements StoreInterface
             $tags = explode(',', $response->headers->get($this->purgeTagsHeader));
         }
 
+        // Prune expired entries on file system if needed
+        $this->pruneExpiredEntries();
 
         $this->saveDeferred($cacheKey, $entries, $response->getMaxAge(), $tags);
 
@@ -446,5 +460,34 @@ class TaggableStore implements StoreInterface
         } else {
             return new FlockStore($cacheDir);
         }
+    }
+
+    /**
+     * Increases a counter every time an item is stored to the cache and then
+     * prunes expired cache entries if a configurable threshold is reached.
+     * This only happens during write operations so cache retrieval is not
+     * slowed down.
+     */
+    private function pruneExpiredEntries()
+    {
+        if (!interface_exists(PruneableInterface::class)
+            || !$this->cache instanceof PruneableInterface
+        ) {
+            return;
+        }
+
+        $item = $this->cache->getItem(self::COUNTER_KEY);
+        $counter = (int) $item->get();
+
+        if ($counter > $this->pruneThreshold) {
+            $this->cache->prune();
+            $counter = 0;
+        } else {
+            ++$counter;
+        }
+
+        $item->set($counter);
+
+        $this->cache->saveDeferred($item);
     }
 }
