@@ -65,6 +65,9 @@ class TaggableStore implements StoreInterface
 
         $this->purgeTagsHeader = $purgeTagsHeader;
 
+        // Default lifetime does not need to be configurable because we're working on a reverse proxy cache here
+        // which means the cache entries (= responses) MUST have cache related headers so we have individual
+        // expiry dates for each entry.
         $this->setCache(new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir)));
         $this->setLockFactory(new Factory($this->getBestLocalLockStore($cacheDir)));
     }
@@ -162,7 +165,7 @@ class TaggableStore implements StoreInterface
         if (!$response->headers->has('X-Content-Digest')) {
             $contentDigest = $this->generateContentDigest($response);
 
-            if (false === $this->save($contentDigest, $response->getContent())) {
+            if (false === $this->saveDeferred($contentDigest, $response->getContent())) {
                 throw new \RuntimeException('Unable to store the entity.');
             }
 
@@ -197,13 +200,16 @@ class TaggableStore implements StoreInterface
             unset($entries[self::NON_VARYING_KEY]);
         }
 
-        // Support tagging
+        // Tags
         $tags = [];
         if ($response->headers->has($this->purgeTagsHeader)) {
             $tags = explode(',', $response->headers->get($this->purgeTagsHeader));
         }
 
-        $this->save($cacheKey, $entries, $tags);
+
+        $this->saveDeferred($cacheKey, $entries, $response->getMaxAge(), $tags);
+
+        $this->cache->commit();
 
         return $cacheKey;
     }
@@ -385,20 +391,22 @@ class TaggableStore implements StoreInterface
     /**
      * @param string $key
      * @param string $data
+     * @param int    $expiresAfter
      * @param array  $tags
      *
      * @return bool
      */
-    private function save($key, $data, $tags = [])
+    private function saveDeferred($key, $data, $expiresAfter = null, $tags = [])
     {
         $item = $this->cache->getItem($key);
         $item->set($data);
+        $item->expiresAfter($expiresAfter);
 
         if (0 !== count($tags)) {
             $item->tag($tags);
         }
 
-        return $this->cache->save($item);
+        return $this->cache->saveDeferred($item);
     }
 
     /**
