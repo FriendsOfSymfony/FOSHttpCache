@@ -106,6 +106,30 @@ class TaggableStoreTest extends TestCase
         $this->assertTrue($this->store->lock($request));
     }
 
+    public function testWriteThrowsExceptionIfDigestCannotBeStored()
+    {
+        $innerCache = new ArrayAdapter();
+        $cache = $this->getMockBuilder(TagAwareAdapter::class)
+            ->setConstructorArgs([$innerCache])
+            ->setMethods(['saveDeferred'])
+            ->getMock();
+
+        $cache
+            ->expects($this->once())
+            ->method('saveDeferred')
+            ->willReturn(false);
+
+        $store = new TaggableStore(sys_get_temp_dir());
+        $store->setCache($cache);
+
+        $request = Request::create('/');
+        $response = new Response('hello world', 200);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Unable to store the entity.');
+        $store->write($request, $response);
+    }
+
     public function testWriteStoresTheResponseContent()
     {
         $request = Request::create('/');
@@ -182,6 +206,25 @@ class TaggableStoreTest extends TestCase
         $this->assertTrue($this->getCache()->getItem($cacheKey)->isHit());
         $this->assertTrue($this->store->invalidateTags(['foobar']));
         $this->assertFalse($this->getCache()->getItem($cacheKey)->isHit());
+    }
+
+    public function testInvalidateTagsReturnsFalseOnException()
+    {
+        $innerCache = new ArrayAdapter();
+        $cache = $this->getMockBuilder(TagAwareAdapter::class)
+            ->setConstructorArgs([$innerCache])
+            ->setMethods(['invalidateTags'])
+            ->getMock();
+
+        $cache
+            ->expects($this->once())
+            ->method('invalidateTags')
+            ->willThrowException(new \Symfony\Component\Cache\Exception\InvalidArgumentException());
+
+        $store = new TaggableStore(sys_get_temp_dir());
+        $store->setCache($cache);
+
+        $this->assertFalse($store->invalidateTags(['foobar']));
     }
 
     public function testVaryResponseDropsNonVaryingOne()
