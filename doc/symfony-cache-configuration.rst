@@ -152,21 +152,11 @@ Purge tags (cache invalidation using tags)
 
 .. versionadded:: 2.1
 
-    The `TaggableStore` has been added in version 2.1.
-
-.. warning::
-
-    You need at least versions 3.4 of `symfony/cache` and `symfony/lock`
-    to use this feature! Add the following lines to your `composer.json` and run
-    `composer update`::
-
-    "symfony/lock": "^3.4",
-    "symfony/cache": "^3.4",
+    Support for tag invalidation in Symfony HttpCache has been added in
+    version 2.1.
 
 
-Symfony's `HttpCache` does not support tags based cache invalidation by default.
-However, this library ships with a `TaggableStore` and a corresponding
-`PurgeTagsListener` which provide this functionality.
+See :ref:`TaggableStore <taggablestore>` for extended description.
 
 Purging tags is only allowed from the same machine by default.
 You can configure the listener just the same as the `PurgeListener` plus the
@@ -189,44 +179,6 @@ You can configure the listener just the same as the `PurgeListener` plus the
 * **purge_tags_header**: HTTP Header that contains the comma-separated tags to purge.
 
   **default**: ``X-Cache-Tags``
-
-For this to work, you have to use the `TaggableStore` as well as the `PurgeListener`
-so your `AppCache` should end up looking like this::
-
-    use FOS\HttpCache\SymfonyCache\TaggableStore();
-    use FOS\HttpCache\SymfonyCache\PurgeTagsListener();
-
-    // ...
-
-    /**
-     * Overwrite constructor to register the TaggableStore.
-     */
-    public function __construct(
-        HttpKernelInterface $kernel,
-        SurrogateInterface $surrogate = null,
-        array $options = []
-    ) {
-        $store = new TaggableStore($kernel->getCacheDir());
-
-        parent::__construct($kernel, $store, $surrogate, $options);
-
-        $this->addSubscriber(new PurgeTagsListener());
-    }
-
-.. note::
-
-    Even if you do not need tags based cache invalidation, you might still be
-    interested in choosing the `TaggableStore` over the default `Store` that
-    Symfony ships with. That's because `TaggableStore` also prunes expired
-    entries on a regular basis which is something the default `Store` does not.
-    The default `Store` keeps filling up your file system without ever cleaning
-    up expired cache entries. The `TaggableStore` counts all the cache write
-    operations (so fetching items from the cache is not slowed down) and after
-    reaching a configurable threshold (default `500`), it prunes expired data.
-    This means that after every `500` HTTP cache writes, your file system directory
-    will be cleaned up and thus kept in good shape.
-    You can configure the prune threshold by providing a different threshold as
-    second argument to the constructor of `TaggableStore`.
 
 Refresh
 ~~~~~~~
@@ -314,6 +266,69 @@ options through the constructor:
 
         RewriteEngine On
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+
+.. _taggablestore:
+
+The TaggableStore
+^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 2.1
+
+    The `TaggableStore` has been added in version 2.1.
+
+.. warning::
+
+    You need at least versions 3.4 of `symfony/cache` and `symfony/lock`
+    to use this feature! Add the following lines to your `composer.json` and run
+    `composer update`::
+
+    "symfony/lock": "^3.4",
+    "symfony/cache": "^3.4",
+
+
+Symfony's `HttpCache` does not support tags based cache invalidation by default.
+However, this library ships with a `TaggableStore` and a corresponding
+`PurgeTagsListener` which provide this functionality.
+Even if you do not want to invalidate cache entries by tags, you might be
+interested in using the `TaggableStore` instead of the default `Store`
+implementation Symfony ships with.
+
+That's because `TaggableStore` also prunes expired entries on a regular basis
+which is something the default `Store` does not. The default `Store` keeps
+filling up your file system without ever cleaning up expired cache entries.
+The `TaggableStore` counts all the cache write operations (so fetching items
+from the cache is not slowed down) and after reaching a configurable
+threshold (default `500`), it prunes expired data.
+This means that after every `500` HTTP cache writes, your file system directory
+will be cleaned up and thus kept in good shape.
+You can configure the prune threshold by providing a different threshold as
+second argument to the constructor of `TaggableStore`.
+
+For this to work, you have to use the `TaggableStore` in your kernel.
+If you want support for tag based cache invalidation, you also need to register
+the `PurgeListener` so your `AppCache` should end up looking like this::
+
+    use FOS\HttpCache\SymfonyCache\TaggableStore();
+    use FOS\HttpCache\SymfonyCache\PurgeTagsListener();
+
+    // ...
+
+    /**
+     * Overwrite constructor to register the TaggableStore.
+     */
+    public function __construct(
+        HttpKernelInterface $kernel,
+        SurrogateInterface $surrogate = null,
+        array $options = []
+    ) {
+        $store = new TaggableStore($kernel->getCacheDir());
+
+        parent::__construct($kernel, $store, $surrogate, $options);
+
+        $this->addSubscriber(new PurgeTagsListener());
+    }
+
 
 Cleaning the Cookie Header
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
