@@ -417,6 +417,31 @@ class TaggableStoreTest extends TestCase
         $store->cleanup();
     }
 
+    public function testPruneIsSkippedIfThresholdDisabled()
+    {
+        $innerCache = new ArrayAdapter();
+        $cache = $this->getMockBuilder(TagAwareAdapter::class)
+                    ->setConstructorArgs([$innerCache])
+                    ->setMethods(['prune'])
+                    ->getMock();
+
+        $cache
+            ->expects($this->never())
+            ->method('prune');
+
+        $store = new TaggableStore(sys_get_temp_dir(), 0);
+        $store->setCache($cache);
+
+        foreach (range(1, 21) as $entry) {
+            $request = Request::create('https://foobar.com/'.$entry);
+            $response = new Response('hello world', 200);
+
+            $store->write($request, $response);
+        }
+
+        $store->cleanup();
+    }
+
     /**
      * @param null $store
      *

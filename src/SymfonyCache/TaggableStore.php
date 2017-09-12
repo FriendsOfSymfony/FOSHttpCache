@@ -472,6 +472,7 @@ class TaggableStore implements StoreInterface
     {
         if (!interface_exists(PruneableInterface::class)
             || !$this->cache instanceof PruneableInterface
+            || 0 === $this->pruneThreshold
         ) {
             return;
         }
