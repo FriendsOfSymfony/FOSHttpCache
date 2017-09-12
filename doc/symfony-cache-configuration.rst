@@ -150,9 +150,18 @@ one of ``client_ips`` or ``client_matcher``*.
 Purge tags (cache invalidation using tags)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. versionadded:: 2.1
+
+    The `TaggableStore` has been added in version 2.1.
+
 .. warning::
 
-    You need at least Symfony 3.4 to use this feature!
+    You need at least versions 3.4 of `symfony/cache` and `symfony/lock`
+    to use this feature! Add the following lines to your `composer.json` and run
+    `composer update`::
+
+    "symfony/lock": "^3.4",
+    "symfony/cache": "^3.4",
 
 
 Symfony's `HttpCache` does not support tags based cache invalidation by default.

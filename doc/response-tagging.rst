@@ -40,9 +40,9 @@ automatically and work out of the box for you::
 
 .. _response_tagger_optional_parameters:
 
-As explained already, if you need a different behavior, you can provide your own
-implementation of the ``TagHeaderFormatter`` interface. But again, be aware that your
-:doc:`proxy configuration <proxy-configuration>` has to match with the response.
+If you need a different behavior, you can provide your own
+``TagHeaderFormatter`` instance. Be aware that your
+:doc:`proxy configuration <proxy-configuration>` has to match the response.
 For example, to use a different header name::
 
     use FOS\HttpCache\ResponseTagger;
