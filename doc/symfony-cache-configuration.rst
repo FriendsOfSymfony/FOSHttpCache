@@ -300,7 +300,7 @@ filling up your file system without ever cleaning up expired cache entries.
 The `TaggableStore` counts all the cache write operations (so fetching items
 from the cache is not slowed down) and after reaching a configurable
 threshold (default `500`), it prunes expired data. If you want to disable
-pruning, you can set the threshold to `0`.
+pruning, you can set the option `prune_threshold` to `0`.
 This means that after every `500` HTTP cache writes, your file system directory
 will be cleaned up and thus kept in good shape.
 You can configure the prune threshold by providing a different threshold as
