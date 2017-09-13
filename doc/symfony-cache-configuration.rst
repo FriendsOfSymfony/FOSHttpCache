@@ -330,6 +330,32 @@ the `PurgeListener` so your `AppCache` should end up looking like this::
         $this->addSubscriber(new PurgeTagsListener());
     }
 
+The `TaggableStore` can be configured by passing an array of `$options` as a
+second argument:
+
+* **prune_threshold**: Configure the number of write actions until the
+  store will prune the expired cache entries. Pass 0 if you want to disable
+  automated pruning.
+  Type: int
+
+* **purge_tags_header**: The HTTP header name used to check for tags
+  Type: string
+
+* **cache**: The cache adapter.
+  Use this option if you want to use a different cache implementation than the
+  default one.
+  Note that there are very good reasons that the local adapters are used by
+  default. This is to protect you as a developer! Only override it if you're
+  really sure your cache implementation meets the needs of Symfony's HttpCache.
+  Type: TagAwareAdapterInterface
+
+* **lock_factory**: The lock factory.
+  Use this option if you want to use a different lock implementation than the
+  default one.
+  Note that there are very good reasons that the local adapters are used by
+  default. This is to protect you as a developer! Only override it if you're
+  really sure your lock implementation meets the needs of Symfony's HttpCache.
+  Type: Factory
 
 Cleaning the Cookie Header
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
