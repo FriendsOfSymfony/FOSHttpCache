@@ -26,6 +26,7 @@ use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\Lock\Store\SemaphoreStore;
 use Symfony\Component\Lock\StoreInterface as LockStoreInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Implements a storage for Symfony's HttpCache that supports tagging.
@@ -38,14 +39,9 @@ class TaggableStore implements StoreInterface
     const COUNTER_KEY = 'write-operations-counter';
 
     /**
-     * @var string
+     * @var array
      */
-    private $purgeTagsHeader;
-
-    /**
-     * @var int
-     */
-    private $pruneThreshold;
+    private $options;
 
     /**
      * @var TagAwareAdapterInterface
@@ -63,63 +59,68 @@ class TaggableStore implements StoreInterface
     private $locks = [];
 
     /**
-     * @param string $cacheDir        The cache directory
-     * @param int    $pruneThreshold  The number of write operations until orphan data gets pruned (default: 500)
-     *                                To disable the feature, pass a threshold of 0.
-     * @param string $purgeTagsHeader The tags header name
+     * When creating a TaggableStore you can configure a number options.
+     *
+     * - prune_threshold:       Configure the number of write actions until the
+     *                          store will prune the expired cache entries. Pass
+     *                          0 if you want to disable automated pruning.
+     *                          Type: int
+     *
+     * - purge_tags_header:     The HTTP header name used to check for tags
+     *                          Type: string
+     *
+     * - cache:                 The cache adapter.
+     *                          Use this option if you want to use a different
+     *                          cache implementation than the default one.
+     *                          Note that there are very good reasons that the
+     *                          local adapters are used by default. This is to
+     *                          protect you as a developer!
+     *                          Only override it if you're really sure your cache
+     *                          implementation meets the needs of Symfony's HttpCache.
+     *                          Type: TagAwareAdapterInterface
+     *
+     * - lock_factory:          The lock factory.
+     *                          Use this option if you want to use a different
+     *                          lock implementation than the default one.
+     *                          Note that there are very good reasons that the
+     *                          local adapters are used by default. This is to
+     *                          protect you as a developer!
+     *                          Only override it if you're really sure your lock
+     *                          implementation meets the needs of Symfony's HttpCache.
+     *                          Type: Factory
+     *
+     * @param string $cacheDir The cache directory
+     * @param array  $options
      */
-    public function __construct($cacheDir, $pruneThreshold = 500, $purgeTagsHeader = PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER)
+    public function __construct($cacheDir, array $options = [])
     {
         if (!class_exists(Factory::class)) {
             throw new \RuntimeException('You need at least Symfony 3.4 to use the TaggableStore.');
         }
 
-        $this->purgeTagsHeader = $purgeTagsHeader;
-        $this->pruneThreshold = $pruneThreshold;
+        $resolver = new OptionsResolver();
 
-        // Default lifetime does not need to be configurable because we're working on a reverse proxy cache here
-        // which means the cache entries (= responses) MUST have cache related headers so we have individual
-        // expiry dates for each entry.
-        $this->setCache(new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir)));
-        $this->setLockFactory(new Factory($this->getDefaultLockFactory($cacheDir)));
-    }
+        // Pruning threshold (set to 0 if you want to disable that feature)
+        $resolver->setDefault('prune_threshold', 500)
+            ->setAllowedTypes('prune_threshold', 'int');
 
-    /**
-     * Use this method if you want to use a different cache implementation than
-     * the one created in the constructor. Note that there are very good reasons
-     * that the local adapters are used by default and you do not inject them in
-     * the constructor but via setter injection instead. This is to protect you
-     * as a developer! Only use this method if you're really sure your cache
-     * implementation meets the needs of Symfony's HttpCache.
-     *
-     * @param TagAwareAdapterInterface $cache
-     *
-     * @return TaggableStore
-     */
-    public function setCache(TagAwareAdapterInterface $cache)
-    {
-        $this->cache = $cache;
+        // HTTP header for tags
+        $resolver->setDefault('purge_tags_header', PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER)
+            ->setAllowedTypes('purge_tags_header', 'string');
 
-        return $this;
-    }
+        // Cache adapter
+        $resolver->setDefault('cache', new TagAwareAdapter(
+            new FilesystemAdapter('fos-http-cache', 0, $cacheDir))
+        )->setAllowedTypes('cache', TagAwareAdapterInterface::class);
 
-    /**
-     * Use this method if you want to use a different lock implementation than
-     * the one created in the constructor. Note that there are very good reasons
-     * that the local adapters are used by default and you do not inject them in
-     * the constructor but via setter injection instead. This is to protect you
-     * as a developer! Only use this method if you're really sure your lock
-     * implementation meets the needs of Symfony's HttpCache.
-     *
-     * @param Factory $lockFactory
-     *
-     * @return TaggableStore
-     */
-    public function setLockFactory(Factory $lockFactory)
-    {
-        $this->lockFactory = $lockFactory;
+        // Lock factory
+        $resolver->setDefault('lock_factory', new Factory(
+            $this->getDefaultLockStore($cacheDir))
+        )->setAllowedTypes('lock_factory', Factory::class);
 
-        return $this;
+        $this->options = $resolver->resolve($options);
+        $this->cache = $this->options['cache'];
+        $this->lockFactory = $this->options['lock_factory'];
     }
 
     /**
@@ -214,8 +215,8 @@ class TaggableStore implements StoreInterface
 
         // Tags
         $tags = [];
-        if ($response->headers->has($this->purgeTagsHeader)) {
-            $tags = explode(',', $response->headers->get($this->purgeTagsHeader));
+        if ($response->headers->has($this->options['purge_tags_header'])) {
+            $tags = explode(',', $response->headers->get($this->options['purge_tags_header']));
         }
 
         // Prune expired entries on file system if needed
@@ -458,7 +459,7 @@ class TaggableStore implements StoreInterface
      *
      * @return LockStoreInterface
      */
-    private function getDefaultLockFactory($cacheDir)
+    private function getDefaultLockStore($cacheDir)
     {
         if (SemaphoreStore::isSupported(false)) {
             return new SemaphoreStore();
@@ -477,7 +478,7 @@ class TaggableStore implements StoreInterface
     {
         if (!interface_exists(PruneableInterface::class)
             || !$this->cache instanceof PruneableInterface
-            || 0 === $this->pruneThreshold
+            || 0 === $this->options['prune_threshold']
         ) {
             return;
         }
@@ -485,7 +486,7 @@ class TaggableStore implements StoreInterface
         $item = $this->cache->getItem(self::COUNTER_KEY);
         $counter = (int) $item->get();
 
-        if ($counter > $this->pruneThreshold) {
+        if ($counter > $this->options['prune_threshold']) {
             $this->cache->prune();
             $counter = 0;
         } else {

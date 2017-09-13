@@ -119,8 +119,7 @@ class TaggableStoreTest extends TestCase
             ->method('saveDeferred')
             ->willReturn(false);
 
-        $store = new TaggableStore(sys_get_temp_dir());
-        $store->setCache($cache);
+        $store = new TaggableStore(sys_get_temp_dir(), ['cache' => $cache]);
 
         $request = Request::create('/');
         $response = new Response('hello world', 200);
@@ -221,8 +220,7 @@ class TaggableStoreTest extends TestCase
             ->method('invalidateTags')
             ->willThrowException(new \Symfony\Component\Cache\Exception\InvalidArgumentException());
 
-        $store = new TaggableStore(sys_get_temp_dir());
-        $store->setCache($cache);
+        $store = new TaggableStore(sys_get_temp_dir(), ['cache' => $cache]);
 
         $this->assertFalse($store->invalidateTags(['foobar']));
     }
@@ -404,8 +402,10 @@ class TaggableStoreTest extends TestCase
             ->expects($this->exactly(3))
             ->method('prune');
 
-        $store = new TaggableStore(sys_get_temp_dir(), 5);
-        $store->setCache($cache);
+        $store = new TaggableStore(sys_get_temp_dir(), [
+            'cache' => $cache,
+            'prune_threshold' => 5,
+        ]);
 
         foreach (range(1, 21) as $entry) {
             $request = Request::create('https://foobar.com/'.$entry);
@@ -429,8 +429,10 @@ class TaggableStoreTest extends TestCase
             ->expects($this->never())
             ->method('prune');
 
-        $store = new TaggableStore(sys_get_temp_dir(), 0);
-        $store->setCache($cache);
+        $store = new TaggableStore(sys_get_temp_dir(), [
+            'cache' => $cache,
+            'prune_threshold' => 0,
+        ]);
 
         foreach (range(1, 21) as $entry) {
             $request = Request::create('https://foobar.com/'.$entry);
