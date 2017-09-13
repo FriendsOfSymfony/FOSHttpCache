@@ -25,6 +25,7 @@ use Symfony\Component\Lock\Factory;
 use Symfony\Component\Lock\LockInterface;
 use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\Lock\Store\SemaphoreStore;
+use Symfony\Component\Lock\StoreInterface as LockStoreInterface;
 
 /**
  * Implements a storage for Symfony's HttpCache that supports tagging.
@@ -62,10 +63,9 @@ class TaggableStore implements StoreInterface
     private $locks = [];
 
     /**
-     * Constructor.
-     *
      * @param string $cacheDir        The cache directory
      * @param int    $pruneThreshold  The number of write operations until orphan data gets pruned (default: 500)
+     *                                To disable the feature, pass a threshold of 0.
      * @param string $purgeTagsHeader The tags header name
      */
     public function __construct($cacheDir, $pruneThreshold = 500, $purgeTagsHeader = PurgeTagsListener::DEFAULT_PURGE_TAGS_HEADER)
@@ -81,7 +81,7 @@ class TaggableStore implements StoreInterface
         // which means the cache entries (= responses) MUST have cache related headers so we have individual
         // expiry dates for each entry.
         $this->setCache(new TagAwareAdapter(new FilesystemAdapter('fos-http-cache', 0, $cacheDir)));
-        $this->setLockFactory(new Factory($this->getBestLocalLockStore($cacheDir)));
+        $this->setLockFactory(new Factory($this->getDefaultLockFactory($cacheDir)));
     }
 
     /**
@@ -449,11 +449,16 @@ class TaggableStore implements StoreInterface
     }
 
     /**
+     * Build and return a default lock factory for when no explicit factory
+     * was specified.
+     * The default factory uses the best quality lock store that is available
+     * on this system.
+     *
      * @param string $cacheDir
      *
-     * @return \Symfony\Component\Lock\StoreInterface
+     * @return LockStoreInterface
      */
-    private function getBestLocalLockStore($cacheDir)
+    private function getDefaultLockFactory($cacheDir)
     {
         if (SemaphoreStore::isSupported(false)) {
             return new SemaphoreStore();
