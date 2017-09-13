@@ -67,7 +67,7 @@ class VarnishProxy extends AbstractProxy
                 // Ignore if command fails when Varnish wasn't running
             }
             unlink($this->pid);
-            $this->waitUntil($this->ip, $this->getPort(), 2000);
+            $this->waitUntil($this->ip, $this->getPort(), 8000);
         }
     }
 
