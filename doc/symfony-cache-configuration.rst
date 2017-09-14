@@ -275,40 +275,40 @@ The TaggableStore
 
 .. versionadded:: 2.1
 
-    The `TaggableStore` has been added in version 2.1.
+    The ``TaggableStore`` has been added in version 2.1.
 
 .. warning::
 
-    You need at least versions 3.4 of `symfony/cache` and `symfony/lock`
-    to use this feature! Add the following lines to your `composer.json` and run
-    `composer update`::
+    You need at least versions 3.4 of ``symfony/cache`` and ``symfony/lock``
+    to use this feature! Add the following lines to your ``composer.json`` and run
+    ``composer update``::
 
-    "symfony/lock": "^3.4",
-    "symfony/cache": "^3.4",
+        "symfony/lock": "^3.4",
+        "symfony/cache": "^3.4",
 
 
-Symfony's `HttpCache` does not support tags based cache invalidation by default.
-However, this library ships with a `TaggableStore` and a corresponding
-`PurgeTagsListener` which provide this functionality.
+Symfony's ``HttpCache`` does not support tags based cache invalidation by default.
+However, this library ships with a ``TaggableStore`` and a corresponding
+``PurgeTagsListener`` which provide this functionality.
 Even if you do not want to invalidate cache entries by tags, you might be
-interested in using the `TaggableStore` instead of the default `Store`
+interested in using the ``TaggableStore`` instead of the default ``Store``
 implementation Symfony ships with.
 
-That's because `TaggableStore` also prunes expired entries on a regular basis
-which is something the default `Store` does not. The default `Store` keeps
+That's because ``TaggableStore`` also prunes expired entries on a regular basis
+which is something the default ``Store`` does not. The default ``Store`` keeps
 filling up your file system without ever cleaning up expired cache entries.
-The `TaggableStore` counts all the cache write operations (so fetching items
+The ``TaggableStore`` counts all the cache write operations (so fetching items
 from the cache is not slowed down) and after reaching a configurable
-threshold (default `500`), it prunes expired data. If you want to disable
-pruning, you can set the option `prune_threshold` to `0`.
-This means that after every `500` HTTP cache writes, your file system directory
+threshold (default ``500``), it prunes expired data. If you want to disable
+pruning, you can set the option ``prune_threshold`` to ``0``.
+This means that after every ``500`` HTTP cache writes, your file system directory
 will be cleaned up and thus kept in good shape.
 You can configure the prune threshold by providing a different threshold as
-second argument to the constructor of `TaggableStore`.
+second argument to the constructor of ``TaggableStore``.
 
-For this to work, you have to use the `TaggableStore` in your kernel.
+For this to work, you have to use the ``TaggableStore`` in your kernel.
 If you want support for tag based cache invalidation, you also need to register
-the `PurgeListener` so your `AppCache` should end up looking like this::
+the ``PurgeListener`` so your ``AppCache`` should end up looking like this::
 
     use FOS\HttpCache\SymfonyCache\TaggableStore();
     use FOS\HttpCache\SymfonyCache\PurgeTagsListener();
@@ -330,7 +330,7 @@ the `PurgeListener` so your `AppCache` should end up looking like this::
         $this->addSubscriber(new PurgeTagsListener());
     }
 
-The `TaggableStore` can be configured by passing an array of `$options` as a
+The ``TaggableStore`` can be configured by passing an array of ``$options`` as a
 second argument:
 
 * **prune_threshold**: Configure the number of write actions until the
