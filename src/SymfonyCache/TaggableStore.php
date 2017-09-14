@@ -328,7 +328,6 @@ class TaggableStore implements StoreInterface
     public function cleanup()
     {
         try {
-            /** @var LockInterface $lock */
             foreach ($this->locks as $lock) {
                 $lock->release();
             }
