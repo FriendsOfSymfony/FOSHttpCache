@@ -30,6 +30,8 @@ Using the trait
 Your ``AppCache`` needs to implement ``CacheInvalidation`` and use the
 trait ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``::
 
+    // app/AppCache.php
+
     use FOS\HttpCache\SymfonyCache\CacheInvalidation;
     use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
     use Symfony\Component\HttpFoundation\Request;
@@ -129,6 +131,7 @@ other hosts, provide the IPs of the machines allowed to purge, or provide a
 RequestMatcher that checks for an Authorization header or similar. *Only set
 one of ``client_ips`` or ``client_matcher``*.
 
+
 * **client_ips**: String with IP or array of IPs that are allowed to
   purge the cache.
 
@@ -142,6 +145,149 @@ one of ``client_ips`` or ``client_matcher``*.
 * **purge_method**: HTTP Method used with purge requests.
 
   **default**: ``PURGE``
+
+
+Purge tags (cache invalidation using tags)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: 2.1
+
+    Support for tag invalidation in Symfony HttpCache has been added in
+    version 2.1.
+
+
+See :ref:`TaggableStore <taggablestore>` for extended description.
+
+Purging tags is only allowed from the same machine by default.
+You can configure the listener just the same as the `PurgeListener` plus the
+`purge_tags_method` and `purge_tags_header`:
+
+* **client_ips**: String with IP or array of IPs that are allowed to
+  purge the cache.
+
+  **default**: ``127.0.0.1``
+
+* **client_matcher**: RequestMatcherInterface that only matches requests that are
+  allowed to purge.
+
+  **default**: ``null``
+
+* **purge_tags_method**: HTTP Method used with purge tags requests.
+
+  **default**: ``PURGETAGS``
+
+* **purge_tags_header**: HTTP Header that contains the comma-separated tags to purge.
+
+  **default**: ``X-Cache-Tags``
+
+If you want support for tag based cache invalidation, you need to register both,
+the ``PurgeListener`` and the ``TaggableStore`` so your ``AppCache`` should end
+up looking like this::
+
+    use FOS\HttpCache\SymfonyCache\TaggableStore();
+    use FOS\HttpCache\SymfonyCache\PurgeTagsListener();
+
+    // ...
+
+    /**
+     * Overwrite constructor to register the TaggableStore.
+     */
+    public function __construct(
+        HttpKernelInterface $kernel,
+        SurrogateInterface $surrogate = null,
+        array $options = []
+    ) {
+        $store = new TaggableStore($kernel->getCacheDir());
+
+        parent::__construct($kernel, $store, $surrogate, $options);
+
+        $this->addSubscriber(new PurgeTagsListener());
+    }
+
+
+.. _taggablestore:
+
+The TaggableStore
+^^^^^^^^^^^^^^^^^
+
+.. versionadded:: 2.1
+
+    The ``TaggableStore`` has been added in version 2.1.
+
+.. warning::
+
+    You need at least versions 3.4 of ``symfony/cache`` and ``symfony/lock``
+    to use this feature! Add the following lines to your ``composer.json`` and run
+    ``composer update``::
+
+        "symfony/lock": "^3.4",
+        "symfony/cache": "^3.4",
+
+
+Symfony's ``HttpCache`` does not support tags based cache invalidation by default.
+However, this library ships with a ``TaggableStore`` and a corresponding
+``PurgeTagsListener`` which provide this functionality.
+Even if you do not want to invalidate cache entries by tags, you might be
+interested in using the ``TaggableStore`` instead of the default ``Store``
+implementation Symfony ships with.
+
+That's because ``TaggableStore`` also prunes expired entries on a regular basis
+which is something the default ``Store`` does not. The default ``Store`` keeps
+filling up your file system without ever cleaning up expired cache entries.
+The ``TaggableStore`` counts all the cache write operations (so fetching items
+from the cache is not slowed down) and after reaching a configurable
+threshold (default ``500``), it prunes expired data. If you want to disable
+pruning, you can set the option ``prune_threshold`` to ``0``.
+This means that after every ``500`` HTTP cache writes, your file system directory
+will be cleaned up and thus kept in good shape.
+You can configure the prune threshold by providing a different threshold as
+second argument to the constructor of ``TaggableStore``.
+
+For this to work, you have to use the ``TaggableStore`` in your kernel::
+
+    use FOS\HttpCache\SymfonyCache\PurgeTagsListener();
+
+    // ...
+
+    /**
+     * Overwrite constructor to register the TaggableStore.
+     */
+    public function __construct(
+        HttpKernelInterface $kernel,
+        SurrogateInterface $surrogate = null,
+        array $options = []
+    ) {
+        $store = new TaggableStore($kernel->getCacheDir());
+
+        parent::__construct($kernel, $store, $surrogate, $options);
+    }
+
+The ``TaggableStore`` can be configured by passing an array of ``$options`` as a
+second argument:
+
+* **prune_threshold**: Configure the number of write actions until the
+  store will prune the expired cache entries. Pass 0 if you want to disable
+  automated pruning.
+  Type: int
+
+* **purge_tags_header**: The HTTP header name used to check for tags
+  Type: string
+
+* **cache**: The cache adapter.
+  Use this option if you want to use a different cache implementation than the
+  default one.
+  Note that there are very good reasons that the local adapters are used by
+  default. This is to protect you as a developer! Only override it if you're
+  really sure your cache implementation meets the needs of Symfony's HttpCache.
+  Type: Symfony\Component\Cache\Adapter\TagAwareAdapterInterface
+
+* **lock_factory**: The lock factory.
+  Use this option if you want to use a different lock implementation than the
+  default one.
+  Note that there are very good reasons that the local adapters are used by
+  default. This is to protect you as a developer! Only override it if you're
+  really sure your lock implementation meets the needs of Symfony's HttpCache.
+  Type: Symfony\Component\Lock\Factory
 
 Refresh
 ~~~~~~~

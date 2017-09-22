@@ -114,4 +114,47 @@ abstract class HttpProxyClient implements ProxyClient
 
         return $tags;
     }
+
+    /**
+     * Splits a header value into an array of values. E.g. useful for tag
+     * invalidation requests where you might need multiple requests if you
+     * want to invalidate too many cache tags (so the header would get too long).
+     *
+     * @param string $value
+     * @param int    $length
+     * @param string $delimiter
+     *
+     * @return array
+     */
+    protected function splitLongHeaderValue($value, $length = 7500, $delimiter = ',')
+    {
+        if (mb_strlen($value) <= $length) {
+            return [$value];
+        }
+
+        $tmp = [];
+        $chunks = explode($delimiter, $value);
+        $currentLength = 0;
+        $index = 0;
+
+        foreach ($chunks as $chunk) {
+            $chunkLength = mb_strlen($chunk) + 1;
+
+            if (($currentLength + $chunkLength) <= $length) {
+                $tmp[$index][] = $chunk;
+                $currentLength += $chunkLength;
+            } else {
+                ++$index;
+                $currentLength = $chunkLength;
+                $tmp[$index][] = $chunk;
+            }
+        }
+
+        $result = [];
+        foreach ($tmp as $values) {
+            $result[] = implode($delimiter, $values);
+        }
+
+        return $result;
+    }
 }

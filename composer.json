@@ -36,6 +36,8 @@
         "php-http/mock-client": "^0.3.2",
         "symfony/process": "^2.3||^3.0",
         "symfony/http-kernel": "^2.3||^3.0",
+        "symfony/lock": "^3.4@dev",
+        "symfony/cache": "^3.4@dev",
         "phpunit/phpunit": "^5.7 || ^6.0"
     },
     "suggest": {

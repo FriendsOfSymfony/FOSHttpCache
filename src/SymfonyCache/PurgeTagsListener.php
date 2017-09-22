@@ -11,31 +11,41 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use FOS\HttpCache\ProxyClient\Symfony;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Purge handler for the symfony built-in HttpCache.
+ * Purge tags handler for the symfony built-in HttpCache.
  *
- * @author David Buchmann <mail@davidbu.ch>
+ * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  *
  * {@inheritdoc}
  */
-class PurgeListener extends AccessControlledListener
+class PurgeTagsListener extends AccessControlledListener
 {
-    const DEFAULT_PURGE_METHOD = 'PURGE';
+    const DEFAULT_PURGE_TAGS_METHOD = 'PURGETAGS';
+    const DEFAULT_PURGE_TAGS_HEADER = 'X-Cache-Tags';
 
     /**
-     * The purge method to use.
+     * The purge tags method to use.
      *
      * @var string
      */
-    private $purgeMethod;
+    private $purgeTagsMethod;
+
+    /**
+     * The purge tags header to use.
+     *
+     * @var string
+     */
+    private $purgeTagsHeader;
 
     /**
      * When creating the purge listener, you can configure an additional option.
      *
-     * - purge_method: HTTP method that identifies purge requests.
+     * - purge_tags_method: HTTP method that identifies purge tags requests.
+     * - purge_tags_header: HTTP header that contains cache tags to invalidate.
      *
      * @param array $options Options to overwrite the default options
      *
@@ -47,7 +57,8 @@ class PurgeListener extends AccessControlledListener
     {
         parent::__construct($options);
 
-        $this->purgeMethod = $this->getOptionsResolver()->resolve($options)['purge_method'];
+        $this->purgeTagsMethod = $this->getOptionsResolver()->resolve($options)['purge_tags_method'];
+        $this->purgeTagsHeader = $this->getOptionsResolver()->resolve($options)['purge_tags_header'];
     }
 
     /**
@@ -61,7 +72,7 @@ class PurgeListener extends AccessControlledListener
     }
 
     /**
-     * Look at unsafe requests and handle purge requests.
+     * Look at unsafe requests and handle purge tags requests.
      *
      * Prevents access when the request comes from a non-authorized client.
      *
@@ -70,7 +81,7 @@ class PurgeListener extends AccessControlledListener
     public function handlePurge(CacheEvent $event)
     {
         $request = $event->getRequest();
-        if ($this->purgeMethod !== $request->getMethod()) {
+        if ($this->purgeTagsMethod !== $request->getMethod()) {
             return;
         }
 
@@ -83,11 +94,31 @@ class PurgeListener extends AccessControlledListener
         $response = new Response();
         $store = $event->getKernel()->getStore();
 
-        if ($store->purge($request->getUri())) {
+        if (!$store instanceof TaggableStore) {
+            $response->setStatusCode(400);
+            $response->setContent('Store must be an instance of TaggableStore! Check your proxy configuration!');
+
+            $event->setResponse($response);
+
+            return;
+        }
+
+        if (!$request->headers->has($this->purgeTagsHeader)) {
+            $response->setStatusCode(200, 'Not found');
+
+            $event->setResponse($response);
+
+            return;
+        }
+
+        $tags = explode(',', $request->headers->get($this->purgeTagsHeader));
+
+        if ($store->invalidateTags($tags)) {
             $response->setStatusCode(200, 'Purged');
         } else {
             $response->setStatusCode(200, 'Not found');
         }
+
         $event->setResponse($response);
     }
 
@@ -99,8 +130,10 @@ class PurgeListener extends AccessControlledListener
     protected function getOptionsResolver()
     {
         $resolver = parent::getOptionsResolver();
-        $resolver->setDefault('purge_method', static::DEFAULT_PURGE_METHOD);
-        $resolver->setAllowedTypes('purge_method', 'string');
+        $resolver->setDefault('purge_tags_method', static::DEFAULT_PURGE_TAGS_METHOD);
+        $resolver->setAllowedTypes('purge_tags_method', 'string');
+        $resolver->setDefault('purge_tags_header', static::DEFAULT_PURGE_TAGS_HEADER);
+        $resolver->setAllowedTypes('purge_tags_header', 'string');
 
         return $resolver;
     }
