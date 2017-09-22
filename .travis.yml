@@ -20,7 +20,7 @@ matrix:
       env: SYMFONY_VERSION=2.7.* VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
     - php: 7.0
       env:
-        - VARNISH_VERSION=41
+        - VARNISH_VERSION=4.1
         - DOCCHECK=true
 
 branches:
