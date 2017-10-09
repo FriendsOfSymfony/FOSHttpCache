@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 5.3
   - 5.4
   - 5.5
   - 5.6
@@ -14,11 +13,9 @@ env:
 
 matrix:
   include:
-    - php: hhvm
-      dist: trusty
     - php: 5.5
       env: VARNISH_VERSION=3.0
-    - php: 5.3
+    - php: 5.4
       env: SYMFONY_VERSION=2.3.* VARNISH_VERSION=4.0 COMPOSER_FLAGS="--prefer-lowest"
 
 branches:
@@ -32,11 +29,13 @@ before_script:
   - composer update $COMPOSER_FLAGS --dev --prefer-source --no-interaction
   - bash -c "if [[ '$TRAVIS_PHP_VERSION' == '7.'* ]] ; then wget https://phar.phpunit.de/phpunit-5.7.phar; fi"
   # Install Varnish
-  - curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add -
-  - echo "deb http://repo.varnish-cache.org/ubuntu/ precise varnish-${VARNISH_VERSION}" | sudo tee -a /etc/apt/sources.list
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq varnish python-sphinx enchant
-  - sudo pip install -r doc/requirements.txt
+  - |
+    set -e
+    curl -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey | sudo apt-key add -
+    curl -L "https://packagecloud.io/install/repositories/varnishcache/varnish${VARNISH_VERSION//./}/config_file.list?os=ubuntu&dist=trusty&source=script" | sudo tee -a /etc/apt/sources.list
+    cat /etc/apt/sources.list
+    sudo apt-get update -qq
+    sudo apt-get install -qq varnish
   # Install NGINX
   - sh ./tests/install-nginx.sh
   # Starting webserver
@@ -46,8 +45,6 @@ before_script:
 script:
   - bash -c "if [[ '$TRAVIS_PHP_VERSION' == '7.'* ]] ; then php phpunit-5.7.phar --coverage-clover=coverage.clover; fi"
   - sh -c "if [ '$TRAVIS_PHP_VERSION' \< '7' ]; then phpunit --coverage-clover=coverage.clover; fi"
-  - make -C doc SPHINXOPTS='-nW' html
-  - make -C doc spelling
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
