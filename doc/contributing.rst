@@ -33,14 +33,8 @@ Functional Tests
 ~~~~~~~~~~~~~~~~
 
 The library also includes functional tests against a Varnish and NGINX instance.
-The functional test suite by default uses PHP’s built-in web server. If you have
-PHP 5.4 or newer, simply run with the default configuration.
-
-If you want to run the tests on HHVM_, you need to configure a web server
-listening on localhost:8080 that points to the folder
-``tests/Functional/Fixtures/web`` and start a `HHVM FastCGI server`_.
-
-To run the functional tests:
+The functional test suite uses PHP’s built-in web server by default. To run the
+functional tests:
 
 .. code-block:: bash
 
@@ -75,7 +69,5 @@ To build the docs:
     $ make html
     $ make spelling
 
-.. _HHVM: http://www.hhvm.com/
-.. _HHVM FastCGI server: https://github.com/facebook/hhvm/wiki/fastcgi
 .. _install Sphinx: http://sphinx-doc.org/latest/install.html
 .. _install enchant: http://www.abisource.com/projects/enchant/
