@@ -283,4 +283,16 @@ class UserContextListenerTest extends TestCase
     {
         new UserContextListener(['foo' => 'bar']);
     }
+
+    public function testHttpMethodParameterOverride()
+    {
+        $userContextListener = new UserContextListener();
+        $request = Request::create('/foo', 'POST', ['_method' => 'PUT']);
+        $event = new CacheEvent($this->kernel, $request);
+
+        $userContextListener->preHandle($event);
+        Request::enableHttpMethodParameterOverride();
+
+        $this->assertSame('PUT', $request->getMethod());
+    }
 }
