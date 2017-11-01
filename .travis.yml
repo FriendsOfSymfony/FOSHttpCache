@@ -12,7 +12,7 @@ php:
   - 7.2
 
 env:
-  - VARNISH_VERSION=5.0.0
+  - VARNISH_VERSION=5.0
 
 matrix:
   include:
@@ -36,20 +36,11 @@ before_script:
   # Install Varnish
   - |
     set -e
-    if [ "$VARNISH_VERSION" = "5.0.0" ]; then
-      wget https://repo.varnish-cache.org/pkg/${VARNISH_VERSION}/varnish_${VARNISH_VERSION}-1_amd64.deb
-      sudo apt-get install -qq libjemalloc1
-      sudo dpkg -i varnish_${VARNISH_VERSION}-1_amd64.deb
-      sudo apt-get update -qq
-      sudo apt-get -f install
-    else
-      curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key add -
-      echo "deb https://repo.varnish-cache.org/ubuntu/ trusty varnish-${VARNISH_VERSION}" | sudo tee -a /etc/apt/sources.list
-      sudo apt-get update -qq
-      sudo apt-get install -qq varnish
-    fi
-  - if [ "$DOCCHECK" = true ]; then sudo apt-get install -qq python-sphinx enchant; fi
-  - if [ "$DOCCHECK" = true ]; then sudo pip install -r doc/requirements.txt; fi
+    curl -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey | sudo apt-key add -
+    curl -L "https://packagecloud.io/install/repositories/varnishcache/varnish${VARNISH_VERSION//./}/config_file.list?os=ubuntu&dist=trusty&source=script" | sudo tee -a /etc/apt/sources.list
+    cat /etc/apt/sources.list
+    sudo apt-get update -qq
+    sudo apt-get install -qq varnish
   # Install NGINX
   - sh ./tests/install-nginx.sh
   # Starting webserver

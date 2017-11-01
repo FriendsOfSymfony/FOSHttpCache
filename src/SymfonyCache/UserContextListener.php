@@ -97,15 +97,17 @@ class UserContextListener implements EventSubscriberInterface
         if (!$this->isInternalRequest($request)) {
             // Prevent tampering attacks on the hash mechanism
             if ($request->headers->get('accept') === $this->options['user_hash_accept_header']
-                || $request->headers->get($this->options['user_hash_header']) !== null
+                || null !== $request->headers->get($this->options['user_hash_header'])
             ) {
                 $event->setResponse(new Response('', 400));
 
                 return;
             }
 
-            if ($request->isMethodSafe() && $hash = $this->getUserHash($event->getKernel(), $request)) {
-                $request->headers->set($this->options['user_hash_header'], $hash);
+            // We must not call $request->isMethodSafe() here, because this will mess up with later configuration of the `http_method_override` that is set onto the request by the Symfony FrameworkBundle.
+            // See http://symfony.com/doc/current/reference/configuration/framework.html#configuration-framework-http-method-override
+            if (in_array($request->getRealMethod(), ['GET', 'HEAD', 'OPTIONS', 'TRACE'])) {
+                $request->headers->set($this->options['user_hash_header'], $this->getUserHash($event->getKernel(), $request));
             }
         }
 
@@ -145,7 +147,7 @@ class UserContextListener implements EventSubscriberInterface
      */
     private function isInternalRequest(Request $request)
     {
-        return $request->attributes->get('internalRequest', false) === true;
+        return true === $request->attributes->get('internalRequest', false);
     }
 
     /**
@@ -212,7 +214,7 @@ class UserContextListener implements EventSubscriberInterface
      */
     private function isSessionName($name)
     {
-        return strpos($name, $this->options['session_name_prefix']) === 0;
+        return 0 === strpos($name, $this->options['session_name_prefix']);
     }
 
     /**
