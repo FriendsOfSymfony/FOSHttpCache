@@ -97,7 +97,7 @@ class UserContextSubscriber implements EventSubscriberInterface
         if (!$this->isInternalRequest($request)) {
             // Prevent tampering attacks on the hash mechanism
             if ($request->headers->get('accept') === $this->options['user_hash_accept_header']
-                || $request->headers->get($this->options['user_hash_header']) !== null
+                || null !== $request->headers->get($this->options['user_hash_header'])
             ) {
                 $event->setResponse(new Response('', 400));
 
@@ -147,7 +147,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function isInternalRequest(Request $request)
     {
-        return $request->attributes->get('internalRequest', false) === true;
+        return true === $request->attributes->get('internalRequest', false);
     }
 
     /**
@@ -213,7 +213,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function isSessionName($name)
     {
-        return strpos($name, $this->options['session_name_prefix']) === 0;
+        return 0 === strpos($name, $this->options['session_name_prefix']);
     }
 
     /**

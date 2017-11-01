@@ -26,7 +26,7 @@ if ('POST' == strtoupper($_SERVER['REQUEST_METHOD'])) {
     exit;
 }
 
-if (!isset($_COOKIE[0]) || ($_COOKIE[0] != 'foo' && $_COOKIE[0] != 'bar')) {
+if (!isset($_COOKIE[0]) || ('foo' != $_COOKIE[0] && 'bar' != $_COOKIE[0])) {
     header('HTTP/1.1 403');
     exit;
 }
@@ -34,7 +34,7 @@ if (!isset($_COOKIE[0]) || ($_COOKIE[0] != 'foo' && $_COOKIE[0] != 'bar')) {
 header('Cache-Control: max-age=3600');
 header('Vary: X-User-Context-Hash');
 
-if ($_COOKIE[0] == 'foo') {
+if ('foo' == $_COOKIE[0]) {
     header('X-HashTest: foo');
     echo 'foo';
 } else {

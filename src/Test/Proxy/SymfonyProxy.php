@@ -55,7 +55,7 @@ class SymfonyProxy implements ProxyInterface
             if (!$this->getCacheDir() || '/' == $path) {
                 throw new \Exception('Invalid test setup, the cache dir is '.$path);
             }
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            if ('WIN' === strtoupper(substr(PHP_OS, 0, 3))) {
                 system('DEL /S '.$path);
             } else {
                 system('rm -r '.$path);
