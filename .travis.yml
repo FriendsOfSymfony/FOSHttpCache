@@ -41,6 +41,8 @@ before_script:
     cat /etc/apt/sources.list
     sudo apt-get update -qq
     sudo apt-get install -qq varnish
+  - if [ "$DOCCHECK" = true ]; then sudo apt-get install -qq python-sphinx enchant; fi
+  - if [ "$DOCCHECK" = true ]; then sudo pip install -r doc/requirements.txt; fi
   # Install NGINX
   - sh ./tests/install-nginx.sh
   # Starting webserver
