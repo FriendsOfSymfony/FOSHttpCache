@@ -205,12 +205,12 @@ class HttpDispatcher
         if ($this->baseUri) {
             if ($uri->getHost()) {
                 // Absolute URI: does it already have a scheme?
-                if (!$uri->getScheme() && $this->baseUri->getScheme() !== '') {
+                if (!$uri->getScheme() && '' !== $this->baseUri->getScheme()) {
                     $uri = $uri->withScheme($this->baseUri->getScheme());
                 }
             } else {
                 // Relative URI
-                if ($this->baseUri->getHost() !== '') {
+                if ('' !== $this->baseUri->getHost()) {
                     $uri = $uri->withHost($this->baseUri->getHost());
                 }
 
@@ -219,7 +219,7 @@ class HttpDispatcher
                 }
 
                 // Base path
-                if ($this->baseUri->getPath() !== '') {
+                if ('' !== $this->baseUri->getPath()) {
                     $path = $this->baseUri->getPath().'/'.ltrim($uri->getPath(), '/');
                     $uri = $uri->withPath($path);
                 }
