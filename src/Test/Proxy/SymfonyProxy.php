@@ -63,7 +63,7 @@ class SymfonyProxy implements ProxyInterface
         }
 
         $path = $this->getCacheDir();
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        if ('WIN' === strtoupper(substr(PHP_OS, 0, 3))) {
             // @codeCoverageIgnoreStart
             system('DEL /S '.$path);
         } else {
