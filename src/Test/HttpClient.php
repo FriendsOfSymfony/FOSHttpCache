@@ -90,7 +90,7 @@ class HttpClient
      */
     private function getHttpClient()
     {
-        if ($this->httpClient === null) {
+        if (null === $this->httpClient) {
             $this->httpClient = HttpClientDiscovery::find();
         }
 
@@ -111,7 +111,7 @@ class HttpClient
     private function createRequest($method, $uri, $headers)
     {
         $uri = $this->createUri($uri);
-        if ($uri->getHost() === '') {
+        if ('' === $uri->getHost()) {
             // Add base URI host
             $uri = $uri->withHost($this->hostname);
         }
@@ -120,7 +120,7 @@ class HttpClient
             $uri = $uri->withPort($this->port);
         }
 
-        if ($uri->getScheme() === '') {
+        if ('' === $uri->getScheme()) {
             $uri = $uri->withScheme('http');
         }
 
