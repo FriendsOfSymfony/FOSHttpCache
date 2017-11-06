@@ -57,7 +57,7 @@ trait AbstractCacheConstraintTrait
             throw new \RuntimeException($message);
         }
 
-        return strpos((string) $other->getHeaderLine($this->header), $this->getValue()) !== false;
+        return false !== strpos((string) $other->getHeaderLine($this->header), $this->getValue());
     }
 
     /**
