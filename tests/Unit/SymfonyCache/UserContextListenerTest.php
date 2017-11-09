@@ -120,8 +120,8 @@ class UserContextListenerTest extends TestCase
 
             $expectedContextHash = 'my_generated_hash';
             // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
-            /** @var \Symfony\Component\HttpFoundation\Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
-            $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
+            /** @var Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
+            $hashResponse = $this->getMockBuilder(Response::class)
                 ->setMethods(['prepare'])
                 ->getMock();
             $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
@@ -187,8 +187,8 @@ class UserContextListenerTest extends TestCase
 
         $expectedContextHash = 'my_generated_hash';
         // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
-        /** @var \Symfony\Component\HttpFoundation\Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
-        $hashResponse = $this->getMockBuilder('\Symfony\Component\HttpFoundation\Response')
+        /** @var Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
+        $hashResponse = $this->getMockBuilder(Response::class)
             ->setMethods(['prepare'])
             ->getMock();
         $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
