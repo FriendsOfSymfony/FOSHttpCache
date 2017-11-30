@@ -6,6 +6,9 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.1.x (unreleased)
 ------------------
 
+* Support Symfony 4.
+* Using Request::isMethodCacheable rather than Request::isMethodSafe to
+  correctly handle OPTIONS and TRACE requests.
 * Upgraded phpunit to 5.7 / 6. If you use anything from the FOS\HttpCache\Test
   namespace you need to update your project to use phpunit 6 (or 5.7, if you
   are using PHP 5.6).

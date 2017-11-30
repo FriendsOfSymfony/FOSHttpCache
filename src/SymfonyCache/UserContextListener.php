@@ -104,9 +104,9 @@ class UserContextListener implements EventSubscriberInterface
                 return;
             }
 
-            // We must not call $request->isMethodSafe() here, because this will mess up with later configuration of the `http_method_override` that is set onto the request by the Symfony FrameworkBundle.
+            // We must not call $request->isMethodCacheable() here, because this will mess up with later configuration of the `http_method_override` that is set onto the request by the Symfony FrameworkBundle.
             // See http://symfony.com/doc/current/reference/configuration/framework.html#configuration-framework-http-method-override
-            if (in_array($request->getRealMethod(), ['GET', 'HEAD', 'OPTIONS', 'TRACE']) && $hash = $this->getUserHash($event->getKernel(), $request)) {
+            if (in_array($request->getRealMethod(), ['GET', 'HEAD']) && $hash = $this->getUserHash($event->getKernel(), $request)) {
                 $request->headers->set($this->options['user_hash_header'], $hash);
             }
         }
