@@ -109,7 +109,7 @@ class VarnishTest extends TestCase
             \Mockery::on(
                 function (RequestInterface $request) {
                     $this->assertEquals('BAN', $request->getMethod());
-                    $this->assertEquals('(mytag|othertag)(,|$))?$', $request->getHeaderLine('X-Cache-Tags'));
+                    $this->assertEquals('(mytag|othertag)(,|$)', $request->getHeaderLine('X-Cache-Tags'));
 
                     // That default BANs is taken into account also for tags as they are powered by BAN in this client.
                     $this->assertEquals('.*', $request->getHeaderLine('Test'));
@@ -134,7 +134,7 @@ class VarnishTest extends TestCase
             \Mockery::on(
                 function (RequestInterface $request) {
                     $this->assertEquals('BAN', $request->getMethod());
-                    $this->assertEquals('(post\-1|post_type\-3)(,|$)?$', $request->getHeaderLine('X-Tags-TRex'));
+                    $this->assertEquals('(post\-1|post_type\-3)(,|$)', $request->getHeaderLine('X-Tags-TRex'));
 
                     return true;
                 }
