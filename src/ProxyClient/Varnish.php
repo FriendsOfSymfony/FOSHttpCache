@@ -70,7 +70,7 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         }
 
         foreach (array_chunk($escapedTags, $elems) as $tagchunk) {
-            $tagExpression = sprintf('(%s)(,.+)?$', implode('|', $tagchunk));
+            $tagExpression = sprintf('(%s)(,|$)', implode('|', $tagchunk));
             $this->ban([$this->options['tags_header'] => $tagExpression]);
         }
 
