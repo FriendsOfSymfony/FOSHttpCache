@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Refresh handler for the symfony built-in HttpCache.
  *
@@ -34,17 +36,22 @@ class RefreshListener extends AccessControlledListener
     }
 
     /**
-     * Look at safe requests and handle refresh requests.
+     * Look at cacheable requests and handle refresh requests.
      *
-     * Ignore refresh to let normal lookup happen when the request comes from
-     * a non-authorized client.
+     * When the request comes from a non-authorized client, ignore refresh to
+     * let normal lookup happen.
      *
      * @param CacheEvent $event
      */
     public function handleRefresh(CacheEvent $event)
     {
         $request = $event->getRequest();
-        if (!$request->isMethodSafe()
+        // BC - we can drop this check when we only support Symfony 3.1 and newer
+        $cacheable = method_exists(Request::class, 'isMethodCacheable')
+            ? $request->isMethodCacheable()
+            : $request->isMethodSafe(false);
+
+        if (!$cacheable
             || !$request->isNoCache()
             || !$this->isRequestAllowed($request)
         ) {

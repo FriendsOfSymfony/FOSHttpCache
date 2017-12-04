@@ -1,33 +1,53 @@
-dist: trusty
-group: edge
 language: php
+
 cache:
   directories:
     - $HOME/.composer/cache/files
 
-php:
-  - 5.6
-  - 7.0
-  - 7.1
-  - 7.2
-
 env:
-  - VARNISH_VERSION=5.0
+  global:
+    - VARNISH_VERSION=5.0
 
 matrix:
+  fast_finish: true
   include:
+      # Minimum supported versions
     - php: 5.6
-      env: SYMFONY_VERSION=2.7.* VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
+      env: VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
+
+    - php: 5.6
     - php: 7.0
-      env:
-        - VARNISH_VERSION=4.1
-        - DOCCHECK=true
+    - php: 7.1
+    - php: 7.2
+      env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text"
+
+      # Test with Varnish 4
+    - php: 7.2
+      env: VARNISH_VERSION=4.1
+
+      # Test Symfony LTS versions
+    - php: 7.2
+      env: DEPENDENCIES="symfony/lts:^2"
+    - php: 7.2
+      env: DEPENDENCIES="symfony/lts:^3"
+
+      # Latest commit to master
+    - php: 7.2
+      env: STABILITY="dev"
+  allow_failures:
+    # Dev-master is allowed to fail.
+    - env: STABILITY="dev"
 
 branches:
   only:
     - master
     # Build maintenance branches for older releases if needed. such branches should be named like "1.2"
     - '/^\d+\.\d+$/'
+
+before_install:
+    - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
+    - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
+    - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
 
 install:
   - composer update $COMPOSER_FLAGS --prefer-dist --no-interaction
@@ -47,7 +67,8 @@ before_script:
   - sh ./tests/install-nginx.sh
 
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.clover
+  - composer validate --strict --no-check-lock
+  - vendor/bin/phpunit $PHPUNIT_FLAGS
   - if [[ "$DOCCHECK" = true ]]; then make -C doc SPHINXOPTS='-nW' html; fi
   - if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
 
