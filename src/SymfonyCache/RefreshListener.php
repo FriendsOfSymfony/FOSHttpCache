@@ -44,7 +44,7 @@ class RefreshListener extends AccessControlledListener
     public function handleRefresh(CacheEvent $event)
     {
         $request = $event->getRequest();
-        if (!$request->isMethodSafe()
+        if (!$request->isMethodSafe(false)
             || !$request->isNoCache()
             || !$this->isRequestAllowed($request)
         ) {
