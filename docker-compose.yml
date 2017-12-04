@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  fos:
+    build:
+      context: tests/docker/
+      args:
+       - VARNISH_VERSION
+       - PHP_VERSION
+       - VARNISH_MODULES_VERSION
+    volumes:
+     - .:/app:cached
+     - ~/.composer:/root/.composer:cached
+    environment:
+     - VARNISH_VERSION
+     - PHP_VERSION
+     - VARNISH_MODULES_VERSION

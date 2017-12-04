@@ -1,42 +1,22 @@
-language: php
+sudo: required
+dist: trusty
+language: generic
+
+services:
+  - docker
 
 cache:
   directories:
     - $HOME/.composer/cache/files
 
+
 env:
-  global:
-    - VARNISH_VERSION=5.0
-
-matrix:
-  fast_finish: true
-  include:
-      # Minimum supported versions
-    - php: 5.6
-      env: VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest"
-
-    - php: 5.6
-    - php: 7.0
-    - php: 7.1
-    - php: 7.2
-      env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text"
-
-      # Test with Varnish 4
-    - php: 7.2
-      env: VARNISH_VERSION=4.1
-
-      # Test Symfony LTS versions
-    - php: 7.2
-      env: DEPENDENCIES="symfony/lts:^2"
-    - php: 7.2
-      env: DEPENDENCIES="symfony/lts:^3"
-
-      # Latest commit to master
-    - php: 7.2
-      env: STABILITY="dev"
-  allow_failures:
-    # Dev-master is allowed to fail.
-    - env: STABILITY="dev"
+  matrix:
+    - PHP_VERSION=5.6 VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.10.2 COMPOSER_FLAGS="--prefer-lowest"
+    - PHP_VERSION=7.0 VARNISH_VERSION=5.0
+    - PHP_VERSION=7.1 DOCCHECK=true DEPENDENCIES="symfony/lts:^2"
+    - PHP_VERSION=7.2
+    #- PHP_VERSION=7.2 STABILITY="dev"
 
 branches:
   only:
@@ -44,40 +24,29 @@ branches:
     # Build maintenance branches for older releases if needed. such branches should be named like "1.2"
     - '/^\d+\.\d+$/'
 
-before_install:
-    - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
-    - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
-    - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
+# For local dev, remember to append --build if you have done changes to docker config or want to change php/varnish versions.
+install: docker-compose up -d
 
-install:
-  - composer update $COMPOSER_FLAGS --prefer-dist --no-interaction
 
 before_script:
-  # Install Varnish
-  - |
-    set -e
-    curl -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey | sudo apt-key add -
-    curl -L "https://packagecloud.io/install/repositories/varnishcache/varnish${VARNISH_VERSION//./}/config_file.list?os=ubuntu&dist=trusty&source=script" | sudo tee -a /etc/apt/sources.list
-    cat /etc/apt/sources.list
-    sudo apt-get update -qq
-    sudo apt-get install -qq varnish
-  - if [ "$DOCCHECK" = true ]; then sudo apt-get install -qq python-sphinx enchant; fi
-  - if [ "$DOCCHECK" = true ]; then sudo pip install -r doc/requirements.txt; fi
-  # Install NGINX
-  - sh ./tests/install-nginx.sh
+  - if ! [ -z "$STABILITY" ]; then docker-compose exec fos sh -c "composer config minimum-stability ${STABILITY}"; fi;
+  - if ! [ -v "$DEPENDENCIES" ]; then docker-compose exec fos sh -c "composer require --no-update ${DEPENDENCIES}"; fi;
+  - docker-compose exec fos sh -c "composer update $COMPOSER_FLAGS --prefer-dist --no-interaction"
+  #- if [ "$DOCCHECK" = true ]; then sudo pip install -r doc/requirements.txt; fi
 
 script:
-  - composer validate --strict --no-check-lock
-  - vendor/bin/phpunit $PHPUNIT_FLAGS
-  - if [[ "$DOCCHECK" = true ]]; then make -C doc SPHINXOPTS='-nW' html; fi
-  - if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
+  - docker-compose exec fos sh -c "composer validate --strict --no-check-lock"
+  - docker-compose exec fos sh -c "vendor/bin/phpunit $PHPUNIT_FLAGS"
+  #- if [[ "$DOCCHECK" = true ]]; then make -C doc SPHINXOPTS='-nW' html; fi
+  #- if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
 
-after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+#after_script:
+  # Todo fix to use curl in image, and either install xdebug OR change to use phpdbg, then re add $PHPUNIT_FLAGS usage
+  #- wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 after_failure:
-  - cat /tmp/fos_nginx_error.log
-  - cat /tmp/fos_nginx_access.log
-  - sudo cat /var/log/apache2/error.log
-  - sudo cat /var/log/apache2/access.log
-  - sudo cat /var/log/apache2/other_vhosts_access.log
+  # Will show us the last bit of the log of container's main processes
+  # NOTE: errors during docker setup of travis build might not show up here (can't output all as it is too much in debug/verbose mode)
+  - docker-compose logs -t --tail=25
+  # Will show us what is up, and how long it's been up
+  - docker ps -s
