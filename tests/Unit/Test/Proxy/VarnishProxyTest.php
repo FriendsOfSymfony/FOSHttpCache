@@ -78,7 +78,9 @@ class VarnishProxyTest extends TestCase
 class VarnishProxyMock extends VarnishProxy
 {
     public $command;
+
     public $arguments;
+
     public $wait = true;
 
     public function setConfigFile($configFile)

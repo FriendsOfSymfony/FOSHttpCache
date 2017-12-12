@@ -17,8 +17,11 @@ use Symfony\Component\Process\ProcessBuilder;
 abstract class AbstractProxy implements ProxyInterface
 {
     protected $port;
+
     protected $binary;
+
     protected $configFile;
+
     protected $ip = '127.0.0.1';
 
     /**
