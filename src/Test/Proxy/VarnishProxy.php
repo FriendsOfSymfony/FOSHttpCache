@@ -29,6 +29,7 @@ class VarnishProxy extends AbstractProxy
     protected $configDir;
 
     protected $cacheDir;
+
     protected $allowInlineC = false;
 
     /**
