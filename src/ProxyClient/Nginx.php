@@ -26,7 +26,9 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
 {
     const HTTP_METHOD_PURGE = 'PURGE';
+
     const HTTP_METHOD_REFRESH = 'GET';
+
     const HTTP_HEADER_REFRESH = 'X-Refresh';
 
     /**
