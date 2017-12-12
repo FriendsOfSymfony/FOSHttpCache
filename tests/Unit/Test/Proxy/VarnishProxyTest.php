@@ -64,7 +64,9 @@ class VarnishTestCaseTest extends \PHPUnit_Framework_TestCase
 class VarnishProxyMock extends VarnishProxy
 {
     public $command;
+
     public $arguments;
+
     public $wait = true;
 
     public function setConfigFile($configFile)

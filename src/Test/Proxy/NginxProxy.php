@@ -14,9 +14,13 @@ namespace FOS\HttpCache\Test\Proxy;
 class NginxProxy extends Abstractproxy
 {
     protected $binary = 'nginx';
+
     protected $configFile;
+
     protected $port = 8080;
+
     protected $pid = '/tmp/foshttpcache-nginx.pid';
+
     protected $cacheDir;
 
     /**

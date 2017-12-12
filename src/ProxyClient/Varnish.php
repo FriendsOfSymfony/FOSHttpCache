@@ -25,10 +25,15 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshInterface;
 class Varnish extends AbstractProxyClient implements BanInterface, PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_BAN = 'BAN';
+
     const HTTP_METHOD_PURGE = 'PURGE';
+
     const HTTP_METHOD_REFRESH = 'GET';
+
     const HTTP_HEADER_HOST = 'X-Host';
+
     const HTTP_HEADER_URL = 'X-Url';
+
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
 
     /**
