@@ -145,11 +145,17 @@ class EventDispatchingHttpCacheTest extends \PHPUnit_Framework_TestCase
 class TestSubscriber implements EventSubscriberInterface
 {
     public $handleHits = 0;
+
     public $invalidateHits = 0;
+
     public $handleResponse;
+
     public $invalidateResponse;
+
     private $test;
+
     private $kernel;
+
     private $request;
 
     public function __construct($test, $kernel, $request)

@@ -17,11 +17,17 @@ namespace FOS\HttpCache\Test\Proxy;
 class VarnishProxy extends AbstractProxy
 {
     protected $binary = 'varnishd';
+
     protected $port = 6181;
+
     protected $managementPort = 6182;
+
     protected $pid = '/tmp/foshttpcache-varnish.pid';
+
     protected $configFile;
+
     protected $configDir;
+
     protected $cacheDir;
 
     /**

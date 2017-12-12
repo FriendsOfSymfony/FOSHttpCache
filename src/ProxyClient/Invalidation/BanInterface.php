@@ -20,6 +20,7 @@ use FOS\HttpCache\ProxyClient\ProxyClientInterface;
 interface BanInterface extends ProxyClientInterface
 {
     const REGEX_MATCH_ALL = '.*';
+
     const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;
 
     /**

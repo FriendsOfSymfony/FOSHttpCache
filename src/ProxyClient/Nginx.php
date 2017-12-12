@@ -23,7 +23,9 @@ use Guzzle\Http\ClientInterface;
 class Nginx extends AbstractProxyClient implements PurgeInterface, RefreshInterface
 {
     const HTTP_METHOD_PURGE = 'PURGE';
+
     const HTTP_METHOD_REFRESH = 'GET';
+
     const HTTP_HEADER_REFRESH = 'X-Refresh';
 
     /**
