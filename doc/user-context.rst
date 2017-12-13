@@ -57,10 +57,10 @@ Caching on user context works as follows:
    The appropriate user role dependent representation of ``/foo.php`` will
    then be returned to the client.
 
-After this happened the first time, the hash can be cached by Varnish for this
-client, moving step 2-4 into the cache. After the page is in cache, subsequent
-requests from clients that got the same hash can be served from the cache as
-well.
+After this happened the first time, the hash can be cached by the proxy server
+for this client, moving step 2-4 into the cache. After the page is in cache,
+subsequent requests from clients that got the same hash can be served from the
+cache as well.
 
 .. note::
 
@@ -69,11 +69,19 @@ well.
     the same hash for authenticated users with no special privileges as for
     anonymous users with a session cookie.
 
-    If there is no cookie and no authentication information, the hash lookup is
-    skipped and no hash header added to the request. However, we can not avoid
-    the initial hash lookup request per different cookie, as the caching proxy
-    can not know which session cookies indicate a logged in user and which an
-    anonymous session.
+    When using the Symfony HttpCache, you can configure the UserContextListener
+    with a fixed hash to use in case there are neither cookie nor
+    authentication information. If you configure the hash to use, the hash
+    lookup is skipped in the case of anonymous requests.
+
+.. warning::
+
+    For users with a session cookie, the hash lookup can not be avoided as the
+    proxy server can not know which session cookies indicate a logged in user
+    and which an anonymous session. When using the Symfony HttpCache with the
+    user context, you have to be careful about cache size as every unique user
+    will lead to a cache entry. Symfony HttpCache has no built-in functionality
+    to clear old cache entries, so the cache folder will just keep growing.
 
 Proxy Client Configuration
 --------------------------

@@ -56,7 +56,7 @@ clients to see fresh content as soon as there is an update.
 
 Instead of finding some compromise, you can have both with cache invalidation.
 When application data changes, the application takes care of invalidating its
-web representation as out-of-date. Although caching proxies may handle
+web representation as out-of-date. Although proxy servers may handle
 invalidation differently, the effect is always the same: the next time a client
 requests the data, he or she gets a new version instead of the outdated one.
 
@@ -112,7 +112,7 @@ Cache invalidation has two possible downsides:
 Invalidation Methods
 --------------------
 
-Cached content can be invalidated in three ways. Not all caching proxies support
+Cached content can be invalidated in three ways. Not all proxy servers support
 all methods, please refer to proxy specific documentation for the details.
 
 .. glossary::

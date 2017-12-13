@@ -16,7 +16,7 @@ your caching and invalidation setup.
 If you use the Symfony full stack framework, have a look at the FOSHttpCacheBundle_.
 The bundle provides the Invalidator as a service, support for the built-in cache
 kernel of Symfony and a number of Symfony-specific features to help with caching and
-caching proxies.
+proxy servers.
 
 Contents:
 
