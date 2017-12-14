@@ -29,8 +29,8 @@ install: docker-compose up -d
 
 
 before_script:
-  - if ! [ -z "$STABILITY" ]; then docker-compose exec fos sh -c "composer config minimum-stability ${STABILITY}"; fi;
-  - if ! [ -v "$DEPENDENCIES" ]; then docker-compose exec fos sh -c "composer require --no-update ${DEPENDENCIES}"; fi;
+  - if [ "$STABILITY" != "" ]; then docker-compose exec fos sh -c "composer config minimum-stability ${STABILITY}"; fi;
+  - if [ "$DEPENDENCIES" != "" ]; then docker-compose exec fos sh -c "composer require --no-update ${DEPENDENCIES}"; fi;
   - docker-compose exec fos sh -c "composer update $COMPOSER_FLAGS --prefer-dist --no-interaction"
   - if [ "$DOCCHECK" = true ]; then docker-compose exec fos sh -c "pip install -r doc/requirements.txt"; fi;
 
