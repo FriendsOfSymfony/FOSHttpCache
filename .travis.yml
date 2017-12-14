@@ -32,13 +32,13 @@ before_script:
   - if ! [ -z "$STABILITY" ]; then docker-compose exec fos sh -c "composer config minimum-stability ${STABILITY}"; fi;
   - if ! [ -v "$DEPENDENCIES" ]; then docker-compose exec fos sh -c "composer require --no-update ${DEPENDENCIES}"; fi;
   - docker-compose exec fos sh -c "composer update $COMPOSER_FLAGS --prefer-dist --no-interaction"
-  #- if [ "$DOCCHECK" = true ]; then sudo pip install -r doc/requirements.txt; fi
+  - if [ "$DOCCHECK" = true ]; then docker-compose exec fos sh -c "pip install -r doc/requirements.txt"; fi;
 
 script:
   - docker-compose exec fos sh -c "composer validate --strict --no-check-lock"
   - docker-compose exec fos sh -c "vendor/bin/phpunit $PHPUNIT_FLAGS"
-  #- if [[ "$DOCCHECK" = true ]]; then make -C doc SPHINXOPTS='-nW' html; fi
-  #- if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
+  - if [ "$DOCCHECK" = true ]; then docker-compose exec fos sh -c "make -C doc SPHINXOPTS='-nW' html"; fi;
+  - if [ "$DOCCHECK" = true ]; then docker-compose exec fos sh -c "make -C doc spelling"; fi;
 
 #after_script:
   # Todo fix to use curl in image, and either install xdebug OR change to use phpdbg, then re add $PHPUNIT_FLAGS usage

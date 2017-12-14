@@ -15,7 +15,6 @@ ENV VARNISH_VERSION=5.1 \
 # see: https://github.com/varnish/varnish-modules/tree/master/docs
 RUN set -xe \
         && buildDeps=" \
-            make \
             automake \
             autotools-dev \
             libedit-dev \
@@ -26,14 +25,11 @@ RUN set -xe \
             libssl-dev \
             zlib1g-dev \
             pkg-config \
-            python-docutils \
-            python-sphinx \
-            enchant \
             varnish-dev \
         " \
     # Update apt and get dependencies
         && apt-get update -q -y \
-        && apt-get install -q -y --no-install-recommends ca-certificates curl bc net-tools unzip git libc6 libpcre3 zlib1g lsb-base debian-archive-keyring gnupg \
+        && apt-get install -q -y --no-install-recommends ca-certificates curl bc net-tools unzip git libc6 libpcre3 zlib1g lsb-base debian-archive-keyring gnupg python-sphinx python-pip enchant python-docutils make \
         \
     # Get official Varnish package
         && url_version=$(echo $VARNISH_VERSION | tr -d '.') \
