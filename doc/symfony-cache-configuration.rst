@@ -30,6 +30,8 @@ Using the trait
 Your ``AppCache`` needs to implement ``CacheInvalidation`` and use the
 trait ``FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache``::
 
+    // app/AppCache.php
+
     use FOS\HttpCache\SymfonyCache\CacheInvalidation;
     use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
     use Symfony\Component\HttpFoundation\Request;
@@ -148,16 +150,18 @@ Refresh
 
 To support :ref:`cache refresh <cache refresh>`, register the
 ``RefreshListener``. You can pass the constructor an option to specify
-what clients are allowed to refresh cache entries. Refreshing is only allowed
-from the same machine by default. To refresh from other hosts, provide the
-IPs of the machines allowed to refresh, or provide a RequestMatcher that
-checks for an Authorization header or similar. *Only set one of
-``client_ips`` or ``client_matcher``*.
+what clients are allowed to refresh cache entries.
 
 The refresh listener needs to access the ``HttpCache::fetch`` method which
 is protected on the base HttpCache class. The ``EventDispatchingHttpCache``
 exposes the method as public, but if you implement your own kernel, you need
 to overwrite the method to make it public.
+
+Refreshing is only allowed from the same machine by default. To refresh from
+other hosts, provide the IPs of the machines allowed to refresh, or provide a
+RequestMatcher that checks for an Authorization header or similar. *Only set
+one of ``client_ips`` or ``client_matcher``*.
+
 
 * **client_ips**: String with IP or array of IPs that are allowed to
   refresh the cache.
@@ -168,6 +172,81 @@ to overwrite the method to make it public.
   allowed to refresh.
 
   **default**: ``null``
+
+Tagging
+~~~~~~~
+
+.. versionadded:: 2.1
+
+    Support for tag invalidation with Symfony HttpCache has been added in
+    version 2.1.
+
+To support :doc:`cache tags <response-tagging>`, require the additional package
+``toflar/psr6-symfony-http-cache-store:^1.0`` with composer and register the
+``PurgeTagsListener`` in your cache kernel. The purge listener needs your cache
+to use the special ``Toflar\Psr6HttpCacheStore\Psr6Store`` store, as the default
+store does not have tagging support.
+
+.. note::
+
+    Symfony's ``HttpCache`` store implementation does not support tags.
+    Therefore, you need the `Toflar Psr6Store`_ which implements the Symfony
+    Store interface but supports cache tagging. See the project README for more
+    information on the store.
+
+    To install the store, run
+    ``composer require toflar/psr6-symfony-http-cache-store``.
+
+Purging tags is only allowed from the same machine by default. To change this,
+you have the same configuration options as with the ``PurgeListener``. *Only
+set one of ``client_ips`` or ``client_matcher``*. Additionally, you can
+configure the HTTP method and header used for tag purging:
+
+* **client_ips**: String with IP or array of IPs that are allowed to
+  purge the cache.
+
+  **default**: ``127.0.0.1``
+
+* **client_matcher**: RequestMatcherInterface that only matches requests that are
+  allowed to purge.
+
+  **default**: ``null``
+
+* **tags_method**: HTTP Method used with purge tags requests.
+
+  **default**: ``PURGETAGS``
+
+* **tags_header**: HTTP Header that contains the comma-separated tags to purge.
+
+  **default**: ``X-Cache-Tags``
+
+To get cache tagging support, register the ``PurgeTagsListener`` and use the
+``Psr6Store`` in your ``AppCache``::
+
+    // app/AppCache.php
+
+    use Toflar\Psr6HttpCacheStore\Psr6Store;
+    use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
+
+    // ...
+
+    /**
+     * Overwrite constructor to register the Psr6Store and PurgeTagsListener.
+     */
+    public function __construct(
+        HttpKernelInterface $kernel,
+        SurrogateInterface $surrogate = null,
+        array $options = []
+    ) {
+        $store = new Psr6Store([
+            'cache_directory' => $kernel->getCacheDir(),
+            'cache_tags_header' => 'X-Cache-Tags',
+        ]);
+
+        parent::__construct($kernel, $store, $surrogate, $options);
+
+        $this->addSubscriber(new PurgeTagsListener());
+    }
 
 .. _symfony-cache user context:
 
@@ -268,3 +347,4 @@ and at the HTML body of the response.
 
 .. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
 .. _HttpKernel: http://symfony.com/doc/current/components/http_kernel.html
+.. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store

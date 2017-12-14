@@ -52,6 +52,96 @@ class SymfonyTest extends TestCase
         $symfony->purge('/url', ['X-Foo' => 'bar']);
     }
 
+    public function testInvalidateTags()
+    {
+        $symfony = new Symfony($this->httpDispatcher);
+
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('PURGETAGS', $request->getMethod());
+
+                    $this->assertEquals('/', $request->getUri());
+                    $this->assertContains('foobar,other tag', $request->getHeaderLine('X-Cache-Tags'));
+
+                    return true;
+                }
+            ),
+            true
+        );
+
+        $symfony->invalidateTags(['foobar', 'other tag']);
+    }
+
+    public function testInvalidateTagsWithALotOfTags()
+    {
+        /** @var HttpDispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+        $dispatcher = $this->createMock(HttpDispatcher::class);
+        $dispatcher
+            ->expects($this->exactly(3))
+            ->method('invalidate')
+            ->withConsecutive(
+                [
+                    $this->callback(function (RequestInterface $request) {
+                        $this->assertEquals('PURGETAGS', $request->getMethod());
+                        $this->assertEquals('foobar,foobar1,foobar2,foobar3,foobar4,foobar5,foobar6,foobar7,foobar8,foobar9,foobar10', $request->getHeaderLine('X-Cache-Tags'));
+
+                        return true;
+                    }),
+                    true,
+                ],
+                [
+                    $this->callback(function (RequestInterface $request) {
+                        $this->assertEquals('PURGETAGS', $request->getMethod());
+                        $this->assertEquals('foobar11,foobar12,foobar13,foobar14,foobar15,foobar16,foobar17,foobar18,foobar19,foobar20,foobar21', $request->getHeaderLine('X-Cache-Tags'));
+
+                        return true;
+                    }),
+                    true,
+                ],
+                [
+                    $this->callback(function (RequestInterface $request) {
+                        $this->assertEquals('PURGETAGS', $request->getMethod());
+                        $this->assertEquals('foobar22,foobar23,foobar24,foobar25', $request->getHeaderLine('X-Cache-Tags'));
+
+                        return true;
+                    }),
+                    true,
+                ]
+            );
+
+        $symfony = new Symfony($dispatcher, ['header_length' => 100]);
+
+        $symfony->invalidateTags([
+            'foobar',
+            'foobar1',
+            'foobar2',
+            'foobar3',
+            'foobar4',
+            'foobar5',
+            'foobar6',
+            'foobar7',
+            'foobar8',
+            'foobar9',
+            'foobar10',
+            'foobar11',
+            'foobar12',
+            'foobar13',
+            'foobar14',
+            'foobar15',
+            'foobar16',
+            'foobar17',
+            'foobar18',
+            'foobar19',
+            'foobar20',
+            'foobar21',
+            'foobar22',
+            'foobar23',
+            'foobar24',
+            'foobar25',
+        ]);
+    }
+
     public function testRefresh()
     {
         $symfony = new Symfony($this->httpDispatcher);

@@ -13,7 +13,9 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 
 /**
  * Symfony HttpCache invalidator.
@@ -24,7 +26,7 @@ use FOS\HttpCache\SymfonyCache\PurgeListener;
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable
+class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, TagCapable
 {
     const HTTP_METHOD_REFRESH = 'GET';
 
@@ -54,8 +56,38 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
             'purge_method' => PurgeListener::DEFAULT_PURGE_METHOD,
+            'tags_method' => PurgeTagsListener::DEFAULT_TAGS_METHOD,
+            'tags_header' => PurgeTagsListener::DEFAULT_TAGS_HEADER,
+            'header_length' => 7500,
         ]);
+        $resolver->setAllowedTypes('purge_method', 'string');
+        $resolver->setAllowedTypes('tags_method', 'string');
+        $resolver->setAllowedTypes('tags_header', 'string');
+        $resolver->setAllowedTypes('header_length', 'int');
 
         return $resolver;
+    }
+
+    /**
+     * Remove/Expire cache objects based on cache tags.
+     *
+     * @param array $tags Tags that should be removed/expired from the cache
+     *
+     * @return $this
+     */
+    public function invalidateTags(array $tags)
+    {
+        $escapedTags = $this->escapeTags($tags);
+
+        $chunkSize = $this->determineTagsPerHeader($escapedTags, ',');
+
+        foreach (array_chunk($escapedTags, $chunkSize) as $tagchunk) {
+            $this->queueRequest(
+                $this->options['tags_method'],
+                '/',
+                [$this->options['tags_header'] => implode(',', $tagchunk)]);
+        }
+
+        return $this;
     }
 }

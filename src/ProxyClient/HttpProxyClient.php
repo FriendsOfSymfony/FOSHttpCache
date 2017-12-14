@@ -102,6 +102,12 @@ abstract class HttpProxyClient implements ProxyClient
      * Reusable function for proxy clients.
      * Escapes `,` and `\n` (newline) characters.
      *
+     * Note: This is not a safe escaping function, it can lead to collisions,
+     * e.g. between "foo,bar" and "foo_bar". But from the nature of the data,
+     * such collisions are unlikely, and from the function of cache tagging,
+     * collisions would in the worst case lead to unintended invalidations,
+     * which is not a bug.
+     *
      * @param array $tags The tags to escape
      *
      * @return array Sane tags
@@ -109,9 +115,37 @@ abstract class HttpProxyClient implements ProxyClient
     protected function escapeTags(array $tags)
     {
         array_walk($tags, function (&$tag) {
-            $tag = str_replace([',', "\n"], ['_', '_'], $tag);
+            // WARNING: changing the list of characters that are escaped is a BC break for existing installations,
+            // as existing tags on the cache would not be invalidated anymore if they contain a character that is
+            // newly escaped
+            $tag = str_replace([',', "\n"], '_', $tag);
         });
 
         return $tags;
+    }
+
+    /**
+     * Calculate how many tags fit into the header.
+     *
+     * This assumes that the tags are separated by one character.
+     *
+     * @param string[] $escapedTags
+     * @param string   $glue        The concatenation string to use
+     *
+     * @return int Number of tags per tag invalidation request
+     */
+    protected function determineTagsPerHeader($escapedTags, $glue)
+    {
+        if (mb_strlen(implode($glue, $escapedTags)) < $this->options['header_length']) {
+            return count($escapedTags);
+        }
+
+        /*
+         * estimate the amount of tags to invalidate by dividing the max
+         * header length by the largest tag (minus the glue length)
+         */
+        $tagsize = max(array_map('mb_strlen', $escapedTags));
+
+        return floor($this->options['header_length'] / ($tagsize + strlen($glue))) ?: 1;
     }
 }
