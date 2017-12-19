@@ -3,8 +3,8 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-2.1.x (unreleased)
-------------------
+2.1.0
+-----
 
 * Support Symfony 4.
 
@@ -16,7 +16,9 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### Symfony HttpCache
 
-* Added a `PurgeTagsListener` for tag based invalidation with the Symfony
+* Cache tagging supprt for Symfony HttpCache
+
+  Added a `PurgeTagsListener` for tag based invalidation with the Symfony
   `HttpCache` reverse caching proxy. This requires the newly created
   [Toflar Psr6Store](https://github.com/Toflar/psr6-symfony-http-cache-store)
   built on PSR-6 cache and supporting pruning expired cache entries.
@@ -27,6 +29,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 -----
 
 * Support PHP 7.2
+
   Avoid warning about `count(null)` in PHP 7.2.
 
 2.0.1
