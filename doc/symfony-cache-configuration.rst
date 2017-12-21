@@ -173,6 +173,8 @@ one of ``client_ips`` or ``client_matcher``*.
 
   **default**: ``null``
 
+.. _symfony_httpcache_tagging:
+
 Tagging
 ~~~~~~~
 
