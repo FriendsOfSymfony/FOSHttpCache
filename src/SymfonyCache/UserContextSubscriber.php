@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use FOS\HttpCache\UserContext\AnonymousRequestMatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -185,23 +186,9 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function isAnonymous(Request $request)
     {
-        // You might have to enable rewriting of the Authorization header in your server config or .htaccess:
-        // RewriteEngine On
-        // RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-        if ($request->server->has('AUTHORIZATION') ||
-            $request->server->has('HTTP_AUTHORIZATION') ||
-            $request->server->has('PHP_AUTH_USER')
-        ) {
-            return false;
-        }
+        $anonymousRequestMatcher = new AnonymousRequestMatcher($this->options['session_name_prefix']);
 
-        foreach ($request->cookies as $name => $value) {
-            if ($this->isSessionName($name)) {
-                return false;
-            }
-        }
-
-        return true;
+        return $anonymousRequestMatcher->matches($request);
     }
 
     /**
