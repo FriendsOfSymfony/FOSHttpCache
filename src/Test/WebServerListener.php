@@ -18,9 +18,11 @@ use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
 
 if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Version::id(), '6.0.0', '<')) {
+    /*
+     * Using an early return instead of a else does not work when using the PHPUnit phar due to some weird PHP behavior
+     * (the class gets defined without executing the code before it and so the definition is not properly conditional)
+     */
     class_alias('FOS\HttpCache\Test\Legacy\WebServerListener', 'FOS\HttpCache\Test\WebServerListener');
-    // Using an early return instead of a else does not work when using the PHPUnit phar due to some weird PHP behavior
-    //(the class gets defined without executing the code before it and so the definition is not properly conditional)
 } else {
     /**
      * A PHPUnit test listener that starts and stops the PHP built-in web server.
