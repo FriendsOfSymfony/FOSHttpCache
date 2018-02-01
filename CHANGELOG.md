@@ -3,6 +3,17 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.1.1
+-----
+
+### Varnish
+
+* Updated X-Cache-Tags regex to prevent matching partial tags
+
+  Invalidating objects with a tag of 'bar' would have previously also have
+  invalidated objects with a tag that ends in 'bar', eg. 'foobar'. Now when
+  invalidating an object the tag name must match in full.
+
 2.1.0
 -----
 
@@ -51,27 +62,27 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### HTTP
 
-* **BC break:** Replaced hard coupling on Guzzle HTTP client with HTTPlug. 
+* **BC break:** Replaced hard coupling on Guzzle HTTP client with HTTPlug.
   You now need to explicitly specify a supported HTTP adapter in composer.json;
   see [installation instructions](http://foshttpcache.readthedocs.io/en/stable/installation.html).
-* **BC break:** Separated the HttpDispatcher from the proxy clients. All 
+* **BC break:** Separated the HttpDispatcher from the proxy clients. All
   existing clients still use HTTP to send invalidation requests.
 * Added support and documentation for setting a custom TTL specifically for the
   caching proxy.
 
 ### Logging
 
-* **BC break:** Renamed the log event listener from `LogSubscriber` to 
+* **BC break:** Renamed the log event listener from `LogSubscriber` to
   `LogListener`.
-  
+
 ### Proxy clients
 
-* **BC break**: Renamed the `Ban`, `Purge`, `Refresh` and `Tag` interfaces to 
+* **BC break**: Renamed the `Ban`, `Purge`, `Refresh` and `Tag` interfaces to
   `BanCapable`, `PurgeCapable`, `RefreshCapable` and `TagCapable`.
 
 ### Tagging
 
-* **BC break:** Moved tag invalidation to `CacheInvalidator`, and renamed 
+* **BC break:** Moved tag invalidation to `CacheInvalidator`, and renamed
   `TagHandler` to `ResponseTagger`.
 * Abstracting tags by adding new `TagCapable` for ProxyClients.
 * Added `strict` option to `ResponseTagger` that throws an exception when empty
@@ -97,21 +108,21 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### Symfony HttpCache
 
-* **BC break:** Renamed all event listeners to `XxListener` instead of 
+* **BC break:** Renamed all event listeners to `XxListener` instead of
   `XxSubscriber`.
-* **BC break:** Constructors for `PurgeListener` and `RefreshListener` now use 
+* **BC break:** Constructors for `PurgeListener` and `RefreshListener` now use
   an options array for customization.
-* **BC break:** Converted abstract event dispatching kernel class 
+* **BC break:** Converted abstract event dispatching kernel class
   `EventDispatchingHttpCache` to a trait, which now provides the `addSubscriber`
-  and `addListener` methods. In your `AppCache`, replace 
-  `AppCache extends EventDispatchingHttpInterface` with a 
-  `use EventDispatchingHttpCache;` statement. 
+  and `addListener` methods. In your `AppCache`, replace
+  `AppCache extends EventDispatchingHttpInterface` with a
+  `use EventDispatchingHttpCache;` statement.
 * The user context by default does not use a hardcoded hash for anonymous users
   but does a hash lookup. You can still configure a hardcoded hash.  
 
 ### Testing
 
-* **BC break:** Refactored the proxy client test system into traits. Removed 
+* **BC break:** Refactored the proxy client test system into traits. Removed
   `ProxyTestCase`; use the traits `CacheAssertions` and `HttpCaller` instead.
 * Added HTTP method parameter to `HttpCaller::getResponse()`.
 
