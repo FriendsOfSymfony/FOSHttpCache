@@ -56,7 +56,7 @@ class PurgeTagsListener extends AccessControlledListener
      */
     public function __construct(array $options = [])
     {
-        if (!class_exists(Psr6StoreInterface::class)) {
+        if (!interface_exists(Psr6StoreInterface::class)) {
             throw new \Exception('Cache tag invalidation only works with the toflar/psr6-symfony-http-cache-store package. See "Symfony HttpCache Configuration" in the documentation.');
         }
         parent::__construct($options);
