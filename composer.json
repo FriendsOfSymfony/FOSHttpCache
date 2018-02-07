@@ -41,6 +41,9 @@
             "FOS\\HttpCache\\Tests\\": "tests/"
         }
     },
+    "conflict": {
+        "symfony/http-foundation": ">=4.0"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.4.x-dev"
