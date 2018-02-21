@@ -1,6 +1,19 @@
 Changelog
 =========
 
+1.4.5
+-----
+
+* Symfony user context: You can now also specify which headers are used for
+  authentication to detect anonymous requests. By default, the headers are the
+  previously hardcoded `Authorization`, `HTTP_AUTHORIZATION` and
+  `PHP_AUTH_USER`.
+
+1.4.4
+-----
+
+* Avoid problem with [http_method_override](http://symfony.com/doc/current/reference/configuration/framework.html#configuration-framework-http-method-override).
+
 1.4.3
 -----
 

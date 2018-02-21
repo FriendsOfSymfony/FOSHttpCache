@@ -13,20 +13,38 @@ namespace FOS\HttpCache\UserContext;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Matches anonymous requests using a list of identification headers.
  */
 class AnonymousRequestMatcher implements RequestMatcherInterface
 {
-    private $sessionNamePrefix;
+    /**
+     * @var array
+     */
+    private $options;
 
     /**
-     * @param string $sessionNamePrefix Prefix for session cookies. Must match your PHP session configuration
+     * @param array $options Configuration for the matcher. All options are required because this matcher is usually
+     *                       created by the UserContextSubscriber which provides the default values.
+     *
+     * @throws \InvalidArgumentException if unknown keys are found in $options
      */
-    public function __construct($sessionNamePrefix)
+    public function __construct(array $options = array())
     {
-        $this->sessionNamePrefix = $sessionNamePrefix;
+        $resolver = new OptionsResolver();
+        $resolver->setRequired(array('user_identifier_headers', 'session_name_prefix'));
+        if (class_exists('Symfony\Component\HttpKernel\Kernel')
+            && (Kernel::MAJOR_VERSION > 2 || Kernel::MINOR_VERSION > 5)
+        ) {
+            // actually string[] but that is not supported by symfony < 3.4
+            $resolver->setAllowedTypes('user_identifier_headers', array('array'));
+            $resolver->setAllowedTypes('session_name_prefix', array('string'));
+        }
+
+        $this->options = $resolver->resolve($options);
     }
 
     public function matches(Request $request)
@@ -34,15 +52,14 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
         // You might have to enable rewriting of the Authorization header in your server config or .htaccess:
         // RewriteEngine On
         // RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-        if ($request->server->has('AUTHORIZATION') ||
-            $request->server->has('HTTP_AUTHORIZATION') ||
-            $request->server->has('PHP_AUTH_USER')
-        ) {
-            return false;
+        foreach ($this->options['user_identifier_headers'] as $header) {
+            if ($request->headers->has($header)) {
+                return false;
+            }
         }
 
         foreach ($request->cookies as $name => $value) {
-            if (0 === strpos($name, $this->sessionNamePrefix)) {
+            if (0 === strpos($name, $this->options['session_name_prefix'])) {
                 return false;
             }
         }
