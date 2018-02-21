@@ -51,6 +51,7 @@ class UserContextSubscriber implements EventSubscriberInterface
      *                            match the setup for the Vary header in the backend application.
      * - user_hash_uri:           Target URI used in the request for user context hash generation.
      * - user_hash_method:        HTTP Method used with the hash lookup request for user context hash generation.
+     * - user_identifier_headers: List of request headers that authenticate a non-anonymous request.
      * - session_name_prefix:     Prefix for session cookies. Must match your PHP session configuration.
      *
      * @param array $options Options to overwrite the default options
@@ -66,6 +67,7 @@ class UserContextSubscriber implements EventSubscriberInterface
             'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
             'user_hash_method' => 'GET',
+            'user_identifier_headers' => array('Authorization', 'HTTP_AUTHORIZATION', 'PHP_AUTH_USER'),
             'session_name_prefix' => 'PHPSESSID',
         ));
 
@@ -186,7 +188,10 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function isAnonymous(Request $request)
     {
-        $anonymousRequestMatcher = new AnonymousRequestMatcher($this->options['session_name_prefix']);
+        $anonymousRequestMatcher = new AnonymousRequestMatcher(array(
+            'user_identifier_headers' => $this->options['user_identifier_headers'],
+            'session_name_prefix' => $this->options['session_name_prefix'],
+        ));
 
         return $anonymousRequestMatcher->matches($request);
     }
