@@ -36,6 +36,8 @@ simple ACL, valid for all Varnish versions from 3 onwards, looks as follows:
 Better tag invalidation: xkey
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. _varnish_xkey_intro:
+
 Since Varnish 4.1 you can use the official [xkey Varnish module] for better
 performance with cache tags.
 
@@ -196,7 +198,8 @@ Tagging
 
 Feature: :ref:`cache tagging <tags>`
 
-For this feature you'll need to choose between either xkey, or BAN based tags invalidation.
+For this feature you'll need to choose between either BAN _(default)_, or
+:ref:`xkey based tags invalidation <varnish_xkey_intro>`.
 
 Using xkey
 ^^^^^^^^^^
