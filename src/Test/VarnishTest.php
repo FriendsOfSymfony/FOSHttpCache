@@ -184,7 +184,7 @@ trait VarnishTest
 
             if (getenv('VARNISH_MODULES_VERSION')) {
                 $config = [
-                    'tags_header' => 'xkey-softpurge',
+                    'tags_header' => 'xkey-purge',
                     'tag_mode' => 'purgekeys',
                 ];
             } else {
