@@ -7,6 +7,7 @@ acl invalidators {
 include "../../../../resources/config/varnish/fos_debug.vcl";
 include "../../../../resources/config/varnish/fos_refresh.vcl";
 include "../../../../resources/config/varnish/fos_purge.vcl";
+include "../../../../resources/config/varnish/fos_tags_xkey.vcl";
 include "../../../../resources/config/varnish/fos_ban.vcl";
 
 backend default {
@@ -18,6 +19,7 @@ sub vcl_recv {
     call fos_ban_recv;
     call fos_purge_recv;
     call fos_refresh_recv;
+    call fos_tags_xkey_recv;
 }
 
 sub vcl_backend_response {
