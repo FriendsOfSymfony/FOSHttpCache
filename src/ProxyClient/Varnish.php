@@ -66,10 +66,10 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         $tagMode = $this->options['tag_mode'];
         $escapedTags = array_map('preg_quote', $this->escapeTags($tags));
 
-        $chunkSize = $this->determineTagsPerHeader($escapedTags, $tagMode === 'ban' ? '|' : ' ');
+        $chunkSize = $this->determineTagsPerHeader($escapedTags, 'ban' === $tagMode ? '|' : ' ');
 
         foreach (array_chunk($escapedTags, $chunkSize) as $tagchunk) {
-            if ($tagMode === 'ban') {
+            if ('ban' === $tagMode) {
                 $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
                 $this->ban([$this->options['tags_header'] => $tagExpression]);
             } else {// purgekeys

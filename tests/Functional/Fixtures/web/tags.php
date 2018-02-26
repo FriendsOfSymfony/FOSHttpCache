@@ -13,9 +13,9 @@ $tagHeader = empty($_GET['tags_header']) ? 'X-Cache-Tags' : $_GET['tags_header']
 
 header('Cache-Control: max-age=3600');
 header('Content-Type: text/html');
-if ($tagHeader === 'xkey') {
-    header($tagHeader . ': tag1 tag2');
+if ('xkey' === $tagHeader) {
+    header($tagHeader.': tag1 tag2');
 } else {
-    header($tagHeader . ': tag1,tag2');
+    header($tagHeader.': tag1,tag2');
 }
 header('X-Cache-Debug: 1');
