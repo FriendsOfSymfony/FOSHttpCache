@@ -43,7 +43,7 @@ performance with cache tags.
 
 As explained by [Varnish Software](http://book.varnish-software.com/4.0/chapters/Cache_Invalidation.html#hashtwo-xkey-varnish-software-implementation-of-surrogate-keys):
 > (..), hashtwo/xkey is much more efficient than bans because of two reasons:
-> 1)looking up hash keys is much more efficient than traversing ban-lists, and
+> 1) looking up hash keys is much more efficient than traversing ban-lists, and
 > 2) every time you test a ban expression, it checks every object in the cache that is
 > older than the ban itself.
 
@@ -53,8 +53,8 @@ Minimum version of `varnish-modules` is v0.10.2*. It's part of Ubuntu 17.10 ("Ar
 and higher. But can also be [installed on any other linux platform](https://github.com/varnish/varnish-modules#installation).
 
 * _v0.10.2 is the first version introducing support for purging several tags at once.
- You can technically use earlier versions like v0.9.1, however then you will not be
- able to invalidate more then one tag at a time._
+You can technically use earlier versions like v0.9.1, however then you will not be
+able to invalidate more then one tag at a time._
 
 Provided VCL Subroutines
 ~~~~~~~~~~~~~~~~~~~~~~~~
