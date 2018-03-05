@@ -220,6 +220,18 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_tags_xkey_recv;
         }
 
+
+Secondly we'll also need to configure Varnish Proxy client for xkey::
+
+    use FOS\HttpCache\ProxyClient\Varnish;
+
+    $options = [
+        'tags_header' => 'xkey-softpurge',// Or 'xkey-purge' if you can not use grace, see VCL
+        'tag_mode' => 'purgekeys'
+    ];
+
+    $varnish = new Varnish($httpDispatcher, $options);
+
 Using BAN
 ^^^^^^^^^
 

@@ -15,13 +15,13 @@ sub fos_tags_xkey_recv {
             return (synth(405, "Not allowed"));
         }
 
-        // If tag invalidation api allows caller to specify expire/purge in the future,
-        // then adjust this to be able to handle both headers in same request.
+        # Based on provided header invalidate (purge) or expire (softpurge) the tagged content
         if (req.http.xkey-purge) {
             set req.http.n-gone = xkey.purge(req.http.xkey-purge);
         } elseif (req.http.xkey-softpurge) {
             set req.http.n-gone = xkey.softpurge(req.http.xkey-softpurge);
         } else {
+            # If neither of the headers are provided we return 400 so you can detect wrong configuration
             return (synth(400));
         }
 

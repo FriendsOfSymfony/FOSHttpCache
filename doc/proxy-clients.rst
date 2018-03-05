@@ -110,15 +110,6 @@ You can also pass some options to the Varnish client:
 * ``default_ban_headers`` (default: []): Map of headers that are set on each
   ban request, merged with the built-in headers.
 
-Example for configuring xkey::
-
-    $options = [
-        'tags_header' => 'xkey-softpurge',// Or 'xkey-purge' if you can not use grace, see VCL
-        'tag_mode' => 'purgekeys'
-    ];
-
-    $varnish = new Varnish($httpDispatcher, $options);
-
 Additionally, you can specify the request factory used to build the
 invalidation HTTP requests. If not specified, auto discovery is used – which
 usually is fine.

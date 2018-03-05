@@ -21,9 +21,10 @@ class CacheInvalidatorTest extends VarnishTestCase
 {
     public function testInvalidateTags()
     {
-        $uri = '/tags.php';
         if (getenv('VARNISH_MODULES_VERSION')) {
-            $uri .= '?tags_header=xkey';
+            $uri = '/tags_xkey.php';
+        } else {
+            $uri = '/tags.php';
         }
 
         $cacheInvalidator = new CacheInvalidator($this->getProxyClient());

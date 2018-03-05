@@ -64,25 +64,32 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
     public function invalidateTags(array $tags)
     {
         $tagMode = $this->options['tag_mode'];
+        $invalidationMethod = "{$tagMode}TagChunk";
         $escapedTags = array_map('preg_quote', $this->escapeTags($tags));
 
         $chunkSize = $this->determineTagsPerHeader($escapedTags, 'ban' === $tagMode ? '|' : ' ');
 
         foreach (array_chunk($escapedTags, $chunkSize) as $tagchunk) {
-            if ('ban' === $tagMode) {
-                $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
-                $this->ban([$this->options['tags_header'] => $tagExpression]);
-            } else {// purgekeys
-                $this->queueRequest(
-                    self::HTTP_METHOD_PURGEKEYS,
-                    '/',
-                    [$this->options['tags_header'] => implode(' ', $tagchunk)],
-                    false
-                );
-            }
+            $this->$invalidationMethod($tagchunk);
         }
 
         return $this;
+    }
+
+    private function banTagChunk(array $tagchunk)
+    {
+        $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
+        $this->ban([$this->options['tags_header'] => $tagExpression]);
+    }
+
+    private function purgekeysTagChunk(array $tagchunk)
+    {
+        $this->queueRequest(
+            self::HTTP_METHOD_PURGEKEYS,
+            '/',
+            [$this->options['tags_header'] => implode(' ', $tagchunk)],
+            false
+        );
     }
 
     /**
