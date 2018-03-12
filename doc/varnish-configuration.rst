@@ -174,6 +174,62 @@ Tagging
 
 Feature: :ref:`cache tagging <tags>`
 
+For this feature you'll need to choose between either BAN _(default)_, or the more
+performant xkey based tag system.
+
+Using xkey
+^^^^^^^^^^
+
+Since Varnish 4.1 you can use the official `xkey Varnish module`_ for better
+performance with cache tags.
+
+As explained in the `Cache Invalidation chapter of the Varnish documentation`_::
+> (..), hashtwo/xkey is much more efficient than bans because of two reasons:
+> 1) looking up hash keys is much more efficient than traversing ban-lists, and
+> 2) every time you test a ban expression, it checks every object in the cache that is
+> older than the ban itself.
+
+With xkey, you can also soft purge tagged responses to allow for a grace period where
+invalidated (stale) content is still delivered to the client.
+
+Minimum version of `varnish-modules` is v0.10.2*. It's part of Ubuntu 17.10 ("Artful")
+and higher, otherwise see their documentation for `installing xkey on other platforms`_.
+
+For ``xkey`` setup you can use ``fos_tags_xkey.vcl`` and
+:ref:`configure Varnish Client for xkey <varnish_custom_tags_header>` as shown below.
+
+Subroutines are provided in ``resources/config/varnish-[version]/fos_tags_xkey.vcl``.
+To enable this feature, add the following to ``your_varnish.vcl``:
+
+.. configuration-block::
+
+    .. code-block:: varnish
+
+        include "path-to-config/varnish/fos_tags_xkey.vcl";
+
+        sub vcl_recv {
+            call fos_tags_xkey_recv;
+        }
+
+
+Secondly we'll also need to configure Varnish Proxy client for xkey::
+
+    use FOS\HttpCache\ProxyClient\Varnish;
+
+    $options = [
+        'tags_header' => 'xkey-softpurge',// Or 'xkey-purge' if you can not use grace, see VCL
+        'tag_mode' => 'purgekeys'
+    ];
+
+    $varnish = new Varnish($httpDispatcher, $options);
+
+\* _v0.10.2 is the first version introducing support for purging several tags at once.
+You can technically use earlier versions down to 0.9.x releases, however then you will not be
+able to invalidate more then one tag at a time._
+
+Using BAN
+^^^^^^^^^
+
 If you have included ``fos_ban.vcl``, tagging will be automatically enabled
 with the ``X-Cache-Tags`` header for both marking the tags on the response and
 for the invalidation request to tell what tags to invalidate.
@@ -405,5 +461,8 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 .. _ban lurker: https://www.varnish-software.com/blog/ban-lurker
 .. _explained in the Varnish documentation: https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies
 .. _curl Varnish plugin: https://github.com/varnish/libvmod-curl
+.. _xkey Varnish module: https://github.com/varnish/varnish-modules/blob/master/docs/vmod_xkey.rst
+.. _Cache Invalidation chapter of the Varnish documentation: http://book.varnish-software.com/4.0/chapters/Cache_Invalidation.html#hashtwo-xkey-varnish-software-implementation-of-surrogate-keys
+.. _installing xkey on other platforms: https://github.com/varnish/varnish-modules#installation
 .. _`builtin VCL`: https://github.com/varnishcache/varnish-cache/blob/5.0/bin/varnishd/builtin.vcl
 .. _`default VCL`: https://github.com/varnishcache/varnish-cache/blob/3.0/bin/varnishd/default.vcl

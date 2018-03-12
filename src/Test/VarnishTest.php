@@ -181,7 +181,17 @@ trait VarnishTest
                 ['http://127.0.0.1:'.$this->getCachingProxyPort()],
                 $this->getHostName().':'.$this->getCachingProxyPort()
             );
-            $this->proxyClient = new Varnish($httpDispatcher);
+
+            if (getenv('VARNISH_MODULES_VERSION')) {
+                $config = [
+                    'tags_header' => 'xkey-purge',
+                    'tag_mode' => 'purgekeys',
+                ];
+            } else {
+                $config = [];
+            }
+
+            $this->proxyClient = new Varnish($httpDispatcher, $config);
         }
 
         return $this->proxyClient;

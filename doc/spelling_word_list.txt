@@ -14,6 +14,7 @@ middlewares
 namespace
 nginx
 roundtrip
+softpurge
 symfony
 whitelisted
 paywall
@@ -24,3 +25,4 @@ fos
 Vcl
 inline
 Noop
+xkey

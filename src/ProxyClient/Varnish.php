@@ -38,6 +38,8 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
 
     const HTTP_METHOD_PURGE = 'PURGE';
 
+    const HTTP_METHOD_PURGEKEYS = 'PURGEKEYS';
+
     const HTTP_METHOD_REFRESH = 'GET';
 
     const HTTP_HEADER_HOST = 'X-Host';
@@ -61,16 +63,36 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
      */
     public function invalidateTags(array $tags)
     {
+        $tagMode = $this->options['tag_mode'];
         $escapedTags = array_map('preg_quote', $this->escapeTags($tags));
 
-        $chunkSize = $this->determineTagsPerHeader($escapedTags, '|');
+        $chunkSize = $this->determineTagsPerHeader($escapedTags, 'ban' === $tagMode ? '|' : ' ');
 
         foreach (array_chunk($escapedTags, $chunkSize) as $tagchunk) {
-            $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
-            $this->ban([$this->options['tags_header'] => $tagExpression]);
+            if ('ban' === $tagMode) {
+                $this->invalidateByBan($tagchunk);
+            } else {
+                $this->invalidateByPurgekeys($tagchunk);
+            }
         }
 
         return $this;
+    }
+
+    private function invalidateByBan(array $tagchunk)
+    {
+        $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
+        $this->ban([$this->options['tags_header'] => $tagExpression]);
+    }
+
+    private function invalidateByPurgekeys(array $tagchunk)
+    {
+        $this->queueRequest(
+            self::HTTP_METHOD_PURGEKEYS,
+            '/',
+            [$this->options['tags_header'] => implode(' ', $tagchunk)],
+            false
+        );
     }
 
     /**
@@ -143,9 +165,12 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
             'tags_header' => self::DEFAULT_HTTP_HEADER_CACHE_TAGS,
+            'tag_mode' => 'ban',
             'header_length' => 7500,
             'default_ban_headers' => [],
         ]);
+        // tag_mode options: 'ban' or 'purgekeys'
+        $resolver->setAllowedValues('tag_mode', ['ban', 'purgekeys']);
         $resolver->setNormalizer('default_ban_headers', function ($resolver, $specified) {
             return array_merge(
                 [
