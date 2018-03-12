@@ -15,16 +15,22 @@ sub fos_tags_xkey_recv {
             return (synth(405, "Not allowed"));
         }
 
-        # Based on provided header invalidate (purge) or expire (softpurge) the tagged content
-        if (req.http.xkey-purge) {
-            set req.http.n-gone = xkey.purge(req.http.xkey-purge);
-        } elseif (req.http.xkey-softpurge) {
-            set req.http.n-gone = xkey.softpurge(req.http.xkey-softpurge);
-        } else {
-            # If neither of the headers are provided we return 400 so you can detect wrong configuration
+        # If neither of the headers are provided we return 400 to simplify detecting wrong configuration
+        if (!req.http.xkey-purge && !req.http.xkey-softpurge) {
             return (synth(400));
         }
 
-        return (synth(200, "Invalidated "+req.http.n-gone+" objects"));
+        # Based on provided header invalidate (purge) and/or expire (softpurge) the tagged content
+        set req.http.n-gone = 0;
+        set req.http.n-softgone = 0;
+        if (req.http.xkey-purge) {
+            set req.http.n-gone = xkey.purge(req.http.xkey-purge);
+        }
+
+        if (req.http.xkey-softpurge) {
+            set req.http.n-softgone = xkey.softpurge(req.http.xkey-softpurge);
+        }
+
+        return (synth(200, "Purged "+req.http.n-gone+" objects, expired "+req.http.n-softgone+" objects"));
     }
 }

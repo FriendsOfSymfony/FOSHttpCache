@@ -19,7 +19,7 @@ matrix:
     - php: 5.6
     - php: 7.0
     - php: 7.1
-      env: VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.9.1 DEPENDENCIES="symfony/lts:^3"
+      env: VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.9.1
     - php: 7.2
       env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text"
 
