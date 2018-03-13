@@ -174,32 +174,35 @@ Tagging
 
 Feature: :ref:`cache tagging <tags>`
 
-For this feature you'll need to choose between either BAN _(default)_, or the more
-performant xkey based tag system.
+For this feature you need to choose between either BAN _(default)_ and the
+more performant xkey based tag system.
 
 Using xkey
 ^^^^^^^^^^
 
-Since Varnish 4.1 you can use the official `xkey Varnish module`_ for better
+Since Varnish 4.1, you can use the official `xkey Varnish module`_ for better
 performance with cache tags.
 
 As explained in the `Cache Invalidation chapter of the Varnish documentation`_::
-> (..), hashtwo/xkey is much more efficient than bans because of two reasons:
+> (..), ``hashtwo``/``xkey`` is much more efficient than bans because of two reasons:
 > 1) looking up hash keys is much more efficient than traversing ban-lists, and
-> 2) every time you test a ban expression, it checks every object in the cache that is
-> older than the ban itself.
+> 2) every time you test a ban expression, it checks every object in the cache
+> that is older than the ban itself.
 
-With xkey, you can also soft purge tagged responses to allow for a grace period where
-invalidated (stale) content is still delivered to the client.
+With xkey, you can also soft purge tagged responses to allow for a grace period
+where invalidated (stale) content is still delivered to the client.
 
-Minimum version of `varnish-modules` is v0.10.2*. It's part of Ubuntu 17.10 ("Artful")
-and higher, otherwise see their documentation for `installing xkey on other platforms`_.
+Minimum version of `varnish-modules` is v0.10.2*. It's part of Ubuntu 17.10
+("Artful") and higher, otherwise see their documentation for
+`installing xkey on other platforms`_. You can technically use earlier versions
+of the varnish modules down to 0.9.x releases. However, v0.10.2 is the first
+version introducing support for purging several tags at once. If you use an
+older version, you need to invalidate only one tag at a time, and can't use
+soft purge.
 
-For ``xkey`` setup you can use ``fos_tags_xkey.vcl`` and
-:ref:`configure Varnish Client for xkey <varnish_custom_tags_header>` as shown below.
-
-Subroutines are provided in ``resources/config/varnish-[version]/fos_tags_xkey.vcl``.
-To enable this feature, add the following to ``your_varnish.vcl``:
+To use ``xkey``, :ref:`configure the Varnish Client for xkey <varnish_custom_tags_header>`
+and :ref:`the response tagger to use the xkey header <response_tagger_optional_parameters>`,
+and include ``resources/config/varnish/fos_tags_xkey.vcl`` in your VCL:
 
 .. configuration-block::
 
@@ -211,21 +214,8 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_tags_xkey_recv;
         }
 
-
-Secondly we'll also need to configure Varnish Proxy client for xkey::
-
-    use FOS\HttpCache\ProxyClient\Varnish;
-
-    $options = [
-        'tags_header' => 'xkey-softpurge',// Or 'xkey-purge' if you can not use grace, see VCL
-        'tag_mode' => 'purgekeys'
-    ];
-
-    $varnish = new Varnish($httpDispatcher, $options);
-
-\* _v0.10.2 is the first version introducing support for purging several tags at once.
-You can technically use earlier versions down to 0.9.x releases, however then you will not be
-able to invalidate more then one tag at a time._
+Note that there is no xkey VCL file for Varnish version 3 because the
+varnish-modules are only available for Varnish 4.1 or newer.
 
 Using BAN
 ^^^^^^^^^

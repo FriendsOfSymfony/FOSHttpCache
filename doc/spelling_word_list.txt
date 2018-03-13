@@ -13,6 +13,7 @@ middleware
 middlewares
 namespace
 nginx
+performant
 roundtrip
 softpurge
 symfony

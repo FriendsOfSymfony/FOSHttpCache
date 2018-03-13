@@ -39,13 +39,14 @@ the header name, just instantiate the response tagger with its default settings:
 If you need a different behavior, you can provide your own
 ``TagHeaderFormatter`` instance. Don't forget to also adjust your
 :doc:`proxy configuration <proxy-configuration>` to match the response. To use
-a different header name, instantiate the ``CommaSeparatedTagHeaderFormatter``
-yourself and pass it to the ``ResponseTagger``::
+:ref:`xkey tags <varnish_tagging>`, instantiate the
+``CommaSeparatedTagHeaderFormatter`` yourself with the appropriate header and
+glue, and pass it to the ``ResponseTagger``::
 
     use FOS\HttpCache\ResponseTagger;
     use FOS\HttpCache\TagHeaderFormatter;
 
-    $formatter = new CommaSeparatedTagHeaderFormatter('Custom-Header-Name');
+    $formatter = new CommaSeparatedTagHeaderFormatter('xkey', ' ');
     $responseTagger = new ResponseTagger(['header_formatter' => $formatter]);
 
 The response tagger validates tags that you set. By default, it simply ignores

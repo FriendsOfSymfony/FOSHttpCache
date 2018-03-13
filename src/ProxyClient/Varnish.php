@@ -16,13 +16,16 @@ use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
+use Symfony\Component\OptionsResolver\Options;
 
 /**
  * Varnish HTTP cache invalidator.
  *
  * Additional constructor options:
+ * - tag_mode            Whether to use ban or the xkey extension for cache tagging.
  * - tags_header         Header for sending tag invalidation requests to
- *                       Varnish, defaults to X-Cache-Tags
+ *                       Varnish, if tag_mode is ban, defaults to X-Cache-Tags,
+ *                       otherwise defaults to xkey-softpurge.
  * - header_length       Maximum header length when invalidating tags. If there
  *                       are more tags to invalidate than fit into the header,
  *                       the invalidation request is split into several requests.
@@ -48,6 +51,10 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
 
     const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
 
+    const TAG_BAN = 'ban';
+
+    const TAG_XKEY = 'purgekeys';
+
     /**
      * Default name of the header used to invalidate content with specific tags.
      *
@@ -58,18 +65,20 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
      */
     const DEFAULT_HTTP_HEADER_CACHE_TAGS = 'X-Cache-Tags';
 
+    const DEFAULT_HTTP_HEADER_CACHE_XKEY = 'xkey-softpurge';
+
     /**
      * {@inheritdoc}
      */
     public function invalidateTags(array $tags)
     {
-        $tagMode = $this->options['tag_mode'];
+        $banMode = self::TAG_BAN === $this->options['tag_mode'];
         $escapedTags = array_map('preg_quote', $this->escapeTags($tags));
 
-        $chunkSize = $this->determineTagsPerHeader($escapedTags, 'ban' === $tagMode ? '|' : ' ');
+        $chunkSize = $this->determineTagsPerHeader($escapedTags, $banMode ? '|' : ' ');
 
         foreach (array_chunk($escapedTags, $chunkSize) as $tagchunk) {
-            if ('ban' === $tagMode) {
+            if ($banMode) {
                 $this->invalidateByBan($tagchunk);
             } else {
                 $this->invalidateByPurgekeys($tagchunk);
@@ -77,22 +86,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         }
 
         return $this;
-    }
-
-    private function invalidateByBan(array $tagchunk)
-    {
-        $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
-        $this->ban([$this->options['tags_header'] => $tagExpression]);
-    }
-
-    private function invalidateByPurgekeys(array $tagchunk)
-    {
-        $this->queueRequest(
-            self::HTTP_METHOD_PURGEKEYS,
-            '/',
-            [$this->options['tags_header'] => implode(' ', $tagchunk)],
-            false
-        );
     }
 
     /**
@@ -165,12 +158,18 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
             'tags_header' => self::DEFAULT_HTTP_HEADER_CACHE_TAGS,
-            'tag_mode' => 'ban',
+            'tag_mode' => self::TAG_BAN,
             'header_length' => 7500,
             'default_ban_headers' => [],
         ]);
-        // tag_mode options: 'ban' or 'purgekeys'
-        $resolver->setAllowedValues('tag_mode', ['ban', 'purgekeys']);
+        $resolver->setDefault('tags_header', function (Options $options) {
+            if (self::TAG_BAN === $options['tag_mode']) {
+                return self::DEFAULT_HTTP_HEADER_CACHE_TAGS;
+            }
+
+            return self::DEFAULT_HTTP_HEADER_CACHE_XKEY;
+        });
+        $resolver->setAllowedValues('tag_mode', [self::TAG_BAN, self::TAG_XKEY]);
         $resolver->setNormalizer('default_ban_headers', function ($resolver, $specified) {
             return array_merge(
                 [
@@ -183,5 +182,21 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         });
 
         return $resolver;
+    }
+
+    private function invalidateByBan(array $tagchunk)
+    {
+        $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
+        $this->ban([$this->options['tags_header'] => $tagExpression]);
+    }
+
+    private function invalidateByPurgekeys(array $tagchunk)
+    {
+        $this->queueRequest(
+            self::HTTP_METHOD_PURGEKEYS,
+            '/',
+            [$this->options['tags_header'] => implode(' ', $tagchunk)],
+            false
+        );
     }
 }
