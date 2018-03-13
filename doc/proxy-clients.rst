@@ -14,7 +14,7 @@ The recommended usage is to have your application interact with the
 client suitable for the proxy server you use.
 
 Supported invalidation methods
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 Not all clients support all :ref:`invalidation methods <invalidation methods>`.
 This table provides of methods supported by each proxy client:
@@ -101,6 +101,8 @@ You can also pass some options to the Varnish client:
   which tags to invalidate when sending invalidation requests to the caching
   proxy. Make sure that your :ref:`Varnish configuration <varnish_tagging>`
   corresponds to the header used here;
+* ``tag_mode`` (default: ban): Select whether to invalidate tags using the xkey
+  module or with ban requests. Supported modes: ``ban`` and ``purgekeys``.
 * ``header_length`` (default: 7500): Control the maximum header length when
   invalidating tags. If there are more tags to invalidate than fit into the
   header, the invalidation request is split into several requests;
@@ -108,7 +110,7 @@ You can also pass some options to the Varnish client:
   ban request, merged with the built-in headers.
 
 Additionally, you can specify the request factory used to build the
-invalidation HTTP requests. If not specified, auto discovery is used – which
+invalidation HTTP requests. If not specified, auto discovery is used - which
 usually is fine.
 
 A full example could look like this::
@@ -123,6 +125,32 @@ A full example could look like this::
     $requestFactory = new MyRequestFactory();
 
     $varnish = new Varnish($httpDispatcher, $options, $requestFactory);
+
+Configuring the Client for xkey Tag Invalidation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you :ref:`install the varnish modules to use xkey tagging <varnish_tagging>`,
+you need to adjust the Varnish client as well::
+
+    use FOS\HttpCache\ProxyClient\Varnish;
+
+    $options = [
+        'tag_mode' => 'purgekeys'
+    ];
+
+    $varnish = new Varnish($httpDispatcher, $options);
+
+If you do not want to use soft purge (either because your varnish modules
+version is too old to support it or because it does not fit your scenario),
+additionally set the ``tags_header`` option to ``xkey-purge`` instead of the
+default ``xkey-softpurge``.
+
+.. note::
+
+    For xkey to work, the response tags MUST be given in a header named
+    ``xkey`` and separated by space rather than the default ``,``. If you use
+    the ``ResponseTagger``, set it up with a
+    :ref:`custom TagHeaderFormatter <response_tagger_optional_parameters>`.
 
 NGINX Client
 ~~~~~~~~~~~~

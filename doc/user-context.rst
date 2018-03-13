@@ -59,7 +59,7 @@ Caching on user context works as follows:
 
 After the first time, the hash lookup response for this client can be cached by
 the proxy server, moving step 2-4 into the cache. After the page is in cache,
-subsequent requests from other clients that recieved the same hash can be served
+subsequent requests from other clients that received the same hash can be served
 from the cache as well.
 
 .. note::

@@ -24,13 +24,18 @@ class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter
     private $headerName;
 
     /**
-     * CommaSeparatedTagHeaderFormatter constructor.
-     *
-     * @param string $headerName
+     * @var string
      */
-    public function __construct($headerName = TagHeaderFormatter::DEFAULT_HEADER_NAME)
+    private $glue;
+
+    /**
+     * @param string $headerName
+     * @param string $glue       Separator character for the tag header
+     */
+    public function __construct($headerName = TagHeaderFormatter::DEFAULT_HEADER_NAME, $glue = ',')
     {
         $this->headerName = $headerName;
+        $this->glue = $glue;
     }
 
     /**
@@ -46,6 +51,6 @@ class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter
      */
     public function getTagsHeaderValue(array $tags)
     {
-        return implode(',', $tags);
+        return implode($this->glue, $tags);
     }
 }
