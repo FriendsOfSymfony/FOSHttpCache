@@ -4,12 +4,14 @@ Getting started
 Installation
 ------------
 
+testerrorforspellchecker.
+
 The FOSHttpCache library is available on Packagist_. You can install the library
 and its dependencies using Composer_:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache 
+    $ composer require friendsofsymfony/http-cache
 
 The library relies on HTTPlug_ for sending invalidation requests over HTTP, so
 you need to install an HTTPlug-compatible client or adapter first:
