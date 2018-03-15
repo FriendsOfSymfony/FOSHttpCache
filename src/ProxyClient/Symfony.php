@@ -85,7 +85,9 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
             $this->queueRequest(
                 $this->options['tags_method'],
                 '/',
-                [$this->options['tags_header'] => implode(',', $tagchunk)]);
+                [$this->options['tags_header'] => implode(',', $tagchunk)],
+                false
+            );
         }
 
         return $this;
