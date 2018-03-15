@@ -54,6 +54,8 @@ class UserContextSubscriber implements EventSubscriberInterface
      * - user_hash_method:        HTTP Method used with the hash lookup request for user context hash generation.
      * - user_identifier_headers: List of request headers that authenticate a non-anonymous request.
      * - session_name_prefix:     Prefix for session cookies. Must match your PHP session configuration.
+     *                            To completely ignore the cookies header and consider requests with cookies
+     *                            anonymous, pass false for this option.
      *
      * @param array $options Options to overwrite the default options
      *
@@ -81,7 +83,7 @@ class UserContextSubscriber implements EventSubscriberInterface
             $resolver->setAllowedTypes('user_hash_method', array('string'));
             // actually string[] but that is not supported by symfony < 3.4
             $resolver->setAllowedTypes('user_identifier_headers', array('array'));
-            $resolver->setAllowedTypes('session_name_prefix', array('string'));
+            $resolver->setAllowedTypes('session_name_prefix', array('string', 'boolean'));
         }
 
         $this->options = $resolver->resolve($options);
@@ -141,6 +143,11 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     protected function cleanupHashLookupRequest(Request $hashLookupRequest, Request $originalRequest)
     {
+        if (!$this->options['session_name_prefix']) {
+            $hashLookupRequest->headers->remove('Cookie');
+
+            return;
+        }
         $sessionIds = array();
         foreach ($originalRequest->cookies as $name => $value) {
             if ($this->isSessionName($name)) {

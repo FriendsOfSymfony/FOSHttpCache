@@ -41,7 +41,7 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
         ) {
             // actually string[] but that is not supported by symfony < 3.4
             $resolver->setAllowedTypes('user_identifier_headers', array('array'));
-            $resolver->setAllowedTypes('session_name_prefix', array('string'));
+            $resolver->setAllowedTypes('session_name_prefix', array('string', 'boolean'));
         }
 
         $this->options = $resolver->resolve($options);
@@ -58,9 +58,11 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
             }
         }
 
-        foreach ($request->cookies as $name => $value) {
-            if (0 === strpos($name, $this->options['session_name_prefix'])) {
-                return false;
+        if ($this->options['session_name_prefix']) {
+            foreach ($request->cookies as $name => $value) {
+                if (0 === strpos($name, $this->options['session_name_prefix'])) {
+                    return false;
+                }
             }
         }
 
