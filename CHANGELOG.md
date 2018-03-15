@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.1.2
+-----
+
+#### Symfony HttpCache
+
+* Fixed bug in Symfony tag invalidation.
+  Do not check if host is missing in request creation.
+
 2.1.1
 -----
 
@@ -27,7 +35,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### Symfony HttpCache
 
-* Cache tagging supprt for Symfony HttpCache
+* Cache tagging support for Symfony HttpCache
 
   Added a `PurgeTagsListener` for tag based invalidation with the Symfony
   `HttpCache` reverse caching proxy. This requires the newly created
