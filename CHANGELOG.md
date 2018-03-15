@@ -3,6 +3,7 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+
 2.2.0 (unreleased)
 ------------------
 
@@ -11,6 +12,21 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Added support for the more efficient xkey cache tag system. BAN remains the
   default cache tagging system, but if you can install the varnish modules in
   your system, it is recommended to update to xkey.
+
+2.1.3
+-----
+
+#### Symfony HttpCache
+
+* Fixed bug in Symfony tag invalidation.
+  Do not check if host is missing in request creation.
+
+2.1.2
+-----
+
+### Symfony HttpCache
+
+* Fixed issue with detection if toflar psr6 store is available.
 
 2.1.1
 -----
@@ -36,7 +52,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### Symfony HttpCache
 
-* Cache tagging supprt for Symfony HttpCache
+* Cache tagging support for Symfony HttpCache
 
   Added a `PurgeTagsListener` for tag based invalidation with the Symfony
   `HttpCache` reverse caching proxy. This requires the newly created
