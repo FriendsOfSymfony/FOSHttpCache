@@ -3,13 +3,20 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-2.1.2
+2.1.3
 -----
 
 #### Symfony HttpCache
 
 * Fixed bug in Symfony tag invalidation.
   Do not check if host is missing in request creation.
+
+2.1.2
+-----
+
+### Symfony HttpCache
+
+* Fixed issue with detection if toflar psr6 store is available.
 
 2.1.1
 -----
