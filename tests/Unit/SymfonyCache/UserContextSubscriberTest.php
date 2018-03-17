@@ -179,6 +179,34 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * When the session_name_prefix is set to false, the cookie header is completely ignored.
+     *
+     * This test does not have authentication headers and thus considers the request anonymous.
+     */
+    public function testUserHashUserIgnoreCookies()
+    {
+        $userContextSubscriber = new UserContextSubscriber([
+            'session_name_prefix' => false,
+        ]);
+
+        $sessionId1 = 'my_session_id';
+        $cookies = array(
+            'PHPSESSID' => $sessionId1,
+        );
+        $cookieString = "PHPSESSID=$sessionId1";
+        $request = Request::create('/foo', 'GET', array(), $cookies, array(), array('Cookie' => $cookieString));
+
+        $event = new CacheEvent($this->kernel, $request);
+
+        $userContextSubscriber->preHandle($event);
+        $response = $event->getResponse();
+
+        $this->assertNull($response);
+        $this->assertTrue($request->headers->has('X-User-Context-Hash'));
+        $this->assertSame('38015b703d82206ebc01d17a39c727e5', $request->headers->get('X-User-Context-Hash'));
+    }
+
+    /**
      * @dataProvider provideConfigOptions
      */
     public function testUserHashUserWithAuthorizationHeader($arg, $options)

@@ -16,6 +16,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -51,7 +52,10 @@ class UserContextSubscriber implements EventSubscriberInterface
      *                            match the setup for the Vary header in the backend application.
      * - user_hash_uri:           Target URI used in the request for user context hash generation.
      * - user_hash_method:        HTTP Method used with the hash lookup request for user context hash generation.
+     * - user_identifier_headers: List of request headers that authenticate a non-anonymous request.
      * - session_name_prefix:     Prefix for session cookies. Must match your PHP session configuration.
+     *                            To completely ignore the cookies header and consider requests with cookies
+     *                            anonymous, pass false for this option.
      *
      * @param array $options Options to overwrite the default options
      *
@@ -66,8 +70,21 @@ class UserContextSubscriber implements EventSubscriberInterface
             'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
             'user_hash_method' => 'GET',
+            'user_identifier_headers' => array('Authorization', 'HTTP_AUTHORIZATION', 'PHP_AUTH_USER'),
             'session_name_prefix' => 'PHPSESSID',
         ));
+        if (class_exists('Symfony\Component\HttpKernel\Kernel')
+            && (Kernel::MAJOR_VERSION > 2 || Kernel::MINOR_VERSION > 5)
+        ) {
+            $resolver->setAllowedTypes('anonymous_hash', array('string'));
+            $resolver->setAllowedTypes('user_hash_accept_header', array('string'));
+            $resolver->setAllowedTypes('user_hash_header', array('string'));
+            $resolver->setAllowedTypes('user_hash_uri', array('string'));
+            $resolver->setAllowedTypes('user_hash_method', array('string'));
+            // actually string[] but that is not supported by symfony < 3.4
+            $resolver->setAllowedTypes('user_identifier_headers', array('array'));
+            $resolver->setAllowedTypes('session_name_prefix', array('string', 'boolean'));
+        }
 
         $this->options = $resolver->resolve($options);
     }
@@ -126,6 +143,11 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     protected function cleanupHashLookupRequest(Request $hashLookupRequest, Request $originalRequest)
     {
+        if (!$this->options['session_name_prefix']) {
+            $hashLookupRequest->headers->remove('Cookie');
+
+            return;
+        }
         $sessionIds = array();
         foreach ($originalRequest->cookies as $name => $value) {
             if ($this->isSessionName($name)) {
@@ -186,7 +208,10 @@ class UserContextSubscriber implements EventSubscriberInterface
      */
     private function isAnonymous(Request $request)
     {
-        $anonymousRequestMatcher = new AnonymousRequestMatcher($this->options['session_name_prefix']);
+        $anonymousRequestMatcher = new AnonymousRequestMatcher(array(
+            'user_identifier_headers' => $this->options['user_identifier_headers'],
+            'session_name_prefix' => $this->options['session_name_prefix'],
+        ));
 
         return $anonymousRequestMatcher->matches($request);
     }

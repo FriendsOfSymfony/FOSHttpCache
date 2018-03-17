@@ -147,7 +147,13 @@ options through the constructor:
 
   **default**: ``GET``
 
+* **user_identifier_headers**: List of request headers that authenticate a non-anonymous request.
+
+  **default**: ``['Authorization', 'HTTP_AUTHORIZATION', 'PHP_AUTH_USER']``
+
 * **session_name_prefix**: Prefix for session cookies. Must match your PHP session configuration.
+  If cookies are not relevant in your application, you can set this to ``false`` to ignore any
+  cookies. (**Only set this to ``false`` if you do not use sessions at all.**)
 
   **default**: ``PHPSESSID``
 
