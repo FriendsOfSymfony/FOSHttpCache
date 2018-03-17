@@ -67,7 +67,7 @@ class SymfonyTest extends TestCase
                     return true;
                 }
             ),
-            true
+            false
         );
 
         $symfony->invalidateTags(['foobar', 'other tag']);
@@ -88,7 +88,7 @@ class SymfonyTest extends TestCase
 
                         return true;
                     }),
-                    true,
+                    false,
                 ],
                 [
                     $this->callback(function (RequestInterface $request) {
@@ -97,7 +97,7 @@ class SymfonyTest extends TestCase
 
                         return true;
                     }),
-                    true,
+                    false,
                 ],
                 [
                     $this->callback(function (RequestInterface $request) {
@@ -106,7 +106,7 @@ class SymfonyTest extends TestCase
 
                         return true;
                     }),
-                    true,
+                    false,
                 ]
             );
 
