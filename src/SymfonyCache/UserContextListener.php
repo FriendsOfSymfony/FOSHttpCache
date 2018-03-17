@@ -73,7 +73,7 @@ class UserContextListener implements EventSubscriberInterface
             'session_name_prefix' => 'PHPSESSID',
         ]);
 
-        $resolver->setAllowedTypes('anonymous_hash', ['string']);
+        $resolver->setAllowedTypes('anonymous_hash', ['null', 'string']);
         $resolver->setAllowedTypes('user_hash_accept_header', ['string']);
         $resolver->setAllowedTypes('user_hash_header', ['string']);
         $resolver->setAllowedTypes('user_hash_uri', ['string']);

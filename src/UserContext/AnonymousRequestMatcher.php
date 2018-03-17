@@ -27,7 +27,7 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
 
     /**
      * @param array $options Configuration for the matcher. All options are required because this matcher is usually
-     *                       created by the UserContextSubscriber which provides the default values.
+     *                       created by the UserContextListener which provides the default values.
      *
      * @throws \InvalidArgumentException if unknown keys are found in $options
      */
