@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use FOS\HttpCache\UserContext\AnonymousRequestMatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,7 +51,10 @@ class UserContextListener implements EventSubscriberInterface
      *                            match the setup for the Vary header in the backend application.
      * - user_hash_uri:           Target URI used in the request for user context hash generation.
      * - user_hash_method:        HTTP Method used with the hash lookup request for user context hash generation.
+     * - user_identifier_headers: List of request headers that authenticate a non-anonymous request.
      * - session_name_prefix:     Prefix for session cookies. Must match your PHP session configuration.
+     *                            To completely ignore the cookies header and consider requests with cookies
+     *                            anonymous, pass false for this option.
      *
      * @param array $options Options to overwrite the default options
      *
@@ -65,8 +69,18 @@ class UserContextListener implements EventSubscriberInterface
             'user_hash_header' => 'X-User-Context-Hash',
             'user_hash_uri' => '/_fos_user_context_hash',
             'user_hash_method' => 'GET',
+            'user_identifier_headers' => ['Authorization', 'HTTP_AUTHORIZATION', 'PHP_AUTH_USER'],
             'session_name_prefix' => 'PHPSESSID',
         ]);
+
+        $resolver->setAllowedTypes('anonymous_hash', ['string']);
+        $resolver->setAllowedTypes('user_hash_accept_header', ['string']);
+        $resolver->setAllowedTypes('user_hash_header', ['string']);
+        $resolver->setAllowedTypes('user_hash_uri', ['string']);
+        $resolver->setAllowedTypes('user_hash_method', ['string']);
+        // actually string[] but that is not supported by symfony < 3.4
+        $resolver->setAllowedTypes('user_identifier_headers', ['array']);
+        $resolver->setAllowedTypes('session_name_prefix', ['string', 'boolean']);
 
         $this->options = $resolver->resolve($options);
     }
@@ -126,6 +140,12 @@ class UserContextListener implements EventSubscriberInterface
     protected function cleanupHashLookupRequest(Request $hashLookupRequest, Request $originalRequest)
     {
         $sessionIds = [];
+        if (!$this->options['session_name_prefix']) {
+            $hashLookupRequest->headers->remove('Cookie');
+
+            return;
+        }
+
         foreach ($originalRequest->cookies as $name => $value) {
             if ($this->isSessionName($name)) {
                 $sessionIds[$name] = $value;
@@ -186,23 +206,12 @@ class UserContextListener implements EventSubscriberInterface
      */
     private function isAnonymous(Request $request)
     {
-        // You might have to enable rewriting of the Authorization header in your server config or .htaccess:
-        // RewriteEngine On
-        // RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-        if ($request->server->has('AUTHORIZATION') ||
-            $request->server->has('HTTP_AUTHORIZATION') ||
-            $request->server->has('PHP_AUTH_USER')
-        ) {
-            return false;
-        }
+        $anonymousRequestMatcher = new AnonymousRequestMatcher([
+            'user_identifier_headers' => $this->options['user_identifier_headers'],
+            'session_name_prefix' => $this->options['session_name_prefix'],
+        ]);
 
-        foreach ($request->cookies as $name => $value) {
-            if ($this->isSessionName($name)) {
-                return false;
-            }
-        }
-
-        return true;
+        return $anonymousRequestMatcher->matches($request);
     }
 
     /**
