@@ -232,6 +232,7 @@ class UserContextListenerTest extends TestCase
     {
         $userContextListener = new UserContextListener([
             'session_name_prefix' => false,
+            'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
         ]);
 
         $sessionId1 = 'my_session_id';
@@ -241,6 +242,7 @@ class UserContextListenerTest extends TestCase
         $cookieString = "PHPSESSID=$sessionId1";
         $request = Request::create('/foo', 'GET', [], $cookies, [], ['Cookie' => $cookieString]);
 
+        $this->kernel->shouldNotReceive('handle');
         $event = new CacheEvent($this->kernel, $request);
 
         $userContextListener->preHandle($event);
