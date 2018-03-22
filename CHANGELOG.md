@@ -12,6 +12,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Added support for the more efficient xkey cache tag system. BAN remains the
   default cache tagging system, but if you can install the varnish modules in
   your system, it is recommended to update to xkey.
+* No inline C is needed for the custom TTL header with Varnish 4 or better. use
+  `std.duration()` instead.
 
 ### Symfony user context
 * You can now also specify which headers are used for

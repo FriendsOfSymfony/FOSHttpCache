@@ -19,14 +19,6 @@ use FOS\HttpCache\Test\VarnishTestCase;
  */
 class CustomTtlTest extends VarnishTestCase
 {
-    public function setUp()
-    {
-        if ($this->getVarnishVersion() >= 4) {
-            $this->getProxy()->setAllowInlineC(true);
-        }
-        parent::setUp();
-    }
-
     protected function getConfigFile()
     {
         switch ((int) $this->getVarnishVersion()) {

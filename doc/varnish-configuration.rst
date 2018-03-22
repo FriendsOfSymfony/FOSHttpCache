@@ -384,10 +384,7 @@ Custom TTL
 .. include:: includes/custom-ttl.rst
 
 Subroutines are provided in ``resources/config/varnish-[version]/fos_custom_ttl.vcl``.
-The configuration needs to use inline C, which is disabled by default since
-Varnish 4.0. To use the custom TTL feature, you need to start your Varnish with
-inline C enabled: ``-p vcc_allow_inline_c=on``. Then add the following to
-``your_varnish.vcl``:
+Add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
@@ -408,6 +405,14 @@ inline C enabled: ``-p vcc_allow_inline_c=on``. Then add the following to
         }
 
 The custom TTL header is removed before sending the response to the client.
+
+.. note::
+
+    If you are using Varnish 3, this feature is using inline C. Inline C is
+    enabled for Varnish 3 by default. Check for the ``vcc_allow_inline_c``
+    setting.
+    If you are using Varnish 4 or newer, you are using the
+    ``varnish/fos_custom_ttl.vcl`` which uses a vmod function instead of inline C.
 
 .. _varnish_debugging:
 
