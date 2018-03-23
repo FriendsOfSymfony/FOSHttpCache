@@ -13,6 +13,12 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   default cache tagging system, but if you can install the varnish modules in
   your system, it is recommended to update to xkey.
 
+### Symfony user context
+* You can now also specify which headers are used for
+  authentication to detect anonymous requests. By default, the headers are the
+  previously hardcoded `Authorization`, `HTTP_AUTHORIZATION` and
+  `PHP_AUTH_USER`.
+
 2.1.3
 -----
 
@@ -158,6 +164,19 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   `TagCapable` as first argument. To adjust the tag header name or the way the
   tags are formatted, use the new `header_formatter` option with a
   `TagHeaderFormatter`.
+
+1.4.5
+-----
+
+* Symfony user context: You can now also specify which headers are used for
+  authentication to detect anonymous requests. By default, the headers are the
+  previously hardcoded `Authorization`, `HTTP_AUTHORIZATION` and
+  `PHP_AUTH_USER`.
+
+1.4.4
+-----
+
+* Avoid problem with [http_method_override](http://symfony.com/doc/current/reference/configuration/framework.html#configuration-framework-http-method-override).
 
 1.4.3
 -----

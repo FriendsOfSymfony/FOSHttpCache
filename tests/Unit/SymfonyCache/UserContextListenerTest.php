@@ -224,6 +224,36 @@ class UserContextListenerTest extends TestCase
     }
 
     /**
+     * When the session_name_prefix is set to false, the cookie header is completely ignored.
+     *
+     * This test does not have authentication headers and thus considers the request anonymous.
+     */
+    public function testUserHashUserIgnoreCookies()
+    {
+        $userContextListener = new UserContextListener([
+            'session_name_prefix' => false,
+            'anonymous_hash' => '38015b703d82206ebc01d17a39c727e5',
+        ]);
+
+        $sessionId1 = 'my_session_id';
+        $cookies = [
+            'PHPSESSID' => $sessionId1,
+        ];
+        $cookieString = "PHPSESSID=$sessionId1";
+        $request = Request::create('/foo', 'GET', [], $cookies, [], ['Cookie' => $cookieString]);
+
+        $this->kernel->shouldNotReceive('handle');
+        $event = new CacheEvent($this->kernel, $request);
+
+        $userContextListener->preHandle($event);
+        $response = $event->getResponse();
+
+        $this->assertNull($response);
+        $this->assertTrue($request->headers->has('X-User-Context-Hash'));
+        $this->assertSame('38015b703d82206ebc01d17a39c727e5', $request->headers->get('X-User-Context-Hash'));
+    }
+
+    /**
      * @dataProvider provideConfigOptions
      */
     public function testUserHashUserWithAuthorizationHeader($arg, $options)
