@@ -7,11 +7,12 @@
  * file that was distributed with this source code.
  */
 
-import std;
-
 /**
  * Read a custom TTL header for the time to live information, to be used
  * instead of s-maxage.
+ *
+ * This needs an `import std;` in your main VCL. If you do not already import
+ * the standard vmod, you need to add it there.
  */
 sub fos_custom_ttl_backend_response {
     if (beresp.http.X-Reverse-Proxy-TTL) {
