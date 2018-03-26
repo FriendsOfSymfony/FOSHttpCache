@@ -1,5 +1,7 @@
 vcl 4.0;
 
+import std;
+
 include "../../../../resources/config/varnish/fos_debug.vcl";
 include "../../../../resources/config/varnish/fos_custom_ttl.vcl";
 
