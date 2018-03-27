@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.2.1
+-----
+
+### Varnish
+
+* The provided VCL for custom TTL no longer provides `import std;` because each
+  import may only exist once.
 
 2.2.0
 -----
