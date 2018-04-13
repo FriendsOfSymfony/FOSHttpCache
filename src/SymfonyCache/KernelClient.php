@@ -16,17 +16,11 @@ use Http\Promise\FulfilledPromise;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Zend\Diactoros\ServerRequest;
 
 class KernelClient implements HttpAsyncClient
 {
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
     /**
      * @var HttpCacheAwareKernelInterface
      */
@@ -45,12 +39,10 @@ class KernelClient implements HttpAsyncClient
     /**
      * KernelClient constructor.
      *
-     * @param RequestStack                       $requestStack
-     * @param HttpCacheAwareKernelInterface|null $kernel
+     * @param HttpCacheAwareKernelInterface $kernel
      */
-    public function __construct(RequestStack $requestStack, HttpCacheAwareKernelInterface $kernel = null)
+    public function __construct(HttpCacheAwareKernelInterface $kernel)
     {
-        $this->requestStack = $requestStack;
         $this->kernel = $kernel;
 
         if (!class_exists(HttpFoundationFactory::class)) {
@@ -63,7 +55,6 @@ class KernelClient implements HttpAsyncClient
 
         $this->httpFoundationFactory = new HttpFoundationFactory();
         $this->psr7Factory = new DiactorosFactory();
-        $this->requestStack = $requestStack;
     }
 
     /**
@@ -75,10 +66,8 @@ class KernelClient implements HttpAsyncClient
      */
     public function sendAsyncRequest(RequestInterface $request)
     {
-        $currentRequest = $this->requestStack->getCurrentRequest();
-
         $serverRequest = new ServerRequest(
-            $currentRequest->server->all(),
+            ['REMOTE_ADDR', '127.0.0.1'],
             [],
             $request->getUri(),
             $request->getMethod(),
