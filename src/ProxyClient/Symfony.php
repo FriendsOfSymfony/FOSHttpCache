@@ -11,15 +11,11 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
-use FOS\HttpCache\SymfonyCache\HttpCacheAwareKernelInterface;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
-use Http\Message\RequestFactory;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Symfony HttpCache invalidator.
@@ -33,32 +29,6 @@ use Symfony\Component\HttpFoundation\Request;
 class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, TagCapable
 {
     const HTTP_METHOD_REFRESH = 'GET';
-
-    /**
-     * @var array
-     */
-    private $queue;
-
-    /**
-     * @var HttpCacheAwareKernelInterface
-     */
-    private $kernel;
-
-    /**
-     * Additional parameter for (optional) kernel.
-     *
-     * {@inheritdoc}
-     */
-    public function __construct(
-        HttpDispatcher $httpDispatcher,
-        array $options = [],
-        RequestFactory $messageFactory = null,
-        HttpCacheAwareKernelInterface $kernel = null
-    ) {
-        parent::__construct($httpDispatcher, $options, $messageFactory);
-
-        $this->kernel = $kernel;
-    }
 
     /**
      * {@inheritdoc}
@@ -81,9 +51,6 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions()
     {
         $resolver = parent::configureOptions();
@@ -92,42 +59,13 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
             'tags_method' => PurgeTagsListener::DEFAULT_TAGS_METHOD,
             'tags_header' => PurgeTagsListener::DEFAULT_TAGS_HEADER,
             'header_length' => 7500,
-            'enable_kernel_routing' => false,
         ]);
         $resolver->setAllowedTypes('purge_method', 'string');
         $resolver->setAllowedTypes('tags_method', 'string');
         $resolver->setAllowedTypes('tags_header', 'string');
         $resolver->setAllowedTypes('header_length', 'int');
-        $resolver->setAllowedTypes('enable_kernel_routing', 'boolean');
 
         return $resolver;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function flush()
-    {
-        if (!$this->isDirectRoutingEnabled()) {
-            return parent::flush();
-        }
-
-        $exceptions = new ExceptionCollection();
-
-        foreach ($this->queue as $request) {
-            try {
-                $this->kernel->getHttpCache()
-                    ->handle($request, HttpCacheAwareKernelInterface::MASTER_REQUEST);
-            } catch (\Exception $e) {
-                $exceptions->add($e);
-            }
-        }
-
-        if (count($exceptions)) {
-            throw $exceptions;
-        }
-
-        return count($this->queue);
     }
 
     /**
@@ -153,34 +91,5 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         }
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function queueRequest($method, $url, array $headers, $validateHost = true)
-    {
-        if (!$this->isDirectRoutingEnabled()) {
-            return parent::queueRequest($method, $url, $headers, $validateHost);
-        }
-
-        $request = Request::create((string) $url, $method);
-        $request->headers->replace($headers);
-
-        $this->queue[sha1((string) $request)] = $request;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isDirectRoutingEnabled()
-    {
-        if ($this->options['enable_kernel_routing']
-            && $this->kernel instanceof HttpCacheAwareKernelInterface
-        ) {
-            return true;
-        }
-
-        return false;
     }
 }
