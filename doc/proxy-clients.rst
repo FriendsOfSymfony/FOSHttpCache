@@ -184,6 +184,42 @@ dispatcher as explained above and pass it to the Symfony client::
 
     $symfony = new Symfony($httpDispatcher);
 
+
+The `HttpDispatcher` sends real HTTP requests using any instance of `HttpAsyncClient`
+available in your application (see HTTPlug_ for more information). If you
+have a single node Symfony application setup you might want to directly route
+these requests through the kernel directly instead of having it execute real
+HTTP requests for e.g. performance reasons or just because it seems easier to
+setup as you don't have to know the domain/ip your application is reachable at.
+For that to work, you can pass an instance of `KernelClient` to your `$httpDispatcher`.
+It takes your kernel as the constructor argument which needs to implement
+`HttpCacheAwareKernelInterface` so the instance of `HttpCache` can be accessed
+which is not possible by default in any Symfony application as `HttpCache` is
+implemented using the decorator pattern and thus the inner - real - application
+kernel does not know whether it's been decorated or not.
+Let's check the code needed, this will help you understand the mechanism::
+
+    use FOS\HttpCache\ProxyClient\HttpDispatcher;
+    use FOS\HttpCache\ProxyClient\Symfony;
+    use FOS\HttpCache\SymfonyCache\KernelClient;
+    use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+
+    // Must implement HttpCacheAwareKernelInterface
+    // You can use the HttpCacheAwareKernel trait to simplify things.
+    $kernel = new App\Kernel();
+
+    $httpCache = new HttpCache($kernel);
+
+    // This is where your kernel now becomes aware of the HttpCache instance
+    $kernel->setHttpCache($httpCache);
+
+    // Now let's create the HttpDispatcher with our KernelClient
+    $kernelClient = new KernelClient($kernel);
+    $httpDispatcher = new HttpDispatcher($kernelClient);
+
+    $symfony = new Symfony($httpDispatcher);
+
+
 .. note::
 
     To make invalidation work, you need to :doc:`use the EventDispatchingHttpCache <symfony-cache-configuration>`.
