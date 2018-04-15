@@ -39,7 +39,7 @@ class KernelClientTest extends TestCase
             $headers
         );
 
-        Request::setFactory(function($query, $request, $attributes, $cookies, $files, $server, $content) {
+        Request::setFactory(function ($query, $request, $attributes, $cookies, $files, $server, $content) {
             return new Request($query, $request, $attributes, $cookies, $files, $server, '');
         });
 
