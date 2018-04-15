@@ -16,9 +16,23 @@ use Http\Promise\FulfilledPromise;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Zend\Diactoros\ServerRequest;
 
+/**
+ * An implementation of HttpAsyncClient that allows direct routing through the
+ * Symfony HttpCache kernel without executing a real HTTP request.
+ * It uses the HttpFoundationFactory and the Zend DiactorosFactory to convert
+ * between PSR-7 requests and responses. Both are optional dependencies of this
+ * package thus existence of the respective classes is checked for in the
+ * constructor of this client. It is only needed if you have a single node
+ * setup of Symfony and serves as kind of a shortcut for easier configuration.
+ * If you use Varnish or have a multiple node Symfony setup, this class is entirely
+ * useless to you and you can happily ignore it.
+ *
+ * @author Yanick Witschi <yanick.witschi@terminal42.ch>
+ */
 class KernelClient implements HttpAsyncClient
 {
     /**
@@ -66,15 +80,25 @@ class KernelClient implements HttpAsyncClient
      */
     public function sendAsyncRequest(RequestInterface $request)
     {
+        $symfonyRequest = Request::createFromGlobals();
+        $symfonyRequest->server->set('REMOTE_ADDR', '127.0.0.1');
+
+        $query = [];
+        $parts = explode('&', $request->getUri()->getQuery());
+        foreach ($parts as $part) {
+            $chunks = explode('=', $part, 2);
+            $query[$chunks[0]] = $chunks[1];
+        }
+
         $serverRequest = new ServerRequest(
-            ['REMOTE_ADDR', '127.0.0.1'],
+            $symfonyRequest->server->all(),
             [],
             $request->getUri(),
             $request->getMethod(),
             $request->getBody(),
             $request->getHeaders(),
-            [],
-            explode('&', $request->getUri()->getQuery())
+            $symfonyRequest->cookies->all(),
+            $query
         );
 
         $symfonyRequest = $this->httpFoundationFactory->createRequest($serverRequest);
