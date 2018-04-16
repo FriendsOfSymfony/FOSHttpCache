@@ -14,7 +14,7 @@ namespace FOS\HttpCache\SymfonyCache;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
 /**
- * Trait for enhanced Symfony reverse proxy based on the Symfony kernel component.
+ * Trait to implement the HttpCacheProvider interface.
  */
 trait HttpCacheAwareKernel
 {

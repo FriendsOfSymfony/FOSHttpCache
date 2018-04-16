@@ -16,22 +16,21 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\ResponseFactory;
 use Http\Promise\FulfilledPromise;
 use Psr\Http\Message\RequestInterface;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Zend\Diactoros\ServerRequest;
 
 /**
- * An implementation of HttpAsyncClient that allows direct routing through the
+ * An implementation of HttpAsyncClient that allows direct calling of the
  * Symfony HttpCache kernel without executing a real HTTP request.
- * It uses the HttpFoundationFactory and the Zend DiactorosFactory to convert
- * between PSR-7 requests and responses. Both are optional dependencies of this
- * package thus existence of the respective classes is checked for in the
- * constructor of this client. It is only needed if you have a single node
- * setup of Symfony and serves as kind of a shortcut for easier configuration.
- * If you use Varnish or have a multiple node Symfony setup, this class is entirely
- * useless to you and you can happily ignore it.
+ * It can only be used if you have a single node setup of Symfony and serves
+ * as kind of a shortcut for easier configuration.
+ * If you use Varnish or have a multiple node Symfony setup, this client is entirely
+ * useless and cannot be used.
+ * It HttPlug libraries to convert between PSR-7 requests and responses. Both are
+ * optional dependencies of this package thus existence of the respective classes
+ * is checked for in the constructor of this client.
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
