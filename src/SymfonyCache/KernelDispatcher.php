@@ -14,7 +14,6 @@ namespace FOS\HttpCache\SymfonyCache;
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\ProxyClient\Dispatcher;
 use Psr\Http\Message\RequestInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
@@ -73,8 +72,8 @@ class KernelDispatcher implements Dispatcher
             if ('cookie' === $name) {
                 foreach ($values as $value) {
                     foreach (explode(';', $value) as $cookieString) {
-                        $cookie = Cookie::fromString($cookieString);
-                        $request->cookies->add([$cookie->getName() => $cookie->getValue()]);
+                        $chunks = explode('=', $cookieString, 2);
+                        $request->cookies->add([trim($chunks[0]) => trim($chunks[1])]);
                     }
                 }
 

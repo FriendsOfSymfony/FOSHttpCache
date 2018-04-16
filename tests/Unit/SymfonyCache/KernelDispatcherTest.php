@@ -39,12 +39,10 @@ class KernelDispatcherTest extends TestCase
             'super content'
         );
 
-
         $httpCache = $this->createMock(HttpCache::class);
         $httpCache->expects($this->once())
             ->method('handle')
-            ->with($this->callback(function(Request $request) {
-
+            ->with($this->callback(function (Request $request) {
                 // Test if the Symfony request contains the relevant information
                 // from the PSR-7 request
                 $valid = true;
