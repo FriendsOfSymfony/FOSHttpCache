@@ -45,7 +45,7 @@
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
         "monolog/monolog": "For logging issues while invalidating",
         "symfony/psr-http-message-bridge": "For simplified setup for cache invalidation in a single node system with symfony HttpCache",
-        "zendframework/zend-diactoros": "For simplified setup for cache invalidation in a single node system with symfony HttpCache"
+        "php-http/message-factory": "For simplified setup for cache invalidation in a single node system with symfony HttpCache"
     },
     "autoload": {
         "psr-4": {

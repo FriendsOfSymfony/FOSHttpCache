@@ -12,6 +12,8 @@
 namespace FOS\HttpCache\SymfonyCache;
 
 use Http\Client\HttpAsyncClient;
+use Http\Discovery\MessageFactoryDiscovery;
+use Http\Message\ResponseFactory;
 use Http\Promise\FulfilledPromise;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
@@ -46,7 +48,7 @@ class KernelClient implements HttpAsyncClient
     private $httpFoundationFactory;
 
     /**
-     * @var DiactorosFactory
+     * @var ResponseFactory
      */
     private $psr7Factory;
 
@@ -55,7 +57,7 @@ class KernelClient implements HttpAsyncClient
      *
      * @param HttpCacheAwareKernelInterface $kernel
      */
-    public function __construct(HttpCacheAwareKernelInterface $kernel)
+    public function __construct(HttpCacheAwareKernelInterface $kernel, ResponseFactory $responseFactory = null)
     {
         $this->kernel = $kernel;
 
@@ -63,12 +65,12 @@ class KernelClient implements HttpAsyncClient
             throw new \RuntimeException('Install symfony/psr-http-message-bridge to use this client.');
         }
 
-        if (!class_exists(DiactorosFactory::class)) {
-            throw new \RuntimeException('Install zendframework/zend-diactoros to use this client.');
+        if (!class_exists(ResponseFactory::class)) {
+            throw new \RuntimeException('Install a php-http/message-factory package to use this client.');
         }
 
         $this->httpFoundationFactory = new HttpFoundationFactory();
-        $this->psr7Factory = new DiactorosFactory();
+        $this->psr7Factory = $responseFactory ?: MessageFactoryDiscovery::find();
     }
 
     /**
