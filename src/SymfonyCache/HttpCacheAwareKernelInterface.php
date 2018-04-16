@@ -11,18 +11,12 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 interface HttpCacheAwareKernelInterface extends HttpKernelInterface
 {
     /**
-     * @param HttpCache $httpCache
-     */
-    public function setHttpCache(HttpCache $httpCache);
-
-    /**
-     * @return HttpCache
+     * @return HttpKernelInterface
      */
     public function getHttpCache();
 }
