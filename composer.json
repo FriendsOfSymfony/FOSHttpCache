@@ -36,16 +36,11 @@
         "php-http/mock-client": "^0.3.2",
         "phpunit/phpunit": "^5.7 || ^6.0",
         "symfony/process": "^2.3 || ^3.0 || ^4.0",
-        "symfony/http-kernel": "^2.3 || ^3.0 || ^4.0",
-        "symfony/http-foundation": "^2.4 || ^3.0 || ^4.0",
-        "symfony/psr-http-message-bridge": "^1.0",
-        "zendframework/zend-diactoros": "^1.7"
+        "symfony/http-kernel": "^2.3 || ^3.0 || ^4.0"
     },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
-        "monolog/monolog": "For logging issues while invalidating",
-        "symfony/psr-http-message-bridge": "For simplified setup for cache invalidation in a single node system with symfony HttpCache",
-        "php-http/message-factory": "For simplified setup for cache invalidation in a single node system with symfony HttpCache"
+        "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {
         "psr-4": {

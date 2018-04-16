@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\HttpCacheAwareKernelInterface;
-use FOS\HttpCache\SymfonyCache\KernelClient;
+use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use GuzzleHttp\Psr7\Request as Psr7Request;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,42 +22,42 @@ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 /**
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
-class KernelClientTest extends TestCase
+class KernelDispatcherTest extends TestCase
 {
-    public function testSendAsyncRequest()
+    public function testFlush()
     {
         $headers = [
             'Content-Type' => 'foobar',
             'Cookie' => 'foo=bar; foscacheis=awesome',
             'X-Cache-Tags' => 'foo,bar,stuff',
-            'Host' => '127.0.0.1',
         ];
 
         $psr7Request = new Psr7Request(
-            'GET',
+            'PURGETAGS',
             'http://127.0.0.1/foobar?query=string&more=stuff',
-            $headers
+            $headers,
+            'super content'
         );
 
-        Request::setFactory(function ($query, $request, $attributes, $cookies, $files, $server, $content) {
-            return new Request($query, $request, $attributes, $cookies, $files, $server, '');
-        });
-
-        $request = Request::createFromGlobals();
-        $request->server->set('REMOTE_ADDR', '127.0.0.1');
-        $request->server->set('SERVER_NAME', '127.0.0.1');
-        $request->server->set('SERVER_PORT', null);
-        $request->server->set('REQUEST_URI', '/foobar');
-        $request->server->set('REQUEST_METHOD', 'GET');
-        $request->server->set('QUERY_STRING', 'query=string&more=stuff');
-        $request->headers->replace($headers);
-        $request->query->replace(['query' => 'string', 'more' => 'stuff']);
-        Request::setFactory(null);
 
         $httpCache = $this->createMock(HttpCache::class);
         $httpCache->expects($this->once())
             ->method('handle')
-            ->with($request) // Tests if psr-7 request is correctly mapped to Symfony request
+            ->with($this->callback(function(Request $request) {
+
+                // Test if the Symfony request contains the relevant information
+                // from the PSR-7 request
+                $valid = true;
+                $valid = $valid && 'PURGETAGS' === $request->getMethod();
+                $valid = $valid && 'foobar' === $request->headers->get('content-type');
+                $valid = $valid && 'foo,bar,stuff' === $request->headers->get('x-cache-tags');
+                $valid = $valid && ['query' => 'string', 'more' => 'stuff'] == $request->query->all();
+                $valid = $valid && 'awesome' == $request->cookies->get('foscacheis');
+                $valid = $valid && 'bar' == $request->cookies->get('foo');
+                $valid = $valid && 'super content' == $request->getContent();
+
+                return $valid;
+            }))
             ->willReturn(new Response());
 
         $kernel = $this->createMock(HttpCacheAwareKernelInterface::class);
@@ -65,12 +65,9 @@ class KernelClientTest extends TestCase
             ->method('getHttpCache')
             ->willReturn($httpCache);
 
-        $client = new KernelClient($kernel);
-        $promise = $client->sendAsyncRequest($psr7Request);
+        $dispatcher = new KernelDispatcher($kernel);
+        $dispatcher->invalidate($psr7Request);
 
-        /** @var \Zend\Diactoros\Response $response */
-        $response = $promise->wait();
-
-        $this->assertSame(200, $response->getStatusCode());
+        $dispatcher->flush();
     }
 }
