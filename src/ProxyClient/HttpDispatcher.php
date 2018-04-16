@@ -34,7 +34,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-class HttpDispatcher
+class HttpDispatcher implements Dispatcher
 {
     /**
      * @var HttpAsyncClient
@@ -108,12 +108,7 @@ class HttpDispatcher
     }
 
     /**
-     * Queue invalidation request.
-     *
-     * @param RequestInterface $invalidationRequest
-     * @param bool             $validateHost        If false, do not validate that we either have a
-     *                                              base uri or the invalidation request specifies
-     *                                              the host
+     * {@inheritdoc}
      */
     public function invalidate(RequestInterface $invalidationRequest, $validateHost = true)
     {
@@ -130,12 +125,9 @@ class HttpDispatcher
         $this->queue[$signature] = $invalidationRequest;
     }
 
+
     /**
-     * Send all pending invalidation requests and make sure the requests have terminated and gather exceptions.
-     *
-     * @return int The number of cache invalidations performed per caching server
-     *
-     * @throws ExceptionCollection If any errors occurred during flush
+     * {@inheritdoc}
      */
     public function flush()
     {
