@@ -44,8 +44,8 @@
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
         "monolog/monolog": "For logging issues while invalidating",
-        "symfony/psr-http-message-bridge": "If you need direct routing for Symfony.",
-        "zendframework/zend-diactoros": "If you need direct routing for Symfony."
+        "symfony/psr-http-message-bridge": "For simplified setup for cache invalidation in a single node system with symfony HttpCache",
+        "zendframework/zend-diactoros": "For simplified setup for cache invalidation in a single node system with symfony HttpCache"
     },
     "autoload": {
         "psr-4": {
