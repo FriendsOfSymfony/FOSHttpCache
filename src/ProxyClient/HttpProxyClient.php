@@ -47,13 +47,13 @@ abstract class HttpProxyClient implements ProxyClient
      *
      * The base class has no options.
      *
-     * @param HttpDispatcher      $httpDispatcher Helper to send HTTP requests to caching proxy
+     * @param Dispatcher          $httpDispatcher Helper to send HTTP requests to caching proxy
      * @param array               $options        Options for this client
      * @param RequestFactory|null $messageFactory Factory for PSR-7 messages. If none supplied,
      *                                            a default one is created
      */
     public function __construct(
-        HttpDispatcher $httpDispatcher,
+        Dispatcher $httpDispatcher,
         array $options = [],
         RequestFactory $messageFactory = null
     ) {
@@ -86,7 +86,7 @@ abstract class HttpProxyClient implements ProxyClient
      * @param string              $method
      * @param string|UriInterface $url
      * @param array               $headers
-     * @param bool                $validateHost see HttpDispatcher::invalidate
+     * @param bool                $validateHost see Dispatcher::invalidate
      */
     protected function queueRequest($method, $url, array $headers, $validateHost = true)
     {
