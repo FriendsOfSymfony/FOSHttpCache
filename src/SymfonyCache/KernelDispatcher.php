@@ -31,7 +31,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class KernelDispatcher implements Dispatcher
 {
     /**
-     * @var HttpCacheAwareKernelInterface
+     * @var HttpCacheProvider
      */
     private $kernel;
 
@@ -43,9 +43,9 @@ class KernelDispatcher implements Dispatcher
     /**
      * KernelClient constructor.
      *
-     * @param HttpCacheAwareKernelInterface $kernel
+     * @param HttpCacheProvider $kernel
      */
-    public function __construct(HttpCacheAwareKernelInterface $kernel)
+    public function __construct(HttpCacheProvider $kernel)
     {
         $this->kernel = $kernel;
     }
@@ -83,7 +83,6 @@ class KernelDispatcher implements Dispatcher
 
             $request->headers->set($name, $values);
         }
-
 
         $this->queue[sha1($request)] = $request;
     }

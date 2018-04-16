@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Trait to implement the HttpCacheProvider interface.
@@ -19,12 +19,12 @@ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 trait HttpCacheAwareKernel
 {
     /**
-     * @var HttpCache
+     * @var HttpKernelInterface
      */
     private $httpCache;
 
     /**
-     * @return HttpCache
+     * @return HttpKernelInterface
      */
     public function getHttpCache()
     {
@@ -32,9 +32,9 @@ trait HttpCacheAwareKernel
     }
 
     /**
-     * @param HttpCache $httpCache
+     * @param HttpKernelInterface $httpCache
      */
-    public function setHttpCache(HttpCache $httpCache)
+    public function setHttpCache(HttpKernelInterface $httpCache)
     {
         $this->httpCache = $httpCache;
     }

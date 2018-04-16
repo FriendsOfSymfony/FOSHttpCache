@@ -193,7 +193,7 @@ HTTP requests over the network. This makes your setup easier as you don't need
 to know the IP of your server and will also save server resources.
 For that to work, you can use the `KernelDispatcher` instead of the `HttpDispatcher`.
 It takes your kernel as the constructor argument which needs to implement
-`HttpCacheAwareKernelInterface` so the instance of `HttpCache` can be accessed.
+`HttpCacheProvider` so the instance of `HttpCache` can be accessed.
 This is not possible by default in any Symfony application as `HttpCache` is
 implemented using the decorator pattern and thus the inner - real - application
 kernel does not know whether it's been decorated or not.
@@ -203,7 +203,7 @@ Let's check the code needed, this will help you understand the mechanism::
     use FOS\HttpCache\SymfonyCache\KernelDispatcher;
     use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
-    // Must implement HttpCacheAwareKernelInterface
+    // Must implement HttpCacheProvider
     // You can use the HttpCacheAwareKernel trait to simplify things.
     $kernel = new App\Kernel();
 

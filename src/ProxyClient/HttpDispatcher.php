@@ -125,7 +125,6 @@ class HttpDispatcher implements Dispatcher
         $this->queue[$signature] = $invalidationRequest;
     }
 
-
     /**
      * {@inheritdoc}
      */

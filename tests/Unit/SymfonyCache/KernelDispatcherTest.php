@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
-use FOS\HttpCache\SymfonyCache\HttpCacheAwareKernelInterface;
+use FOS\HttpCache\SymfonyCache\HttpCacheProvider;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use GuzzleHttp\Psr7\Request as Psr7Request;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +60,7 @@ class KernelDispatcherTest extends TestCase
             }))
             ->willReturn(new Response());
 
-        $kernel = $this->createMock(HttpCacheAwareKernelInterface::class);
+        $kernel = $this->createMock(HttpCacheProvider::class);
         $kernel->expects($this->once())
             ->method('getHttpCache')
             ->willReturn($httpCache);

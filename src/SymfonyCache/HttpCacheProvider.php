@@ -13,7 +13,7 @@ namespace FOS\HttpCache\SymfonyCache;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-interface HttpCacheAwareKernelInterface
+interface HttpCacheProvider
 {
     /**
      * @return HttpKernelInterface
