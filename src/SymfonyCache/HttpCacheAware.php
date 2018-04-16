@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 /**
  * Trait to implement the HttpCacheProvider interface.
  */
-trait HttpCacheAwareKernel
+trait HttpCacheAware
 {
     /**
      * @var HttpKernelInterface

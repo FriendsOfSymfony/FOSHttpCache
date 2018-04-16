@@ -15,9 +15,10 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Queue and send HTTP requests with a Httplug asynchronous client.
+ * Queue and send HTTP invalidation requests.
  *
  * @author David Buchmann <mail@davidbu.ch>
+ * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
 interface Dispatcher
 {

@@ -32,21 +32,16 @@ class KernelDispatcher implements Dispatcher
     /**
      * @var HttpCacheProvider
      */
-    private $kernel;
+    private $httpCacheProvider;
 
     /**
      * @var array
      */
     private $queue = [];
 
-    /**
-     * KernelClient constructor.
-     *
-     * @param HttpCacheProvider $kernel
-     */
-    public function __construct(HttpCacheProvider $kernel)
+    public function __construct(HttpCacheProvider $httpCacheProvider)
     {
-        $this->kernel = $kernel;
+        $this->httpCacheProvider = $httpCacheProvider;
     }
 
     /**
@@ -96,7 +91,7 @@ class KernelDispatcher implements Dispatcher
 
         $exceptions = new ExceptionCollection();
 
-        $httpCache = $this->kernel->getHttpCache();
+        $httpCache = $this->httpCacheProvider->getHttpCache();
 
         foreach ($queue as $request) {
             try {

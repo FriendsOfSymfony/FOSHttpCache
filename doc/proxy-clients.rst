@@ -204,7 +204,7 @@ Let's check the code needed, this will help you understand the mechanism::
     use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
     // Must implement HttpCacheProvider
-    // You can use the HttpCacheAwareKernel trait to simplify things.
+    // You can use the HttpCacheAware trait to simplify things.
     $kernel = new App\Kernel();
 
     $httpCache = new HttpCache($kernel);
