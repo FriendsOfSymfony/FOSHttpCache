@@ -3,6 +3,19 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.3.0 (unreleased)
+------------------
+
+### ProxyClient
+
+* The `HttpProxyClient` now accepts an instance of the new `Dispatcher` interface
+  instead of the concrete `HttpDispatcher`, allowing for more flexibility.
+
+### Symfony
+
+* Introduced a new `KernelDispatcher` for the Symfony proxy that calls the application
+  kernel directly instead of executing a full HTTP request.
+
 2.2.1
 -----
 

@@ -172,7 +172,8 @@ call `setPurgeLocation()`::
 
 .. note::
 
-    To use the client, you need to :doc:`configure NGINX <nginx-configuration>` accordingly.
+    To use the client, you need to :doc:`configure NGINX <nginx-configuration>`
+    accordingly.
 
 Symfony Client
 ~~~~~~~~~~~~~~
@@ -187,6 +188,39 @@ dispatcher as explained above and pass it to the Symfony client::
 .. note::
 
     To make invalidation work, you need to :doc:`use the EventDispatchingHttpCache <symfony-cache-configuration>`.
+
+The ``HttpDispatcher`` sends real HTTP requests using any instance of
+``HttpAsyncClient`` available in your application. If your application runs on
+one single server, you can call the cache kernel directly, inside the same PHP
+process, instead of sending actual HTTP requests over the network. This makes
+your setup easier as you don't need to know the IP of your server and will also
+save server resources.
+
+To do this, use the ``KernelDispatcher`` instead of the ``HttpDispatcher``.
+This alternate dispatcher expects a ``HttpCacheProvider`` in the constructor to
+provide the ``HttpCache``. The cache is implemented with the decorator pattern
+and thus the actual application kernel does not normally know about the cache.
+This library provides the ``HttpCacheAware`` trait to simplify making your
+kernel capable of providing the cache.
+
+Let's look at an example to understand how this works::
+
+    use FOS\HttpCache\ProxyClient\Symfony;
+    use FOS\HttpCache\SymfonyCache\KernelDispatcher;
+    use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+
+    // Must implement HttpCacheProvider
+    // Use HttpCacheAware trait to simplify things
+    $kernel = new App\Kernel();
+
+    $httpCache = new HttpCache($kernel);
+
+    // Tell the kernel about the cache
+    $kernel->setHttpCache($httpCache);
+
+    // Create the Symfony proxy client with KernelDispatcher
+    $kernelDispatcher = new KernelDispatcher($kernel);
+    $symfony = new Symfony($kernelDispatcher);
 
 Noop Client
 ~~~~~~~~~~~
