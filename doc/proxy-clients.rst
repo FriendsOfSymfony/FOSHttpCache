@@ -189,6 +189,9 @@ dispatcher as explained above and pass it to the Symfony client::
 
     To make invalidation work, you need to :doc:`use the EventDispatchingHttpCache <symfony-cache-configuration>`.
 
+KernelDispatcher for Single Server Installations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 The ``HttpDispatcher`` sends real HTTP requests using any instance of
 ``HttpAsyncClient`` available in your application. If your application runs on
 one single server, you can call the cache kernel directly, inside the same PHP
@@ -199,19 +202,35 @@ save server resources.
 To do this, use the ``KernelDispatcher`` instead of the ``HttpDispatcher``.
 This alternate dispatcher expects a ``HttpCacheProvider`` in the constructor to
 provide the ``HttpCache``. The cache is implemented with the decorator pattern
-and thus the actual application kernel does not normally know about the cache.
-This library provides the ``HttpCacheAware`` trait to simplify making your
-kernel capable of providing the cache.
+and thus the application kernel does not normally know about the cache. This
+library provides the ``HttpCacheAware`` trait to simplify making your kernel
+capable of providing the cache.
 
-Let's look at an example to understand how this works::
+You need to adjust your kernel::
+
+    // src/AppKernel.php
+
+    namespace App;
+
+    use FOS\HttpCache\SymfonyCache\HttpCacheAware;
+    use FOS\HttpCache\SymfonyCache\HttpCacheProvider;
+    use Symfony\Component\HttpKernel\Kernel;
+
+    class AppKernel extends Kernel implements HttpCacheProvider
+    {
+        use HttpCacheAware;
+        ...
+    }
+
+And adjust your bootstrapping code to wire the cache together with the cache provider::
+
+    // public/index.php
 
     use FOS\HttpCache\ProxyClient\Symfony;
     use FOS\HttpCache\SymfonyCache\KernelDispatcher;
     use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
-    // Must implement HttpCacheProvider
-    // Use HttpCacheAware trait to simplify things
-    $kernel = new App\Kernel();
+    $kernel = new App\AppKernel();
 
     $httpCache = new HttpCache($kernel);
 
