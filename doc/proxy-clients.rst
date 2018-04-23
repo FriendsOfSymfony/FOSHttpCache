@@ -189,6 +189,8 @@ dispatcher as explained above and pass it to the Symfony client::
 
     To make invalidation work, you need to :doc:`use the EventDispatchingHttpCache <symfony-cache-configuration>`.
 
+.. _proxy client symfony httpcache kernel dispatcher:
+
 KernelDispatcher for Single Server Installations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
