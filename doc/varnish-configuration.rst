@@ -177,8 +177,8 @@ Feature: :ref:`cache tagging <tags>`
 For this feature you need to choose between either BAN _(default)_ and the
 more performant xkey based tag system.
 
-Using xkey
-^^^^^^^^^^
+Tag Invalidation Using xkey
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Since Varnish 4.1, you can use the official `xkey Varnish module`_ for better
 performance with cache tags.
@@ -217,8 +217,8 @@ and include ``resources/config/varnish/fos_tags_xkey.vcl`` in your VCL:
 Note that there is no xkey VCL file for Varnish version 3 because the
 varnish-modules are only available for Varnish 4.1 or newer.
 
-Using BAN
-^^^^^^^^^
+Tag Invalidation Using BAN
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you have included ``fos_ban.vcl``, tagging will be automatically enabled
 with the ``X-Cache-Tags`` header for both marking the tags on the response and
