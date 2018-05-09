@@ -39,7 +39,7 @@ Provided VCL Subroutines
 In order to ease configuration we provide a set of VCL subroutines in the
 ``resources/config`` directory. These can be included from your main Varnish
 configuration file, typically ``default.vcl``. Then you need to make your
-``VCL_*`` subroutines call the ``fos_*`` routines.
+``vcl_*`` subroutines call the ``fos_*`` routines.
 
 .. tip::
     When including one of the provided VCL, you need to call all the defined
