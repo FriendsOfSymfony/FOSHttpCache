@@ -3,6 +3,15 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.3.1
+-----
+
+### Varnish
+
+* Fixed: Do not `preg_quote` tags when using xkey. Quoting is only used for BAN
+  requests that expect a regular expression. This bug only affected you if you
+  use xkey *and* used characters in your tags that are changed by `preg_quote`.
+
 2.3.0
 -----
 

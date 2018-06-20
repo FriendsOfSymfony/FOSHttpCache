@@ -84,6 +84,49 @@ class VarnishTest extends TestCase
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
     }
 
+    public function testPurgekeys()
+    {
+        $options = [
+            'tag_mode' => 'purgekeys',
+        ];
+
+        $varnish = new Varnish($this->httpDispatcher, $options);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('PURGEKEYS', $request->getMethod());
+                    $this->assertEquals('post-1 post,type-3', $request->getHeaderLine('xkey-softpurge'));
+
+                    return true;
+                }
+            ), false
+        );
+
+        $varnish->invalidateTags(['post-1', 'post,type-3']);
+    }
+
+    public function testHardPurgekeys()
+    {
+        $options = [
+            'tag_mode' => 'purgekeys',
+            'tags_header' => 'xkey-purge',
+        ];
+
+        $varnish = new Varnish($this->httpDispatcher, $options);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('PURGEKEYS', $request->getMethod());
+                    $this->assertEquals('post-1 post,type-3', $request->getHeaderLine('xkey-purge'));
+
+                    return true;
+                }
+            ), false
+        );
+
+        $varnish->invalidateTags(['post-1', 'post,type-3']);
+    }
+
     /**
      * @expectedException \FOS\HttpCache\Exception\InvalidArgumentException
      */
