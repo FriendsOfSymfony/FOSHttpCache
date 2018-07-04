@@ -87,7 +87,7 @@ class VarnishTest extends TestCase
     public function testPurgekeys()
     {
         $options = [
-            'tag_mode' => 'purgekeys'
+            'tag_mode' => 'purgekeys',
         ];
 
         $varnish = new Varnish($this->httpDispatcher, $options);
@@ -109,7 +109,7 @@ class VarnishTest extends TestCase
     {
         $options = [
             'tag_mode' => 'purgekeys',
-            'tags_header' => 'xkey-purge'
+            'tags_header' => 'xkey-purge',
         ];
 
         $varnish = new Varnish($this->httpDispatcher, $options);
