@@ -32,7 +32,7 @@ class Fastly extends HttpProxyClient implements TagCapable
     public function invalidateTags(array $tags)
     {
 
-        $headers= [
+        $headers = [
             'Fastly-Key' => $this->options['authentication_token'],
             'Accept' => 'application/json'
         ];
@@ -41,8 +41,15 @@ class Fastly extends HttpProxyClient implements TagCapable
             $headers['Fastly-Soft-Purge'] = 1;
         }
 
-        foreach ($tags as $tag) {
-            $this->queueRequest(Request::METHOD_POST, sprintf("/service/%s/purge/%s", $this->options['service_identifier'], $tag), $headers, false);
+        foreach (\explode(",", $this->options['service_identifier']) as $fastlyServiceId) {
+            foreach ($tags as $tag) {
+                $this->queueRequest(
+                    Request::METHOD_POST,
+                    sprintf("/service/%s/purge/%s", $fastlyServiceId, $tag),
+                    $headers,
+                    false
+                );
+            }
         }
 
         return $this;
