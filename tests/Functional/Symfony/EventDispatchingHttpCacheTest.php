@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests\Functional\Symfony;
 
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
+use FOS\HttpCache\SymfonyCache\CleanupCacheTagsListener;
 use FOS\HttpCache\SymfonyCache\CustomTtlListener;
 use FOS\HttpCache\SymfonyCache\DebugListener;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
@@ -38,6 +39,7 @@ class EventDispatchingHttpCacheTest extends TestCase
         $request = new Request();
         $expectedResponse = new Response();
         $expectedResponse->headers->set('X-Reverse-Proxy-TTL', 60);
+        $expectedResponse->headers->set('X-Cache-Tags', 'foo, bar');
 
         $httpKernel = \Mockery::mock(HttpKernelInterface::class)
             ->shouldReceive('handle')
@@ -59,10 +61,12 @@ class EventDispatchingHttpCacheTest extends TestCase
             // we already test anonymous hash lookup in the UserContextListener unit test
             'anonymous_hash' => 'abcdef',
         ]));
+        $kernel->addSubscriber(new CleanupCacheTagsListener());
 
         $response = $kernel->handle($request);
         $this->assertSame($expectedResponse, $response);
         $this->assertFalse($response->headers->has('X-Reverse-Proxy-TTL'));
+        $this->assertFalse($response->headers->has('X-Cache-Tags'));
     }
 }
 

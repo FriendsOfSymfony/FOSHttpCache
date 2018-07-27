@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.4.0 (unreleased)
+------------------
+
+### Symfony
+
+* Added: `CleanupCacheTagsListener` to remove the cache tags header from the final
+  response that is sent to the client. Add this listener to your cache kernel.
+
 2.3.1
 -----
 
