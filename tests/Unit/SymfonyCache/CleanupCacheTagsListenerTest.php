@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\CleanupCacheTagsListener;
+use FOS\HttpCache\SymfonyCache\Events;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CleanupCacheTagsListenerTest extends TestCase
 {
+    public function testSubscribedEvents()
+    {
+        $this->assertEquals([
+            Events::POST_HANDLE => 'cleanResponse',
+        ], CleanupCacheTagsListener::getSubscribedEvents());
+    }
+
     public function testNoResponse()
     {
         $listener = new CleanupCacheTagsListener();
