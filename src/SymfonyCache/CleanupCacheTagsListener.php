@@ -27,7 +27,7 @@ class CleanupCacheTagsListener implements EventSubscriberInterface
     private $tagsHeader;
 
     /**
-     * @param string $tagsHeader The header that is used for cache tags.
+     * @param string $tagsHeader The header that is used for cache tags
      */
     public function __construct($tagsHeader = PurgeTagsListener::DEFAULT_TAGS_HEADER)
     {

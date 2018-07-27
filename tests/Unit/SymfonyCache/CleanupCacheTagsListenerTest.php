@@ -32,6 +32,7 @@ class CleanupCacheTagsListenerTest extends TestCase
 
     public function testResponseHeaderIsCleanedUp()
     {
+        // Default cache tags header
         $response = new Response();
         $response->headers->set('X-Cache-Tags', 'foo, bar');
 
@@ -40,7 +41,7 @@ class CleanupCacheTagsListenerTest extends TestCase
 
         $this->assertFalse($response->headers->has('X-Cache-Tags'));
 
-
+        // Custom cache tags header
         $response = new Response();
         $response->headers->set('Foobar', 'foo, bar');
 
