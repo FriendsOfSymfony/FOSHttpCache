@@ -123,7 +123,7 @@ class ResponseTagger
             throw new InvalidTagException('Empty tags are not allowed');
         }
 
-        $this->tags = array_merge($this->tags, $filtered);
+        $this->tags = array_unique(array_merge($this->tags, $filtered));
 
         return $this;
     }
