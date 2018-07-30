@@ -10,6 +10,10 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Added: `CleanupCacheTagsListener` to remove the cache tags header from the final
   response that is sent to the client. Add this listener to your cache kernel.
+  
+### Tagging
+
+* Improved: The `ResponseTagger` does now remove duplicate tags.
 
 2.3.1
 -----
