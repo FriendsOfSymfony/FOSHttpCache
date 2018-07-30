@@ -139,8 +139,9 @@ class ResponseTaggerTest extends TestCase
 
         $tagHandler = new ResponseTagger(['header_formatter' => $headerFormatter, 'strict' => true]);
         $tagHandler->addTags(['post-1', 'post-2', 'post-1']);
+        $tagHandler->addTags(['post-2', 'post-3']);
         $this->assertTrue($tagHandler->hasTags());
 
-        $this->assertEquals('post-1,post-2', $tagHandler->getTagsHeaderValue());
+        $this->assertEquals('post-1,post-2,post-3', $tagHandler->getTagsHeaderValue());
     }
 }
