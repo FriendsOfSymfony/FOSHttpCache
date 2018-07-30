@@ -199,6 +199,10 @@ store does not have tagging support.
     To install the store, run
     ``composer require toflar/psr6-symfony-http-cache-store``.
 
+You should also add the ``CleanupCacheTagsListener`` to make sure the final
+response when sent to the client does not contain any cache tags in the
+headers anymore.
+
 Purging tags is only allowed from the same machine by default. To change this,
 you have the same configuration options as with the ``PurgeListener``. *Only
 set one of ``client_ips`` or ``client_matcher``*. Additionally, you can
@@ -229,6 +233,9 @@ To get cache tagging support, register the ``PurgeTagsListener`` and use the
 
     use Toflar\Psr6HttpCacheStore\Psr6Store;
     use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
+    use FOS\HttpCache\SymfonyCache\CleanupCacheTagsListener;
+
+    const TAGS_HEADER = 'Custom-Cache-Tags-Header';
 
     // ...
 
@@ -242,12 +249,13 @@ To get cache tagging support, register the ``PurgeTagsListener`` and use the
     ) {
         $store = new Psr6Store([
             'cache_directory' => $kernel->getCacheDir(),
-            'cache_tags_header' => 'X-Cache-Tags',
+            'cache_tags_header' => self::TAGS_HEADER,
         ]);
 
         parent::__construct($kernel, $store, $surrogate, $options);
 
         $this->addSubscriber(new PurgeTagsListener());
+        $this->addSubscriber(new CleanupCacheTagsListener(self::TAGS_HEADER));
     }
 
 .. _symfony-cache user context:
