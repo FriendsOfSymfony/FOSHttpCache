@@ -27,14 +27,14 @@ class CleanupCacheTagsListenerTest extends TestCase
     public function testSubscribedEvents()
     {
         $this->assertEquals([
-            Events::POST_HANDLE => 'cleanResponse',
+            Events::POST_HANDLE => 'removeTagsHeader',
         ], CleanupCacheTagsListener::getSubscribedEvents());
     }
 
     public function testNoResponse()
     {
         $listener = new CleanupCacheTagsListener();
-        $listener->cleanResponse($this->createEvent());
+        $listener->removeTagsHeader($this->createEvent());
         $this->addToAssertionCount(1); // Nothing should happen, just asserting the "response is null" case
     }
 
@@ -45,7 +45,7 @@ class CleanupCacheTagsListenerTest extends TestCase
         $response->headers->set('X-Cache-Tags', 'foo, bar');
 
         $listener = new CleanupCacheTagsListener();
-        $listener->cleanResponse($this->createEvent($response));
+        $listener->removeTagsHeader($this->createEvent($response));
 
         $this->assertFalse($response->headers->has('X-Cache-Tags'));
 
@@ -54,7 +54,7 @@ class CleanupCacheTagsListenerTest extends TestCase
         $response->headers->set('Foobar', 'foo, bar');
 
         $listener = new CleanupCacheTagsListener('Foobar');
-        $listener->cleanResponse($this->createEvent($response));
+        $listener->removeTagsHeader($this->createEvent($response));
 
         $this->assertFalse($response->headers->has('Foobar'));
     }
