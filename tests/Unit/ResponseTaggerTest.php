@@ -132,4 +132,16 @@ class ResponseTaggerTest extends TestCase
         $this->assertTrue($tagHandler->hasTags());
         $this->assertEquals('post-1', $tagHandler->getTagsHeaderValue());
     }
+
+    public function testUniqueTags()
+    {
+        $headerFormatter = new CommaSeparatedTagHeaderFormatter('FOS-Tags');
+
+        $tagHandler = new ResponseTagger(['header_formatter' => $headerFormatter, 'strict' => true]);
+        $tagHandler->addTags(['post-1', 'post-2', 'post-1']);
+        $tagHandler->addTags(['post-2', 'post-3']);
+        $this->assertTrue($tagHandler->hasTags());
+
+        $this->assertEquals('post-1,post-2,post-3', $tagHandler->getTagsHeaderValue());
+    }
 }
