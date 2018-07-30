@@ -11,11 +11,12 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Listener that allows to cleanup the cache tags header so it's not exposed
- * to the world.
+ * Listener to remove the cache tags header before the response
+ * is delivered to the client so it's not exposed to the world.
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
@@ -29,19 +30,14 @@ class CleanupCacheTagsListener implements EventSubscriberInterface
     /**
      * @param string $tagsHeader The header that is used for cache tags
      */
-    public function __construct($tagsHeader = PurgeTagsListener::DEFAULT_TAGS_HEADER)
+    public function __construct($tagsHeader = TagHeaderFormatter::DEFAULT_HEADER_NAME)
     {
         $this->tagsHeader = $tagsHeader;
     }
 
-    /**
-     * Remove the cache headers.
-     *
-     * @param CacheEvent $e
-     */
-    public function cleanResponse(CacheEvent $e)
+    public function removeTagsHeader(CacheEvent $e)
     {
-        if (null === ($response = $e->getResponse())) {
+        if (null === $response = $e->getResponse()) {
             return;
         }
 
@@ -54,7 +50,7 @@ class CleanupCacheTagsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::POST_HANDLE => 'cleanResponse',
+            Events::POST_HANDLE => 'removeTagsHeader',
         ];
     }
 }

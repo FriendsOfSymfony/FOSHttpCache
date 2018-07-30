@@ -235,6 +235,8 @@ To get cache tagging support, register the ``PurgeTagsListener`` and use the
     use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
     use FOS\HttpCache\SymfonyCache\CleanupCacheTagsListener;
 
+    const TAGS_HEADER = 'Custom-Cache-Tags-Header';
+
     // ...
 
     /**
@@ -245,17 +247,15 @@ To get cache tagging support, register the ``PurgeTagsListener`` and use the
         SurrogateInterface $surrogate = null,
         array $options = []
     ) {
-        $tagsHeader = 'X-Cache-Tags';
-
         $store = new Psr6Store([
             'cache_directory' => $kernel->getCacheDir(),
-            'cache_tags_header' => $tagsHeader,
+            'cache_tags_header' => self::TAGS_HEADER,
         ]);
 
         parent::__construct($kernel, $store, $surrogate, $options);
 
         $this->addSubscriber(new PurgeTagsListener());
-        $this->addSubscriber(new CleanupCacheTagsListener($tagsHeader));
+        $this->addSubscriber(new CleanupCacheTagsListener(self::TAGS_HEADER));
     }
 
 .. _symfony-cache user context:
