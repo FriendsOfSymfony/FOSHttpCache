@@ -17,7 +17,7 @@ use FOS\HttpCache\Exception\InvalidTagException;
  * A header formatter that splits the value(s) from a given
  * other header formatter (e.g. the CommaSeparatedTagHeaderFormatter)
  * into multiple headers making sure none of the header values
- * exceeds the configured limit
+ * exceeds the configured limit.
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
@@ -40,7 +40,7 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
      * use up just one byte.
      *
      * @param TagHeaderFormatter $inner
-     * @param int $maxHeaderValueLength
+     * @param int                $maxHeaderValueLength
      */
     public function __construct(TagHeaderFormatter $inner, $maxHeaderValueLength = 4096)
     {
@@ -56,7 +56,6 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
         $this->inner->getTagsHeaderName();
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -67,7 +66,7 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
 
         foreach ($values as $value) {
             if ($this->isHeaderTooLong($value)) {
-                list ($firstTags, $secondTags) = $this->splitTagsInHalves($tags);
+                list($firstTags, $secondTags) = $this->splitTagsInHalves($tags);
 
                 $newValues[] = (array) $this->getTagsHeaderValue($firstTags);
                 $newValues[] = (array) $this->getTagsHeaderValue($secondTags);
@@ -101,10 +100,11 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
      * @param array $tags
      *
      * @return array
+     *
      * @throws InvalidTagException
      */
-    private function splitTagsInHalves(array $tags) {
-
+    private function splitTagsInHalves(array $tags)
+    {
         if (1 === count($tags)) {
             throw new InvalidTagException(sprintf(
                 'You configured a maximum header length of %d but the tag "%s" is too long.',
@@ -114,6 +114,7 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
         }
 
         $size = ceil(count($tags) / 2);
+
         return array_chunk($tags, $size);
     }
 }

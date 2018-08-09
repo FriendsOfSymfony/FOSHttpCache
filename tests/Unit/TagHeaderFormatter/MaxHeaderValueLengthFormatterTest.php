@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCache\Tests\Unit\TagHeaderFormatter;
 
-
 use FOS\HttpCache\Exception\InvalidTagException;
 use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
 use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter;
@@ -29,7 +28,8 @@ class MaxHeaderValueLengthFormatterTest extends TestCase
 
     /**
      * @dataProvider tooLongProvider
-     * @param int $maxLength
+     *
+     * @param int   $maxLength
      * @param array $tags
      * @param mixed $expectedHeaderValue
      */
