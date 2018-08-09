@@ -12,7 +12,7 @@
 namespace FOS\HttpCache\Exception;
 
 /**
- * Thrown during tagging with an empty value.
+ * Thrown during tagging with an invalid value.
  */
 class InvalidTagException extends \InvalidArgumentException implements HttpCacheException
 {

@@ -39,7 +39,7 @@ interface TagHeaderFormatter
      *
      * @param array $tags
      *
-     * @return string
+     * @return string|string[]
      */
     public function getTagsHeaderValue(array $tags);
 }
