@@ -123,6 +123,8 @@ trait SymfonyTest
 
             $this->proxyClient = new Symfony($httpDispatcher, [
                     'purge_method' => 'NOTIFY',
+                    'tags_method' => 'UNSUBSCRIBE',
+                    'tags_path' => '/symfony.php/',
                 ]
             );
         }

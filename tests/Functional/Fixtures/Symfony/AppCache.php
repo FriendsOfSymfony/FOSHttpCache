@@ -16,6 +16,7 @@ use FOS\HttpCache\SymfonyCache\CustomTtlListener;
 use FOS\HttpCache\SymfonyCache\DebugListener;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 use FOS\HttpCache\SymfonyCache\RefreshListener;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +35,7 @@ class AppCache extends HttpCache implements CacheInvalidation
 
         $this->addSubscriber(new CustomTtlListener());
         $this->addSubscriber(new PurgeListener(['purge_method' => 'NOTIFY']));
+        $this->addSubscriber(new PurgeTagsListener(['tags_method' => 'UNSUBSCRIBE']));
         $this->addSubscriber(new RefreshListener());
         $this->addSubscriber(new UserContextListener());
         if (isset($options['debug']) && $options['debug']) {

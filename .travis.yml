@@ -7,7 +7,7 @@ cache:
 env:
   global:
     - VARNISH_VERSION=5.1
-    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^1.0"
+    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^1.1.2"
 
 matrix:
   fast_finish: true
@@ -30,7 +30,7 @@ matrix:
     - php: 7.2
       env: DEPENDENCIES="symfony/lts:^2"
     - php: 7.2
-      env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^1.0"
+      env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^1.1.2"
 
       # Latest commit to master
     - php: 7.2
