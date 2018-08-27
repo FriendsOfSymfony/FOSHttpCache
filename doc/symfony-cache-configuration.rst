@@ -226,7 +226,7 @@ configure the HTTP method and header used for tag purging:
 
   **default**: ``X-Cache-Tags``
 
-* **tags_invalidate_path**: Path to where the invalidation request with the headers should be sent to.
+* **tags_invalidate_path**: Path on the caching proxy to which the purge tags request should be sent.
 
   **default**: ``/``
 

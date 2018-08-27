@@ -57,6 +57,9 @@ empty tags::
     $responseTagger = new ResponseTagger(['strict' => true]);
 
 
+Working with large numbers of tags
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 Depending on how many tags your system usually generates your tags header value
 might get pretty long. In that case, again depending on your setup, you might run
 into server exceptions because the header value is too big to send. Mostly, this
@@ -72,6 +75,10 @@ the splitting for you. You give it an inner formatter and the maximum length lik
 
     $inner = new CommaSeparatedTagHeaderFormatter('X-Cache-Tags', ',');
     $formatter new MaxHeaderValueLengthFormatter($inner, 4096);
+
+.. note::
+
+    Both, Varnish and Symfony HttpCache support multiple cache tag headers.
 
 Usage
 ~~~~~
