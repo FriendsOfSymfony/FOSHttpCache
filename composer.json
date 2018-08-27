@@ -38,6 +38,9 @@
         "symfony/process": "^3.4 || ^4.0",
         "symfony/http-kernel": "^3.4 || ^4.0"
     },
+    "conflict": {
+        "toflar/psr6-symfony-http-cache-store": "<1.1.2"
+    },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
         "monolog/monolog": "For logging issues while invalidating"
