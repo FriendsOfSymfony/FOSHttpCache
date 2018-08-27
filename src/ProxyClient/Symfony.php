@@ -58,13 +58,13 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
             'purge_method' => PurgeListener::DEFAULT_PURGE_METHOD,
             'tags_method' => PurgeTagsListener::DEFAULT_TAGS_METHOD,
             'tags_header' => PurgeTagsListener::DEFAULT_TAGS_HEADER,
-            'tags_path' => '/',
+            'tags_invalidate_path' => '/',
             'header_length' => 7500,
         ]);
         $resolver->setAllowedTypes('purge_method', 'string');
         $resolver->setAllowedTypes('tags_method', 'string');
         $resolver->setAllowedTypes('tags_header', 'string');
-        $resolver->setAllowedTypes('tags_path', 'string');
+        $resolver->setAllowedTypes('tags_invalidate_path', 'string');
         $resolver->setAllowedTypes('header_length', 'int');
 
         return $resolver;
@@ -86,7 +86,7 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         foreach (array_chunk($escapedTags, $chunkSize) as $tagchunk) {
             $this->queueRequest(
                 $this->options['tags_method'],
-                $this->options['tags_path'],
+                $this->options['tags_invalidate_path'],
                 [$this->options['tags_header'] => implode(',', $tagchunk)],
                 false
             );
