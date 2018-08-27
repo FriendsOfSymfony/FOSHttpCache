@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.5.0
+-----
+
+### Tagging
+
+* Added: `MaxHeaderValueLengthFormatter` to allow splitting cache tag headers into
+  multiple headers.
+
 2.4.0
 -----
 
