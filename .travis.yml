@@ -26,6 +26,10 @@ matrix:
     - php: 7.2
       env: VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.9.1
 
+    # Test Symfony LTS versions
+    - php: 7.2
+      env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^1.0"
+
       # Latest commit to master
     - php: 7.2
       env: STABILITY="dev"
