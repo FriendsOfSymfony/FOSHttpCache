@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Test;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Symfony;
 use FOS\HttpCache\Test\Proxy\SymfonyProxy;
+use Toflar\Psr6HttpCacheStore\Psr6Store;
 
 /**
  * Clears the Symfony HttpCache proxy between tests.
@@ -121,12 +122,16 @@ trait SymfonyTest
                 $this->getHostName().':'.$this->getCachingProxyPort()
             );
 
-            $this->proxyClient = new Symfony($httpDispatcher, [
-                    'purge_method' => 'NOTIFY',
-                    'tags_method' => 'UNSUBSCRIBE',
-                    'tags_invalidate_path' => '/symfony.php/',
-                ]
-            );
+            $config = [
+                'purge_method' => 'NOTIFY',
+            ];
+
+            if (class_exists(Psr6Store::class)) {
+                $config['tags_method'] = 'UNSUBSCRIBE';
+                $config['tags_invalidate_path'] = '/symfony.php/';
+            }
+
+            $this->proxyClient = new Symfony($httpDispatcher, $config);
         }
 
         return $this->proxyClient;

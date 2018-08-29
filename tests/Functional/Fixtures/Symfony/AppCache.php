@@ -24,6 +24,7 @@ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Toflar\Psr6HttpCacheStore\Psr6Store;
 
 class AppCache extends HttpCache implements CacheInvalidation
 {
@@ -35,7 +36,11 @@ class AppCache extends HttpCache implements CacheInvalidation
 
         $this->addSubscriber(new CustomTtlListener());
         $this->addSubscriber(new PurgeListener(['purge_method' => 'NOTIFY']));
-        $this->addSubscriber(new PurgeTagsListener(['tags_method' => 'UNSUBSCRIBE']));
+
+        if (!class_exists(Psr6Store::class)) {
+            $this->addSubscriber(new PurgeTagsListener(['tags_method' => 'UNSUBSCRIBE']));
+        }
+
         $this->addSubscriber(new RefreshListener());
         $this->addSubscriber(new UserContextListener());
         if (isset($options['debug']) && $options['debug']) {
