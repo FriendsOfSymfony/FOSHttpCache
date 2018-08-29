@@ -33,6 +33,18 @@ class AppKernel implements HttpKernelInterface
                 $response->setCache(['max_age' => 3600, 'public' => true]);
 
                 return $response;
+            case '/tags':
+                $response = new Response(microtime(true));
+                $response->setCache(['max_age' => 3600, 'public' => true]);
+                $response->headers->set('X-Cache-Tags', 'tag1,tag2');
+
+                return $response;
+            case '/tags_multi_header':
+                $response = new Response(microtime(true));
+                $response->setCache(['max_age' => 3600, 'public' => true]);
+                $response->headers->set('X-Cache-Tags', ['tag1', 'tag2']);
+
+                return $response;
             case '/negotiation':
                 $response = new Response(microtime(true));
                 $response->setCache(['max_age' => 3600, 'public' => true]);

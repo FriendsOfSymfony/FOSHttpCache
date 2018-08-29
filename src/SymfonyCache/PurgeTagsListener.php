@@ -117,7 +117,13 @@ class PurgeTagsListener extends AccessControlledListener
             return;
         }
 
-        $tags = explode(',', $request->headers->get($this->tagsHeader));
+        $tags = [];
+
+        foreach ($request->headers->get($this->tagsHeader, '', false) as $v) {
+            foreach (explode(',', $v) as $tag) {
+                $tags[] = $tag;
+            }
+        }
 
         if ($store->invalidateTags($tags)) {
             $response->setStatusCode(200, 'Purged');

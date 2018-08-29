@@ -226,6 +226,10 @@ configure the HTTP method and header used for tag purging:
 
   **default**: ``X-Cache-Tags``
 
+* **tags_invalidate_path**: Path on the caching proxy to which the purge tags request should be sent.
+
+  **default**: ``/``
+
 To get cache tagging support, register the ``PurgeTagsListener`` and use the
 ``Psr6Store`` in your ``AppCache``::
 

@@ -21,7 +21,7 @@ abstract class AbstractCacheConstraintTest extends TestCase
     protected function getResponseMock()
     {
         $mock = \Mockery::mock(
-            '\Psr\Http\Message\ResponseInterface[hasHeader,getHeaderLine,getStatusCode]'
+            '\Psr\Http\Message\ResponseInterface[hasHeader,getHeaderLine,getStatusCode,getHeaders,getBody]'
         );
 
         return $mock;

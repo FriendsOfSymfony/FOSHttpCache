@@ -54,6 +54,18 @@ trait AbstractCacheConstraintTrait
                 $message .= sprintf("\nStatus code of response is %s.", $other->getStatusCode());
             }
 
+            $message .= "\nThe response headers are:\n\n";
+
+            foreach ($other->getHeaders() as $name => $values) {
+                foreach ($values as $value) {
+                    $message .= $name.': '.$value;
+                }
+            }
+
+            $body = $other->getBody();
+            $body->rewind();
+            $message .= sprintf("\nThe response body is:\n\n %s", $body->getContents());
+
             throw new \RuntimeException($message);
         }
 

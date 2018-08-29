@@ -16,6 +16,7 @@ use FOS\HttpCache\SymfonyCache\CustomTtlListener;
 use FOS\HttpCache\SymfonyCache\DebugListener;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
+use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 use FOS\HttpCache\SymfonyCache\RefreshListener;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,7 @@ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Toflar\Psr6HttpCacheStore\Psr6Store;
 
 class AppCache extends HttpCache implements CacheInvalidation
 {
@@ -34,6 +36,11 @@ class AppCache extends HttpCache implements CacheInvalidation
 
         $this->addSubscriber(new CustomTtlListener());
         $this->addSubscriber(new PurgeListener(['purge_method' => 'NOTIFY']));
+
+        if (class_exists(Psr6Store::class)) {
+            $this->addSubscriber(new PurgeTagsListener(['tags_method' => 'UNSUBSCRIBE']));
+        }
+
         $this->addSubscriber(new RefreshListener());
         $this->addSubscriber(new UserContextListener());
         if (isset($options['debug']) && $options['debug']) {

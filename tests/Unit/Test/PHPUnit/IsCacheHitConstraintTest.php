@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\Test\PHPUnit;
 
 use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
+use GuzzleHttp\Psr7\Stream;
 
 // phpunit 5 has forward compatibility classes but missed this one
 if (!class_exists('\PHPUnit\Framework\ExpectationFailedException')) {
@@ -40,6 +41,8 @@ class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
             ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
             ->shouldReceive('getHeaderLine')->with('cache-header')->once()->andReturn('MISS')
             ->shouldReceive('getStatusCode')->andReturn(500)
+            ->shouldReceive('getHeaders')->andReturn([])
+            ->shouldReceive('getBody')->andReturn(new Stream(fopen('php://temp', 'r+')))
             ->getMock();
 
         $this->constraint->evaluate($response);
@@ -54,6 +57,8 @@ class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->once()->andReturn(false)
             ->shouldReceive('getStatusCode')->andReturn(200)
+            ->shouldReceive('getHeaders')->andReturn([])
+            ->shouldReceive('getBody')->andReturn(new Stream(fopen('php://temp', 'r+')))
             ->getMock();
 
         $this->constraint->evaluate($response);

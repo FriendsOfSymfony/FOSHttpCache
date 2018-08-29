@@ -56,6 +56,35 @@ empty tags::
 
     $responseTagger = new ResponseTagger(['strict' => true]);
 
+
+Working with large numbers of tags
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Depending on how many tags your system usually generates your tags header value
+might get pretty long. In that case, again depending on your setup, you might run
+into server exceptions because the header value is too big to send. Mostly, this
+value seems to be about 4KB. The only thing you can do in such a case is to split
+up one header into multiple ones.
+
+ .. note::
+
+    Of course, your proxy then has to support multiple header values otherwise
+    you'll end up with a proxy that only reads the first line of your tags.
+
+This library ships with a ``MaxHeaderValueLengthFormatter`` that does
+the splitting for you. You give it an inner formatter and the maximum length like so::
+
+
+    use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
+    use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter
+
+    $inner = new CommaSeparatedTagHeaderFormatter('X-Cache-Tags', ',');
+    $formatter new MaxHeaderValueLengthFormatter($inner, 4096);
+
+.. note::
+
+    Both, Varnish and Symfony HttpCache support multiple cache tag headers.
+
 Usage
 ~~~~~
 

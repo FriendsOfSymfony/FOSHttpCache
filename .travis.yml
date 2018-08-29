@@ -7,7 +7,7 @@ cache:
 env:
   global:
     - VARNISH_VERSION=5.1
-    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^1.0"
+    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^1.1.2"
 
 matrix:
   fast_finish: true
@@ -26,15 +26,14 @@ matrix:
     - php: 7.2
       env: VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.9.1
 
-      # Test Symfony LTS versions
-    - php: 7.2
-      env: DEPENDENCIES="symfony/lts:^2"
+    # Test Symfony LTS versions
     - php: 7.2
       env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^1.0"
 
       # Latest commit to master
     - php: 7.2
       env: STABILITY="dev"
+
   allow_failures:
     # Dev-master is allowed to fail.
     - env: STABILITY="dev"

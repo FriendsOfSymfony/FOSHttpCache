@@ -9,11 +9,8 @@
  * file that was distributed with this source code.
  */
 
-namespace FOS\HttpCache\Exception;
-
-/**
- * Thrown during tagging with an invalid value.
- */
-class InvalidTagException extends \InvalidArgumentException implements HttpCacheException
-{
-}
+header('Cache-Control: max-age=3600');
+header('Content-Type: text/html');
+header('X-Cache-Tags: tag1');
+header('X-Cache-Tags: tag2');
+header('X-Cache-Debug: 1');
