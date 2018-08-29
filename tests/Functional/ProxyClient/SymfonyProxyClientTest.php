@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
 use FOS\HttpCache\Test\SymfonyTestCase;
+use Toflar\Psr6HttpCacheStore\Psr6Store;
 
 /**
  * @group webserver
@@ -50,11 +51,19 @@ class SymfonyProxyClientTest extends SymfonyTestCase
 
     public function testInvalidateTags()
     {
+        if (!class_exists(Psr6Store::class)) {
+            $this->markTestSkipped('Needs PSR-6 store to be installed.');
+        }
+
         $this->assertInvalidateTags($this->getProxyClient(), ['tag1'], '/symfony.php/tags');
     }
 
     public function testInvalidateTagsMultiHeader()
     {
+        if (!class_exists(Psr6Store::class)) {
+            $this->markTestSkipped('Needs PSR-6 store to be installed.');
+        }
+
         $this->assertInvalidateTags($this->getProxyClient(), ['tag2'], '/symfony.php/tags_multi_header');
     }
 }
