@@ -37,7 +37,7 @@ class AppCache extends HttpCache implements CacheInvalidation
         $this->addSubscriber(new CustomTtlListener());
         $this->addSubscriber(new PurgeListener(['purge_method' => 'NOTIFY']));
 
-        if (!class_exists(Psr6Store::class)) {
+        if (class_exists(Psr6Store::class)) {
             $this->addSubscriber(new PurgeTagsListener(['tags_method' => 'UNSUBSCRIBE']));
         }
 
