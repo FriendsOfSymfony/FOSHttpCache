@@ -3,26 +3,23 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-2.5.1
------
-
-### Symfony
-
-* Have cache invalidator check for presence of Psr6Store for a better guess
-  whether the cache really is TagCapable or not.
-
 2.5.0
 -----
 
-### Tagging
+### Cache Tagging
 
 * Added: `MaxHeaderValueLengthFormatter` to allow splitting cache tag headers into
   multiple headers.
 
+### Symfony HttpCache
+
+* Have cache invalidator check for presence of Psr6Store for a better guess
+  whether the cache really is TagCapable or not.
+
 2.4.0
 -----
 
-### Symfony
+### Symfony HttpCache
 
 * Added: `CleanupCacheTagsListener` to remove the cache tags header from the final
   response that is sent to the client. Add this listener to your cache kernel.
