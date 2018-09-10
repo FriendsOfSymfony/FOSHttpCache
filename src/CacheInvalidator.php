@@ -21,8 +21,10 @@ use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ProxyClient\ProxyClient;
+use FOS\HttpCache\ProxyClient\Symfony;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Toflar\Psr6HttpCacheStore\Psr6Store;
 
 /**
  * Manages HTTP cache invalidation.
@@ -97,7 +99,12 @@ class CacheInvalidator
             case self::INVALIDATE:
                 return $this->cache instanceof BanCapable;
             case self::TAGS:
-                return $this->cache instanceof TagCapable;
+                $supports = $this->cache instanceof TagCapable;
+                if ($supports && $this->cache instanceof Symfony) {
+                    return class_exists(Psr6Store::class);
+                }
+
+                return $supports;
             default:
                 throw new InvalidArgumentException('Unknown operation '.$operation);
         }

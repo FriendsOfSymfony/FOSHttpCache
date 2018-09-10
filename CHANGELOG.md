@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.5.1
+-----
+
+### Symfony
+
+* Have cache invalidator check for presence of Psr6Store for a better guess
+  whether the cache really is TagCapable or not.
+
 2.5.0
 -----
 
