@@ -53,7 +53,7 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
      */
     public function getTagsHeaderName()
     {
-        $this->inner->getTagsHeaderName();
+        return $this->inner->getTagsHeaderName();
     }
 
     /**
