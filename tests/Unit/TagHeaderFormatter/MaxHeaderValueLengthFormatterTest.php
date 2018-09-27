@@ -18,6 +18,12 @@ use PHPUnit\Framework\TestCase;
 
 class MaxHeaderValueLengthFormatterTest extends TestCase
 {
+    public function testGetTagsHeaderName()
+    {
+        $formatter = $this->getFormatter(50);
+        $this->assertSame('X-Cache-Tags', $formatter->getTagsHeaderName());
+    }
+
     public function testNotTooLong()
     {
         $formatter = $this->getFormatter(50);
