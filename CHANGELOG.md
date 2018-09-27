@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.5.1
+-----
+
+### Cache Tagging
+
+* Fixed: `MaxHeaderValueLengthFormatter::getTagsHeaderName` now actually returns the value.
+
 2.5.0
 -----
 
