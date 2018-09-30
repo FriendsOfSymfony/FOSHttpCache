@@ -34,3 +34,10 @@ sub fos_tags_xkey_recv {
         return (synth(200, "Purged "+req.http.n-gone+" objects, expired "+req.http.n-softgone+" objects"));
     }
 }
+
+sub fos_tags_xkey_deliver {
+    if (!resp.http.X-Cache-Debug) {
+        // Remove tag headers when delivering to non debug client
+        unset resp.http.xkey;
+    }
+}
