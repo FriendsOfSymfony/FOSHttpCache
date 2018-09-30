@@ -21,6 +21,12 @@ sub fos_ban_recv {
                 // the left side is the response header, the right side the invalidation header
                 + " && obj.http.X-Cache-Tags ~ " + req.http.X-Cache-Tags
             );
+        } elseif(req.http.Cookie) {
+            ban("obj.http.X-Host ~ " + req.http.X-Host
+                + " && obj.http.X-Url ~ " + req.http.X-Url
+                + " && obj.http.content-type ~ " + req.http.X-Content-Type
+                + " && obj.http.Cookie ~ " + req.http.Cookie
+            );
         } else {
             ban("obj.http.X-Host ~ " + req.http.X-Host
                 + " && obj.http.X-Url ~ " + req.http.X-Url
@@ -37,6 +43,9 @@ sub fos_ban_backend_response {
     # Set ban-lurker friendly custom headers
     set beresp.http.X-Url = bereq.url;
     set beresp.http.X-Host = bereq.http.host;
+    if (bereq.http.accept ~ "application/vnd.fos.user-context-hash") {
+        set beresp.http.Cookie = ";" + bereq.http.Cookie;
+    }
 }
 
 sub fos_ban_deliver {
@@ -46,6 +55,7 @@ sub fos_ban_deliver {
         # Remove ban-lurker friendly custom headers when delivering to client
         unset resp.http.X-Url;
         unset resp.http.X-Host;
+        unset resp.http.Cookie;
 
         # Unset the tagged cache headers
         unset resp.http.X-Cache-Tags;
