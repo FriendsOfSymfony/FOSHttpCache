@@ -214,6 +214,10 @@ and include ``resources/config/varnish/fos_tags_xkey.vcl`` in your VCL:
             call fos_tags_xkey_recv;
         }
 
+        sub vcl_deliver {
+            call fos_tags_xkey_deliver;
+        }
+
 Note that there is no xkey VCL file for Varnish version 3 because the
 varnish-modules are only available for Varnish 4.1 or newer.
 
