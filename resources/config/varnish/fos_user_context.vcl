@@ -86,16 +86,18 @@ sub fos_user_context_deliver {
         return (restart);
     }
 
-    # If we get here, this is a real response that gets sent to the client.
+    # If we get here, this is a real response that gets sent to the client and we do some cleanup if not in debug.
 
-    # Remove the vary on context user hash, this is nothing public. Keep all
-    # other vary headers.
-    set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *X-User-Context-Hash *", "");
-    set resp.http.Vary = regsub(resp.http.Vary, "^, *", "");
-    if (resp.http.Vary == "") {
-        unset resp.http.Vary;
+    if (!resp.http.X-Cache-Debug) {
+        # Remove the vary on context user hash, this is nothing public. Keep all
+        # other vary headers.
+        set resp.http.Vary = regsub(resp.http.Vary, "(?i),? *X-User-Context-Hash *", "");
+        set resp.http.Vary = regsub(resp.http.Vary, "^, *", "");
+        if (resp.http.Vary == "") {
+            unset resp.http.Vary;
+        }
+
+        # Sanity check to prevent ever exposing the hash to a client.
+        unset resp.http.X-User-Context-Hash;
     }
-
-    # Sanity check to prevent ever exposing the hash to a client.
-    unset resp.http.X-User-Context-Hash;
 }
