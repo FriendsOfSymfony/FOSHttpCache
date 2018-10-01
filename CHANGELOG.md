@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+unreleased
+----------
+
+### Varnish
+
+* Fixed: Remove the xkey header in vcl_deliver if we are not in debug mode
+* Do not cleanup the Vary header and keep the user context hash if we are in debug mode
+
 2.5.1
 -----
 
@@ -31,7 +39,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Added: `CleanupCacheTagsListener` to remove the cache tags header from the final
   response that is sent to the client. Add this listener to your cache kernel.
   
-### Tagging
+### Cache Tagging
 
 * Improved: The `ResponseTagger` does now remove duplicate tags.
 
