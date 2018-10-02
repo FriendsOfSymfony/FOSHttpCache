@@ -21,6 +21,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 /**
  * Service for Response cache tagging.
  *
+ * Record tags with this class and then either get the tags header or have the
+ * tagger add the tags to a PSR-7 response.
+ * Recorded tags are cleared after tagging a response.
+ *
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  * @author André Rømcke <ar@ez.no>
@@ -129,7 +133,18 @@ class ResponseTagger
     }
 
     /**
-     * Set tags on a response.
+     * Remove all tags that have been recorded.
+     *
+     * This is usually called after adding the tags header to a response. It is
+     * automatically called by the tagResponse method.
+     */
+    public function clear()
+    {
+        $this->tags = [];
+    }
+
+    /**
+     * Set tags on a response and then clear the tags.
      *
      * @param ResponseInterface $response Original response
      * @param bool              $replace  Whether to replace the current tags
@@ -143,10 +158,13 @@ class ResponseTagger
             return $response;
         }
 
+        $tagsHeaderValue = $this->getTagsHeaderValue();
+        $this->clear();
+
         if ($replace) {
-            return $response->withHeader($this->getTagsHeaderName(), $this->getTagsHeaderValue());
+            return $response->withHeader($this->getTagsHeaderName(), $tagsHeaderValue);
         }
 
-        return $response->withAddedHeader($this->getTagsHeaderName(), $this->getTagsHeaderValue());
+        return $response->withAddedHeader($this->getTagsHeaderName(), $tagsHeaderValue);
     }
 }

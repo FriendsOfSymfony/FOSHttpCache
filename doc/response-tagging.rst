@@ -100,6 +100,11 @@ Before any content is sent out, you need to send the tag header_::
         $responseTagger->getTagsHeaderName(),
         $responseTagger->getTagsHeaderValue()
     ));
+    $responseTagger->clear();
+
+The call to ``clear`` is only relevant if the same PHP process handles multiple
+requests. This happens for example when you :doc:`cache on user context <user-context>`
+with the Symfony HttpCache.
 
 .. tip::
 
