@@ -11,6 +11,12 @@ unreleased
 * Fixed: Remove the xkey header in vcl_deliver if we are not in debug mode
 * Do not cleanup the Vary header and keep the user context hash if we are in debug mode
 
+### Cache Tagging
+
+* Fixed: Clear the ResponseTagger after we tagged a response. Usually PHP uses
+  a new instance for every request. But for example the hash lookup when using
+  Symfony HttpCache does two requests in the same PHP process.
+
 2.5.1
 -----
 

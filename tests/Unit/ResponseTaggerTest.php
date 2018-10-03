@@ -43,6 +43,7 @@ class ResponseTaggerTest extends TestCase
         $tagger->addTags(['post-1', 'test,post']);
         $this->assertTrue($tagger->hasTags());
         $this->assertEquals('post-1,test_post', $tagger->getTagsHeaderValue());
+        $this->assertTrue($tagger->hasTags()); // getting the header does not clear the tags
     }
 
     public function testTagResponseReplace()
@@ -66,6 +67,7 @@ class ResponseTaggerTest extends TestCase
 
         $tagger->addTags(['tag-1', 'tag-2']);
         $tagger->tagResponse($response, true);
+        $this->assertFalse($tagger->hasTags());
     }
 
     public function testTagResponseAdd()
@@ -89,6 +91,7 @@ class ResponseTaggerTest extends TestCase
 
         $tagger->addTags(['tag-1', 'tag-2']);
         $tagger->tagResponse($response);
+        $this->assertFalse($tagger->hasTags());
     }
 
     public function testTagResponseNoTags()
@@ -143,5 +146,15 @@ class ResponseTaggerTest extends TestCase
         $this->assertTrue($tagHandler->hasTags());
 
         $this->assertEquals('post-1,post-2,post-3', $tagHandler->getTagsHeaderValue());
+    }
+
+    public function testClear()
+    {
+        $tagger = new ResponseTagger();
+        $this->assertFalse($tagger->hasTags());
+        $tagger->addTags(['foo', 'bar']);
+        $this->assertTrue($tagger->hasTags());
+        $tagger->clear();
+        $this->assertFalse($tagger->hasTags());
     }
 }
