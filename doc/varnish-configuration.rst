@@ -37,9 +37,9 @@ Provided VCL Subroutines
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to ease configuration we provide a set of VCL subroutines in the
-``resources/config`` directory. These can be included from your main Varnish
-configuration file, typically ``default.vcl``. Then you need to make your
-``vcl_*`` subroutines call the ``fos_*`` routines.
+``resources/config`` `directory of FOSHttpCache`_. These can be included from
+your main Varnish configuration file, typically ``default.vcl``. Then you need
+to make your ``vcl_*`` subroutines call the ``fos_*`` routines.
 
 .. tip::
     When including one of the provided VCL, you need to call all the defined
@@ -451,6 +451,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. _ACL: https://www.varnish-cache.org/docs/4.0/users-guide/vcl-example-acls.html
 .. _ACL for Varnish 3: https://www.varnish-cache.org/docs/3.0/tutorial/vcl.html#example-3-acls
+.. _directory of FOSHttpCache: https://github.com/FriendsOfSymfony/FOSHttpCache/tree/master/resources/config
 .. _handling PURGE requests: https://www.varnish-cache.org/docs/4.0/users-guide/purging.html#bans
 .. _purging for Varnish 3: https://www.varnish-cache.org/docs/3.0/tutorial/purging.html
 .. _forcing a refresh: https://www.varnish-cache.org/docs/4.0/users-guide/purging.html#forcing-a-cache-miss
