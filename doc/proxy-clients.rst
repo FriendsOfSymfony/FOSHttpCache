@@ -208,7 +208,9 @@ and thus the application kernel does not normally know about the cache. This
 library provides the ``HttpCacheAware`` trait to simplify making your kernel
 capable of providing the cache.
 
-You need to adjust your kernel::
+The recommended way to wire things up is to instantiate the cache kernel in the
+kernel constructor to guarantee consistent setup over all entry points. Adjust
+your kernel like this::
 
     // src/AppKernel.php
 
@@ -221,27 +223,33 @@ You need to adjust your kernel::
     class AppKernel extends Kernel implements HttpCacheProvider
     {
         use HttpCacheAware;
-        ...
+        //...
+
+        public function __construct(...)
+        {
+            // ...
+            $this->setHttpCache(new AppCache($this));
+        }
     }
 
-And adjust your bootstrapping code to wire the cache together with the cache provider::
+And adapt your bootstrapping code to use the cache kernel::
 
     // public/index.php
 
     use FOS\HttpCache\ProxyClient\Symfony;
     use FOS\HttpCache\SymfonyCache\KernelDispatcher;
-    use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
     $kernel = new App\AppKernel();
-
-    $httpCache = new HttpCache($kernel);
-
-    // Tell the kernel about the cache
-    $kernel->setHttpCache($httpCache);
+    $cacheKernel = $kernel->getHttpCache();
 
     // Create the Symfony proxy client with KernelDispatcher
+    // Use $kernel, not $cacheKernel here!
     $kernelDispatcher = new KernelDispatcher($kernel);
     $symfony = new Symfony($kernelDispatcher);
+
+    ...
+    $response = $cacheKernel->handle($request);
+    ...
 
 Noop Client
 ~~~~~~~~~~~
