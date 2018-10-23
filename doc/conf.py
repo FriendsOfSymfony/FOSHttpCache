@@ -30,7 +30,9 @@ highlight_language = 'php'
 extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.extlinks',
+    'sphinxcontrib.phpdomain',
     'sensio.sphinx.configurationblock',
+    'sensio.sphinx.phpcode',
     'sphinxcontrib.spelling'
 ]
 
@@ -52,7 +54,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'FOSHttpCache'
-copyright = u'2014–2016, FriendsOfSymfony'
+copyright = u'2014–2018, FriendsOfSymfony'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
