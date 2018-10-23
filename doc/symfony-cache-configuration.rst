@@ -365,6 +365,6 @@ The ``UNDETERMINED`` state should never happen. If it does, it means that
 something went really wrong in the kernel. Have a look at ``X-Symfony-Cache``
 and at the HTML body of the response.
 
-.. _HttpCache: http://symfony.com/doc/current/book/http_cache.html#symfony-reverse-proxy
-.. _HttpKernel: http://symfony.com/doc/current/components/http_kernel.html
+.. _HttpCache: https://symfony.com/doc/current/http_cache.html#symfony-reverse-proxy
+.. _HttpKernel: https://symfony.com/doc/current/components/http_kernel.html
 .. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store
