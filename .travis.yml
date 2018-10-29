@@ -20,7 +20,6 @@ matrix:
     - php: 7.0
     - php: 7.1
     - php: 7.2
-      env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
     - php: 7.3
       env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
 
