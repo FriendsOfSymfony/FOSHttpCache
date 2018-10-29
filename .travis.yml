@@ -24,15 +24,15 @@ matrix:
       env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
 
       # Test with Varnish 4
-    - php: 7.2
+    - php: 7.3
       env: VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.9.1
 
     # Test Symfony LTS versions
-    - php: 7.2
+    - php: 7.3
       env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^1.0"
 
       # Latest commit to master
-    - php: 7.2
+    - php: 7.3
       env: STABILITY="dev"
 
   allow_failures:
