@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.5.3
+-----
+
+### Symfony HttpCache
+
+* Fixed: Handle HttpCache not available in KernelDispatcher and fix return
+  type annotations - if HttpCache is not set, it can't be returned.
+
 2.5.2
 -----
 
