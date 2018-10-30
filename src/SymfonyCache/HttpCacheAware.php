@@ -24,7 +24,7 @@ trait HttpCacheAware
     private $httpCache;
 
     /**
-     * @return HttpKernelInterface
+     * @return HttpKernelInterface|null
      */
     public function getHttpCache()
     {

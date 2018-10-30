@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
+use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\SymfonyCache\HttpCacheProvider;
 use FOS\HttpCache\SymfonyCache\KernelDispatcher;
 use GuzzleHttp\Psr7\Request as Psr7Request;
@@ -26,19 +27,6 @@ class KernelDispatcherTest extends TestCase
 {
     public function testFlush()
     {
-        $headers = [
-            'Content-Type' => 'foobar',
-            'Cookie' => 'foo=bar; foscacheis=awesome',
-            'X-Cache-Tags' => 'foo,bar,stuff',
-        ];
-
-        $psr7Request = new Psr7Request(
-            'PURGETAGS',
-            'http://127.0.0.1/foobar?query=string&more=stuff',
-            $headers,
-            'super content'
-        );
-
         $httpCache = $this->createMock(HttpCache::class);
         $httpCache->expects($this->once())
             ->method('handle')
@@ -64,8 +52,43 @@ class KernelDispatcherTest extends TestCase
             ->willReturn($httpCache);
 
         $dispatcher = new KernelDispatcher($kernel);
-        $dispatcher->invalidate($psr7Request);
+        $dispatcher->invalidate($this->getRequest());
 
         $dispatcher->flush();
+    }
+
+    public function testFlushWithoutHttpCache()
+    {
+        $this->expectException(ProxyUnreachableException::class);
+        $this->expectExceptionMessage('Cannot reach Symfony HttpCache as the Kernel does not know about it.');
+
+        $kernel = $this->createMock(HttpCacheProvider::class);
+        $kernel->expects($this->once())
+            ->method('getHttpCache')
+            ->willReturn(null);
+
+        $dispatcher = new KernelDispatcher($kernel);
+        $dispatcher->invalidate($this->getRequest());
+
+        $dispatcher->flush();
+    }
+
+    /**
+     * @return Psr7Request
+     */
+    private function getRequest()
+    {
+        $headers = [
+            'Content-Type' => 'foobar',
+            'Cookie' => 'foo=bar; foscacheis=awesome',
+            'X-Cache-Tags' => 'foo,bar,stuff',
+        ];
+
+        return new Psr7Request(
+            'PURGETAGS',
+            'http://127.0.0.1/foobar?query=string&more=stuff',
+            $headers,
+            'super content'
+        );
     }
 }
