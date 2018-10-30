@@ -60,7 +60,7 @@ class KernelDispatcherTest extends TestCase
     public function testFlushWithoutHttpCache()
     {
         $this->expectException(ProxyUnreachableException::class);
-        $this->expectExceptionMessage('Cannot reach Symfony HttpCache as the Kernel does not know about it.');
+        $this->expectExceptionMessage('Kernel did not return a HttpCache instance. Did you forget $kernel->setHttpCache($cacheKernel) in your front controller?');
 
         $kernel = $this->createMock(HttpCacheProvider::class);
         $kernel->expects($this->once())
