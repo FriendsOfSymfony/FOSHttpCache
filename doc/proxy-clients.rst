@@ -19,15 +19,18 @@ Supported invalidation methods
 Not all clients support all :ref:`invalidation methods <invalidation methods>`.
 This table provides of methods supported by each proxy client:
 
-============= ======= ======= ======= =======
-Client        Purge   Refresh Ban     Tagging
-============= ======= ======= ======= =======
+============= ======= ======= ======= ======= =======
+Client        Purge   Refresh Ban     Tagging Clear
+============= ======= ======= ======= ======= =======
 Varnish       ✓       ✓       ✓       ✓
 NGINX         ✓       ✓
-Symfony Cache ✓       ✓               ✓
+Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
 Noop          ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓
-============= ======= ======= ======= =======
+============= ======= ======= ======= ======= =======
+
+(1): Only when using `Toflar Psr6Store`_.
+
 
 Of course, you can also implement your own client for other needs. Have a look
 at the interfaces in namespace ``FOS\HttpCache\ProxyClient\Invalidation``.
@@ -315,7 +318,7 @@ Implementation Notes
 --------------------
 
 Each client is an implementation of :source:`ProxyClient <src/ProxyClient/ProxyClient.php>`.
-All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable`` and
+All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable``, ``ClearCapable`` and
 ``TagCapable``, extend this ``ProxyClient``. So each client implements at least
 one of the three :ref:`invalidation methods <invalidation methods>` depending on
 the proxy server’s abilities. To interact with a proxy client directly, refer to
@@ -332,3 +335,4 @@ requests.
 .. _in the HTTPlug documentation: http://php-http.readthedocs.io/en/latest/clients.html
 .. _HTTPlug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
 .. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html
+.. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store

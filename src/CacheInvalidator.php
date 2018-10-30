@@ -17,6 +17,7 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -54,6 +55,11 @@ class CacheInvalidator
      * Value to check support of invalidateTags operation.
      */
     const TAGS = 'tags';
+
+    /**
+     * Value to check support of clearCache operation.
+     */
+    const CLEAR = 'clear';
 
     /**
      * @var ProxyClient
@@ -105,6 +111,8 @@ class CacheInvalidator
                 }
 
                 return $supports;
+            case self::CLEAR:
+                return $this->cache instanceof ClearCapable;
             default:
                 throw new InvalidArgumentException('Unknown operation '.$operation);
         }
@@ -260,6 +268,24 @@ class CacheInvalidator
         }
 
         $this->cache->banPath($path, $contentType, $hosts);
+
+        return $this;
+    }
+
+    /**
+     * Clear the cache completely.
+     *
+     * @throws UnsupportedProxyOperationException if HTTP cache does not support clearing the cache completely
+     *
+     * @return $this
+     */
+    public function clearCache()
+    {
+        if (!$this->cache instanceof ClearCapable) {
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('CLEAR');
+        }
+
+        $this->cache->clear();
 
         return $this;
     }

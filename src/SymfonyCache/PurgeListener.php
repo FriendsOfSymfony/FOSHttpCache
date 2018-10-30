@@ -13,11 +13,13 @@ namespace FOS\HttpCache\SymfonyCache;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Toflar\Psr6HttpCacheStore\Psr6StoreInterface;
 
 /**
  * Purge handler for the symfony built-in HttpCache.
  *
  * @author David Buchmann <mail@davidbu.ch>
+ * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  *
  * {@inheritdoc}
  */
@@ -25,12 +27,21 @@ class PurgeListener extends AccessControlledListener
 {
     const DEFAULT_PURGE_METHOD = 'PURGE';
 
+    const DEFAULT_CLEAR_CACHE_HEADER = 'Clear-Cache';
+
     /**
      * The purge method to use.
      *
      * @var string
      */
     private $purgeMethod;
+
+    /**
+     * The clear cache header to use.
+     *
+     * @var string
+     */
+    private $clearCacheHeader;
 
     /**
      * When creating the purge listener, you can configure an additional option.
@@ -47,7 +58,9 @@ class PurgeListener extends AccessControlledListener
     {
         parent::__construct($options);
 
-        $this->purgeMethod = $this->getOptionsResolver()->resolve($options)['purge_method'];
+        $options = $this->getOptionsResolver()->resolve($options);
+        $this->purgeMethod = $options['purge_method'];
+        $this->clearCacheHeader = $options['clear_cache_header'];
     }
 
     /**
@@ -83,6 +96,24 @@ class PurgeListener extends AccessControlledListener
         $response = new Response();
         $store = $event->getKernel()->getStore();
 
+        // Purge whole cache
+        if ($request->headers->has($this->clearCacheHeader)) {
+            if (!$store instanceof Psr6StoreInterface) {
+                $response->setStatusCode(400);
+                $response->setContent('Store must be an instance of '.Psr6StoreInterface::class.'. Please check your proxy configuration.');
+                $event->setResponse($response);
+
+                return;
+            }
+
+            $store->prune();
+
+            $response->setStatusCode(200, 'Pruned');
+            $event->setResponse($response);
+
+            return;
+        }
+
         if ($store->purge($request->getUri())) {
             $response->setStatusCode(200, 'Purged');
         } else {
@@ -100,7 +131,9 @@ class PurgeListener extends AccessControlledListener
     {
         $resolver = parent::getOptionsResolver();
         $resolver->setDefault('purge_method', static::DEFAULT_PURGE_METHOD);
+        $resolver->setDefault('clear_cache_header', static::DEFAULT_CLEAR_CACHE_HEADER);
         $resolver->setAllowedTypes('purge_method', 'string');
+        $resolver->setAllowedTypes('clear_cache_header', 'string');
 
         return $resolver;
     }
