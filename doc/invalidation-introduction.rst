@@ -148,3 +148,8 @@ all methods, please refer to proxy specific documentation for the details.
         invalidation, such as selecting content to be banned by regular expressions.
         This opens the way for powerful invalidation schemes, such as tagging cache
         entries.
+
+    Clear
+        Clearing a cache means removing all its cache entries completely. It can be
+        used for a more efficient cache reset rather than banning or purging every
+        URL individually.
