@@ -98,7 +98,7 @@ class KernelDispatcher implements Dispatcher
         $httpCache = $this->httpCacheProvider->getHttpCache();
 
         if (null === $httpCache) {
-            throw new ProxyUnreachableException('Cannot reach Symfony HttpCache as the Kernel does not know about it.');
+            throw new ProxyUnreachableException('Kernel did not return a HttpCache instance. Did you forget $kernel->setHttpCache($cacheKernel) in your front controller?');
         }
 
         foreach ($queue as $request) {
