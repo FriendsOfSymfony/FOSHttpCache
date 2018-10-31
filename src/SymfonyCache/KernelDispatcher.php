@@ -90,13 +90,14 @@ class KernelDispatcher implements Dispatcher
      */
     public function flush()
     {
+        if (!count($this->queue)) {
+            return 0;
+        }
         $queue = $this->queue;
         $this->queue = [];
 
         $exceptions = new ExceptionCollection();
-
         $httpCache = $this->httpCacheProvider->getHttpCache();
-
         if (null === $httpCache) {
             throw new ProxyUnreachableException('Kernel did not return a HttpCache instance. Did you forget $kernel->setHttpCache($cacheKernel) in your front controller?');
         }
