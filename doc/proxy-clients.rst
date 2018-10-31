@@ -24,10 +24,13 @@ Client        Purge   Refresh Ban     Tagging Clear
 ============= ======= ======= ======= ======= =======
 Varnish       ✓       ✓       ✓       ✓
 NGINX         ✓       ✓
-Symfony Cache ✓       ✓               ✓       ✓
+Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
 Noop          ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓
 ============= ======= ======= ======= ======= =======
+
+(1): Only when using `Toflar Psr6Store`_.
+
 
 Of course, you can also implement your own client for other needs. Have a look
 at the interfaces in namespace ``FOS\HttpCache\ProxyClient\Invalidation``.
@@ -332,3 +335,4 @@ requests.
 .. _in the HTTPlug documentation: http://php-http.readthedocs.io/en/latest/clients.html
 .. _HTTPlug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
 .. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html
+.. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store
