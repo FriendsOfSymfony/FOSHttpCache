@@ -23,7 +23,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
  * an alternative to proxies that do not support
  * banning cache entries at all.
  */
-interface ClearCacheCapable extends ProxyClient
+interface ClearCapable extends ProxyClient
 {
     /**
      * Clear the cache completely.

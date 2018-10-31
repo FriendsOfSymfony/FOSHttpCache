@@ -17,7 +17,7 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
-use FOS\HttpCache\ProxyClient\Invalidation\ClearCacheCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -112,7 +112,7 @@ class CacheInvalidator
 
                 return $supports;
             case self::CLEAR:
-                return $this->cache instanceof ClearCacheCapable;
+                return $this->cache instanceof ClearCapable;
             default:
                 throw new InvalidArgumentException('Unknown operation '.$operation);
         }
@@ -283,7 +283,7 @@ class CacheInvalidator
      */
     public function clearCache()
     {
-        if (!$this->cache instanceof ClearCacheCapable) {
+        if (!$this->cache instanceof ClearCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('CLEAR');
         }
 

@@ -318,7 +318,7 @@ Implementation Notes
 --------------------
 
 Each client is an implementation of :source:`ProxyClient <src/ProxyClient/ProxyClient.php>`.
-All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable``, ``ClearCacheCapable`` and
+All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable``, ``ClearCapable`` and
 ``TagCapable``, extend this ``ProxyClient``. So each client implements at least
 one of the three :ref:`invalidation methods <invalidation methods>` depending on
 the proxy server’s abilities. To interact with a proxy client directly, refer to

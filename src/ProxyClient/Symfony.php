@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\ClearCacheCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -27,7 +27,7 @@ use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, TagCapable, ClearCacheCapable
+class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, TagCapable, ClearCapable
 {
     const HTTP_METHOD_REFRESH = 'GET';
 
