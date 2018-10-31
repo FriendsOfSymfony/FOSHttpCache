@@ -24,6 +24,7 @@ Client        Purge   Refresh Ban     Tagging Clear
 ============= ======= ======= ======= ======= =======
 Varnish       ✓       ✓       ✓       ✓
 NGINX         ✓       ✓
+LiteSpeed     ✓               ✓       ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
 Noop          ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓
@@ -179,6 +180,21 @@ call `setPurgeLocation()`::
 .. note::
 
     To use the client, you need to :doc:`configure NGINX <nginx-configuration>`
+    accordingly.
+
+LiteSpeed Client
+~~~~~~~~~~~~~~~~~
+
+The LiteSpeed client sends HTTP requests with the ``HttpDispatcher``. Create the
+dispatcher as explained above and pass it to the LiteSpeed client::
+
+    use FOS\HttpCache\ProxyClient\LiteSpeed;
+
+    $litespeed = new LiteSpeed($httpDispatcher);
+
+.. note::
+
+    To use the client, you need to :doc:`configure LiteSpeed <litespeed-configuration>`
     accordingly.
 
 Symfony Client
