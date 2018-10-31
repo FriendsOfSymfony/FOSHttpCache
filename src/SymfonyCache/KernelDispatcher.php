@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\SymfonyCache;
 
 use FOS\HttpCache\Exception\ExceptionCollection;
+use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\ProxyClient\Dispatcher;
 use Psr\Http\Message\RequestInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -95,6 +96,10 @@ class KernelDispatcher implements Dispatcher
         $exceptions = new ExceptionCollection();
 
         $httpCache = $this->httpCacheProvider->getHttpCache();
+
+        if (null === $httpCache) {
+            throw new ProxyUnreachableException('Kernel did not return a HttpCache instance. Did you forget $kernel->setHttpCache($cacheKernel) in your front controller?');
+        }
 
         foreach ($queue as $request) {
             try {
