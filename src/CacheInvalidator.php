@@ -287,7 +287,7 @@ class CacheInvalidator
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('CLEAR');
         }
 
-        $this->cache->clearCache();
+        $this->cache->clear();
 
         return $this;
     }

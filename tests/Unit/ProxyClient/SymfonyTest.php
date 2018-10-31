@@ -142,7 +142,7 @@ class SymfonyTest extends TestCase
         ]);
     }
 
-    public function testClearCache()
+    public function testClear()
     {
         $symfony = new Symfony($this->httpDispatcher);
 
@@ -160,7 +160,7 @@ class SymfonyTest extends TestCase
             false
         );
 
-        $symfony->clearCache();
+        $symfony->clear();
     }
 
     public function testRefresh()
