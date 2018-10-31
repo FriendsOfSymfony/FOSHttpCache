@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.5.4
+-----
+
+### Symfony HttpCache
+
+* Fixed: Avoid regression of 2.5.3: If there are no messages to be dispatched,
+  do not throw an exception if the HttpCache is not set.
+
 2.5.3
 -----
 
