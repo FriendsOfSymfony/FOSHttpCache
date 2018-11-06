@@ -14,6 +14,7 @@ namespace FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -23,7 +24,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
  *
  * @author Emanuele Panzeri <thepanz@gmail.com>
  */
-class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, TagCapable
+class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, TagCapable, ClearCapable
 {
     /**
      * @var ProxyClient[]
@@ -139,6 +140,18 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     public function refresh($url, array $headers = [])
     {
         $this->invoke(RefreshCapable::class, 'refresh', [$url, $headers]);
+
+        return $this;
+    }
+
+    /**
+     * Forwards to all clients.
+     *
+     * @return $this
+     */
+    public function clear()
+    {
+        $this->invoke(ClearCapable::class, 'clear', []);
 
         return $this;
     }

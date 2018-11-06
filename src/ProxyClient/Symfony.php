@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
+use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -26,7 +27,7 @@ use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
  * @author David de Boer <david@driebit.nl>
  * @author David Buchmann <mail@davidbu.ch>
  */
-class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, TagCapable
+class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, TagCapable, ClearCapable
 {
     const HTTP_METHOD_REFRESH = 'GET';
 
@@ -56,12 +57,14 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
             'purge_method' => PurgeListener::DEFAULT_PURGE_METHOD,
+            'clear_cache_header' => PurgeListener::DEFAULT_CLEAR_CACHE_HEADER,
             'tags_method' => PurgeTagsListener::DEFAULT_TAGS_METHOD,
             'tags_header' => PurgeTagsListener::DEFAULT_TAGS_HEADER,
             'tags_invalidate_path' => '/',
             'header_length' => 7500,
         ]);
         $resolver->setAllowedTypes('purge_method', 'string');
+        $resolver->setAllowedTypes('clear_cache_header', 'string');
         $resolver->setAllowedTypes('tags_method', 'string');
         $resolver->setAllowedTypes('tags_header', 'string');
         $resolver->setAllowedTypes('tags_invalidate_path', 'string');
@@ -71,11 +74,7 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
     }
 
     /**
-     * Remove/Expire cache objects based on cache tags.
-     *
-     * @param array $tags Tags that should be removed/expired from the cache
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function invalidateTags(array $tags)
     {
@@ -91,6 +90,25 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
                 false
             );
         }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Clearing the cache is implemented with a purge request with a special
+     * header to indicate that the whole cache should be removed.
+     *
+     * @return $this
+     */
+    public function clear()
+    {
+        $this->queueRequest(
+            $this->options['purge_method'], '/',
+            [$this->options['clear_cache_header'] => 'true'],
+            false
+        );
 
         return $this;
     }

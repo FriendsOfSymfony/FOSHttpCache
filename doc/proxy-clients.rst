@@ -19,18 +19,24 @@ Supported invalidation methods
 Not all clients support all :ref:`invalidation methods <invalidation methods>`.
 This table provides of methods supported by each proxy client:
 
-============= ======= ======= ======= =======
-Client        Purge   Refresh Ban     Tagging
-============= ======= ======= ======= =======
+============= ======= ======= ======= ======= =======
+Client        Purge   Refresh Ban     Tagging Clear
+============= ======= ======= ======= ======= =======
 Varnish       ✓       ✓       ✓       ✓
 NGINX         ✓       ✓
-Symfony Cache ✓       ✓               ✓
+Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
 Noop          ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓
-============= ======= ======= ======= =======
+============= ======= ======= ======= ======= =======
 
-Of course, you can also implement your own client for other needs. Have a look
+(1): Only when using `Toflar Psr6Store`_.
+
+If needed, you can also implement your own client for other needs. Have a look
 at the interfaces in namespace ``FOS\HttpCache\ProxyClient\Invalidation``.
+
+"Clear" can be emulated by "Ban" with a request that matches everything. If
+both are available, "Clear" is preferred as it can be implemented by the
+caching proxy more efficiently.
 
 .. _client setup:
 
@@ -315,11 +321,11 @@ Implementation Notes
 --------------------
 
 Each client is an implementation of :source:`ProxyClient <src/ProxyClient/ProxyClient.php>`.
-All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable`` and
-``TagCapable``, extend this ``ProxyClient``. So each client implements at least
-one of the three :ref:`invalidation methods <invalidation methods>` depending on
+All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable``, ``TagCapable``
+and ``ClearCapable`` extend this ``ProxyClient``. So each client implements at least
+one of the :ref:`invalidation methods <invalidation methods>` depending on
 the proxy server’s abilities. To interact with a proxy client directly, refer to
-the doc comments on the interfaces.
+the phpdoc on the interfaces.
 
 The ``ProxyClient`` has one method: ``flush()``. After collecting
 invalidation requests, ``flush()`` needs to be called to actually send the
@@ -332,3 +338,4 @@ requests.
 .. _in the HTTPlug documentation: http://php-http.readthedocs.io/en/latest/clients.html
 .. _HTTPlug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
 .. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html
+.. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store

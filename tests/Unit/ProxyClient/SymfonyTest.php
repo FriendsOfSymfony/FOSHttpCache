@@ -142,6 +142,27 @@ class SymfonyTest extends TestCase
         ]);
     }
 
+    public function testClear()
+    {
+        $symfony = new Symfony($this->httpDispatcher);
+
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('PURGE', $request->getMethod());
+
+                    $this->assertEquals('/', $request->getUri());
+                    $this->assertEquals('true', $request->getHeaderLine('Clear-Cache'));
+
+                    return true;
+                }
+            ),
+            false
+        );
+
+        $symfony->clear();
+    }
+
     public function testRefresh()
     {
         $symfony = new Symfony($this->httpDispatcher);
