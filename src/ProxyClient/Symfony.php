@@ -74,11 +74,7 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
     }
 
     /**
-     * Remove/Expire cache objects based on cache tags.
-     *
-     * @param array $tags Tags that should be removed/expired from the cache
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function invalidateTags(array $tags)
     {
@@ -99,7 +95,10 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
     }
 
     /**
-     * Clear the cache completely.
+     * {@inheritdoc}
+     *
+     * Clearing the cache is implemented with a purge request with a special
+     * header to indicate that the whole cache should be removed.
      *
      * @return $this
      */
@@ -110,5 +109,7 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
             [$this->options['clear_cache_header'] => 'true'],
             false
         );
+
+        return $this;
     }
 }

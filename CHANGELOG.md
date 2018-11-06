@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.6.0 (unreleased)
+------------------
+
+### Cache Clear
+
+* Added: ClearCapable to clear the whole cache in one efficient call. Currently
+  supported only by the Symfony HttpCache.
+
 2.5.4
 -----
 

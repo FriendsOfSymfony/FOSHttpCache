@@ -151,5 +151,5 @@ all methods, please refer to proxy specific documentation for the details.
 
     Clear
         Clearing a cache means removing all its cache entries completely. It can be
-        used for a more efficient cache reset rather than banning or purging every
-        URL individually.
+        used for a more efficient cache reset rather than a ban that matches every
+        request or purging every URL individually.

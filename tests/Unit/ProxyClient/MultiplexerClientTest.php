@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -134,6 +135,7 @@ class MultiplexerClientTest extends TestCase
             ->getMock();
         $mockClient2 = \Mockery::mock(PurgeCapable::class)
             ->shouldReceive('purge')
+            ->once()
             ->with($url, $headers)
             ->getMock();
         $mockClient3 = \Mockery::mock(ProxyClient::class);
@@ -141,6 +143,23 @@ class MultiplexerClientTest extends TestCase
         $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2, $mockClient3]);
 
         $this->assertSame($multiplexer, $multiplexer->purge($url, $headers));
+    }
+
+    public function testClear()
+    {
+        $mockClient1 = \Mockery::mock(ClearCapable::class)
+            ->shouldReceive('clear')
+            ->once()
+            ->getMock();
+        $mockClient2 = \Mockery::mock(ClearCapable::class)
+            ->shouldReceive('clear')
+            ->once()
+            ->getMock();
+        $mockClient3 = \Mockery::mock(ProxyClient::class);
+
+        $multiplexer = new MultiplexerClient([$mockClient1, $mockClient2, $mockClient3]);
+
+        $this->assertSame($multiplexer, $multiplexer->clear());
     }
 
     public function provideInvalidClient()

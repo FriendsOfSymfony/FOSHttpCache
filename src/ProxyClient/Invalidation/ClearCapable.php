@@ -14,19 +14,16 @@ namespace FOS\HttpCache\ProxyClient\Invalidation;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 
 /**
- * An HTTP cache that supports clearing all of its
- * cache entries.
+ * An HTTP cache that supports removing all of its cache entries.
  *
- * Proxy clients supporting this interface can allow
- * for a more efficient delete-all operation rather
- * than banning everything. Also it serves as
- * an alternative to proxies that do not support
- * banning cache entries at all.
+ * This operation allows to clear proxies that do not support banning.
+ * Additionally, this operation is likely more efficient than a ban request
+ * that matches everything.
  */
 interface ClearCapable extends ProxyClient
 {
     /**
-     * Clear the cache completely.
+     * Remove all cache items from this cache.
      *
      * @return $this
      */
