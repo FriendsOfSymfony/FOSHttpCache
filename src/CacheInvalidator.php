@@ -115,8 +115,6 @@ class CacheInvalidator
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
-     * @return $this
-     *
      * @throws \Exception when trying to override the event dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
