@@ -12,7 +12,6 @@
 namespace FOS\HttpCache\SymfonyCache;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Debug handler for the symfony built-in HttpCache.

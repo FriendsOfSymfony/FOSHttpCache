@@ -14,7 +14,6 @@ namespace FOS\HttpCache\SymfonyCache;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
 /**
  * Event raised by the HttpCache kernel.

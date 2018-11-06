@@ -12,7 +12,6 @@
 namespace FOS\HttpCache\Exception;
 
 use Http\Client\Exception\HttpException;
-use Psr\Http\Message\ResponseInterface;
 
 /**
  * Wrapping an error response from the caching proxy.
@@ -20,8 +19,6 @@ use Psr\Http\Message\ResponseInterface;
 class ProxyResponseException extends \RuntimeException implements HttpCacheException
 {
     /**
-     * @param ResponseInterface $response HTTP response
-     *
      * @return ProxyResponseException
      */
     public static function proxyResponse(HttpException $exception)

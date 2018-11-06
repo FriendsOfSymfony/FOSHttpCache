@@ -35,7 +35,7 @@ class WebServerListenerTrait
             return;
         }
 
-        if (!in_array('webserver', $suite->getGroups()) || null !== $this->pid) {
+        if (null !== $this->pid || !in_array('webserver', $suite->getGroups())) {
             return;
         }
 

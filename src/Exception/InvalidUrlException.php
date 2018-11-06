@@ -14,7 +14,7 @@ namespace FOS\HttpCache\Exception;
 /**
  * Thrown during setup if the configuration for a proxy client is invalid.
  */
-class InvalidUrlException extends InvalidArgumentException implements HttpCacheException
+class InvalidUrlException extends InvalidArgumentException
 {
     /**
      * @param string $url    the invalid URL
