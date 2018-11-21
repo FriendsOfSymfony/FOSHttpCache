@@ -100,24 +100,10 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
             $content .= sprintf('header(\'%s\');', $header)."\n";
         }
 
-        $filename = $this->generateUrlSafeRandomFileName();
+        // Generate a reasonably random file name, no need to be cryptographically safe here
+        $filename = 'fos_cache_litespeed_purger_'.substr(sha1(uniqid('', true).mt_rand()), 0, mt_rand(10, 40)) . '.php';
 
         file_put_contents($this->options['target_dir'].'/'.$filename, $content);
-
-        return $filename;
-    }
-
-    private function generateUrlSafeRandomFileName()
-    {
-        $filename = 'fos_cache_litespeed_purger_';
-
-        if (function_exists('random_bytes')) {
-            $filename .= bin2hex(random_bytes(20));
-        } else {
-            $filename .= sha1(mt_rand().mt_rand().mt_rand());
-        }
-
-        $filename .= '.php';
 
         return $filename;
     }
