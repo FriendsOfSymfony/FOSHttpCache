@@ -26,7 +26,8 @@ After generation, we request this file and delete it again right away.
 
 For this reason you have to configure two parameters:
 
-* The location on your server where the file should be generated to (must be publicly accessible).
+* The location on your server where the file should be generated to
+  (must be publicly accessible and writable by the server).
 * The base URL on which the generated file can be requested.
 
 Configuring LiteSpeed WebServer itself
@@ -39,31 +40,13 @@ Add this to your ``.htaccess``::
         CacheEnable public /
     </IfModule>
 
-If you also want to enable ESI support, you need to enable this as well::
-
-    <IfModule LiteSpeed>
-        CacheEnable public /
-        RewriteRule .? - [E=esi_on:1]
-    </IfModule>
-
-Depending on your setup you might also make your app aware of the fact that your
-server supports ESI. E.g. Symfony checks the request header called ``Surrogate-Capability``.
-In case of Symfony your full setup might thus look as follows::
-
-
-    <IfModule LiteSpeed>
-        CacheEnable public /
-        RewriteRule .? - [E=esi_on:1]
-        SetEnv HTTP_SURROGATE_CAPABILITY "litespeed=ESI/1.0"
-    </IfModule>
-
 .. note::
 
-     ESI is not supported in OpenLiteSpeed.
-     You must be using LiteSpeed Enterprise in order to take advantage of ESI functionality.
+    This setup works in a single node webserver environment only. If you are targeting a multi
+    node setup you might want to consider switching to :ref:`Varnish <varnish configuration>` which has excellent
+    support for this setup already built-in in this library.
 
-
-You can find more information on how to `configure LiteSpeed`_ and how to `configure ESI`_ support in their docs.
+You can find more information on how to `configure LiteSpeed`_ in their docs.
 
 Configuring the library
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,5 +73,4 @@ Your proxy client instance has to look like so::
     $litespeed = new LiteSpeed($httpDispatcher, $options);
 
 .. _configure LiteSpeed: https://www.litespeedtech.com/support/wiki/doku.php/litespeed_wiki:cache:no-plugin-setup-guidline
-.. _configure ESI: https://www.litespeedtech.com/support/wiki/doku.php/litespeed_wiki:cache:no-plugin-advanced:esi-support
 .. _LiteSpeed response headers documentation:  https://www.litespeedtech.com/support/wiki/doku.php/litespeed_wiki:cache:developer_guide:response_headers
