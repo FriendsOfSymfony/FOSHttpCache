@@ -55,12 +55,16 @@ class LiteSpeedTest extends TestCase
 
 header('X-LiteSpeed-Purge: /url');
 header('X-LiteSpeed-Purge: /another/url');
+header('X-LiteSpeed-Purge: foo\'); exec(\'rm -rf /\');//');
+header('X-LiteSpeed-Purge: foo\'); exec(\\\'rm -rf /\\\');//');
 
 EOT;
         $this->assertLiteSpeedPurger($expectedContent);
 
         $ls->purge('/url');
         $ls->purge('/another/url');
+        $ls->purge("foo'); exec('rm -rf /');//"); // Somebody tried something evil
+        $ls->purge("foo'); exec(\'rm -rf /\');//"); // Somebody tried something even more evil
         $ls->flush();
 
         // Assert file has been deleted again

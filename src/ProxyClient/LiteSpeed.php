@@ -97,7 +97,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
         $content = '<?php'."\n\n";
 
         foreach ($this->headerLines as $header) {
-            $content .= sprintf('header(\'%s\');', $header)."\n";
+            $content .= sprintf('header(\'%s\');', addslashes($header))."\n";
         }
 
         // Generate a reasonably random file name, no need to be cryptographically safe here
