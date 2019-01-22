@@ -67,6 +67,8 @@ before_script:
   - if [ "$VARNISH_MODULES_VERSION" != "" ]; then sh ./tests/install-varnish-modules.sh; fi
   # Install NGINX
   - sh ./tests/install-nginx.sh
+  # Install OpenLiteSpeed
+  - sh ./tests/install-openlitespeed.sh
 
 script:
   - composer validate --strict --no-check-lock
