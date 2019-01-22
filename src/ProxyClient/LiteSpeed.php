@@ -107,7 +107,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
         foreach ($this->headerLines as $host => $lines) {
             $filename = $this->createInvalidationFile($lines);
 
-            $this->queueRequest('GET', $path.$filename);
+            $this->queueRequest('GET', $path.$filename, []);
 
             $filenames[] = $filename;
         }
