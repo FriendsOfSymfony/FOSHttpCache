@@ -29,6 +29,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
      */
     public function clear()
     {
+        // Litespeed supports purging everything by passing *
         $this->addHeaderLine('X-LiteSpeed-Purge', '*');
 
         return $this;
@@ -40,12 +41,8 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
     public function purge($url, array $headers = [])
     {
         $urlParts = parse_url($url);
-        $host = null;
-
-        if (isset($urlParts['host'])) {
-            $host = $urlParts['host'];
-            $url = $urlParts['path'];
-        }
+        $host = array_key_exists('host', $urlParts) ? $urlParts['host'] : null;
+        $url = array_key_exists('path', $urlParts) ? $urlParts['path'] : '/';
 
         $this->addHeaderLine('X-LiteSpeed-Purge', $url, $host);
 
@@ -54,6 +51,18 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
 
     /**
      * {@inheritdoc}
+     *
+     * You must configure the following options:
+     *
+     * - document_root: Must contain the absolute path on your system, where the invalidation file should be created at.
+     *
+     * You can configure the following options:
+     *
+     * - target_dir: If you don't want to have your invalidation files reside in document_root directly, you can specify
+     *               a target_dir. It will be appended to both, the document_root when creating the files and the URL
+     *               when executing the invalidation request.
+     * - base_uri:   The base_uri is used when you call purge() with passing an URL without any host (e.g. /path). The
+     *               base_uri will be used as host then.
      */
     protected function configureOptions()
     {
@@ -89,16 +98,16 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
     {
         $filenames = [];
 
-        $url = '/';
+        $path = '/';
 
         if ($this->options['target_dir']) {
-            $url .= $this->options['target_dir'].'/';
+            $path .= $this->options['target_dir'].'/';
         }
 
         foreach ($this->headerLines as $host => $lines) {
-            $filename = $this->createFileForHost($host);
+            $filename = $this->createInvalidationFile($lines);
 
-            $this->queueRequest('GET', $url.$filename, []);
+            $this->queueRequest('GET', $path.$filename);
 
             $filenames[] = $filename;
         }
@@ -131,15 +140,15 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
     /**
      * Creates the file and returns the file name.
      *
-     * @param string $host
+     * @param array $lines
      *
      * @return string
      */
-    private function createFileForHost($host)
+    private function createInvalidationFile(array $lines)
     {
         $content = '<?php'."\n\n";
 
-        foreach ($this->headerLines[$host] as $header) {
+        foreach ($lines as $header) {
             $content .= sprintf('header(\'%s\');', addslashes($header))."\n";
         }
 
