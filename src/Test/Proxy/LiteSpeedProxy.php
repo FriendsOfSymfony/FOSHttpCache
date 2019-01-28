@@ -13,7 +13,7 @@ namespace FOS\HttpCache\Test\Proxy;
 
 class LiteSpeedProxy extends AbstractProxy
 {
-    protected $binary = 'lswsctrl';
+    protected $binary = '/usr/local/lsws/bin/lswsctrl';
 
     protected $port = 80;
 
