@@ -3,6 +3,11 @@
 wget https://openlitespeed.org/packages/openlitespeed-1.4.42.tgz
 tar -zxvf openlitespeed-1.4.42.tgz
 cd openlitespeed
+
+# Ensure correct owners for travis
+sed -i s/OPENLSWS_USER=nobody/OPENLSWS_USER=travis/g ./ols.conf
+sed -i s/OPENLSWS_GROUP=nobody/OPENLSWS_GROUP=travis/g ./ols.conf
+
 sudo ./install.sh
 
 # Remove examples
