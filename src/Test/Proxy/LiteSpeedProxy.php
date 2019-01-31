@@ -13,7 +13,7 @@ namespace FOS\HttpCache\Test\Proxy;
 
 class LiteSpeedProxy extends AbstractProxy
 {
-    protected $binary = '/usr/local/lsws/bin/lswsctrl';
+    protected $binary = 'lswsctrl';
 
     protected $port = 80;
 
@@ -50,7 +50,11 @@ class LiteSpeedProxy extends AbstractProxy
      */
     public function clear()
     {
-        $this->stop();
-        $this->start();
+        $this->runCommand(
+            $this->getBinary(),
+            [
+                'restart',
+            ]
+        );
     }
 }
