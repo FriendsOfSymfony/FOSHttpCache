@@ -13,9 +13,9 @@ namespace FOS\HttpCache\Test\Proxy;
 
 class LiteSpeedProxy extends AbstractProxy
 {
-    protected $binary = 'lswsctrl';
+    protected $binary = '/tmp/openlitespeed/bin/lswsctrl';
 
-    protected $port = 80;
+    protected $port = 8080;
 
     /**
      * {@inheritdoc}

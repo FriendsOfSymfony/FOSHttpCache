@@ -107,11 +107,11 @@ trait LiteSpeedTest
     {
         if (null === $this->proxyClient) {
             $httpDispatcher = new HttpDispatcher(
-                ['http://127.0.0.1']
+                ['http://127.0.0.1:8080']
             );
 
             $this->proxyClient = new LiteSpeed($httpDispatcher, [
-                'document_root' => '/usr/local/lsws/DEFAULT/html',
+                'document_root' => '/usr/local/lsws/DEFAULT/html', // TODO
             ]);
         }
 
