@@ -111,11 +111,7 @@ abstract class AbstractProxy implements ProxyInterface
             $process = new Process(array_merge([$command], $arguments));
         }
 
-        $process->run();
-
-        if (!$process->isSuccessful()) {
-            throw new \RuntimeException($process->getErrorOutput());
-        }
+        $process->mustRun();
     }
 
     /**
