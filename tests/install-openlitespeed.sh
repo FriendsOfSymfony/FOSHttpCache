@@ -20,3 +20,5 @@ cd $TRAVIS_BUILD_DIR/tests/ci/openlitespeed
 sudo cp ./httpd_config.conf /tmp/openlitespeed/conf/httpd_config.conf
 sudo mkdir /tmp/openlitespeed/conf/vhosts/foshttpcachetest
 sudo cp ./vhconf.conf /tmp/openlitespeed/conf/vhosts/foshttpcachetest/vhconf.conf
+
+sudo ln -s /tmp/openlitespeed/bin/lswsctrl /usr/sbin/lswsctrl
