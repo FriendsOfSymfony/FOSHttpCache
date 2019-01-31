@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\Test\Proxy;
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
+
 class LiteSpeedProxy extends AbstractProxy
 {
     protected $binary = '/usr/local/lsws/bin/lswsctrl';
@@ -50,7 +52,20 @@ class LiteSpeedProxy extends AbstractProxy
      */
     public function clear()
     {
-        $this->stop();
+        try {
+            $this->runCommand(
+                $this->getBinary(),
+                [
+                    'status',
+                ]
+            );
+
+            $this->stop();
+
+        } catch (ProcessFailedException $e) {
+            // Not running, no need to stop
+        }
+
         $this->start();
     }
 }

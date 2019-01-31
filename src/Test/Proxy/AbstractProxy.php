@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Test\Proxy;
 
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
@@ -97,7 +98,7 @@ abstract class AbstractProxy implements ProxyInterface
      * @param string $command
      * @param array  $arguments
      *
-     * @throws \RuntimeException If command execution fails
+     * @throws ProcessFailedException If command execution fails
      */
     protected function runCommand($command, array $arguments)
     {
