@@ -6,10 +6,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.6.0 (unreleased)
 ------------------
 
-### Cache Clear
+### General
 
 * Added: ClearCapable to clear the whole cache in one efficient call. Currently
   supported only by the Symfony HttpCache.
+* Allow installing with Httplug 2.0 / PSR-18.
 
 2.5.4
 -----
