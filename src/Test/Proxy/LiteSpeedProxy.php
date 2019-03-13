@@ -15,7 +15,7 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class LiteSpeedProxy extends AbstractProxy
 {
-    protected $binary = '/usr/local/lsws/bin/lswsctrl';
+    protected $binary = '/usr/bin/sudo /usr/local/lsws/bin/lswsctrl';
 
     protected $port = 8080;
 
