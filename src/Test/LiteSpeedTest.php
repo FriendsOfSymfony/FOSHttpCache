@@ -42,7 +42,7 @@ trait LiteSpeedTest
     }
 
     /**
-     * Defaults to "lswsctrl".
+     * Defaults to "/usr/local/lsws/bin/lswsctrl".
      *
      * @return string
      */
@@ -58,7 +58,7 @@ trait LiteSpeedTest
      */
     protected function getCachingProxyPort()
     {
-        return defined('LITESPEED_PORT') ? LITESPEED_PORT : 80;
+        return defined('LITESPEED_PORT') ? LITESPEED_PORT : 8080;
     }
 
     /**
@@ -103,15 +103,15 @@ trait LiteSpeedTest
      *
      * @return LiteSpeed
      */
-    protected function getProxyClient($purgeLocation = '')
+    protected function getProxyClient()
     {
         if (null === $this->proxyClient) {
             $httpDispatcher = new HttpDispatcher(
-                ['http://127.0.0.1:8080']
+                ['http://127.0.0.1:'.$this->getCachingProxyPort()]
             );
 
             $this->proxyClient = new LiteSpeed($httpDispatcher, [
-                'document_root' => '/usr/local/lsws/DEFAULT/html', // TODO
+                'document_root' => realpath(__DIR__ . '/../../tests/Functional/Fixtures/web'),
             ]);
         }
 

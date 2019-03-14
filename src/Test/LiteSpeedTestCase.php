@@ -25,11 +25,6 @@ abstract class LiteSpeedTestCase extends TestCase
     use HttpCaller;
     use LiteSpeedTest;
 
-    protected function getCachingProxyPort()
-    {
-        return 8080;
-    }
-
     public static function isCacheHit()
     {
         return new IsCacheHitConstraint('X-LiteSpeed-Cache');
