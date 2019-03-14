@@ -22,4 +22,9 @@ abstract class LiteSpeedTestCase extends TestCase
     use CacheAssertions;
     use HttpCaller;
     use LiteSpeedTest;
+
+    protected function getCachingProxyPort()
+    {
+        return 8080;
+    }
 }
