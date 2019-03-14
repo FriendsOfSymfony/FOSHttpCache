@@ -3,8 +3,6 @@
 wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | sudo bash
 sudo apt-get -y install openlitespeed
 
-sudo /usr/local/lsws/bin/lswsctrl stop
-
 # Remove examples
 sudo rm -r /usr/local/lsws/conf/vhosts/Example
 sudo rm -r /usr/local/lsws/Example
