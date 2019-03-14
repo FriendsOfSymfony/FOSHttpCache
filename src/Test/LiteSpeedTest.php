@@ -107,7 +107,7 @@ trait LiteSpeedTest
     {
         if (null === $this->proxyClient) {
             $httpDispatcher = new HttpDispatcher(
-                ['http://127.0.0.1:'.$this->getCachingProxyPort()]
+                ['http://'.$this->getHostName().':'.$this->getCachingProxyPort()]
             );
 
             $this->proxyClient = new LiteSpeed($httpDispatcher, [
