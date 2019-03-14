@@ -19,17 +19,21 @@ use Psr\Http\Message\ResponseInterface;
 trait AbstractCacheConstraintTrait
 {
     protected $header = 'X-Cache';
+    protected $matchesIfHeaderIsMissing = false;
 
     /**
      * Constructor.
      *
-     * @param string $header Cache debug header; defaults to X-Cache-Debug
+     * @param string $header Cache debug header; defaults to X-Cache
+     * @param bool $matchesIfHeaderIsMissing Defines that the constraint matches if the header is missing completely; defaults to false
      */
-    public function __construct($header = null)
+    public function __construct($header = null, $matchesIfHeaderIsMissing = false)
     {
         if ($header) {
             $this->header = $header;
         }
+
+        $this->matchesIfHeaderIsMissing = $matchesIfHeaderIsMissing;
 
         parent::__construct();
     }
@@ -44,7 +48,13 @@ trait AbstractCacheConstraintTrait
         if (!$other instanceof ResponseInterface) {
             throw new \RuntimeException(sprintf('Expected a GuzzleHttp\Psr7\Response but got %s', get_class($other)));
         }
+
         if (!$other->hasHeader($this->header)) {
+
+            if ($this->matchesIfHeaderIsMissing) {
+                return true;
+            }
+
             $message = sprintf(
                 'Response has no "%s" header. Configure your caching proxy '
                 .'to set the header with cache hit/miss status.',

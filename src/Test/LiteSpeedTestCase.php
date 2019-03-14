@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\Test;
 
+use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
+use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,5 +28,15 @@ abstract class LiteSpeedTestCase extends TestCase
     protected function getCachingProxyPort()
     {
         return 8080;
+    }
+
+    public static function isCacheHit()
+    {
+        return new IsCacheHitConstraint('X-LiteSpeed-Cache');
+    }
+
+    public static function isCacheMiss()
+    {
+        return new IsCacheMissConstraint('X-LiteSpeed-Cache', true);
     }
 }
