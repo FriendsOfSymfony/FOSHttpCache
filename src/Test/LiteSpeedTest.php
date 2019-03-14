@@ -58,7 +58,7 @@ trait LiteSpeedTest
      */
     protected function getCachingProxyPort()
     {
-        return defined('LITESPEED_PORT') ? LITESPEED_PORT : 8080;
+        return defined('LITESPEED_PORT') ? LITESPEED_PORT : 8088;
     }
 
     /**
