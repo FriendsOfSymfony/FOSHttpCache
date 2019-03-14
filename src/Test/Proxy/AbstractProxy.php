@@ -13,7 +13,6 @@ namespace FOS\HttpCache\Test\Proxy;
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 
 abstract class AbstractProxy implements ProxyInterface
 {
@@ -96,14 +95,14 @@ abstract class AbstractProxy implements ProxyInterface
      * Run a shell command.
      *
      * @param array $command
-     * @param bool   $sudo
+     * @param bool  $sudo
      *
      * @throws ProcessFailedException If command execution fails
      */
     protected function runCommand(array $command, $sudo = false)
     {
         if ($sudo) {
-            $command = array_merge(array('sudo'), $command);
+            $command = array_merge(['sudo'], $command);
         }
 
         $process = new Process($command);

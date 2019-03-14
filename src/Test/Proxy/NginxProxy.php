@@ -56,7 +56,7 @@ class NginxProxy extends AbstractProxy
         if (file_exists($this->pid)) {
             $this->runCommand([
                 'kill',
-                trim(file_get_contents($this->pid))
+                trim(file_get_contents($this->pid)),
             ]);
         }
     }
@@ -69,7 +69,7 @@ class NginxProxy extends AbstractProxy
         $this->runCommand([
             'rm',
             '-rf',
-            $this->getCacheDir()
+            $this->getCacheDir(),
         ]);
         $this->start();
     }
