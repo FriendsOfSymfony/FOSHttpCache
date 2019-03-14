@@ -24,12 +24,10 @@ class LiteSpeedProxy extends AbstractProxy
      */
     public function start()
     {
-        $this->runCommand(
+        $this->runCommand([
             $this->getBinary(),
-            [
-                'start',
-            ]
-        );
+            'start',
+        ], true);
 
         $this->waitFor($this->getIp(), $this->getPort(), 2000);
     }
@@ -39,12 +37,10 @@ class LiteSpeedProxy extends AbstractProxy
      */
     public function stop()
     {
-        $this->runCommand(
+        $this->runCommand([
             $this->getBinary(),
-            [
-                'stop',
-            ]
-        );
+            'stop',
+        ], true);
     }
 
     /**
@@ -53,12 +49,10 @@ class LiteSpeedProxy extends AbstractProxy
     public function clear()
     {
         try {
-            $this->runCommand(
+            $this->runCommand([
                 $this->getBinary(),
-                [
-                    'status',
-                ]
-            );
+                'status',
+            ], true);
 
             $this->stop();
 

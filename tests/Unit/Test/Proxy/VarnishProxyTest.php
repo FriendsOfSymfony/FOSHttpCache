@@ -45,8 +45,8 @@ class VarnishProxyTest extends TestCase
         $this->assertEquals($inlineC, $proxy->getAllowInlineC());
         $proxy->start();
 
-        $this->assertEquals('/usr/sbin/varnishd', $proxy->command);
-        $arguments = [
+        $command = [
+            '/usr/sbin/varnishd',
             '-a', '192.168.0.1:6181',
             '-T', '192.168.0.1:1331',
             '-f', 'config.vcl',
@@ -55,11 +55,11 @@ class VarnishProxyTest extends TestCase
             '-P', '/tmp/foshttpcache-varnish.pid',
         ];
         if ($inlineC) {
-            $arguments[] = '-p';
-            $arguments[] = 'vcc_allow_inline_c=on';
+            $command[] = '-p';
+            $command[] = 'vcc_allow_inline_c=on';
         }
 
-        $this->assertEquals($arguments, $proxy->arguments);
+        $this->assertEquals($command, $proxy->command);
     }
 
     /**
@@ -79,8 +79,6 @@ class VarnishProxyMock extends VarnishProxy
 {
     public $command;
 
-    public $arguments;
-
     public $wait = true;
 
     public function setConfigFile($configFile)
@@ -88,10 +86,9 @@ class VarnishProxyMock extends VarnishProxy
         $this->configFile = $configFile;
     }
 
-    protected function runCommand($command, array $arguments)
+    protected function runCommand(array $command, $sudo = false)
     {
         $this->command = $command;
-        $this->arguments = $arguments;
     }
 
     protected function wait($timeout, $callback)

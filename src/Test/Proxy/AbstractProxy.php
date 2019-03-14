@@ -95,23 +95,18 @@ abstract class AbstractProxy implements ProxyInterface
     /**
      * Run a shell command.
      *
-     * @param string $command
-     * @param array  $arguments
+     * @param array $command
+     * @param bool   $sudo
      *
      * @throws ProcessFailedException If command execution fails
      */
-    protected function runCommand($command, array $arguments)
+    protected function runCommand(array $command, $sudo = false)
     {
-        if (method_exists(Process::class, 'setStdin')) {
-            // Symfony 2, process can not handle an array as command. Use the meanwhile deprecated ProcessBuilder
-            $builder = new ProcessBuilder($arguments);
-            $builder->setPrefix($command);
-
-            $process = $builder->getProcess();
-        } else {
-            $process = new Process(array_merge([$command], $arguments));
+        if ($sudo) {
+            $command = array_merge(array('sudo'), $command);
         }
 
+        $process = new Process($command);
         $process->mustRun();
     }
 

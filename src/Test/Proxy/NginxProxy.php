@@ -39,13 +39,11 @@ class NginxProxy extends AbstractProxy
      */
     public function start()
     {
-        $this->runCommand(
+        $this->runCommand([
             $this->getBinary(),
-            [
-                '-c', $this->getConfigFile(),
-                '-g', 'pid '.$this->pid.';',
-            ]
-        );
+            '-c', $this->getConfigFile(),
+            '-g', 'pid '.$this->pid.';',
+        ]);
 
         $this->waitFor($this->getIp(), $this->getPort(), 2000);
     }
@@ -56,7 +54,10 @@ class NginxProxy extends AbstractProxy
     public function stop()
     {
         if (file_exists($this->pid)) {
-            $this->runCommand('kill', [trim(file_get_contents($this->pid))]);
+            $this->runCommand([
+                'kill',
+                trim(file_get_contents($this->pid))
+            ]);
         }
     }
 
@@ -65,7 +66,11 @@ class NginxProxy extends AbstractProxy
      */
     public function clear()
     {
-        $this->runCommand('rm', ['-rf', $this->getCacheDir()]);
+        $this->runCommand([
+            'rm',
+            '-rf',
+            $this->getCacheDir()
+        ]);
         $this->start();
     }
 

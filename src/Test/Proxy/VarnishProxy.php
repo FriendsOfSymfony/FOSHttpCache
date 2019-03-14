@@ -48,21 +48,21 @@ class VarnishProxy extends AbstractProxy
      */
     public function start()
     {
-        $args = [
+        $command = [
+            $this->getBinary(),
             '-a', $this->ip.':'.$this->getPort(),
             '-T', $this->ip.':'.$this->getManagementPort(),
             '-f', $this->getConfigFile(),
             '-n', $this->getCacheDir(),
             '-p', 'vcl_dir='.$this->getConfigDir(),
-
             '-P', $this->pid,
         ];
         if ($this->getAllowInlineC()) {
-            $args[] = '-p';
-            $args[] = 'vcc_allow_inline_c=on';
+            $command[] = '-p';
+            $command[] = 'vcc_allow_inline_c=on';
         }
 
-        $this->runCommand($this->getBinary(), $args);
+        $this->runCommand($command);
 
         $this->waitFor($this->ip, $this->getPort(), 5000);
     }
@@ -74,7 +74,11 @@ class VarnishProxy extends AbstractProxy
     {
         if (file_exists($this->pid)) {
             try {
-                $this->runCommand('kill', ['-9', trim(file_get_contents($this->pid))]);
+                $this->runCommand([
+                    'kill',
+                    '-9',
+                    trim(file_get_contents($this->pid))
+                ]);
             } catch (\RuntimeException $e) {
                 // Ignore if command fails when Varnish wasn't running
             }
