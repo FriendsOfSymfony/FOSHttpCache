@@ -1,14 +1,9 @@
 #!/bin/sh
 
-sudo apt-get -y install build-essential
-sudo apt-get -y install rcs libpcre3-dev libexpat1-dev libssl-dev libgeoip-dev libudns-dev zlib1g-dev libxml2 libxml2-dev libpng-dev openssl
-sudo apt-get -y install wget
+wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | sudo bash
+sudo apt-get -y install openlitespeed
 
-wget https://openlitespeed.org/packages/openlitespeed-1.4.43.src.tgz
-tar -zxvf openlitespeed-1.4.43.src.tgz
-cd ./openlitespeed-1.4.43
-./configure --with-user travis --with-group travis
-make && make install
+sudo /usr/local/lsws/bin/lswsctrl stop
 
 # Remove examples
 sudo rm -r /usr/local/lsws/conf/vhosts/Example
