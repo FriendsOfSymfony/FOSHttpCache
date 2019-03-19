@@ -13,64 +13,113 @@ First of all, let's get one thing straight here: You'll find a lot of documentat
 and noise around LiteSpeed cache on the Internet, mostly involving plugins, specifically the
 Wordpress one. You **don't** need any plugin to benefit from LiteSpeed cache!
 As long as you follow the HTTP specification regarding the caching headers, you can use it as
-a general reverse proxy like NGINX or Varnish.
+a general reverse proxy just like NGINX or Varnish.
 
-Invalidation works by setting the specific LiteSpeed headers on the **response**. This means
-contrary to other proxies in this library, we do not send any ``PURGE`` requests to
-the proxy but instead we have to send a request to an endpoint where the response provides
-the correct LiteSpeed-specific headers which then trigger purging actions.
-You can read more on these headers in the `LiteSpeed response headers documentation`_.
+LiteSpeed comes in two different variants:
 
-To do so, we generate a simple PHP file with a random file name containing the appropriate ``header()`` calls.
-After generation, we request this file and delete it again right away.
+* OpenLiteSpeed (OLS) - the open source product with less features
+* LiteSpeed Web Server (LSWS) - the enterprise version with more features and professional support
 
-For this reason you have to configure two parameters:
+The caching module implementations are different and thus have to be configured differently but they support the
+same set of features (except for OLS not supporting Edge Side Includes (ESI)).
 
-* The location on your server where the file should be generated to
-  (must be publicly accessible and writable by the server).
-* The base URL on which the generated file can be requested.
-
-Configuring LiteSpeed WebServer itself
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Enabling LiteSpeed to support public caching on your server is pretty much straight forward.
-Add this to your ``.htaccess``::
-
-    <IfModule LiteSpeed>
-        CacheEnable public /
-    </IfModule>
+So before you start configuring the server, make sure you know which version of LiteSpeed you are using.
 
 .. note::
 
-    This setup works in a single node webserver environment only. If you are targeting a multi
+    Any LiteSpeed setup works in a single node web server environment only. If you are targeting a multi
     node setup you might want to consider switching to :ref:`Varnish <varnish configuration>` which has excellent
-    support for this setup already built-in in this library.
+    support for this already built-in in this library.
 
-You can find more information on how to `configure LiteSpeed`_ in their docs.
+
+Configuring OpenLiteSpeed
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+OLS does not support different caching settings depending on ``.htaccess`` settings and different paths.
+If you need that, you have to go with LSWS instead.
+Thus, OLS has to be configured as follows on server or vHost level::
+
+    module cache {
+      # This enables the public cache
+      enableCache                      1
+
+      # This disables the private cache
+      enablePrivateCache               0
+
+      # This enables the public cache
+      checkPublicCache                 1
+
+      # This disables the private cache
+      checkPrivateCache                0
+
+      # Also consider the query string in caches
+      qsCache                          1
+
+      # Enable checking for a cached entry if there's a cookie on the request
+      reqCookieCache                   1
+
+      # We ignore request Cache-Control headers
+      ignoreReqCacheCtrl               1
+
+      # Must be disabled, this tells LS to check the Cache-Control/Expire headers on the response
+      ignoreRespCacheCtrl              0
+
+      # We don't cache responses that set a cookie
+      respCookieCache                  0
+
+      # Configure the maximum stale age to a sensible value for your application
+      # The maxStaleAge defines a grace period in which LS can use an out of date (stale) response while checking on a new version
+      maxStaleAge                      10
+
+      # Make sure we disable expireInSeconds because it would override our Cache-Control header
+      expireInSeconds                  0
+
+      # Enable the module
+      ls_enabled                       1
+    }
+
+That's all you need. Of course you might want to adjust certain values to your needs.
+Also refer to the OLS docs if you need more details about the different configuration values.
+
+Configuring LiteSpeed WebServer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+LSWS can also be configured on server level, however, as LSWS supports ``.htaccess`` you may want to configure it
+there to give your application the flexibility of having different configurations for certain paths.
+
+Configure your ``.htaccess`` as follows::
+
+    <IfModule LiteSpeed>
+        CacheEnable public /
+        # TODO: The rest of the directives
+    </IfModule>
+
+Also refer to the LSWS docs if you need more details about the different configuration values.
 
 Configuring the library
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To illustrate configuration it's easiest if we do so with an example. For this we assume you have the following setup:
-
-* Your domain is called ``www.example.com``
-* Your domain points to ``/var/www/public``
-
-
-Your proxy client instance has to look like so::
+Because LiteSpeed does not support a multi node setup configuring the proxy client is pretty straight forward::
 
     use FOS\HttpCache\ProxyClient\HttpDispatcher;
     use FOS\HttpCache\ProxyClient\LiteSpeed;
 
     $servers = ['https://www.example.com'];
-    $baseUri = 'https://www.example.com';
-    $httpDispatcher = new HttpDispatcher($servers, $baseUri);
+    $httpDispatcher = new HttpDispatcher($servers);
 
-    $options = [
-        'target_dir' => '/var/www/public',
-    ];
+    $litespeed = new LiteSpeed($httpDispatcher);
 
-    $litespeed = new LiteSpeed($httpDispatcher, $options);
 
-.. _configure LiteSpeed: https://www.litespeedtech.com/support/wiki/doku.php/litespeed_wiki:cache:no-plugin-setup-guidline
-.. _LiteSpeed response headers documentation:  https://www.litespeedtech.com/support/wiki/doku.php/litespeed_wiki:cache:developer_guide:response_headers
+Cache Tagging
+~~~~~~~~~~~~~
+
+If you want to use cache tagging please note that you cannot use the default settings of the ``ResponseTagger`` (which
+by default uses  ``X-Cache-Tags``) but instead you have to configure it to ``X-LiteSpeed-Tag`` like so::
+
+    use FOS\HttpCache\ResponseTagger;
+    use FOS\HttpCache\TagHeaderFormatter;
+
+    $formatter = new CommaSeparatedTagHeaderFormatter('X-LiteSpeed-Tag');
+    $responseTagger = new ResponseTagger(['header_formatter' => $formatter]);
+
+
