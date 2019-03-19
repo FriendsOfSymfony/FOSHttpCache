@@ -19,21 +19,17 @@ use Psr\Http\Message\ResponseInterface;
 trait AbstractCacheConstraintTrait
 {
     protected $header = 'X-Cache';
-    protected $matchesIfHeaderIsMissing = false;
 
     /**
      * Constructor.
      *
      * @param string $header Cache debug header; defaults to X-Cache
-     * @param bool $matchesIfHeaderIsMissing Defines that the constraint matches if the header is missing completely; defaults to false
      */
-    public function __construct($header = null, $matchesIfHeaderIsMissing = false)
+    public function __construct($header = null)
     {
         if ($header) {
             $this->header = $header;
         }
-
-        $this->matchesIfHeaderIsMissing = $matchesIfHeaderIsMissing;
 
         parent::__construct();
     }
@@ -50,11 +46,6 @@ trait AbstractCacheConstraintTrait
         }
 
         if (!$other->hasHeader($this->header)) {
-
-            if ($this->matchesIfHeaderIsMissing) {
-                return true;
-            }
-
             $message = sprintf(
                 'Response has no "%s" header. Configure your caching proxy '
                 .'to set the header with cache hit/miss status.',
@@ -79,7 +70,7 @@ trait AbstractCacheConstraintTrait
             throw new \RuntimeException($message);
         }
 
-        return false !== strpos((string) $other->getHeaderLine($this->header), $this->getValue());
+        return false !== strpos((string) strtolower($other->getHeaderLine($this->header)), strtolower($this->getValue()));
     }
 
     /**

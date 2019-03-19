@@ -32,6 +32,6 @@ abstract class LiteSpeedTestCase extends TestCase
 
     public static function isCacheMiss()
     {
-        return new IsCacheMissConstraint('X-LiteSpeed-Cache', true);
+        return new IsCacheMissConstraint('X-LiteSpeed-Cache');
     }
 }
