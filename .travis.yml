@@ -56,7 +56,6 @@ install:
 before_script:
   # Install Varnish
   - |
-    set -e
     curl -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey | sudo apt-key add -
     curl -L "https://packagecloud.io/install/repositories/varnishcache/varnish${VARNISH_VERSION//./}/config_file.list?os=ubuntu&dist=trusty&source=script" | sudo tee -a /etc/apt/sources.list
     cat /etc/apt/sources.list
