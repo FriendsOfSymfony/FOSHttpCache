@@ -110,9 +110,7 @@ trait LiteSpeedTest
                 ['http://'.$this->getHostName().':'.$this->getCachingProxyPort()]
             );
 
-            $this->proxyClient = new LiteSpeed($httpDispatcher, [
-                'document_root' => realpath(__DIR__ . '/../../tests/Functional/Fixtures/web'),
-            ]);
+            $this->proxyClient = new LiteSpeed($httpDispatcher);
         }
 
         return $this->proxyClient;
