@@ -15,7 +15,6 @@ use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\LiteSpeed;
 use FOS\HttpCache\Test\Proxy\LiteSpeedProxy;
 
-// TODO: update docs in case anything is configurable
 /**
  * Starts and clears the LiteSpeed proxy between tests.
  */

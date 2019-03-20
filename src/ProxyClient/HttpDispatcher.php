@@ -83,7 +83,7 @@ class HttpDispatcher implements Dispatcher
      *                                         requests (optional). At least one is required if
      *                                         you purge and refresh paths instead of
      *                                         absolute URLs. A request will be sent for each
-     *                                         base URL.     *
+     *                                         base URL.
      * @param HttpAsyncClient|null $httpClient Client capable of sending HTTP requests. If no
      *                                         client is supplied, a default one is created
      * @param UriFactory|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
@@ -192,52 +192,25 @@ class HttpDispatcher implements Dispatcher
      */
     private function fanOut(RequestInterface $request)
     {
-        /** @var RequestInterface[] $requests */
-        $requests = [$request];
-
-        // If base URIs are configured, try to make partial invalidation
-        // requests complete and send out a request for every base URI
-        if (0 !== \count($this->baseUris)) {
-
-            $requests = [];
-
-            foreach ($this->baseUris as $baseUri) {
-                $uri = $request->getUri();
-
-                if ($uri->getHost()) {
-                    // Absolute URI: does it already have a scheme?
-                    if (!$uri->getScheme() && '' !== $baseUri->getScheme()) {
-                        $uri = $uri->withScheme($baseUri->getScheme());
-                    }
-                } else {
-                    // Relative URI
-                    if ('' !== $baseUri->getHost()) {
-                        $uri = $uri->withHost($baseUri->getHost());
-                    }
-
-                    if ($baseUri->getPort()) {
-                        $uri = $uri->withPort($baseUri->getPort());
-                    }
-
-                    // Base path
-                    if ('' !== $baseUri->getPath()) {
-                        $path = $baseUri->getPath().'/'.ltrim($uri->getPath(), '/');
-                        $uri = $uri->withPath($path);
-                    }
-                }
-
-                // Close connections to make sure invalidation (PURGE/BAN) requests
-                // will not interfere with content (GET) requests.
-                $requests[] = $request->withUri($uri)->withHeader('Connection', 'Close');
-            }
-        }
-
         $serverRequests = [];
+
+        if (0 !== \count($this->baseUris)) {
+            // If base URIs are configured, try to make partial invalidation
+            // requests complete and send out a request for every base URI
+            $requests = $this->requestToBaseUris($request);
+        } else {
+            /** @var RequestInterface[] $requests */
+            $requests = [$request];
+        }
 
         // Create all requests to each caching proxy server
         foreach ($requests as $request) {
 
             $uri = $request->getUri();
+
+            // Close connections to make sure invalidation (PURGE/BAN) requests
+            // will not interfere with content (GET) requests.
+            $requests[] = $request->withUri($uri)->withHeader('Connection', 'Close');
 
             foreach ($this->getServers() as $server) {
                 $serverRequests[] = $request->withUri(
@@ -251,6 +224,49 @@ class HttpDispatcher implements Dispatcher
         }
 
         return $serverRequests;
+    }
+
+    /**
+     * Looks at a given request and returns an array of requests incorporating
+     * every configured base URI.
+     *
+     * @param RequestInterface $request The request to modify for every configured base URI
+     *
+     * @return RequestInterface[]
+     */
+    private function requestToBaseUris(RequestInterface $request)
+    {
+        $requests = [];
+
+        foreach ($this->baseUris as $baseUri) {
+            $uri = $request->getUri();
+
+            if ($uri->getHost()) {
+                // Absolute URI: does it already have a scheme?
+                if (!$uri->getScheme() && '' !== $baseUri->getScheme()) {
+                    $uri = $uri->withScheme($baseUri->getScheme());
+                }
+            } else {
+                // Relative URI
+                if ('' !== $baseUri->getHost()) {
+                    $uri = $uri->withHost($baseUri->getHost());
+                }
+
+                if ($baseUri->getPort()) {
+                    $uri = $uri->withPort($baseUri->getPort());
+                }
+
+                // Base path
+                if ('' !== $baseUri->getPath()) {
+                    $path = $baseUri->getPath().'/'.ltrim($uri->getPath(), '/');
+                    $uri = $uri->withPath($path);
+                }
+            }
+
+            $requests[] = $request->withUri($uri);
+        }
+
+        return $requests;
     }
 
     /**

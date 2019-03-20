@@ -96,8 +96,8 @@ Configure your ``.htaccess`` as follows::
 
 Also refer to the LSWS docs if you need more details about the different configuration values.
 
-Configuring the library
-~~~~~~~~~~~~~~~~~~~~~~~
+Configuring FOSHttpCache to work with LiteSpeed
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because LiteSpeed does not support a multi node setup configuring the proxy client is pretty straight forward if
 you serve your application only on one domain::
