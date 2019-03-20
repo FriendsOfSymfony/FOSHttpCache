@@ -99,16 +99,28 @@ Also refer to the LSWS docs if you need more details about the different configu
 Configuring the library
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Because LiteSpeed does not support a multi node setup configuring the proxy client is pretty straight forward::
+Because LiteSpeed does not support a multi node setup configuring the proxy client is pretty straight forward if
+you serve your application only on one domain::
 
     use FOS\HttpCache\ProxyClient\HttpDispatcher;
     use FOS\HttpCache\ProxyClient\LiteSpeed;
 
-    $servers = ['https://www.example.com'];
-    $httpDispatcher = new HttpDispatcher($servers);
+    $servers = ['127.0.0.1'];
+    $baseUri = 'example.com';
+    $httpDispatcher = new HttpDispatcher($servers, $baseUri);
 
     $litespeed = new LiteSpeed($httpDispatcher);
 
+If you need multiple domains, make your ``$baseUri`` an array like so::
+
+    use FOS\HttpCache\ProxyClient\HttpDispatcher;
+    use FOS\HttpCache\ProxyClient\LiteSpeed;
+
+    $servers = ['127.0.0.1'];
+    $baseUris = ['example.com', 'foobar.com'];
+    $httpDispatcher = new HttpDispatcher($servers, $baseUris);
+
+    $litespeed = new LiteSpeed($httpDispatcher);
 
 Cache Tagging
 ~~~~~~~~~~~~~
