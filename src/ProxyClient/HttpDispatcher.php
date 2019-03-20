@@ -107,7 +107,20 @@ class HttpDispatcher implements Dispatcher
         $this->setServers($servers);
 
         // Support both, a string or an array of strings (array_filter to kill empty base URLs)
-        $baseUris = array_filter((array) $baseUris);
+        if (is_string($baseUris)) {
+            if ('' === $baseUris) {
+                $baseUris = [];
+            } else {
+                $baseUris = [$baseUris];
+            }
+        }
+
+        if (!\is_array($baseUris)) {
+            throw new \InvalidArgumentException(sprintf(
+                'URI parameter must be either a string or an array of strings, %s given',
+                gettype($baseUris)
+            ));
+        }
 
         $this->setBaseUris($baseUris);
     }
@@ -324,13 +337,6 @@ class HttpDispatcher implements Dispatcher
      */
     private function filterUri($uriString, array $allowedParts = [])
     {
-        if (!is_string($uriString)) {
-            throw new \InvalidArgumentException(sprintf(
-                'URI parameter must be a string, %s given',
-                gettype($uriString)
-            ));
-        }
-
         // Creating a PSR-7 URI without scheme (with parse_url) results in the
         // original hostname to be seen as path. So first add a scheme if none
         // is given.

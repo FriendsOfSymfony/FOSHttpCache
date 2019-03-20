@@ -60,7 +60,7 @@ class HttpDispatcherTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage URI parameter must be a string, object given
+     * @expectedExceptionMessage URI parameter must be either a string or an array of strings
      */
     public function testInstantiateWithNonUri()
     {
