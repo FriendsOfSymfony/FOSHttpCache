@@ -24,7 +24,7 @@ Client        Purge   Refresh Ban     Tagging Clear
 ============= ======= ======= ======= ======= =======
 Varnish       ✓       ✓       ✓       ✓
 NGINX         ✓       ✓
-LiteSpeed     ✓                       ✓       ✓
+LiteSpeed     ✓       ✓               ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
 Noop          ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓

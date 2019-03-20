@@ -13,6 +13,7 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 
 /**
@@ -20,7 +21,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
-class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, ClearCapable
+class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, ClearCapable, RefreshCapable
 {
     /**
      * {@inheritdoc}
@@ -68,5 +69,14 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
         $purgeEndpoint = '/';
 
         $this->queueRequest('PURGE', $purgeEndpoint, $headers);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function refresh($url, array $headers = [])
+    {
+        $this->purge($url);
+        $this->queueRequest('GET', $url, $headers);
     }
 }

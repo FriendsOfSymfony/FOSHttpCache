@@ -19,7 +19,9 @@ use FOS\HttpCache\Test\LiteSpeedTestCase;
  */
 class LiteSpeedProxyClientTest extends LiteSpeedTestCase
 {
+    use RefreshAssertions;
     use PurgeAssertions;
+    use InvalidateTagsAssertions;
 
     public function testPurge()
     {
@@ -33,6 +35,21 @@ class LiteSpeedProxyClientTest extends LiteSpeedTestCase
 
     public function testPurgeHost()
     {
-        $this->assertPurgeHost($this->getProxyClient(), 'http://localhost:6181');
+        $this->assertPurgeHost($this->getProxyClient(), 'http://localhost:8088');
+    }
+
+    public function testRefresh()
+    {
+        $this->assertRefresh($this->getProxyClient());
+    }
+
+    public function testRefreshContentType()
+    {
+        $this->assertRefreshContentType($this->getProxyClient());
+    }
+
+    public function testInvalidateTags()
+    {
+        $this->assertInvalidateTags($this->getProxyClient(), ['tag1']);
     }
 }
