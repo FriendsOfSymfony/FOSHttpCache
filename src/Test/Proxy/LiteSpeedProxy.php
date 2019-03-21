@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\Test\Proxy;
 
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use DirectoryIterator;
 
 class LiteSpeedProxy extends AbstractProxy
 {
@@ -19,11 +19,24 @@ class LiteSpeedProxy extends AbstractProxy
 
     protected $port = 8080;
 
+    protected $cacheDir = '/usr/local/lsws/cachedata';
+
     /**
      * {@inheritdoc}
      */
     public function start()
     {
+        $process = $this->runCommand([
+            $this->getBinary(),
+            'status',
+        ], true);
+
+        // Already running
+        if (false !== strpos($process->getOutput(), 'litespeed is running with PID')) {
+            return;
+        }
+
+        // Starting deamonized
         $this->runCommand([
             $this->getBinary(),
             'start',
@@ -48,17 +61,36 @@ class LiteSpeedProxy extends AbstractProxy
      */
     public function clear()
     {
-        try {
-            $this->runCommand([
-                $this->getBinary(),
-                'status',
-            ], true);
+        // Runs as sudo to make sure it can be removed
+        $this->runCommand([
+            'rm',
+            '-rf',
+            $this->getCacheDir(),
+        ], true);
 
-            $this->stop();
-        } catch (ProcessFailedException $e) {
-            // Not running, no need to stop
-        }
+        // Does not run as sudo to make sure it's created using the correct user
+        $this->runCommand([
+            'mkdir',
+            '-p',
+            $this->getCacheDir(),
+        ]);
 
         $this->start();
+    }
+
+    /**
+     * @param string $cacheDir
+     */
+    public function setCacheDir($cacheDir)
+    {
+        $this->cacheDir = $cacheDir;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheDir()
+    {
+        return $this->cacheDir;
     }
 }

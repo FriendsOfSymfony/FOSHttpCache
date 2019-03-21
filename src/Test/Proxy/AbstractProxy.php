@@ -97,6 +97,8 @@ abstract class AbstractProxy implements ProxyInterface
      * @param array $command
      * @param bool  $sudo
      *
+     * @return Process
+     *
      * @throws ProcessFailedException If command execution fails
      */
     protected function runCommand(array $command, $sudo = false)
@@ -107,6 +109,8 @@ abstract class AbstractProxy implements ProxyInterface
 
         $process = new Process($command);
         $process->mustRun();
+
+        return $process;
     }
 
     /**

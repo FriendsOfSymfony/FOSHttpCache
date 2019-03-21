@@ -37,7 +37,12 @@ trait LiteSpeedTest
 
     protected function tearDown()
     {
-        $this->getProxy()->stop();
+        // Comment this out if you want to check the whole
+        // error.log
+        // Otherwise you'll get a new error.log for every
+        // test run and thus only the log of the last
+        // test will be visible.
+        // $this->getProxy()->stop();
     }
 
     /**
@@ -57,7 +62,7 @@ trait LiteSpeedTest
      */
     protected function getCachingProxyPort()
     {
-        return defined('LITESPEED_PORT') ? LITESPEED_PORT : 8088;
+        return defined('LITESPEED_PORT') ? LITESPEED_PORT : 8089; // 8088 is used by nginx
     }
 
     /**

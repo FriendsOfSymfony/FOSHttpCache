@@ -317,7 +317,7 @@ class HttpDispatcher implements Dispatcher
         }
 
         foreach ($baseUris as $baseUri) {
-            $this->baseUris[] =  $this->filterUri($baseUri);
+            $this->baseUris[] = $this->filterUri($baseUri);
         }
     }
 

@@ -28,7 +28,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
      */
     public function clear()
     {
-        $this->sendPurgeRequest([
+        $this->queuePurgeRequest([
             'X-LiteSpeed-Purge' => '*',
         ]);
 
@@ -44,7 +44,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
         $urlParts = parse_url($url);
         $url = array_key_exists('path', $urlParts) ? $urlParts['path'] : '/';
 
-        $this->sendPurgeRequest([
+        $this->queuePurgeRequest([
             'X-LiteSpeed-Purge' => $url,
         ]);
 
@@ -56,17 +56,18 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
      */
     public function invalidateTags(array $tags)
     {
-        $this->sendPurgeRequest([
+        $this->queuePurgeRequest([
             'X-LiteSpeed-Purge' => implode(', ', preg_filter('/^/', 'tag=', $tags)),
         ]);
 
         return $this;
     }
 
-    private function sendPurgeRequest(array $headers)
+    private function queuePurgeRequest(array $headers)
     {
         // TODO: LiteSpeed is likely going to hard code this URL, otherwise it has to be configurable
-        $purgeEndpoint = '/';
+        $purgeEndpoint = '/_fos_litespeed_purge_endpoint/';
+        $headers['Authorization'] = 'Basic Zm9zOmZvczEyMw=='; // fos:fos123
 
         $this->queueRequest('PURGE', $purgeEndpoint, $headers);
     }
@@ -78,5 +79,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
     {
         $this->purge($url);
         $this->queueRequest('GET', $url, $headers);
+
+        return $this;
     }
 }
