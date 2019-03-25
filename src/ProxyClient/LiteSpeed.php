@@ -67,7 +67,6 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
     {
         // TODO: LiteSpeed is likely going to hard code this URL, otherwise it has to be configurable
         $purgeEndpoint = '/_fos_litespeed_purge_endpoint/';
-        $headers['Authorization'] = 'Basic Zm9zOmZvczEyMw=='; // fos:fos123
 
         $this->queueRequest('PURGE', $purgeEndpoint, $headers);
     }
