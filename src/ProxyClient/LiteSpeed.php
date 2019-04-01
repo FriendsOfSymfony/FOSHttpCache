@@ -28,7 +28,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
      */
     public function clear()
     {
-        $this->queuePurgeEndpointRequest([
+        $this->queueRequest('PURGE', $this->options['purge_endpoint'], [
             'X-LiteSpeed-Purge' => '*',
         ]);
 
@@ -52,21 +52,25 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
     /**
      * {@inheritdoc}
      */
+    protected function configureOptions()
+    {
+        $resolver = parent::configureOptions();
+        $resolver->setDefaults(['purge_endpoint' => '/_fos_litespeed_purge_endpoint']);
+        $resolver->setAllowedTypes('purge_endpoint', 'string');
+
+        return $resolver;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function invalidateTags(array $tags)
     {
-        $this->queuePurgeEndpointRequest([
+        $this->queueRequest('PURGE', $this->options['purge_endpoint'], [
             'X-LiteSpeed-Purge' => implode(', ', preg_filter('/^/', 'tag=', $tags)),
         ]);
 
         return $this;
-    }
-
-    private function queuePurgeEndpointRequest(array $headers)
-    {
-        // TODO: Make this configurable
-        $purgeEndpoint = '/_fos_litespeed_purge_endpoint/';
-
-        $this->queueRequest('PURGE', $purgeEndpoint, $headers);
     }
 
     /**

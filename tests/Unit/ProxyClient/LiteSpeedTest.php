@@ -36,10 +36,12 @@ class LiteSpeedTest extends TestCase
     {
         $ls = new LiteSpeed($this->httpDispatcher);
 
-        $this->assertInvaliationRequests([
-            ['X-LiteSpeed-Purge' => ['/url']],
-            ['X-LiteSpeed-Purge' => ['/another/url']],
-        ]);
+        $this->assertInvaliationRequests(
+            [
+                '/url',
+                '/another/url',
+            ]
+        );
 
         $ls->purge('/url');
         $ls->purge('/another/url');
@@ -50,11 +52,13 @@ class LiteSpeedTest extends TestCase
     {
         $ls = new LiteSpeed($this->httpDispatcher);
 
-        $this->assertInvaliationRequests([
-            ['X-LiteSpeed-Purge' => ['/url']],
-            ['X-LiteSpeed-Purge' => ['/foobar']],
-            ['X-LiteSpeed-Purge' => ['/foobar']],
-        ]);
+        $this->assertInvaliationRequests(
+            [
+                '/url',
+                '/foobar',
+                '/foobar',
+            ]
+        );
 
         $ls->purge('/url');
         $ls->purge('https://www.domain.com/foobar');
@@ -66,10 +70,38 @@ class LiteSpeedTest extends TestCase
     {
         $ls = new LiteSpeed($this->httpDispatcher);
 
-        $this->assertInvaliationRequests([
-            ['X-LiteSpeed-Purge' => ['tag=foobar, tag=tag']],
-            ['X-LiteSpeed-Purge' => ['tag=more, tag=tags']],
+        $this->assertInvaliationRequests(
+            [
+                '/_fos_litespeed_purge_endpoint',
+                '/_fos_litespeed_purge_endpoint',
+            ],
+            [
+                ['X-LiteSpeed-Purge' => ['tag=foobar, tag=tag']],
+                ['X-LiteSpeed-Purge' => ['tag=more, tag=tags']],
+            ]
+        );
+
+        $ls->invalidateTags(['foobar', 'tag']);
+        $ls->invalidateTags(['more', 'tags']);
+        $ls->flush();
+    }
+
+    public function testInvalidateTagsWithDifferentEndpoint()
+    {
+        $ls = new LiteSpeed($this->httpDispatcher, [
+            'purge_endpoint' => '/purge',
         ]);
+
+        $this->assertInvaliationRequests(
+            [
+                '/purge',
+                '/purge',
+            ],
+            [
+                ['X-LiteSpeed-Purge' => ['tag=foobar, tag=tag']],
+                ['X-LiteSpeed-Purge' => ['tag=more, tag=tags']],
+            ]
+        );
 
         $ls->invalidateTags(['foobar', 'tag']);
         $ls->invalidateTags(['more', 'tags']);
@@ -80,24 +112,33 @@ class LiteSpeedTest extends TestCase
     {
         $ls = new LiteSpeed($this->httpDispatcher);
 
-        $this->assertInvaliationRequests([
-            ['X-LiteSpeed-Purge' => ['*']],
-        ]);
+        $this->assertInvaliationRequests(
+            [
+                '/_fos_litespeed_purge_endpoint',
+            ],
+            [
+                ['X-LiteSpeed-Purge' => ['*']],
+            ]
+        );
 
         $ls->clear();
         $ls->flush();
     }
 
-    private function assertInvaliationRequests(array $expectedConsecutiveHeaders)
+    private function assertInvaliationRequests(array $expectedPurgeUris, array $expectedConsecutiveHeaders = [])
     {
         $methodCallCount = 0;
 
         $this->httpDispatcher->shouldReceive('invalidate')
-            ->times(count($expectedConsecutiveHeaders))
+            ->times(count($expectedPurgeUris))
             ->with(\Mockery::on(
-                function (RequestInterface $request) use ($expectedConsecutiveHeaders, &$methodCallCount) {
+                function (RequestInterface $request) use ($expectedPurgeUris, $expectedConsecutiveHeaders, &$methodCallCount) {
                     $this->assertEquals('PURGE', $request->getMethod());
-                    $this->assertSame($expectedConsecutiveHeaders[$methodCallCount], $request->getHeaders());
+                    $this->assertEquals($expectedPurgeUris[$methodCallCount], $request->getUri()->getPath());
+
+                    if (0 !== count($expectedConsecutiveHeaders)) {
+                        $this->assertSame($expectedConsecutiveHeaders[$methodCallCount], $request->getHeaders());
+                    }
 
                     ++$methodCallCount;
 

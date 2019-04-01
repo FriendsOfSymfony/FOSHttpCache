@@ -11,8 +11,6 @@
 
 namespace FOS\HttpCache\Test\Proxy;
 
-use DirectoryIterator;
-
 class LiteSpeedProxy extends AbstractProxy
 {
     protected $binary = '/usr/local/lsws/bin/lswsctrl';

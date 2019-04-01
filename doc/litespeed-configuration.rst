@@ -74,6 +74,12 @@ Thus, OLS has to be configured as follows on server or vHost level::
       # Make sure we disable expireInSeconds because it would override our Cache-Control header
       expireInSeconds                  0
 
+      # If you want to use cache invalidation by cache tags, configure the general PURGE endpoint here.
+      # By default, this library is configured to use "/_fos_litespeed_purge_endpoint". If you'd like to
+      # have a different one, configure it here accordingly and make sure you configure the same URI
+      # in the library itself (see further down this page). Also make sure you don't overlook trailing slashes here!
+      purgeuri                         /_fos_litespeed_purge_endpoint
+
       # Enable the module
       ls_enabled                       1
     }
@@ -121,6 +127,19 @@ If you need multiple domains, make your ``$baseUri`` an array like so::
     $httpDispatcher = new HttpDispatcher($servers, $baseUris);
 
     $litespeed = new LiteSpeed($httpDispatcher);
+
+
+If you configured your LiteSpeed instance to use a different ``purgeuri`` than ``/_fos_litespeed_purge_endpoint`` also
+make sure to pass the configured URI like so::
+
+    use FOS\HttpCache\ProxyClient\HttpDispatcher;
+    use FOS\HttpCache\ProxyClient\LiteSpeed;
+
+    $servers = ['127.0.0.1'];
+    $baseUris = ['example.com', 'foobar.com'];
+    $httpDispatcher = new HttpDispatcher($servers, $baseUris);
+
+    $litespeed = new LiteSpeed($httpDispatcher, ['purge_endpoint' => '/your-uri');
 
 Cache Tagging
 ~~~~~~~~~~~~~

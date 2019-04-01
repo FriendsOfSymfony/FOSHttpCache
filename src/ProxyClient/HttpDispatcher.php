@@ -218,7 +218,6 @@ class HttpDispatcher implements Dispatcher
 
         // Create all requests to each caching proxy server
         foreach ($requests as $request) {
-
             $uri = $request->getUri();
 
             // Close connections to make sure invalidation (PURGE/BAN) requests
