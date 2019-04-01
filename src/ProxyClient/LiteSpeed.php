@@ -28,7 +28,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
      */
     public function clear()
     {
-        $this->queuePurgeRequest([
+        $this->queuePurgeEndpointRequest([
             'X-LiteSpeed-Purge' => '*',
         ]);
 
@@ -44,9 +44,7 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
         $urlParts = parse_url($url);
         $url = array_key_exists('path', $urlParts) ? $urlParts['path'] : '/';
 
-        $this->queuePurgeRequest([
-            'X-LiteSpeed-Purge' => $url,
-        ]);
+        $this->queueRequest('PURGE', $url, $headers);
 
         return $this;
     }
@@ -56,16 +54,16 @@ class LiteSpeed extends HttpProxyClient implements PurgeCapable, TagCapable, Cle
      */
     public function invalidateTags(array $tags)
     {
-        $this->queuePurgeRequest([
+        $this->queuePurgeEndpointRequest([
             'X-LiteSpeed-Purge' => implode(', ', preg_filter('/^/', 'tag=', $tags)),
         ]);
 
         return $this;
     }
 
-    private function queuePurgeRequest(array $headers)
+    private function queuePurgeEndpointRequest(array $headers)
     {
-        // TODO: LiteSpeed is likely going to hard code this URL, otherwise it has to be configurable
+        // TODO: Make this configurable
         $purgeEndpoint = '/_fos_litespeed_purge_endpoint/';
 
         $this->queueRequest('PURGE', $purgeEndpoint, $headers);

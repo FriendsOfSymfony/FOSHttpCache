@@ -31,12 +31,17 @@ class LiteSpeedProxy extends AbstractProxy
             'status',
         ], true);
 
-        // Already running
+        // Already running, restart
         if (false !== strpos($process->getOutput(), 'litespeed is running with PID')) {
+            $this->runCommand([
+                $this->getBinary(),
+                'restart',
+            ], true);
+
             return;
         }
 
-        // Starting deamonized
+        // Otherwise start
         $this->runCommand([
             $this->getBinary(),
             'start',

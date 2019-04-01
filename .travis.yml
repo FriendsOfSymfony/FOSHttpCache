@@ -84,6 +84,5 @@ after_failure:
   - sudo cat /var/log/apache2/error.log
   - sudo cat /var/log/apache2/access.log
   - sudo cat /var/log/apache2/other_vhosts_access.log
-  - sudo cat /usr/local/lsws/logs/error.log
+  - for errorlog in '/usr/local/lsws/logs/error.log*'; do sudo cat $errorlog; done
   - sudo cat /usr/local/lsws/logs/access.log
-  - ls -la /usr/local/lsws/cachedata

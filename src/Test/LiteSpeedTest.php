@@ -37,12 +37,7 @@ trait LiteSpeedTest
 
     protected function tearDown()
     {
-        // Comment this out if you want to check the whole
-        // error.log
-        // Otherwise you'll get a new error.log for every
-        // test run and thus only the log of the last
-        // test will be visible.
-        // $this->getProxy()->stop();
+        $this->getProxy()->stop();
     }
 
     /**
