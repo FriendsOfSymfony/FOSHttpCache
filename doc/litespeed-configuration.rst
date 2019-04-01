@@ -55,8 +55,8 @@ Thus, OLS has to be configured as follows on server or vHost level::
       # Also consider the query string in caches
       qsCache                          1
 
-      # Enable checking for a cached entry if there's a cookie on the request
-      reqCookieCache                   1
+      # Disable checking for a cached entry if there's a cookie on the request
+      reqCookieCache                   0
 
       # We ignore request Cache-Control headers
       ignoreReqCacheCtrl               1
