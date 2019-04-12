@@ -171,8 +171,6 @@ class HttpDispatcherTest extends TestCase
 
         $request = $this->messageFactory->createRequest('BAN', '/', ['X-Url' => '/foo/.*']);
         $httpDispatcher->invalidate($request, false);
-
-        // TODO: This is already a risky case because it doesn't test anything. Should be fixed in master?
     }
 
     public function testSetBasePathWithHost()
