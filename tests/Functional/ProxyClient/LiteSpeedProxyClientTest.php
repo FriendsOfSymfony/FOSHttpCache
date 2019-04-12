@@ -30,8 +30,6 @@ class LiteSpeedProxyClientTest extends LiteSpeedTestCase
 
     public function testPurgeContentType()
     {
-        $this->markTestSkipped('Not working with litespeed, it ignores the Vary: Accept header at the moment: https://github.com/litespeedtech/openlitespeed/issues/127');
-
         $this->assertPurgeContentType($this->getProxyClient());
     }
 
@@ -42,8 +40,6 @@ class LiteSpeedProxyClientTest extends LiteSpeedTestCase
 
     public function testRefreshContentType()
     {
-        $this->markTestSkipped('Not working with litespeed, it ignores the Vary: Accept header at the moment: https://github.com/litespeedtech/openlitespeed/issues/127');
-
         $this->assertRefreshContentType($this->getProxyClient());
     }
 
