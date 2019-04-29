@@ -6,7 +6,7 @@ cache:
 
 env:
   global:
-    - VARNISH_VERSION=5.1
+    - VARNISH_VERSION=6.2
     - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^1.1.2"
 
 matrix:
@@ -26,6 +26,10 @@ matrix:
       # Test with Varnish 4
     - php: 7.3
       env: VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.9.1
+
+      # Test with Varnish 5
+    - php: 7.3
+      env: VARNISH_VERSION=5.1
 
     # Test Symfony LTS versions
     - php: 7.3
@@ -58,6 +62,7 @@ before_script:
   - |
     set -e
     curl -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey | sudo apt-key add -
+    curl -L https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add -
     curl -L "https://packagecloud.io/install/repositories/varnishcache/varnish${VARNISH_VERSION//./}/config_file.list?os=ubuntu&dist=trusty&source=script" | sudo tee -a /etc/apt/sources.list
     cat /etc/apt/sources.list
     sudo apt-get update -qq
