@@ -16,11 +16,17 @@ header('Vary: X-User-Context-Hash');
 
 if (!isset($_COOKIE[0])) {
     header('X-HashTest: anonymous');
+    header('Content-Length: 9');
+
     echo 'anonymous';
 } elseif ('foo' === $_COOKIE[0]) {
     header('X-HashTest: foo');
+    header('Content-Length: 3');
+
     echo 'foo';
 } else {
     header('X-HashTest: bar');
+    header('Content-Length: 3');
+
     echo 'bar';
 }

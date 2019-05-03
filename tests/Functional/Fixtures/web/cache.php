@@ -9,8 +9,11 @@
  * file that was distributed with this source code.
  */
 
+$mt = microtime(true);
+
 header('Cache-Control: max-age=3600');
 header('Content-Type: text/html');
 header('X-Cache-Debug: 1');
+header('Content-Length: ' . strlen($mt));
 
-echo microtime(true);
+echo $mt;
