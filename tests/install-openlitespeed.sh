@@ -3,6 +3,7 @@
 #sudo wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | sudo bash
 #sudo apt-get -y install openlitespeed
 
+# TODO: still preuse
 sudo wget https://openlitespeed.org/preuse/openlitespeed-1.4.47.tgz
 tar -zxvf openlitespeed-*.tgz
 cd openlitespeed
