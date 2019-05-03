@@ -15,6 +15,6 @@ header('Cache-Control: max-age=3600');
 header('Content-Type: text/html');
 header('xkey: tag1 tag2');
 header('X-Cache-Debug: 1');
-header('Content-Length: ' . strlen($mt));
+header('Content-Length: '.strlen($mt));
 
 echo $mt;

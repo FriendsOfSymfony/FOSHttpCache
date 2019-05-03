@@ -16,6 +16,6 @@ header('Content-Type: text/html');
 header('X-Cache-Tags: tag1');
 header('X-Cache-Tags: tag2');
 header('X-Cache-Debug: 1');
-header('Content-Length: ' . strlen($mt));
+header('Content-Length: '.strlen($mt));
 
 echo $mt;

@@ -16,6 +16,6 @@ header('Content-Type: text/html');
 header('X-Cache-Tags: tag1,tag2');
 header('X-LiteSpeed-Tag: tag1, tag2'); // For LiteSpeed
 header('X-Cache-Debug: 1');
-header('Content-Length: ' . strlen($mt));
+header('Content-Length: '.strlen($mt));
 
 echo $mt;

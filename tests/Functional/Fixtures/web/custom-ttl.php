@@ -15,6 +15,6 @@ header('Cache-Control: s-maxage=0');
 header('X-Reverse-Proxy-TTL: 3600');
 header('Content-Type: text/html');
 header('X-Cache-Debug: 1');
-header('Content-Length: ' . strlen($mt));
+header('Content-Length: '.strlen($mt));
 
 echo $mt;
