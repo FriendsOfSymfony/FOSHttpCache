@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
+use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Simone Fumagalli <simone.fumagalli@musement.com>
  */
-class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable
+class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearCapable
 {
     /**
      * @internal
@@ -73,6 +74,32 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable
         $this->queueRequest(
             self::HTTP_METHOD_PURGE,
             $url,
+            $headers,
+            false
+        );
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see https://docs.fastly.com/api/purge#purge_bee5ed1a0cfd541e8b9f970a44718546
+     *
+     * Warning:
+     * - Does not support soft purge, for that use an "all" key.
+     * - Requires a API token of a user with at least Engineer permissions.
+     */
+    public function clear()
+    {
+        $headers = [
+            'Fastly-Key' => $this->options['authentication_token'],
+            'Accept' => 'application/json'
+        ];
+
+        $this->queueRequest(
+            Request::METHOD_POST,
+            sprintf("/service/%s/purge_all", $this->options['service_identifier']),
             $headers,
             false
         );
