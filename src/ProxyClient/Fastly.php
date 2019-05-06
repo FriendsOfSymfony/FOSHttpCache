@@ -11,27 +11,29 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\Exception\InvalidArgumentException;
-use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
-use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Fastly HTTP cache invalidator.
  *
  * @author Simone Fumagalli <simone.fumagalli@musement.com>
  */
-class Fastly extends HttpProxyClient implements TagCapable
+class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable
 {
     /**
+     * @internal
+     */
+    const HTTP_METHOD_PURGE = 'PURGE';
+
+    /**
      * {@inheritdoc}
+     *
+     * @see https://docs.fastly.com/api/purge#purge_db35b293f8a724717fcf25628d713583
      */
     public function invalidateTags(array $tags)
     {
-
         $headers = [
             'Fastly-Key' => $this->options['authentication_token'],
             'Accept' => 'application/json'
@@ -41,16 +43,39 @@ class Fastly extends HttpProxyClient implements TagCapable
             $headers['Fastly-Soft-Purge'] = 1;
         }
 
-        foreach (\explode(",", $this->options['service_identifier']) as $fastlyServiceId) {
-            foreach ($tags as $tag) {
-                $this->queueRequest(
-                    Request::METHOD_POST,
-                    sprintf("/service/%s/purge/%s", $fastlyServiceId, $tag),
-                    $headers,
-                    false
-                );
-            }
+        foreach (\array_chunk($tags, 256) as $tagchunk) {
+            $this->queueRequest(
+                Request::METHOD_POST,
+                sprintf("/service/%s/purge", $this->options['service_identifier']),
+                $headers + [
+                    'Surrogate-Key' => implode(' ', $tagchunk),
+                ],
+                false
+            );
         }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @see https://docs.fastly.com/api/purge#soft_purge_0c4f56f3d68e9bed44fb8b638b78ea36
+     * @see https://docs.fastly.com/guides/purging/authenticating-api-purge-requests#purging-urls-with-an-api-token
+     */
+    public function purge($url, array $headers = [])
+    {
+        $headers['Fastly-Key'] = $this->options['authentication_token'];
+        if (true === $this->options['soft_purge']) {
+            $headers['Fastly-Soft-Purge'] = 1;
+        }
+
+        $this->queueRequest(
+            self::HTTP_METHOD_PURGE,
+            $url,
+            $headers,
+            false
+        );
 
         return $this;
     }
