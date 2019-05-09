@@ -17,6 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Trait for enhanced Symfony reverse proxy based on the symfony kernel component.
@@ -91,13 +92,13 @@ trait EventDispatchingHttpCache
         // trigger loading the CacheEvent to avoid fatal error when HttpKernel::loadClassCache is used.
         class_exists(CacheEvent::class);
 
-        if ($response = $this->dispatch(Events::PRE_HANDLE, $request)) {
-            return $this->dispatch(Events::POST_HANDLE, $request, $response);
+        if ($response = $this->dispatch(Events::PRE_HANDLE, $request, null, $type)) {
+            return $this->dispatch(Events::POST_HANDLE, $request, $response, $type);
         }
 
         $response = parent::handle($request, $type, $catch);
 
-        return $this->dispatch(Events::POST_HANDLE, $request, $response);
+        return $this->dispatch(Events::POST_HANDLE, $request, $response, $type);
     }
 
     /**
@@ -129,16 +130,17 @@ trait EventDispatchingHttpCache
     /**
      * Dispatch an event if needed.
      *
-     * @param string        $name     Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
+     * @param string        $name        Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
      * @param Request       $request
-     * @param Response|null $response If already available
+     * @param Response|null $response    If already available
+     * @param int           $requestType The request type (default KernelInterface::MASTER_REQUEST)
      *
      * @return Response The response to return, which might be provided/altered by a listener
      */
-    protected function dispatch($name, Request $request, Response $response = null)
+    protected function dispatch($name, Request $request, Response $response = null, $requestType = KernelInterface::MASTER_REQUEST)
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
-            $event = new CacheEvent($this, $request, $response);
+            $event = new CacheEvent($this, $request, $response, $requestType);
             $this->getEventDispatcher()->dispatch($name, $event);
             $response = $event->getResponse();
         }

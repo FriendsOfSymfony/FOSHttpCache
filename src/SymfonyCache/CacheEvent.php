@@ -14,6 +14,7 @@ namespace FOS\HttpCache\SymfonyCache;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Event raised by the HttpCache kernel.
@@ -38,17 +39,24 @@ class CacheEvent extends Event
     private $response;
 
     /**
+     * @var int
+     */
+    private $requestType;
+
+    /**
      * Make sure your $kernel implements CacheInvalidationInterface.
      *
-     * @param CacheInvalidation $kernel   the kernel raising with this event
-     * @param Request           $request  the request being processed
-     * @param Response          $response the response, if available
+     * @param CacheInvalidation $kernel      the kernel raising with this event
+     * @param Request           $request     the request being processed
+     * @param Response          $response    the response, if available
+     * @param int               $requestType the request type (default KernelInterface::MASTER_REQUEST)
      */
-    public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null)
+    public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null, $requestType = KernelInterface::MASTER_REQUEST)
     {
         $this->kernel = $kernel;
         $this->request = $request;
         $this->response = $response;
+        $this->requestType = $requestType;
     }
 
     /**
@@ -69,6 +77,16 @@ class CacheEvent extends Event
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * Get the request type.
+     *
+     * @return int
+     */
+    public function getRequestType()
+    {
+        return $this->requestType;
     }
 
     /**
