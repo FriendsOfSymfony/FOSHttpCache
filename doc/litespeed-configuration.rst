@@ -35,6 +35,10 @@ So before you start configuring the server, make sure you know which version of 
 Configuring OpenLiteSpeed
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. note::
+
+    You need at least OpenLiteSpeed version 1.4.47
+
 OLS does not support different caching settings depending on ``.htaccess`` settings and different paths.
 If you need that, you have to go with LSWS instead.
 Thus, OLS has to be configured as follows on server or vHost level::
