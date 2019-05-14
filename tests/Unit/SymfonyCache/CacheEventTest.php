@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 class CacheEventTest extends TestCase
 {
@@ -40,7 +39,7 @@ class CacheEventTest extends TestCase
         $this->assertSame($this->kernel, $event->getKernel());
         $this->assertSame($request, $event->getRequest());
         $this->assertNull($event->getResponse());
-        $this->assertSame(KernelInterface::MASTER_REQUEST, $event->getRequestType());
+        $this->assertSame(HttpKernelInterface::MASTER_REQUEST, $event->getRequestType());
 
         $response = new Response();
 
@@ -49,6 +48,6 @@ class CacheEventTest extends TestCase
         $this->assertSame($this->kernel, $event->getKernel());
         $this->assertSame($request, $event->getRequest());
         $this->assertSame($response, $event->getResponse());
-        $this->assertSame(KernelInterface::SUB_REQUEST, $event->getRequestType());
+        $this->assertSame(HttpKernelInterface::SUB_REQUEST, $event->getRequestType());
     }
 }

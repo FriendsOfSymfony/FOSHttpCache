@@ -17,7 +17,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Trait for enhanced Symfony reverse proxy based on the symfony kernel component.
@@ -133,11 +132,11 @@ trait EventDispatchingHttpCache
      * @param string        $name        Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
      * @param Request       $request
      * @param Response|null $response    If already available
-     * @param int           $requestType The request type (default KernelInterface::MASTER_REQUEST)
+     * @param int           $requestType The request type (default HttpKernelInterface::MASTER_REQUEST)
      *
      * @return Response The response to return, which might be provided/altered by a listener
      */
-    protected function dispatch($name, Request $request, Response $response = null, $requestType = KernelInterface::MASTER_REQUEST)
+    protected function dispatch($name, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
             $event = new CacheEvent($this, $request, $response, $requestType);
