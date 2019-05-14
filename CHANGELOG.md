@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.7.0
+-----
+
+### Symfony HttpCache
+
+* Added request type to the CacheEvent.
+
 2.6.0
 -----
 
