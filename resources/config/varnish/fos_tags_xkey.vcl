@@ -17,7 +17,7 @@ sub fos_tags_xkey_recv {
 
         # If neither of the headers are provided we return 400 to simplify detecting wrong configuration
         if (!req.http.xkey-purge && !req.http.xkey-softpurge) {
-            return (synth(400));
+            return (synth(400, "Neither header XKey-Purge or XKey-SoftPurge set"));
         }
 
         # Based on provided header invalidate (purge) and/or expire (softpurge) the tagged content
