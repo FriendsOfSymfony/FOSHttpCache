@@ -11,9 +11,8 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Fastly;
-use FOS\HttpCache\ProxyClient\Symfony;
+use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
@@ -59,7 +58,6 @@ class FastlyTest extends TestCase
                     $this->assertEquals('1', $request->getHeaderLine('Fastly-Soft-Purge'));
                     $this->assertEquals('post-1 post,type-3', $request->getHeaderLine('Surrogate-Key'));
 
-
                     return true;
                 }
             ), false
@@ -95,8 +93,8 @@ class FastlyTest extends TestCase
         $this->httpDispatcher->shouldReceive('invalidate')->twice();
 
         $tags = [];
-        for ($i = 1; $i < 258; $i++) {
-            $tags[] = 'post-' . $i;
+        for ($i = 1; $i < 258; ++$i) {
+            $tags[] = 'post-'.$i;
         }
         $fastly->invalidateTags($tags);
     }

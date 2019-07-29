@@ -37,7 +37,7 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearC
     {
         $headers = [
             'Fastly-Key' => $this->options['authentication_token'],
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
         ];
 
         if (true === $this->options['soft_purge']) {
@@ -47,7 +47,7 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearC
         foreach (\array_chunk($tags, 256) as $tagChunk) {
             $this->queueRequest(
                 Request::METHOD_POST,
-                sprintf("/service/%s/purge", $this->options['service_identifier']),
+                sprintf('/service/%s/purge', $this->options['service_identifier']),
                 $headers + [
                     // TODO: change to use json payload if queueRequest is changed to expose possibility to pass body
                     'Surrogate-Key' => implode(' ', $tagChunk),
@@ -96,12 +96,12 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearC
     {
         $headers = [
             'Fastly-Key' => $this->options['authentication_token'],
-            'Accept' => 'application/json'
+            'Accept' => 'application/json',
         ];
 
         $this->queueRequest(
             Request::METHOD_POST,
-            sprintf("/service/%s/purge_all", $this->options['service_identifier']),
+            sprintf('/service/%s/purge_all', $this->options['service_identifier']),
             $headers,
             false
         );
@@ -119,7 +119,7 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearC
         $resolver->setRequired([
             'authentication_token',
             'service_identifier',
-            'soft_purge'
+            'soft_purge',
         ]);
 
         $resolver->setDefaults([
@@ -128,5 +128,4 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearC
 
         return $resolver;
     }
-
 }
