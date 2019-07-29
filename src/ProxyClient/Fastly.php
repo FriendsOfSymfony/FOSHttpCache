@@ -13,6 +13,7 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Simone Fumagalli <simone.fumagalli@musement.com>
  */
-class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearCapable
+class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, RefreshCapable, TagCapable
 {
     /**
      * @internal
@@ -49,7 +50,7 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearC
                 Request::METHOD_POST,
                 sprintf('/service/%s/purge', $this->options['service_identifier']),
                 $headers + [
-                    // TODO: change to use json payload if queueRequest is changed to expose possibility to pass body
+                    // Can be changed to use json payload if queueRequest is changed to expose possibility to pass body
                     'Surrogate-Key' => implode(' ', $tagChunk),
                 ],
                 false
@@ -75,6 +76,32 @@ class Fastly extends HttpProxyClient implements TagCapable, PurgeCapable, ClearC
 
         $this->queueRequest(
             self::HTTP_METHOD_PURGE,
+            $url,
+            $headers,
+            false
+        );
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function refresh($url, array $headers = [])
+    {
+        $headers['Fastly-Key'] = $this->options['authentication_token'];
+
+        // First soft purge url
+        $this->queueRequest(
+            self::HTTP_METHOD_PURGE,
+            $url,
+            array_merge($headers, ['Fastly-Soft-Purge' => 1]),
+            false
+        );
+
+        // Secondly make sure refresh is triggered
+        $this->queueRequest(
+            Request::METHOD_HEAD,
             $url,
             $headers,
             false

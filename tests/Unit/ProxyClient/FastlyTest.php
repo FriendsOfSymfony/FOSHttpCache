@@ -29,7 +29,14 @@ class FastlyTest extends TestCase
 
     protected function setUp()
     {
+        parent::setUp();
         $this->httpDispatcher = \Mockery::mock(HttpDispatcher::class);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->httpDispatcher);
+        parent::tearDown();
     }
 
     protected function getProxyClient(array $options = [])
@@ -125,6 +132,25 @@ class FastlyTest extends TestCase
         $fastly->purge('/url', ['X-Foo' => 'bar']);
     }
 
+    public function testRefresh()
+    {
+        $fastly = $this->getProxyClient();
+
+        $this->httpDispatcher->shouldReceive('invalidate')->twice()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertContains($request->getMethod(), ['PURGE', 'HEAD']);
+                    $this->assertEquals('o43r8j34hr', $request->getHeaderLine('Fastly-Key'));
+                    $this->assertEquals('/fresh', $request->getRequestTarget());
+
+                    return true;
+                }
+            ), false
+        );
+
+        $fastly->refresh('/fresh');
+    }
+
     public function testClear()
     {
         $fastly = $this->getProxyClient();
@@ -143,8 +169,7 @@ class FastlyTest extends TestCase
 
                     return true;
                 }
-            ),
-            false
+            ), false
         );
 
         $fastly->clear();
