@@ -45,6 +45,12 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     const TAG_BATCH_PURGE_LIMIT = 256;
 
     /**
+     * @internal
+     * @see https://docs.fastly.com/api/purge Base url endpoint used on anything but url PURGE/GET/HEAD.
+     */
+    const API_ENDPOINT = 'https://api.fastly.com';
+
+    /**
      * {@inheritdoc}
      *
      * @see https://docs.fastly.com/api/purge#purge_db35b293f8a724717fcf25628d713583
@@ -64,7 +70,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         foreach (\array_chunk($tags, self::TAG_BATCH_PURGE_LIMIT) as $tagChunk) {
             $this->queueRequest(
                 Request::METHOD_POST,
-                sprintf('/service/%s/purge', $this->options['service_identifier']),
+                sprintf(self::API_ENDPOINT . '/service/%s/purge', $this->options['service_identifier']),
                 $headers + [
                     // Note: Can be changed to rather use json payload if queueRequest is changed to allow passing body
                     'Surrogate-Key' => implode(' ', $tagChunk),
@@ -144,7 +150,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
 
         $this->queueRequest(
             Request::METHOD_POST,
-            sprintf('/service/%s/purge_all', $this->options['service_identifier']),
+            sprintf(self::API_ENDPOINT . '/service/%s/purge_all', $this->options['service_identifier']),
             $headers,
             false
         );
