@@ -93,7 +93,7 @@ class FastlyTest extends TestCase
         $fastly->invalidateTags(['post-1', 'post,type-3']);
     }
 
-    public function testInvalidateTags_HeadersSplit()
+    public function testInvalidateTagsHeadersSplit()
     {
         $fastly = $this->getProxyClient();
 

@@ -20,7 +20,16 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Fastly HTTP cache invalidator.
  *
+ * Additional constructor options:
+ * - service_identifier    Identifier for your Fastly service account.
+ * - authentication_token  Token for authentication against Fastly APIs.
+ *                         For full capabilities (incl ClearCapable) you'll need one with Fastly Engineer permissions.
+ * - soft_purge            Boolean for doing soft purges or not on tag invalidation and url purging, default true.
+ *                         Soft purges expires cache instead of hard purge, and allow grace/stale handling.
+ *
+ * @link https://docs.fastly.com/api/purge Fastly Purge API documentation.
  * @author Simone Fumagalli <simone.fumagalli@musement.com>
+ * @author André Rømcke <andre_gpt@msn.com>
  */
 class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, RefreshCapable, TagCapable
 {
@@ -28,6 +37,12 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      * @internal
      */
     const HTTP_METHOD_PURGE = 'PURGE';
+
+    /**
+     * @internal
+     * @see https://docs.fastly.com/api/purge#purge_db35b293f8a724717fcf25628d713583 Fastly's limit on batch tag purges.
+     */
+    const TAG_BATCH_PURGE_LIMIT = 256;
 
     /**
      * {@inheritdoc}
@@ -45,12 +60,13 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
             $headers['Fastly-Soft-Purge'] = 1;
         }
 
-        foreach (\array_chunk($tags, 256) as $tagChunk) {
+        // Split tag invalidations across several requests within Fastly's tag batch invalidations limits.
+        foreach (\array_chunk($tags, self::TAG_BATCH_PURGE_LIMIT) as $tagChunk) {
             $this->queueRequest(
                 Request::METHOD_POST,
                 sprintf('/service/%s/purge', $this->options['service_identifier']),
                 $headers + [
-                    // Can be changed to use json payload if queueRequest is changed to expose possibility to pass body
+                    // Note: Can be changed to rather use json payload if queueRequest is changed to allow passing body
                     'Surrogate-Key' => implode(' ', $tagChunk),
                 ],
                 false
