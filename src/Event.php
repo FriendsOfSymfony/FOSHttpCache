@@ -11,9 +11,21 @@
 
 namespace FOS\HttpCache;
 
-use Symfony\Component\EventDispatcher\Event as BaseEvent;
+use Symfony\Component\EventDispatcher\Event as BaseEventDeprecated;
+use Symfony\Contracts\EventDispatcher\Event as BaseEvent;
 
-class Event extends BaseEvent
+// Symfony 4.3 BC layer
+if (class_exists(BaseEvent::class)) {
+    class MiddleManEvent extends BaseEvent
+    {
+    }
+} else {
+    class MiddleManEvent extends BaseEventDeprecated
+    {
+    }
+}
+
+class Event extends MiddleManEvent
 {
     private $exception;
 

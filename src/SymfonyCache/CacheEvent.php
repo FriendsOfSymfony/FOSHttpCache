@@ -11,17 +11,29 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event as EventDeprecated;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Contracts\EventDispatcher\Event;
+
+// Symfony 4.3 BC layer
+if (class_exists(Event::class)) {
+    class MiddleManCacheEvent extends Event
+    {
+    }
+} else {
+    class MiddleManCacheEvent extends EventDeprecated
+    {
+    }
+}
 
 /**
  * Event raised by the HttpCache kernel.
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-class CacheEvent extends Event
+class CacheEvent extends MiddleManCacheEvent
 {
     /**
      * @var CacheInvalidation
