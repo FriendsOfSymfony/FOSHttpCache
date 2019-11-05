@@ -14,6 +14,7 @@ namespace FOS\HttpCache\SymfonyCache;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -54,8 +55,12 @@ trait EventDispatchingHttpCache
      */
     public function getEventDispatcher()
     {
-        if (null === $this->eventDispatcher) {
-            $this->eventDispatcher = new EventDispatcher();
+        if (!$this->eventDispatcher) {
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                $this->eventDispatcher = LegacyEventDispatcherProxy::decorate(new EventDispatcher());
+            } else {
+                $this->eventDispatcher = new EventDispatcher();
+            }
         }
 
         return $this->eventDispatcher;
