@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.8.0
+-----
+
+### General
+
+* Use `LegacyEventDispatcherProxy` for Symfony >= 4.3 to avoid deprecation messages.
+
 2.7.0
 -----
 
