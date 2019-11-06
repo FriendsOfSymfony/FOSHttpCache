@@ -145,7 +145,16 @@ trait EventDispatchingHttpCache
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
             $event = new CacheEvent($this, $request, $response, $requestType);
-            $this->getEventDispatcher()->dispatch($name, $event);
+
+            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                // New Symfony 4.3 EventDispatcher signature
+                $this->getEventDispatcher()->dispatch($event, $name);
+            } else {
+                // Old EventDispatcher signature
+                $this->getEventDispatcher()->dispatch($name, $event);
+            }
+
             $response = $event->getResponse();
         }
 
