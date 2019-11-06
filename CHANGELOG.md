@@ -9,6 +9,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 ### General
 
 * Use `LegacyEventDispatcherProxy` for Symfony >= 4.3 to avoid deprecation messages.
+* Event classes now extend `Symfony\Contracts\EventDispatcher\Event` if available.
 
 2.7.0
 -----
