@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\EventDispatcher\Event;
+use FOS\HttpCache\BaseEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author David Buchmann <mail@davidbu.ch>
  */
-class CacheEvent extends Event
+class CacheEvent extends BaseEvent
 {
     /**
      * @var CacheInvalidation
