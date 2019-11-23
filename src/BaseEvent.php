@@ -11,8 +11,8 @@
 
 namespace FOS\HttpCache;
 
-use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 use Symfony\Component\EventDispatcher\Event as OldEvent;
+use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
 if (class_exists(ContractEvent::class)) {
     class BaseEvent extends ContractEvent
