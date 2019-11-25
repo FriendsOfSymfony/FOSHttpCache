@@ -11,8 +11,6 @@
 
 namespace FOS\HttpCache;
 
-use Symfony\Component\EventDispatcher\Event as BaseEvent;
-
 class Event extends BaseEvent
 {
     private $exception;
