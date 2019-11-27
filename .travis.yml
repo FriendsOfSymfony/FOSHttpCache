@@ -51,8 +51,8 @@ branches:
 before_install:
     - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
     - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
-    - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; echo ${DEPENDENCIES}; fi;
-    - if ! [ -v "$SYMFONY_VERSION" ]; then composer config extra.symfony.require ${SYMFONY_VERSION}; fi;
+    - if ! [ -z "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; echo ${DEPENDENCIES}; fi;
+    - if ! [ -z "$SYMFONY_VERSION" ]; then composer config extra.symfony.require ${SYMFONY_VERSION}; fi;
 
 install:
   - composer update $COMPOSER_FLAGS --prefer-dist --no-interaction
