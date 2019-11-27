@@ -31,6 +31,8 @@ matrix:
     # Test Symfony LTS versions
     - php: 7.3
       env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^1.0"
+    - php: 7.3
+      env: DEPENDENCIES="symfony/lts:^4
 
       # Latest commit to master
     - php: 7.3

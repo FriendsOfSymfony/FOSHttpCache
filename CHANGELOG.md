@@ -8,6 +8,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 ### General
 
+* Support Symfony 5
 * Use `LegacyEventDispatcherProxy` for Symfony >= 4.3 to avoid deprecation messages.
 
 2.7.0
