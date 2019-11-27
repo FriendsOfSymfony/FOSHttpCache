@@ -27,7 +27,8 @@ use Symfony\Component\HttpFoundation\Request;
  * - soft_purge            Boolean for doing soft purges or not on tag invalidation and url purging, default true.
  *                         Soft purges expires cache instead of hard purge, and allow grace/stale handling.
  *
- * @link https://docs.fastly.com/api/purge Fastly Purge API documentation.
+ * @see https://docs.fastly.com/api/purge Fastly Purge API documentation.
+ *
  * @author Simone Fumagalli <simone.fumagalli@musement.com>
  * @author André Rømcke <andre_gpt@msn.com>
  */
@@ -40,12 +41,14 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
 
     /**
      * @internal
+     *
      * @see https://docs.fastly.com/api/purge#purge_db35b293f8a724717fcf25628d713583 Fastly's limit on batch tag purges.
      */
     const TAG_BATCH_PURGE_LIMIT = 256;
 
     /**
      * @internal
+     *
      * @see https://docs.fastly.com/api/purge Base url endpoint used on anything but url PURGE/GET/HEAD.
      */
     const API_ENDPOINT = 'https://api.fastly.com';
@@ -70,7 +73,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         foreach (\array_chunk($tags, self::TAG_BATCH_PURGE_LIMIT) as $tagChunk) {
             $this->queueRequest(
                 Request::METHOD_POST,
-                sprintf(self::API_ENDPOINT . '/service/%s/purge', $this->options['service_identifier']),
+                sprintf(self::API_ENDPOINT.'/service/%s/purge', $this->options['service_identifier']),
                 $headers + [
                     // Note: Can be changed to rather use json payload if queueRequest is changed to allow passing body
                     'Surrogate-Key' => implode(' ', $tagChunk),
@@ -150,7 +153,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
 
         $this->queueRequest(
             Request::METHOD_POST,
-            sprintf(self::API_ENDPOINT . '/service/%s/purge_all', $this->options['service_identifier']),
+            sprintf(self::API_ENDPOINT.'/service/%s/purge_all', $this->options['service_identifier']),
             $headers,
             false
         );
