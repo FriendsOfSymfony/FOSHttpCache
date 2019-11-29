@@ -36,6 +36,8 @@ class LiteSpeedProxy extends AbstractProxy
                 'restart',
             ], true);
 
+            $this->waitFor($this->getIp(), $this->getPort(), 5000);
+
             return;
         }
 
@@ -45,7 +47,7 @@ class LiteSpeedProxy extends AbstractProxy
             'start',
         ], true);
 
-        $this->waitFor($this->getIp(), $this->getPort(), 2000);
+        $this->waitFor($this->getIp(), $this->getPort(), 5000);
     }
 
     /**
