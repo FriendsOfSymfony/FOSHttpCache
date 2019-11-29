@@ -14,6 +14,7 @@ namespace FOS\HttpCache\SymfonyCache;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -54,8 +55,12 @@ trait EventDispatchingHttpCache
      */
     public function getEventDispatcher()
     {
-        if (null === $this->eventDispatcher) {
-            $this->eventDispatcher = new EventDispatcher();
+        if (!$this->eventDispatcher) {
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                $this->eventDispatcher = LegacyEventDispatcherProxy::decorate(new EventDispatcher());
+            } else {
+                $this->eventDispatcher = new EventDispatcher();
+            }
         }
 
         return $this->eventDispatcher;
@@ -91,13 +96,13 @@ trait EventDispatchingHttpCache
         // trigger loading the CacheEvent to avoid fatal error when HttpKernel::loadClassCache is used.
         class_exists(CacheEvent::class);
 
-        if ($response = $this->dispatch(Events::PRE_HANDLE, $request)) {
-            return $this->dispatch(Events::POST_HANDLE, $request, $response);
+        if ($response = $this->dispatch(Events::PRE_HANDLE, $request, null, $type)) {
+            return $this->dispatch(Events::POST_HANDLE, $request, $response, $type);
         }
 
         $response = parent::handle($request, $type, $catch);
 
-        return $this->dispatch(Events::POST_HANDLE, $request, $response);
+        return $this->dispatch(Events::POST_HANDLE, $request, $response, $type);
     }
 
     /**
@@ -129,17 +134,27 @@ trait EventDispatchingHttpCache
     /**
      * Dispatch an event if needed.
      *
-     * @param string        $name     Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
+     * @param string        $name        Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
      * @param Request       $request
-     * @param Response|null $response If already available
+     * @param Response|null $response    If already available
+     * @param int           $requestType The request type (default HttpKernelInterface::MASTER_REQUEST)
      *
      * @return Response The response to return, which might be provided/altered by a listener
      */
-    protected function dispatch($name, Request $request, Response $response = null)
+    protected function dispatch($name, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
-            $event = new CacheEvent($this, $request, $response);
-            $this->getEventDispatcher()->dispatch($name, $event);
+            $event = new CacheEvent($this, $request, $response, $requestType);
+
+            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                // New Symfony 4.3 EventDispatcher signature
+                $this->getEventDispatcher()->dispatch($event, $name);
+            } else {
+                // Old EventDispatcher signature
+                $this->getEventDispatcher()->dispatch($name, $event);
+            }
+
             $response = $event->getResponse();
         }
 

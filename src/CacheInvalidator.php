@@ -25,6 +25,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\ProxyClient\Symfony;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Toflar\Psr6HttpCacheStore\Psr6Store;
 
 /**
@@ -143,7 +144,11 @@ class CacheInvalidator
     public function getEventDispatcher()
     {
         if (!$this->eventDispatcher) {
-            $this->eventDispatcher = new EventDispatcher();
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                $this->eventDispatcher = LegacyEventDispatcherProxy::decorate(new EventDispatcher());
+            } else {
+                $this->eventDispatcher = new EventDispatcher();
+            }
         }
 
         return $this->eventDispatcher;
@@ -306,13 +311,25 @@ class CacheInvalidator
                 $event = new Event();
                 $event->setException($exception);
                 if ($exception instanceof ProxyResponseException) {
-                    $this->getEventDispatcher()->dispatch(Events::PROXY_RESPONSE_ERROR, $event);
+                    $this->dispatch($event, Events::PROXY_RESPONSE_ERROR);
                 } elseif ($exception instanceof ProxyUnreachableException) {
-                    $this->getEventDispatcher()->dispatch(Events::PROXY_UNREACHABLE_ERROR, $event);
+                    $this->dispatch($event, Events::PROXY_UNREACHABLE_ERROR);
                 }
             }
 
             throw $exceptions;
+        }
+    }
+
+    private function dispatch(Event $event, $eventName)
+    {
+        // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            // New Symfony 4.3 EventDispatcher signature
+            $this->getEventDispatcher()->dispatch($event, $eventName);
+        } else {
+            // Old EventDispatcher signature
+            $this->getEventDispatcher()->dispatch($eventName, $event);
         }
     }
 }

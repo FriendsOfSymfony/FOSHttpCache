@@ -22,21 +22,21 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0.0",
-        "symfony/event-dispatcher": "^3.4 || ^4.0",
-        "symfony/options-resolver": "^3.4 || ^4.0",
-        "php-http/client-implementation": "^1.0.0",
-        "php-http/client-common": "^1.1.0",
-        "php-http/message": "^1.0.0",
-        "php-http/discovery": "^1.0"
+        "symfony/event-dispatcher": "^3.4 || ^4.3 || ^5.0",
+        "symfony/options-resolver": "^3.4 || ^4.3 || ^5.0",
+        "php-http/client-implementation": "^1.0 || ^2.0",
+        "php-http/client-common": "^1.1.0 || ^2.0",
+        "php-http/message": "^1.0 || ^2.0",
+        "php-http/discovery": "^1.0 || ^2.0"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.5",
         "monolog/monolog": "^1.0",
-        "php-http/guzzle6-adapter": "^1.0.0",
-        "php-http/mock-client": "^0.3.2",
+        "php-http/guzzle6-adapter": "^1.0 || ^2.0",
+        "php-http/mock-client": "^1.2",
         "phpunit/phpunit": "^5.7 || ^6.0",
-        "symfony/process": "^3.4 || ^4.0",
-        "symfony/http-kernel": "^3.4 || ^4.0"
+        "symfony/process": "^3.4 || ^4.3 || ^5.0",
+        "symfony/http-kernel": "^3.4 || ^4.3 || ^5.0"
     },
     "conflict": {
         "toflar/psr6-symfony-http-cache-store": "<1.1.2"
@@ -57,7 +57,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.6.x-dev"
+            "dev-master": "2.8.x-dev"
         }
     }
 }

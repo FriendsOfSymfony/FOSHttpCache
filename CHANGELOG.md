@@ -3,13 +3,29 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-2.6.0 (unreleased)
-------------------
+2.8.0
+-----
 
-### Cache Clear
+### General
+
+* Support Symfony 5
+* Use `LegacyEventDispatcherProxy` for Symfony >= 4.3 to avoid deprecation messages.
+
+2.7.0
+-----
+
+### Symfony HttpCache
+
+* Added request type to the CacheEvent.
+
+2.6.0
+-----
+
+### General
 
 * Added: ClearCapable to clear the whole cache in one efficient call. Currently
   supported only by the Symfony HttpCache.
+* Allow installing with Httplug 2.0 / PSR-18.
 
 2.5.4
 -----
