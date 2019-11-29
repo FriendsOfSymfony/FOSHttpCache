@@ -20,8 +20,9 @@ LiteSpeed comes in two different variants:
 * OpenLiteSpeed (OLS) - the open source product with less features
 * LiteSpeed Web Server (LSWS) - the enterprise version with more features and professional support
 
-The caching module implementations are different and thus have to be configured differently but they support the
-same set of features (except for OLS not supporting Edge Side Includes (ESI)).
+The caching module implementations are different and thus have to be configured differently.
+Currently, OLS does support cache tagging and cache tag invalidation and LSWS does not. However, LSWS supports ESI
+whereas OLS does not.
 
 So before you start configuring the server, make sure you know which version of LiteSpeed you are using.
 
@@ -94,17 +95,9 @@ Also refer to the OLS docs if you need more details about the different configur
 Configuring LiteSpeed WebServer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-LSWS can also be configured on server level, however, as LSWS supports ``.htaccess`` you may want to configure it
-there to give your application the flexibility of having different configurations for certain paths.
+.. warning::
 
-Configure your ``.htaccess`` as follows::
-
-    <IfModule LiteSpeed>
-        CacheEnable public /
-        # TODO: The rest of the directives
-    </IfModule>
-
-Also refer to the LSWS docs if you need more details about the different configuration values.
+    Unfortunately LSWS does currently not support invalidating cache tags.
 
 Configuring FOSHttpCache to work with LiteSpeed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
