@@ -17,7 +17,6 @@ sudo sed -i "s#%USER%#$USER#g" /usr/local/lsws/conf/httpd_config.conf
 sudo sed -i "s#%GROUP%#travis#g" /usr/local/lsws/conf/httpd_config.conf
 sudo mkdir -p /usr/local/lsws/conf/vhosts/foshttpcachetest
 sudo cp ./vhconf.conf /usr/local/lsws/conf/vhosts/foshttpcachetest/vhconf.conf
-sudo cp ./htpasswd /usr/local/lsws/conf/vhosts/foshttpcachetest/htpasswd
 
 # Make sure it's all owned by travis
 sudo chown -R travis /usr/local/lsws
