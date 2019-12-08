@@ -13,6 +13,7 @@ namespace FOS\HttpCache\ProxyClient;
 
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\RequestFactory;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -83,15 +84,16 @@ abstract class HttpProxyClient implements ProxyClient
     /**
      * Create a request and queue it with the HTTP dispatcher.
      *
-     * @param string              $method
-     * @param string|UriInterface $url
-     * @param array               $headers
-     * @param bool                $validateHost see Dispatcher::invalidate
+     * @param string                               $method
+     * @param string|UriInterface                  $url
+     * @param array                                $headers
+     * @param bool                                 $validateHost see Dispatcher::invalidate
+     * @param resource|string|StreamInterface|null $body
      */
-    protected function queueRequest($method, $url, array $headers, $validateHost = true)
+    protected function queueRequest($method, $url, array $headers, $validateHost = true, $body = null)
     {
         $this->httpDispatcher->invalidate(
-            $this->requestFactory->createRequest($method, $url, $headers),
+            $this->requestFactory->createRequest($method, $url, $headers, $body),
             $validateHost
         );
     }

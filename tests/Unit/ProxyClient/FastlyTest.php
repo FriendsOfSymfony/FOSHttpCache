@@ -49,7 +49,7 @@ class FastlyTest extends TestCase
         return new Fastly($this->httpDispatcher, $options);
     }
 
-    public function testInvalidateTags()
+    public function testInvalidateTagsDefaultSoftPurge()
     {
         $fastly = $this->getProxyClient();
 
@@ -63,7 +63,9 @@ class FastlyTest extends TestCase
                     $this->assertEquals('/service/greenpeace/purge', $request->getRequestTarget());
 
                     $this->assertEquals('1', $request->getHeaderLine('Fastly-Soft-Purge'));
-                    $this->assertEquals('post-1 post,type-3', $request->getHeaderLine('Surrogate-Key'));
+                    $this->assertEquals('', $request->getHeaderLine('Surrogate-Key'));
+
+                    $this->assertEquals('{"surrogate_keys":["post-1","post,type-3"]}', $request->getBody()->getContents());
 
                     return true;
                 }
@@ -83,7 +85,9 @@ class FastlyTest extends TestCase
                     $this->assertEquals('POST', $request->getMethod());
 
                     $this->assertEquals('', $request->getHeaderLine('Fastly-Soft-Purge'));
-                    $this->assertEquals('post-1 post,type-3', $request->getHeaderLine('Surrogate-Key'));
+                    $this->assertEquals('', $request->getHeaderLine('Surrogate-Key'));
+
+                    $this->assertEquals('{"surrogate_keys":["post-1","post,type-3"]}', $request->getBody()->getContents());
 
                     return true;
                 }

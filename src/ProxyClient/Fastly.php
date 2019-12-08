@@ -30,7 +30,6 @@ use Symfony\Component\HttpFoundation\Request;
  * @see https://docs.fastly.com/api/purge Fastly Purge API documentation.
  *
  * @author Simone Fumagalli <simone.fumagalli@musement.com>
- * @author André Rømcke <andre_gpt@msn.com>
  */
 class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, RefreshCapable, TagCapable
 {
@@ -60,11 +59,8 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      */
     public function invalidateTags(array $tags)
     {
-        $headers = [
-            'Fastly-Key' => $this->options['authentication_token'],
-            'Accept' => 'application/json',
-        ];
-
+        $url = sprintf(self::API_ENDPOINT.'/service/%s/purge', $this->options['service_identifier']);
+        $headers = ['Accept' => 'application/json'];
         if (true === $this->options['soft_purge']) {
             $headers['Fastly-Soft-Purge'] = 1;
         }
@@ -73,12 +69,10 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         foreach (\array_chunk($tags, self::TAG_BATCH_PURGE_LIMIT) as $tagChunk) {
             $this->queueRequest(
                 Request::METHOD_POST,
-                sprintf(self::API_ENDPOINT.'/service/%s/purge', $this->options['service_identifier']),
-                $headers + [
-                    // Note: Can be changed to rather use json payload if queueRequest is changed to allow passing body
-                    'Surrogate-Key' => implode(' ', $tagChunk),
-                ],
-                false
+                $url,
+                $headers,
+                false,
+                json_encode(['surrogate_keys' => $tagChunk])
             );
         }
 
@@ -93,8 +87,6 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      */
     public function purge($url, array $headers = [])
     {
-        $headers['Fastly-Key'] = $this->options['authentication_token'];
-
         if (true === $this->options['soft_purge']) {
             $headers['Fastly-Soft-Purge'] = 1;
         }
@@ -114,17 +106,15 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      */
     public function refresh($url, array $headers = [])
     {
-        $headers['Fastly-Key'] = $this->options['authentication_token'];
-
         // First soft purge url
         $this->queueRequest(
             self::HTTP_METHOD_PURGE,
             $url,
-            array_merge($headers, ['Fastly-Soft-Purge' => 1]),
+            ['Fastly-Soft-Purge' => 1] + $headers,
             false
         );
 
-        // Secondly make sure refresh is triggered
+        // Secondly make sure refresh is triggered with a HEAD request
         $this->queueRequest(
             Request::METHOD_HEAD,
             $url,
@@ -146,19 +136,28 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      */
     public function clear()
     {
-        $headers = [
-            'Fastly-Key' => $this->options['authentication_token'],
-            'Accept' => 'application/json',
-        ];
-
         $this->queueRequest(
             Request::METHOD_POST,
             sprintf(self::API_ENDPOINT.'/service/%s/purge_all', $this->options['service_identifier']),
-            $headers,
+            ['Accept' => 'application/json'],
             false
         );
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc Always provides default authentication token on "Fastly-Key" header.
+     */
+    protected function queueRequest($method, $url, array $headers, $validateHost = true, $body = null)
+    {
+        parent::queueRequest(
+            $method,
+            $url,
+            $headers + ['Fastly-Key' => $this->options['authentication_token']],
+            $validateHost,
+            $body
+        );
     }
 
     /**
