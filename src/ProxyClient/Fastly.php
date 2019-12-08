@@ -147,7 +147,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     }
 
     /**
-     * @inheritDoc Always provides default authentication token on "Fastly-Key" header.
+     * {@inheritdoc} Always provides default authentication token on "Fastly-Key" header.
      */
     protected function queueRequest($method, $url, array $headers, $validateHost = true, $body = null)
     {
