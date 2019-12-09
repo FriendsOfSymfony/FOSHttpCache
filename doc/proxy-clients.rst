@@ -178,7 +178,7 @@ You need to pass the following options to the Fastly client:
 
 * ``service_identifier``: Identifier for your Fastly service account.
 * ``authentication_token``: User token for authentication against Fastly APIs.
-* NB: To be able to clear all cache(`->clear()`), you'll need a token for user with Fastly "Engineer permissions".
+* NB: To be able to clear all cache(``->clear()``), you'll need a token for user with Fastly "Engineer permissions".
 * ``soft_purge`` (default: true): Boolean for doing soft purges or not on tag & url purging.
   Soft purges expires the cache unlike hard purge (removal), and allow grace/stale handling within Fastly VCL.
 
