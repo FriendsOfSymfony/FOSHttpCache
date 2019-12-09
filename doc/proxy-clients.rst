@@ -23,6 +23,7 @@ This table provides of methods supported by each proxy client:
 Client        Purge   Refresh Ban     Tagging Clear
 ============= ======= ======= ======= ======= =======
 Varnish       ✓       ✓       ✓       ✓
+Fastly        ✓       ✓               ✓       ✓
 NGINX         ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
 Noop          ✓       ✓       ✓       ✓
@@ -157,6 +158,44 @@ default ``xkey-softpurge``.
     ``xkey`` and separated by space rather than the default ``,``. If you use
     the ``ResponseTagger``, set it up with a
     :ref:`custom TagHeaderFormatter <response_tagger_optional_parameters>`.
+
+Fastly Client
+~~~~~~~~~~~~~~
+
+The Fastly client sends HTTP requests with the ``HttpDispatcher``. Create the
+dispatcher as explained above and pass it to the Fastly client::
+
+    use FOS\HttpCache\ProxyClient\Fastly;
+
+    $varnish = new Fastly($httpDispatcher);
+
+.. note::
+
+    Unlike other supported proxies there is no configuration needed for the proxy itself as all invalidation is done
+    against `Fastly Purge API`_. But for optimal use make sure to tune configuration together with Fastly.
+
+You need to pass the following options to the Fastly client:
+
+* ``service_identifier``: Identifier for your Fastly service account.
+* ``authentication_token``: User token for authentication against Fastly APIs.
+* NB: To be able to clear all cache(``->clear()``), you'll need a token for user with Fastly "Engineer permissions".
+* ``soft_purge`` (default: true): Boolean for doing soft purges or not on tag & url purging.
+  Soft purges expires the cache unlike hard purge (removal), and allow grace/stale handling within Fastly VCL.
+
+Additionally, you can specify the request factory used to build the
+invalidation HTTP requests. If not specified, auto discovery is used - which
+usually is fine.
+
+A full example could look like this::
+
+    $options = [
+        'service_identifier' => '<my-app-identifier>',
+        'authentication_token' => '<user-authentication-token>',
+        'soft_purge' => false
+    ];
+    $requestFactory = new MyRequestFactory();
+
+    $varnish = new Fastly($httpDispatcher, $options, $requestFactory);
 
 NGINX Client
 ~~~~~~~~~~~~
@@ -339,3 +378,4 @@ requests.
 .. _HTTPlug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
 .. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html
 .. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store
+.. _Fastly Purge API: https://docs.fastly.com/api/purge

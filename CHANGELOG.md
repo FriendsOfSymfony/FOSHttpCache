@@ -10,6 +10,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Support Symfony 5
 * Use `LegacyEventDispatcherProxy` for Symfony >= 4.3 to avoid deprecation messages.
+* Added Fastly ProxyClient Adapter with ClearCapable, PurgeCapable, RefreshCapable, & TagCapable.
+  Fastly is a CDN originally based on Varnish 2.x, so with many of the same capabilities like VCL and more.
 
 2.7.0
 -----
