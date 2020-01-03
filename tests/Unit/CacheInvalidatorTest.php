@@ -24,7 +24,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use FOS\HttpCache\ProxyClient\Varnish;
 use Http\Client\Exception\HttpException;
-use Http\Client\Exception\RequestException;
+use Http\Client\Exception\NetworkException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
@@ -211,7 +211,7 @@ class CacheInvalidatorTest extends TestCase
         $failedRequest = \Mockery::mock(RequestInterface::class)
             ->shouldReceive('getHeaderLine')->with('Host')->andReturn('127.0.0.1')
             ->getMock();
-        $clientException = new RequestException('Couldn\'t connect to host', $failedRequest);
+        $clientException = new NetworkException('Couldn\'t connect to host', $failedRequest);
 
         $unreachableException = ProxyUnreachableException::proxyUnreachable($clientException);
 

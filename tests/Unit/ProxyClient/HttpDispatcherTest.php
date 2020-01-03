@@ -17,7 +17,7 @@ use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use Http\Client\Exception\HttpException;
-use Http\Client\Exception\RequestException;
+use Http\Client\Exception\NetworkException;
 use Http\Client\HttpAsyncClient;
 use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
@@ -133,7 +133,7 @@ class HttpDispatcherTest extends TestCase
                 '400',
             ],
             [
-                new RequestException('test', $request),
+                new NetworkException('test', $request),
                 ProxyUnreachableException::class,
                 'bla.com',
             ],

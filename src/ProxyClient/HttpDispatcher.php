@@ -20,7 +20,7 @@ use FOS\HttpCache\Exception\ProxyUnreachableException;
 use Http\Client\Common\Plugin\ErrorPlugin;
 use Http\Client\Common\PluginClient;
 use Http\Client\Exception\HttpException;
-use Http\Client\Exception\RequestException;
+use Http\Client\Exception\NetworkException;
 use Http\Client\HttpAsyncClient;
 use Http\Discovery\HttpAsyncClientDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
@@ -152,7 +152,7 @@ class HttpDispatcher implements Dispatcher
                 $promise->wait();
             } catch (HttpException $exception) {
                 $exceptions->add(ProxyResponseException::proxyResponse($exception));
-            } catch (RequestException $exception) {
+            } catch (NetworkException $exception) {
                 $exceptions->add(ProxyUnreachableException::proxyUnreachable($exception));
             } catch (\Exception $exception) {
                 // @codeCoverageIgnoreStart
