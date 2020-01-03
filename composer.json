@@ -27,7 +27,7 @@
         "php-http/client-implementation": "^1.0 || ^2.0",
         "php-http/client-common": "^1.1.0 || ^2.0",
         "php-http/message": "^1.0 || ^2.0",
-        "php-http/discovery": "^1.0 || ^2.0"
+        "php-http/discovery": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "~0.9.5",
