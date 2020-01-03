@@ -50,7 +50,7 @@ trait SymfonyTest
      *
      * @throws \Exception
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->getProxy()->clear();
     }

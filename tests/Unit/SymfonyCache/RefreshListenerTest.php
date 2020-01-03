@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\RefreshListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
@@ -22,11 +23,11 @@ use Symfony\Component\HttpFoundation\Response;
 class RefreshListenerTest extends TestCase
 {
     /**
-     * @var CacheInvalidation|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInvalidation&MockObject
      */
     private $kernel;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->kernel = $this->createMock(CacheInvalidation::class);
     }
@@ -119,12 +120,10 @@ class RefreshListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage does not exist
-     */
     public function testInvalidConfiguration()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('does not exist');
         new RefreshListener(['stuff' => '1.2.3.4']);
     }
 }

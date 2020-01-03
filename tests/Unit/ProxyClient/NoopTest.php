@@ -21,7 +21,7 @@ class NoopTest extends TestCase
      */
     private $noop;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->noop = new Noop();
     }

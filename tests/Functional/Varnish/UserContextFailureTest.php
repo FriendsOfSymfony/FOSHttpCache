@@ -28,7 +28,7 @@ class UserContextFailureTest extends VarnishTestCase
      */
     private $mode = 'cache';
 
-    public function setUp()
+    public function setUp(): void
     {
         // needs to be decided before doing the setup
         $this->mode = 'testHashRequestFailure' === $this->getName() ? 'failure' : 'cache';

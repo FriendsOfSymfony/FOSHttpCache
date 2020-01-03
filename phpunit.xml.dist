@@ -5,7 +5,7 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         syntaxCheck="true">
+>
     <testsuites>
         <testsuite name="FOSHttpCache tests">
             <directory suffix="Test.php">./tests/</directory>

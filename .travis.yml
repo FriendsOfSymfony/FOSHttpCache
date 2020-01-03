@@ -8,19 +8,18 @@ cache:
 env:
   global:
     - VARNISH_VERSION=5.1
+    - SYMFONY_PHPUNIT_VERSION=8
     - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^2.2.0"
 
 matrix:
   fast_finish: true
   include:
       # Minimum supported versions
-    - php: 5.6
-      env: VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest" DEPENDENCIES=""
-    - php: 7.0
-      env: VARNISH_VERSION=3.0 COMPOSER_FLAGS="--prefer-lowest" DEPENDENCIES=""
-
-    - php: 5.6
     - php: 7.1
+      env: VARNISH_VERSION=3.0 SYMFONY_PHPUNIT_VERSION=5.7 COMPOSER_FLAGS="--prefer-lowest" DEPENDENCIES=""
+
+    - php: 7.1
+      env: SYMFONY_PHPUNIT_VERSION=7
     - php: 7.2
     - php: 7.3
     - php: 7.4
@@ -30,7 +29,11 @@ matrix:
     - php: 7.4
       env: VARNISH_VERSION=4.1 VARNISH_MODULES_VERSION=0.9.1
 
-    # Test Symfony LTS versions
+      # Test PHPUnit versions
+    - php: 7.4
+      env: SYMFONY_PHPUNIT_VERSION=6
+
+      # Test SYMFONY LTS versions
     - php: 7.4
       env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^2.2.0"
     - php: 7.4
@@ -76,7 +79,7 @@ before_script:
 
 script:
   - composer validate --strict --no-check-lock
-  - vendor/bin/phpunit $PHPUNIT_FLAGS
+  - vendor/bin/simple-phpunit $PHPUNIT_FLAGS
   - if [[ "$DOCCHECK" = true ]]; then make -C doc SPHINXOPTS='-nW' html; fi
   - if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
 

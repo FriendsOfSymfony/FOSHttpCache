@@ -16,23 +16,19 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractProxyTest extends TestCase
 {
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Caching proxy still up at
-     */
     public function testWaitTimeout()
     {
         $proxy = new ProxyPartial();
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Caching proxy still up at');
         $proxy->start();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage /path/to/not/exists
-     */
     public function testRunFailure()
     {
         $proxy = new ProxyPartial();
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('/path/to/not/exists');
         $proxy->run();
     }
 }

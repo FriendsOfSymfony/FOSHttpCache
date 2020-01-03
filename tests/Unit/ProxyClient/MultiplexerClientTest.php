@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 
+use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
@@ -174,10 +175,10 @@ class MultiplexerClientTest extends TestCase
      * @param ProxyClient[] $clients
      *
      * @dataProvider provideInvalidClient
-     * @expectedException \FOS\HttpCache\Exception\InvalidArgumentException
      */
     public function testInvalidClientTest(array $clients)
     {
+        $this->expectException(InvalidArgumentException::class);
         new MultiplexerClient($clients);
     }
 }

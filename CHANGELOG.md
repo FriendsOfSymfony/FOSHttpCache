@@ -3,12 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-2.8.1
+2.9.0
 -----
 
 ### General
 
-* Removed PHP 7.0 compatibility
+* Raised minimal PHP version to 7.1
+* Test helper classes upgraded to support PHPUnit 7/8
 
 ### Symfony HttpCache
 
@@ -98,7 +99,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Added: `CleanupCacheTagsListener` to remove the cache tags header from the final
   response that is sent to the client. Add this listener to your cache kernel.
-  
+
 ### Cache Tagging
 
 * Improved: The `ResponseTagger` does now remove duplicate tags.
@@ -256,7 +257,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Varnish configuration are now files that you can directly include from your
   .vcl and call custom functions to avoid copy-pasting VCL code.
-* Added support for and changed default to Varnish version 5.  
+* Added support for and changed default to Varnish version 5.
 * Moved Varnish 4 and 5 configuration files from `resources/config/varnish-4/`
   to `resources/config/varnish/`.
 * Changed default Varnish version to 5.
@@ -280,7 +281,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   `AppCache extends EventDispatchingHttpInterface` with a
   `use EventDispatchingHttpCache;` statement.
 * The user context by default does not use a hardcoded hash for anonymous users
-  but does a hash lookup. You can still configure a hardcoded hash.  
+  but does a hash lookup. You can still configure a hardcoded hash.
 
 ### Testing
 

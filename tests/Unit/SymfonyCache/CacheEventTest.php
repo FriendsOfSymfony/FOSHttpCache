@@ -13,6 +13,7 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,11 +22,11 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 class CacheEventTest extends TestCase
 {
     /**
-     * @var CacheInvalidation|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheInvalidation&MockObject
      */
     private $kernel;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->kernel = $this->createMock(CacheInvalidation::class);
     }
