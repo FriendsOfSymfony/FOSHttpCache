@@ -265,5 +265,5 @@ extlinks = {'source': ('https://github.com/FriendsOfSymfony/FOSHttpCache/blob/ma
 
 config_block = {
     'varnish3': 'Varnish 3',
-    'varnish': 'Varnish 4 & 5'
+    'varnish': 'Varnish 4 - 6'
 }
