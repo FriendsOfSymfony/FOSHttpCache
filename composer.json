@@ -39,7 +39,7 @@
         "symfony/http-kernel": "^3.4 || ^4.3 || ^5.0"
     },
     "conflict": {
-        "toflar/psr6-symfony-http-cache-store": "<2.2.0"
+        "toflar/psr6-symfony-http-cache-store": "<2.2.1"
     },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
