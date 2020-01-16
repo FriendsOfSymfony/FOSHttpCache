@@ -106,9 +106,9 @@ class PurgeListener extends AccessControlledListener
                 return;
             }
 
-            $store->prune();
+            $store->clear();
 
-            $response->setStatusCode(200, 'Pruned');
+            $response->setStatusCode(200, 'Purged');
             $event->setResponse($response);
 
             return;
