@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php": "^5.6 || ^7.0.0",
+        "php": "^5.6 || ^7.1.0",
         "symfony/event-dispatcher": "^3.4 || ^4.3 || ^5.0",
         "symfony/options-resolver": "^3.4 || ^4.3 || ^5.0",
         "php-http/client-implementation": "^1.0 || ^2.0",
