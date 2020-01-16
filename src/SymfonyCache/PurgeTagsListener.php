@@ -119,8 +119,16 @@ class PurgeTagsListener extends AccessControlledListener
 
         $tags = [];
 
-        foreach ($request->headers->get($this->tagsHeader, '', false) as $v) {
-            foreach (explode(',', $v) as $tag) {
+        // Compatibility with Symfony < 4.4
+        $reflection = new \ReflectionClass($request->headers);
+        if (1 === $reflection->getMethod('all')->getNumberOfParameters()) {
+            $headers = $request->headers->all($this->tagsHeader);
+        } else {
+            $headers = $request->headers->get($this->tagsHeader, '', false);
+        }
+
+        foreach ($headers as $header) {
+            foreach (explode(',', $header) as $tag) {
                 $tags[] = $tag;
             }
         }

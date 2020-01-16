@@ -3,6 +3,18 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.8.1
+-----
+
+### General
+
+* Removed PHP 7.0 compatibility
+
+### Symfony HttpCache
+
+* Fixed issue with `PurgeTagsListener` and Symfony 5
+* Fixed clearing the cache completely together with toflar psr6 store did not work
+
 2.8.0
 -----
 
