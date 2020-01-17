@@ -60,7 +60,7 @@ class HttpDispatcherTest extends TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage URI parameter must be a string, object given
+     * @expectedExceptionMessage URI parameter must be either a string or an array of strings
      */
     public function testInstantiateWithNonUri()
     {
@@ -189,6 +189,23 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
     }
 
+    public function testSetBasePathWithMultipleHosts()
+    {
+        $httpDispatcher = new HttpDispatcher(
+            ['127.0.0.1'],
+            ['fos.lo', 'fos.com'],
+            $this->httpClient
+        );
+
+        $request = $this->messageFactory->createRequest('PURGE', '/path');
+        $httpDispatcher->invalidate($request);
+        $httpDispatcher->flush();
+
+        $requests = $this->getRequests();
+        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
+        $this->assertEquals('fos.com', $requests[1]->getHeaderLine('Host'));
+    }
+
     public function testSetBasePathWithPath()
     {
         $httpDispatcher = new HttpDispatcher(
@@ -203,6 +220,24 @@ class HttpDispatcherTest extends TestCase
         $requests = $this->getRequests();
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
         $this->assertEquals('http://127.0.0.1:8080/my/path/append', (string) $requests[0]->getUri());
+    }
+
+    public function testSetBasePathWithMultiplePathsAndHosts()
+    {
+        $httpDispatcher = new HttpDispatcher(
+            ['127.0.0.1:8080'],
+            ['http://fos.lo/my/path', 'http://fos.com/my/path'],
+            $this->httpClient
+        );
+        $request = $this->messageFactory->createRequest('PURGE', 'append');
+        $httpDispatcher->invalidate($request);
+        $httpDispatcher->flush();
+
+        $requests = $this->getRequests();
+        $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
+        $this->assertEquals('http://127.0.0.1:8080/my/path/append', (string) $requests[0]->getUri());
+        $this->assertEquals('fos.com', $requests[1]->getHeaderLine('Host'));
+        $this->assertEquals('http://127.0.0.1:8080/my/path/append', (string) $requests[1]->getUri());
     }
 
     public function testSetServersDefaultSchemeIsAdded()

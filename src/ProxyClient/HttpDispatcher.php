@@ -63,9 +63,9 @@ class HttpDispatcher implements Dispatcher
     /**
      * Application host name and optional base URL.
      *
-     * @var UriInterface
+     * @var UriInterface[]
      */
-    private $baseUri;
+    private $baseUris;
 
     /**
      * If you specify a custom HTTP client, make sure that it converts HTTP
@@ -78,11 +78,12 @@ class HttpDispatcher implements Dispatcher
      * @param string[]             $servers    Caching proxy server hostnames or IP
      *                                         addresses, including port if not port 80.
      *                                         E.g. ['127.0.0.1:6081']
-     * @param string               $baseUri    Default application hostname, optionally
+     * @param string|string[]      $baseUris   Default application hostnames, optionally
      *                                         including base URL, for purge and refresh
-     *                                         requests (optional). This is required if
+     *                                         requests (optional). At least one is required if
      *                                         you purge and refresh paths instead of
-     *                                         absolute URLs
+     *                                         absolute URLs. A request will be sent for each
+     *                                         base URL.
      * @param HttpAsyncClient|null $httpClient Client capable of sending HTTP requests. If no
      *                                         client is supplied, a default one is created
      * @param UriFactory|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
@@ -90,7 +91,7 @@ class HttpDispatcher implements Dispatcher
      */
     public function __construct(
         array $servers,
-        $baseUri = '',
+        $baseUris = [],
         HttpAsyncClient $httpClient = null,
         UriFactory $uriFactory = null
     ) {
@@ -104,7 +105,24 @@ class HttpDispatcher implements Dispatcher
         $this->uriFactory = $uriFactory ?: UriFactoryDiscovery::find();
 
         $this->setServers($servers);
-        $this->setBaseUri($baseUri);
+
+        // Support both, a string or an array of strings (array_filter to kill empty base URLs)
+        if (is_string($baseUris)) {
+            if ('' === $baseUris) {
+                $baseUris = [];
+            } else {
+                $baseUris = [$baseUris];
+            }
+        }
+
+        if (!\is_array($baseUris)) {
+            throw new \InvalidArgumentException(sprintf(
+                'URI parameter must be either a string or an array of strings, %s given',
+                gettype($baseUris)
+            ));
+        }
+
+        $this->setBaseUris($baseUris);
     }
 
     /**
@@ -112,7 +130,7 @@ class HttpDispatcher implements Dispatcher
      */
     public function invalidate(RequestInterface $invalidationRequest, $validateHost = true)
     {
-        if ($validateHost && !$this->baseUri && !$invalidationRequest->getUri()->getHost()) {
+        if ($validateHost && 0 === \count($this->baseUris) && !$invalidationRequest->getUri()->getHost()) {
             throw MissingHostException::missingHost((string) $invalidationRequest->getUri());
         }
 
@@ -187,49 +205,77 @@ class HttpDispatcher implements Dispatcher
      */
     private function fanOut(RequestInterface $request)
     {
-        $requests = [];
+        $serverRequests = [];
 
-        $uri = $request->getUri();
+        if (0 !== \count($this->baseUris)) {
+            // If base URIs are configured, try to make partial invalidation
+            // requests complete and send out a request for every base URI
+            $requests = $this->requestToBaseUris($request);
+        } else {
+            /** @var RequestInterface[] $requests */
+            $requests = [$request];
+        }
 
-        // If a base URI is configured, try to make partial invalidation
-        // requests complete.
-        if ($this->baseUri) {
-            if ($uri->getHost()) {
-                // Absolute URI: does it already have a scheme?
-                if (!$uri->getScheme() && '' !== $this->baseUri->getScheme()) {
-                    $uri = $uri->withScheme($this->baseUri->getScheme());
-                }
-            } else {
-                // Relative URI
-                if ('' !== $this->baseUri->getHost()) {
-                    $uri = $uri->withHost($this->baseUri->getHost());
-                }
+        // Create all requests to each caching proxy server
+        foreach ($requests as $request) {
+            $uri = $request->getUri();
 
-                if ($this->baseUri->getPort()) {
-                    $uri = $uri->withPort($this->baseUri->getPort());
-                }
+            // Close connections to make sure invalidation (PURGE/BAN) requests
+            // will not interfere with content (GET) requests.
+            $requests[] = $request->withUri($uri)->withHeader('Connection', 'Close');
 
-                // Base path
-                if ('' !== $this->baseUri->getPath()) {
-                    $path = $this->baseUri->getPath().'/'.ltrim($uri->getPath(), '/');
-                    $uri = $uri->withPath($path);
-                }
+            foreach ($this->getServers() as $server) {
+                $serverRequests[] = $request->withUri(
+                    $uri
+                        ->withScheme($server->getScheme())
+                        ->withHost($server->getHost())
+                        ->withPort($server->getPort()),
+                    true    // Preserve application Host header
+                );
             }
         }
 
-        // Close connections to make sure invalidation (PURGE/BAN) requests
-        // will not interfere with content (GET) requests.
-        $request = $request->withUri($uri)->withHeader('Connection', 'Close');
+        return $serverRequests;
+    }
 
-        // Create a request to each caching proxy server
-        foreach ($this->getServers() as $server) {
-            $requests[] = $request->withUri(
-                $uri
-                    ->withScheme($server->getScheme())
-                    ->withHost($server->getHost())
-                    ->withPort($server->getPort()),
-                true    // Preserve application Host header
-            );
+    /**
+     * Looks at a given request and returns an array of requests incorporating
+     * every configured base URI.
+     *
+     * @param RequestInterface $request The request to modify for every configured base URI
+     *
+     * @return RequestInterface[]
+     */
+    private function requestToBaseUris(RequestInterface $request)
+    {
+        $requests = [];
+
+        foreach ($this->baseUris as $baseUri) {
+            $uri = $request->getUri();
+
+            if ($uri->getHost()) {
+                // Absolute URI: does it already have a scheme?
+                if (!$uri->getScheme() && '' !== $baseUri->getScheme()) {
+                    $uri = $uri->withScheme($baseUri->getScheme());
+                }
+            } else {
+                // Relative URI
+                if ('' !== $baseUri->getHost()) {
+                    $uri = $uri->withHost($baseUri->getHost());
+                }
+
+                if ($baseUri->getPort()) {
+                    $uri = $uri->withPort($baseUri->getPort());
+                }
+
+                // Base path
+                if ('' !== $baseUri->getPath()) {
+                    $path = $baseUri->getPath().'/'.ltrim($uri->getPath(), '/');
+                    $uri = $uri->withPath($path);
+                }
+            }
+
+            $requests[] = $request->withUri($uri);
         }
 
         return $requests;
@@ -257,19 +303,21 @@ class HttpDispatcher implements Dispatcher
      * Set application base URI that will be prefixed to relative purge and
      * refresh requests, and validate it.
      *
-     * @param string $uriString Your application’s base URI
+     * @param array $baseUris Your application’s base URIs
      *
      * @throws InvalidUrlException If the base URI is not a valid URI
      */
-    private function setBaseUri($uriString = null)
+    private function setBaseUris(array $baseUris = [])
     {
-        if (!$uriString) {
-            $this->baseUri = null;
+        if (0 === \count($baseUris)) {
+            $this->baseUris = [];
 
             return;
         }
 
-        $this->baseUri = $this->filterUri($uriString);
+        foreach ($baseUris as $baseUri) {
+            $this->baseUris[] = $this->filterUri($baseUri);
+        }
     }
 
     /**
@@ -288,13 +336,6 @@ class HttpDispatcher implements Dispatcher
      */
     private function filterUri($uriString, array $allowedParts = [])
     {
-        if (!is_string($uriString)) {
-            throw new \InvalidArgumentException(sprintf(
-                'URI parameter must be a string, %s given',
-                gettype($uriString)
-            ));
-        }
-
         // Creating a PSR-7 URI without scheme (with parse_url) results in the
         // original hostname to be seen as path. So first add a scheme if none
         // is given.

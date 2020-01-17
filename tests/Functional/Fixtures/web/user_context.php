@@ -22,6 +22,7 @@ if (isset($_GET['accept'])) {
 }
 
 if ('POST' === strtoupper($_SERVER['REQUEST_METHOD'])) {
+    header('Content-Length: 4');
     echo 'POST';
     exit;
 }
@@ -33,6 +34,7 @@ if (!isset($_COOKIE[0]) || ('foo' !== $_COOKIE[0] && 'bar' !== $_COOKIE[0])) {
 
 header('Cache-Control: max-age=3600');
 header('Vary: X-User-Context-Hash');
+header('Content-Length: 3');
 
 if ('foo' === $_COOKIE[0]) {
     header('X-HashTest: foo');

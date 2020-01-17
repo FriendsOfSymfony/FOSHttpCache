@@ -54,6 +54,6 @@ class ProxyPartial extends AbstractProxy
 
     public function run()
     {
-        $this->runCommand('/path/to/not/exists', []);
+        $this->runCommand(['/path/to/not/exists']);
     }
 }

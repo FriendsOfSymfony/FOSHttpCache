@@ -59,7 +59,6 @@ install:
 before_script:
   # Install Varnish
   - |
-    set -e
     curl -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey | sudo apt-key add -
     curl -L "https://packagecloud.io/install/repositories/varnishcache/varnish${VARNISH_VERSION//./}/config_file.list?os=ubuntu&dist=trusty&source=script" | sudo tee -a /etc/apt/sources.list
     cat /etc/apt/sources.list
@@ -70,6 +69,8 @@ before_script:
   - if [ "$VARNISH_MODULES_VERSION" != "" ]; then sh ./tests/install-varnish-modules.sh; fi
   # Install NGINX
   - sh ./tests/install-nginx.sh
+  # Install OpenLiteSpeed
+  - sh ./tests/install-openlitespeed.sh
 
 script:
   - composer validate --strict --no-check-lock
@@ -86,3 +87,5 @@ after_failure:
   - sudo cat /var/log/apache2/error.log
   - sudo cat /var/log/apache2/access.log
   - sudo cat /var/log/apache2/other_vhosts_access.log
+  - for errorlog in '/usr/local/lsws/logs/error.log*'; do sudo cat $errorlog; done
+  - sudo cat /usr/local/lsws/logs/access.log

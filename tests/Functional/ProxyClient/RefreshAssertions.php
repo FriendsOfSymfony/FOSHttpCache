@@ -32,7 +32,7 @@ trait RefreshAssertions
         $this->assertHit($response);
 
         $proxyClient->refresh($path)->flush();
-        usleep(1000);
+        usleep(2000);
         $refreshed = $this->getResponse($path);
 
         $originalTimestamp = (float) (string) $response->getBody();

@@ -23,7 +23,7 @@ trait AbstractCacheConstraintTrait
     /**
      * Constructor.
      *
-     * @param string $header Cache debug header; defaults to X-Cache-Debug
+     * @param string $header Cache debug header; defaults to X-Cache
      */
     public function __construct($header = null)
     {
@@ -44,6 +44,7 @@ trait AbstractCacheConstraintTrait
         if (!$other instanceof ResponseInterface) {
             throw new \RuntimeException(sprintf('Expected a GuzzleHttp\Psr7\Response but got %s', get_class($other)));
         }
+
         if (!$other->hasHeader($this->header)) {
             $message = sprintf(
                 'Response has no "%s" header. Configure your caching proxy '
@@ -69,7 +70,7 @@ trait AbstractCacheConstraintTrait
             throw new \RuntimeException($message);
         }
 
-        return false !== strpos((string) $other->getHeaderLine($this->header), $this->getValue());
+        return false !== strpos((string) strtolower($other->getHeaderLine($this->header)), strtolower($this->getValue()));
     }
 
     /**

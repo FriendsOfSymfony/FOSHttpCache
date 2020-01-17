@@ -18,6 +18,8 @@ Create the cache invalidator by passing a proxy client as
     // or
     $client = new ProxyClient\Nginx(...);
     // or
+    $client = new ProxyClient\LiteSpeed(...);
+    // or
     $client = new ProxyClient\Symfony(...);
     // or, for local development
     $client = new ProxyClient\Noop();
