@@ -11,18 +11,22 @@
 
 namespace FOS\HttpCache\Test;
 
+use FOS\HttpCache\Test\Legacy\WebServerListener6;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestListener as TestListenerInterface;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
+use PHPUnit\Runner\Version;
 
-if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Version::id(), '6.0.0', '<')) {
+if (class_exists(\PHPUnit_Runner_Version::class) && version_compare(\PHPUnit_Runner_Version::id(), '6.0.0', '<')) {
     /*
      * Using an early return instead of a else does not work when using the PHPUnit phar due to some weird PHP behavior
      * (the class gets defined without executing the code before it and so the definition is not properly conditional)
      */
     class_alias('FOS\HttpCache\Test\Legacy\WebServerListener', 'FOS\HttpCache\Test\WebServerListener');
+} elseif (version_compare(Version::id(), '7.0.0', '<')) {
+    class_alias(WebServerListener6::class, 'FOS\HttpCache\Test\WebServerListener');
 } else {
     /**
      * A PHPUnit test listener that starts and stops the PHP built-in web server.
@@ -51,7 +55,7 @@ if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Ve
          * Make sure the PHP built-in web server is running for tests with group
          * 'webserver'.
          */
-        public function startTestSuite(TestSuite $suite)
+        public function startTestSuite(TestSuite $suite): void
         {
             $this->trait->startTestSuite($suite);
         }
@@ -59,39 +63,39 @@ if (class_exists('PHPUnit_Runner_Version') && version_compare(\PHPUnit_Runner_Ve
         /**
          *  We don't need these.
          */
-        public function endTestSuite(TestSuite $suite)
+        public function endTestSuite(TestSuite $suite): void
         {
         }
 
-        public function addError(Test $test, \Exception $e, $time)
+        public function addError(Test $test, \Throwable $e, float $time): void
         {
         }
 
-        public function addFailure(Test $test, AssertionFailedError $e, $time)
+        public function addFailure(Test $test, AssertionFailedError $e, float $time): void
         {
         }
 
-        public function addIncompleteTest(Test $test, \Exception $e, $time)
+        public function addIncompleteTest(Test $test, \Throwable $e, float $time): void
         {
         }
 
-        public function addSkippedTest(Test $test, \Exception $e, $time)
+        public function addSkippedTest(Test $test, \Throwable $e, float $time): void
         {
         }
 
-        public function startTest(Test $test)
+        public function startTest(Test $test): void
         {
         }
 
-        public function endTest(Test $test, $time)
+        public function endTest(Test $test, float $time): void
         {
         }
 
-        public function addRiskyTest(Test $test, \Exception $e, $time)
+        public function addRiskyTest(Test $test, \Throwable $e, float $time): void
         {
         }
 
-        public function addWarning(Test $test, Warning $e, $time)
+        public function addWarning(Test $test, Warning $e, float $time): void
         {
         }
 

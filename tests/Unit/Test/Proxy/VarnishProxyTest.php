@@ -16,12 +16,11 @@ use PHPUnit\Framework\TestCase;
 
 class VarnishProxyTest extends TestCase
 {
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Cannot find config file: nope.vcl
-     */
     public function testInvalidConfigFileThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot find config file: nope.vcl');
+
         new VarnishProxy('nope.vcl');
     }
 
@@ -62,15 +61,13 @@ class VarnishProxyTest extends TestCase
         $this->assertEquals($arguments, $proxy->arguments);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Caching proxy cannot be reached at 127.0.0.1:6181
-     */
     public function testWaitThrowsException()
     {
         $proxy = new VarnishProxyMock('config.vcl');
         $proxy->wait = false;
 
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Caching proxy cannot be reached at 127.0.0.1:6181');
         $proxy->start();
     }
 }

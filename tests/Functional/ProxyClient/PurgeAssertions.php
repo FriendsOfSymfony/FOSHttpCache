@@ -60,7 +60,7 @@ trait PurgeAssertions
         $this->assertHit($this->getResponse($path, $json));
 
         $response = $this->getResponse($path, $html);
-        $this->assertContains('text/html', $response->getHeaderLine('Content-Type'));
+        $this->assertStringContainsString('text/html', $response->getHeaderLine('Content-Type'));
         $this->assertMiss($response);
         $this->assertHit($this->getResponse($path, $html));
 

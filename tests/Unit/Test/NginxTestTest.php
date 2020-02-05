@@ -19,7 +19,7 @@ class NginxTestTest extends TestCase
 {
     use NginxTest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         // do not try to set up proxy
     }

@@ -19,7 +19,7 @@ class VarnishTestTest extends TestCase
 {
     use VarnishTest;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         // do not try to set up proxy
     }

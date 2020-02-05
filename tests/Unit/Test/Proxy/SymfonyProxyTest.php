@@ -23,13 +23,11 @@ class SymfonyProxyTest extends TestCase
         $proxy->stop();
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
     public function testInvalidDirectoryThrowsException()
     {
         define('SYMFONY_CACHE_DIR', '/');
         $proxy = new SymfonyProxy();
+        $this->expectException(\RuntimeException::class);
         $proxy->getCacheDir();
     }
 }

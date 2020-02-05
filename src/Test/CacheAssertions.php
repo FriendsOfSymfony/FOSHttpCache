@@ -34,7 +34,7 @@ trait CacheAssertions
      * @param ResponseInterface $response
      * @param string            $message  Test failure message (optional)
      */
-    public function assertMiss(ResponseInterface $response, $message = null)
+    public function assertMiss(ResponseInterface $response, $message = '')
     {
         TestCase::assertThat($response, self::isCacheMiss(), $message);
     }
@@ -45,7 +45,7 @@ trait CacheAssertions
      * @param ResponseInterface $response
      * @param string            $message  Test failure message (optional)
      */
-    public function assertHit(ResponseInterface $response, $message = null)
+    public function assertHit(ResponseInterface $response, $message = '')
     {
         TestCase::assertThat($response, self::isCacheHit(), $message);
     }

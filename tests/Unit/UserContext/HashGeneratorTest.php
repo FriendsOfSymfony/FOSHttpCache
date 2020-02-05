@@ -11,6 +11,7 @@
 
 namespace FOS\HttpCache\Tests\Unit\UserContext;
 
+use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\UserContext\ContextProvider;
 use FOS\HttpCache\UserContext\DefaultHashGenerator;
 use FOS\HttpCache\UserContext\UserContext;
@@ -27,11 +28,9 @@ class HashGeneratorTest extends TestCase
         $this->assertEquals($expectedHash, $hashGenerator->generateHash());
     }
 
-    /**
-     * @expectedException \FOS\HttpCache\Exception\InvalidArgumentException
-     */
     public function testConstructorError()
     {
+        $this->expectException(InvalidArgumentException::class);
         new DefaultHashGenerator([]);
     }
 }

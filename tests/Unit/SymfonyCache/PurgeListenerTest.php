@@ -29,12 +29,11 @@ class PurgeListenerTest extends TestCase
 
     /**
      * This tests a sanity check in the AbstractControlledListener.
-     *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage You may not set both a request matcher and an IP
      */
     public function testConstructorOverspecified()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('You may not set both a request matcher and an IP');
         new PurgeListener([
             'client_matcher' => new RequestMatcher('/forbidden'),
             'client_ips' => ['1.2.3.4'],
@@ -178,12 +177,10 @@ class PurgeListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage does not exist
-     */
     public function testInvalidConfiguration()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('does not exist');
         new PurgeListener(['stuff' => '1.2.3.4']);
     }
 

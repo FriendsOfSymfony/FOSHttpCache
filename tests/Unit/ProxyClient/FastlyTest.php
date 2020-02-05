@@ -27,13 +27,13 @@ class FastlyTest extends TestCase
      */
     private $httpDispatcher;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->httpDispatcher = \Mockery::mock(HttpDispatcher::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->httpDispatcher);
         parent::tearDown();
