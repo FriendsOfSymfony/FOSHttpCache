@@ -203,7 +203,7 @@ class HttpDispatcherTest extends TestCase
             'http://fos.lo/my/path',
             $this->httpClient
         );
-        $request = $this->messageFactory->createRequest('PURGE', 'append');
+        $request = $this->messageFactory->createRequest('PURGE', '/append');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
 
