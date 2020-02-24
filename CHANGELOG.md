@@ -10,6 +10,8 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 
 * Raised minimal PHP version to 7.1
 * Test helper classes upgraded to support PHPUnit 7/8
+* There is no php-http/discovery package 2.0, drop it from composer.json
+* Adapt for changes to NetworkException in HTTPlug 2.1 for PSR-18 compatibility
 
 ### Symfony HttpCache
 
