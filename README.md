@@ -31,7 +31,7 @@ Features
   [Symfony reverse proxy from the http-kernel component](http://foshttpcache.readthedocs.io/en/stable/symfony-cache-configuration.html)
   or easily implement your own caching proxy client.
 * [Test your application](http://foshttpcache.readthedocs.io/en/stable/testing-your-application.html)
-  against your Varnish or NGINX setup.
+  against your Varnish or NGINX setup with the help of a PHPUnit functional test case.
 
 Documentation
 -------------

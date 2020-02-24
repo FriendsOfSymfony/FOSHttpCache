@@ -43,8 +43,7 @@
     },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",
-        "monolog/monolog": "For logging issues while invalidating",
-        "phpunit/phpunit": "Functional tests for your cache invalidation system, 5.7 || 6.0 || 7.0 || 8.0"
+        "monolog/monolog": "For logging issues while invalidating"
     },
     "autoload": {
         "psr-4": {
