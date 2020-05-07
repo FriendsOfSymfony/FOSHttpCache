@@ -265,7 +265,7 @@ class HttpDispatcherTest extends TestCase
     public function testSetServersThrowsInvalidServerException()
     {
         $this->expectException(InvalidUrlException::class);
-        $this->expectExceptionMessage('Server "http://127.0.0.1:80/some/path" is invalid. Only scheme, host, port URL parts are allowed');
+        $this->expectExceptionMessage('Server "http://127.0.0.1:80/some/path" is invalid. Only scheme, user, pass, host, port URL parts are allowed');
 
         new HttpDispatcher(['http://127.0.0.1:80/some/path']);
     }

@@ -249,7 +249,7 @@ class HttpDispatcher implements Dispatcher
     {
         $this->servers = [];
         foreach ($servers as $server) {
-            $this->servers[] = $this->filterUri($server, ['scheme', 'host', 'port']);
+            $this->servers[] = $this->filterUri($server, ['scheme', 'user', 'pass', 'host', 'port']);
         }
     }
 
