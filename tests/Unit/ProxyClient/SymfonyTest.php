@@ -46,7 +46,8 @@ class SymfonyTest extends TestCase
 
                     return true;
                 }
-            ), true
+            ),
+            true
         );
 
         $symfony->purge('/url', ['X-Foo' => 'bar']);

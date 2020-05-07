@@ -69,7 +69,8 @@ class FastlyTest extends TestCase
 
                     return true;
                 }
-            ), false
+            ),
+            false
         );
 
         $fastly->invalidateTags(['post-1', 'post,type-3']);
@@ -91,7 +92,8 @@ class FastlyTest extends TestCase
 
                     return true;
                 }
-            ), false
+            ),
+            false
         );
 
         $fastly->invalidateTags(['post-1', 'post,type-3']);
@@ -130,7 +132,8 @@ class FastlyTest extends TestCase
 
                     return true;
                 }
-            ), false
+            ),
+            false
         );
 
         $fastly->purge('/url', ['X-Foo' => 'bar']);
@@ -149,7 +152,8 @@ class FastlyTest extends TestCase
 
                     return true;
                 }
-            ), false
+            ),
+            false
         );
 
         $fastly->refresh('/fresh');
@@ -173,7 +177,8 @@ class FastlyTest extends TestCase
 
                     return true;
                 }
-            ), false
+            ),
+            false
         );
 
         $fastly->clear();
