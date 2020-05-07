@@ -105,7 +105,8 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
     public function clear()
     {
         $this->queueRequest(
-            $this->options['purge_method'], '/',
+            $this->options['purge_method'],
+            '/',
             [$this->options['clear_cache_header'] => 'true'],
             false
         );

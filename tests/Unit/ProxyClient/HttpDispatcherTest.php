@@ -273,7 +273,9 @@ class HttpDispatcherTest extends TestCase
     public function testFlushEmpty()
     {
         $httpDispatcher = new HttpDispatcher(
-            ['127.0.0.1', '127.0.0.2'], 'fos.lo', $this->httpClient
+            ['127.0.0.1', '127.0.0.2'],
+            'fos.lo',
+            $this->httpClient
         );
         $this->assertEquals(0, $httpDispatcher->flush());
 
