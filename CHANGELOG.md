@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.9.1
+-----
+
+### Proxy Client
+
+* Allow to use inline credentials for the caching proxy URL in the format http://user:pass@1.2.3.4
+
 2.9.0
 -----
 
