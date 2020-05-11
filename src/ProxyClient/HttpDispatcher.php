@@ -223,13 +223,18 @@ class HttpDispatcher implements Dispatcher
 
         // Create a request to each caching proxy server
         foreach ($this->getServers() as $server) {
-            $requests[] = $request->withUri(
-                $uri
-                    ->withScheme($server->getScheme())
-                    ->withHost($server->getHost())
-                    ->withPort($server->getPort()),
-                true    // Preserve application Host header
-            );
+            $serverUri = $uri
+                ->withScheme($server->getScheme())
+                ->withHost($server->getHost())
+                ->withPort($server->getPort());
+
+            if ($userInfo = $server->getUserInfo()) {
+                $userInfoParts = explode(':', $userInfo, 2);
+                $serverUri = $serverUri
+                    ->withUserInfo($userInfoParts[0], $userInfoParts[1] ?? null);
+            }
+
+            $requests[] = $request->withUri($serverUri, true); // Preserve application Host header
         }
 
         return $requests;
