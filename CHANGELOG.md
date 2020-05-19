@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.9.2
+-----
+
+### Proxy Client
+
+* Fix: Preserve inline credentials when multiplexing to the proxy servers.
+
 2.9.1
 -----
 
