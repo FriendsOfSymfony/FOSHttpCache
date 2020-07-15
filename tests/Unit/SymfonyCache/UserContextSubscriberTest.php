@@ -75,6 +75,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
         $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('Bad Request',  $response->getContent());
     }
 
     /**
@@ -93,6 +94,7 @@ class UserContextSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Symfony\\Component\\HttpFoundation\\Response', $response);
         $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('Bad Request',  $response->getContent());
     }
 
     /**

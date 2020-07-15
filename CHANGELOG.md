@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.4.6
+-----
+
+* [Symfony HttpCache] Added a neutral "Bad Request" body to user hash mismatch
+  response to have something searchable in the code when debugging.
+
 1.4.5
 -----
 
