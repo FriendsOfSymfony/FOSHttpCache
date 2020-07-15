@@ -196,6 +196,26 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
     }
 
+    public function testServerWithUserInfo()
+    {
+        $httpDispatcher = new HttpDispatcher(
+            ['http://userone:passone@127.0.0.1', 'http://127.0.0.2', 'http://usertwo:passtwo@127.0.0.2'],
+            'fos.lo',
+            $this->httpClient
+        );
+
+        $request = $this->messageFactory->createRequest('PURGE', '/path');
+        $httpDispatcher->invalidate($request);
+        $httpDispatcher->flush();
+
+        $requests = $this->getRequests();
+
+        $this->assertCount(3, $requests);
+        $this->assertEquals('userone:passone', $requests[0]->getUri()->getUserInfo());
+        $this->assertEquals('', $requests[1]->getUri()->getUserInfo());
+        $this->assertEquals('usertwo:passtwo', $requests[2]->getUri()->getUserInfo());
+    }
+
     public function testSetBasePathWithPath()
     {
         $httpDispatcher = new HttpDispatcher(
