@@ -76,6 +76,7 @@ class UserContextListenerTest extends TestCase
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('Bad Request', $response->getContent());
     }
 
     /**
@@ -94,6 +95,7 @@ class UserContextListenerTest extends TestCase
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame('Bad Request', $response->getContent());
     }
 
     /**

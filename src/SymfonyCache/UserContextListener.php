@@ -113,7 +113,7 @@ class UserContextListener implements EventSubscriberInterface
             if ($request->headers->get('accept') === $this->options['user_hash_accept_header']
                 || null !== $request->headers->get($this->options['user_hash_header'])
             ) {
-                $event->setResponse(new Response('', 400));
+                $event->setResponse(new Response('Bad Request', 400));
 
                 return;
             }
