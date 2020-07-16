@@ -3,6 +3,14 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+unreleased
+----------
+
+### Symfony HttpCache
+
+* Added a neutral "Bad Request" body to user hash mismatch response to have
+  something searchable in the code when debugging.
+
 2.9.2
 -----
 
@@ -312,6 +320,12 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   `TagCapable` as first argument. To adjust the tag header name or the way the
   tags are formatted, use the new `header_formatter` option with a
   `TagHeaderFormatter`.
+
+1.4.6
+-----
+
+* [Symfony HttpCache] Added a neutral "Bad Request" body to user hash mismatch
+  response to have something searchable in the code when debugging.
 
 1.4.5
 -----
