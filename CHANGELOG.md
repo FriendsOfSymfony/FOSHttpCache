@@ -3,8 +3,8 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-unreleased
-----------
+2.10.0
+------
 
 ### General
 
