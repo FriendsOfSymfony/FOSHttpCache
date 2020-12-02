@@ -16,11 +16,9 @@ matrix:
   fast_finish: true
   include:
       # Minimum supported versions
-    - php: 7.1
+    - php: 7.2
       env: VARNISH_VERSION=3.0 SYMFONY_PHPUNIT_VERSION=5.7 COMPOSER_FLAGS="--prefer-lowest" DEPENDENCIES=""
 
-    - php: 7.1
-      env: SYMFONY_PHPUNIT_VERSION=7
     - php: 7.2
     - php: 7.3
     - php: 7.4
