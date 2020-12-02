@@ -30,7 +30,7 @@ matrix:
       # PHP 8.0 (Travis does not yet support using the stable 8.0.0)
     - php: nightly
       dist: xenial
-      env: COMPOSER_FLAGS="--ignore-platform-req=php" SYMFONY_PHPUNIT_VERSION=8
+      env: SYMFONY_PHPUNIT_VERSION=8
 
       # Test with Varnish 4
     - php: 7.4
