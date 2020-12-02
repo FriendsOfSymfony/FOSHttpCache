@@ -35,8 +35,6 @@ class UserContext implements \IteratorAggregate
 
     /**
      * Set all the parameters of this context.
-     *
-     * @param array $parameters
      */
     public function setParameters(array $parameters)
     {

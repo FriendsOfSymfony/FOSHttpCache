@@ -104,8 +104,6 @@ class CacheEvent extends BaseEvent
      * Sets a response to use instead of continuing to handle this request.
      *
      * Setting a response stops propagation of the event to further event handlers.
-     *
-     * @param Response $response
      */
     public function setResponse(Response $response)
     {

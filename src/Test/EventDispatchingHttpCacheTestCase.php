@@ -81,10 +81,6 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 
     /**
      * Set the store property on a HttpCache to a StoreInterface expecting one write with request and response.
-     *
-     * @param CacheInvalidation $httpCache
-     * @param Request           $request
-     * @param Response          $response
      */
     protected function setStoreMock(CacheInvalidation $httpCache, Request $request, Response $response)
     {

@@ -25,11 +25,10 @@ interface Dispatcher
     /**
      * Queue invalidation request.
      *
-     * @param RequestInterface $invalidationRequest
-     * @param bool             $validateHost        If false, do not validate
-     *                                              that we either have a base
-     *                                              uri or the invalidation
-     *                                              request specifies the host
+     * @param bool $validateHost If false, do not validate
+     *                           that we either have a base
+     *                           uri or the invalidation
+     *                           request specifies the host
      */
     public function invalidate(RequestInterface $invalidationRequest, $validateHost = true);
 

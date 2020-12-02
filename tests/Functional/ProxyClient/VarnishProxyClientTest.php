@@ -20,9 +20,9 @@ use FOS\HttpCache\Test\VarnishTestCase;
  */
 class VarnishProxyClientTest extends VarnishTestCase
 {
-    use RefreshAssertions;
-    use PurgeAssertions;
     use BanAssertions;
+    use PurgeAssertions;
+    use RefreshAssertions;
 
     public function testBanAll()
     {

@@ -29,8 +29,6 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
     /**
      * Add an exception to the collection.
      *
-     * @param \Exception $e
-     *
      * @return $this
      */
     public function add(\Exception $e)

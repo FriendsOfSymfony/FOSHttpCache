@@ -135,7 +135,6 @@ trait EventDispatchingHttpCache
      * Dispatch an event if needed.
      *
      * @param string        $name        Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
-     * @param Request       $request
      * @param Response|null $response    If already available
      * @param int           $requestType The request type (default HttpKernelInterface::MASTER_REQUEST)
      *

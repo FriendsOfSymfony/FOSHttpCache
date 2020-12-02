@@ -17,8 +17,6 @@ class Event extends BaseEvent
 
     /**
      * Set exception.
-     *
-     * @param \Exception $exception
      */
     public function setException(\Exception $exception)
     {
