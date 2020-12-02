@@ -24,7 +24,8 @@ matrix:
     - php: 7.2
     - php: 7.3
     - php: 7.4
-      env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
+      env: COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
+      #TODO re-add DOCCHECK=true - see https://github.com/FriendsOfSymfony/FOSHttpCache/pull/450
 
       # Test with Varnish 4
     - php: 7.4
