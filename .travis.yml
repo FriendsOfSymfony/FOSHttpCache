@@ -25,6 +25,7 @@ matrix:
     - php: 7.3
     - php: 7.4
       env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
+      python: 3.6
 
       # PHP 8.0 (Travis does not yet support using the stable 8.0.0)
     - php: nightly
