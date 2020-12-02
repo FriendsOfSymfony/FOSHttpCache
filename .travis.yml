@@ -25,6 +25,8 @@ matrix:
     - php: 7.3
     - php: 7.4
       env: DOCCHECK=true COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
+    - php: 8.0
+      env: COMPOSER_FLAGS="--ignore-platform-req=php" SYMFONY_PHPUNIT_VERSION=8
 
       # Test with Varnish 4
     - php: 7.4
