@@ -6,6 +6,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 unreleased
 ----------
 
+### General
+
+* Raised minimal PHP version to 7.2
+* Added support for PHP 8.0
+
 ### Symfony HttpCache
 
 * Added a neutral "Bad Request" body to user hash mismatch response to have
