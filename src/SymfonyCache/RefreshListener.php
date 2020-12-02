@@ -40,8 +40,6 @@ class RefreshListener extends AccessControlledListener
      *
      * When the request comes from a non-authorized client, ignore refresh to
      * let normal lookup happen.
-     *
-     * @param CacheEvent $event
      */
     public function handleRefresh(CacheEvent $event)
     {

@@ -103,8 +103,6 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
      *
      * {@inheritdoc}
      *
-     * @param array $tags
-     *
      * @return $this
      */
     public function invalidateTags(array $tags)

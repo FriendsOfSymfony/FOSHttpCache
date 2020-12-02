@@ -86,7 +86,6 @@ abstract class HttpProxyClient implements ProxyClient
      *
      * @param string                               $method
      * @param string|UriInterface                  $url
-     * @param array                                $headers
      * @param bool                                 $validateHost see Dispatcher::invalidate
      * @param resource|string|StreamInterface|null $body
      */

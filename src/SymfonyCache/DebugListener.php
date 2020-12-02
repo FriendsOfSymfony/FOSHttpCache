@@ -39,8 +39,6 @@ class DebugListener implements EventSubscriberInterface
      *
      * For this header to be present, the HttpCache must be created with the
      * debug option set to true.
-     *
-     * @param CacheEvent $event
      */
     public function handleDebug(CacheEvent $event)
     {

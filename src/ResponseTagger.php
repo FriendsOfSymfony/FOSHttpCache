@@ -55,8 +55,6 @@ class ResponseTagger
      *
      * - header_formatter (TagHeaderFormatter) Default: CommaSeparatedTagHeaderFormatter with default header name
      * - strict (bool) Default: false. If set to true, throws exception when adding empty tags
-     *
-     * @param array $options
      */
     public function __construct(array $options = [])
     {

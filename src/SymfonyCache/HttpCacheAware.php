@@ -31,9 +31,6 @@ trait HttpCacheAware
         return $this->httpCache;
     }
 
-    /**
-     * @param HttpKernelInterface $httpCache
-     */
     public function setHttpCache(HttpKernelInterface $httpCache)
     {
         $this->httpCache = $httpCache;

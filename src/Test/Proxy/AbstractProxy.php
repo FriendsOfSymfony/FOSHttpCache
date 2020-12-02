@@ -95,7 +95,6 @@ abstract class AbstractProxy implements ProxyInterface
      * Run a shell command.
      *
      * @param string $command
-     * @param array  $arguments
      *
      * @throws \RuntimeException If command execution fails
      */

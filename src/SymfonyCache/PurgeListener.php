@@ -77,8 +77,6 @@ class PurgeListener extends AccessControlledListener
      * Look at unsafe requests and handle purge requests.
      *
      * Prevents access when the request comes from a non-authorized client.
-     *
-     * @param CacheEvent $event
      */
     public function handlePurge(CacheEvent $event)
     {

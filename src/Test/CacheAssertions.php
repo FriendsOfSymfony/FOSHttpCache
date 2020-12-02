@@ -31,8 +31,7 @@ trait CacheAssertions
     /**
      * Assert a cache miss.
      *
-     * @param ResponseInterface $response
-     * @param string            $message  Test failure message (optional)
+     * @param string $message Test failure message (optional)
      */
     public function assertMiss(ResponseInterface $response, $message = '')
     {
@@ -42,8 +41,7 @@ trait CacheAssertions
     /**
      * Assert a cache hit.
      *
-     * @param ResponseInterface $response
-     * @param string            $message  Test failure message (optional)
+     * @param string $message Test failure message (optional)
      */
     public function assertHit(ResponseInterface $response, $message = '')
     {
