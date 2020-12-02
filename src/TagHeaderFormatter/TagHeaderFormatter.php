@@ -37,8 +37,6 @@ interface TagHeaderFormatter
      *
      * This concatenates all tags and ensures correct encoding.
      *
-     * @param array $tags
-     *
      * @return string|string[]
      */
     public function getTagsHeaderValue(array $tags);

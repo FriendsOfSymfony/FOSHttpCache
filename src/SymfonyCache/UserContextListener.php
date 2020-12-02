@@ -102,8 +102,6 @@ class UserContextListener implements EventSubscriberInterface
      *
      * Checks if an external request tries tampering with the use context hash mechanism
      * to prevent attacks.
-     *
-     * @param CacheEvent $event
      */
     public function preHandle(CacheEvent $event)
     {
@@ -133,9 +131,6 @@ class UserContextListener implements EventSubscriberInterface
      *
      * Cleans cookies header to only keep the session identifier cookie, so the hash lookup request
      * can be cached per session.
-     *
-     * @param Request $hashLookupRequest
-     * @param Request $originalRequest
      */
     protected function cleanupHashLookupRequest(Request $hashLookupRequest, Request $originalRequest)
     {
@@ -161,8 +156,6 @@ class UserContextListener implements EventSubscriberInterface
     /**
      * Checks if passed request object is to be considered internal (e.g. for user hash lookup).
      *
-     * @param Request $request
-     *
      * @return bool
      */
     private function isInternalRequest(Request $request)
@@ -172,9 +165,6 @@ class UserContextListener implements EventSubscriberInterface
 
     /**
      * Returns the user context hash for $request.
-     *
-     * @param HttpKernelInterface $kernel
-     * @param Request             $request
      *
      * @return string
      */
@@ -199,8 +189,6 @@ class UserContextListener implements EventSubscriberInterface
 
     /**
      * Checks if current request is considered anonymous.
-     *
-     * @param Request $request
      *
      * @return bool
      */
@@ -228,8 +216,6 @@ class UserContextListener implements EventSubscriberInterface
 
     /**
      * Generates the request object that will be forwarded to get the user context hash.
-     *
-     * @param Request $request
      *
      * @return Request the request that will return the user context hash value
      */

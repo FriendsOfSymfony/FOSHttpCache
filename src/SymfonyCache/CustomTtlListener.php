@@ -50,8 +50,6 @@ class CustomTtlListener implements EventSubscriberInterface
      *
      * If there is such a header, the original s_maxage is backed up to the
      * static::SMAXAGE_BACKUP header.
-     *
-     * @param CacheEvent $e
      */
     public function useCustomTtl(CacheEvent $e)
     {
@@ -69,8 +67,6 @@ class CustomTtlListener implements EventSubscriberInterface
 
     /**
      * Remove the custom TTL header and restore s_maxage from the backup.
-     *
-     * @param CacheEvent $e
      */
     public function cleanResponse(CacheEvent $e)
     {

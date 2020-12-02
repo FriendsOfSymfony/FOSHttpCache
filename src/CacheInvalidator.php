@@ -122,8 +122,6 @@ class CacheInvalidator
     /**
      * Set event dispatcher - may only be called once.
      *
-     * @param EventDispatcherInterface $eventDispatcher
-     *
      * @throws \Exception when trying to override the event dispatcher
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)

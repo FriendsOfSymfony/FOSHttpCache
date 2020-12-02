@@ -39,8 +39,7 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
      * HTTP messages cannot carry characters outside the ISO-8859-1 standard so they all
      * use up just one byte.
      *
-     * @param TagHeaderFormatter $inner
-     * @param int                $maxHeaderValueLength
+     * @param int $maxHeaderValueLength
      */
     public function __construct(TagHeaderFormatter $inner, $maxHeaderValueLength = 4096)
     {
@@ -96,8 +95,6 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
 
     /**
      * Split an array of tags in two more or less equal sized arrays.
-     *
-     * @param array $tags
      *
      * @return array
      *

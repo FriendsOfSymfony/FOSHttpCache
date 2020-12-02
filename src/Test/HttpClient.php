@@ -70,8 +70,6 @@ class HttpClient
     /**
      * Send PSR HTTP request to your application.
      *
-     * @param RequestInterface $request
-     *
      * @return ResponseInterface
      */
     public function sendRequest(RequestInterface $request)

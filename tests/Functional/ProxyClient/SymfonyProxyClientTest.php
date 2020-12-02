@@ -20,9 +20,9 @@ use Toflar\Psr6HttpCacheStore\Psr6Store;
  */
 class SymfonyProxyClientTest extends SymfonyTestCase
 {
-    use RefreshAssertions;
-    use PurgeAssertions;
     use InvalidateTagsAssertions;
+    use PurgeAssertions;
+    use RefreshAssertions;
 
     public function testPurge()
     {

@@ -19,8 +19,8 @@ use FOS\HttpCache\Test\NginxTestCase;
  */
 class NginxProxyClientTest extends NginxTestCase
 {
-    use RefreshAssertions;
     use PurgeAssertions;
+    use RefreshAssertions;
 
     public function testPurgeSeparateLocation()
     {
