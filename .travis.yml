@@ -10,22 +10,25 @@ env:
     - VARNISH_VERSION=5.1
     - SYMFONY_PHPUNIT_VERSION=8
     - SYMFONY_DEPRECATIONS_HELPER="max[self]=0"
-    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^2.2.0"
+    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^2.2.0\|^3.0.0"
 
 matrix:
   fast_finish: true
   include:
       # Minimum supported versions
-    - php: 7.1
+    - php: 7.2
       env: VARNISH_VERSION=3.0 SYMFONY_PHPUNIT_VERSION=5.7 COMPOSER_FLAGS="--prefer-lowest" DEPENDENCIES=""
 
-    - php: 7.1
-      env: SYMFONY_PHPUNIT_VERSION=7
     - php: 7.2
     - php: 7.3
     - php: 7.4
       env: COVERAGE=true PHPUNIT_FLAGS="-v --coverage-text" VARNISH_MODULES_VERSION=0.12.1
       #TODO re-add DOCCHECK=true - see https://github.com/FriendsOfSymfony/FOSHttpCache/pull/450
+
+      # PHP 8.0 (Travis does not yet support using the stable 8.0.0)
+    - php: nightly
+      dist: xenial
+      env: SYMFONY_PHPUNIT_VERSION=8
 
       # Test with Varnish 4
     - php: 7.4
@@ -37,7 +40,7 @@ matrix:
 
       # Test SYMFONY LTS versions
     - php: 7.4
-      env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^2.2.0"
+      env: DEPENDENCIES="symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^2.2.0\|^3.0.0"
     - php: 7.4
       env: DEPENDENCIES="symfony/flex" SYMFONY_VERSION="^4"
 
@@ -86,7 +89,7 @@ script:
   - if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
 
 after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - if [[ $COVERAGE = true ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
 
 after_failure:
   - cat /tmp/fos_nginx_error.log
