@@ -90,7 +90,7 @@ script:
   - if [[ "$DOCCHECK" = true ]]; then make -C doc spelling; fi
 
 after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - if [[ $COVERAGE = true ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
 
 after_failure:
   - cat /tmp/fos_nginx_error.log
