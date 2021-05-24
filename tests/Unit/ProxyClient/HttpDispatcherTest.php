@@ -277,7 +277,7 @@ class HttpDispatcherTest extends TestCase
     public function testSetServersThrowsWeirdInvalidUrlException()
     {
         $this->expectException(InvalidUrlException::class);
-        $this->expectExceptionMessage('URL "this ://is no url" is invalid.');
+        $this->expectExceptionMessage('"this ://is no url" is invalid.');
 
         new HttpDispatcher(['this ://is no url']);
     }
