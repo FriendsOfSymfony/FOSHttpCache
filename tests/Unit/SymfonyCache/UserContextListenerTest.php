@@ -138,6 +138,10 @@ class UserContextListenerTest extends TestCase
                             // we need to call some methods to get the internal fields initialized
                             $request->getMethod();
                             $request->getPathInfo();
+                            $hashRequest->server->remove('REQUEST_TIME_FLOAT');
+                            $hashRequest->server->remove('REQUEST_TIME');
+                            $request->server->remove('REQUEST_TIME_FLOAT');
+                            $request->server->remove('REQUEST_TIME');
                             $that->assertEquals($hashRequest, $request);
                             $that->assertCount(0, $request->cookies->all());
 

@@ -10,7 +10,7 @@ env:
     - VARNISH_VERSION=5.1
     - SYMFONY_PHPUNIT_VERSION=8
     - SYMFONY_DEPRECATIONS_HELPER="max[self]=0"
-    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^2.2.0\|^3.0.0"
+    - DEPENDENCIES="toflar/psr6-symfony-http-cache-store:^2.2.0|^3.0.0"
 
 matrix:
   fast_finish: true
