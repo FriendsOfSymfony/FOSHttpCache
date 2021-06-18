@@ -43,6 +43,10 @@ sub fos_user_context_recv {
 
         # Force the lookup, the backend must tell not to cache or vary on all
         # headers that are used to build the hash.
+        #
+        # To avoid massive performance issues when caching the hash lookup request, see
+        # fos_user_context_hash
+
         return (hash);
     }
 
@@ -64,6 +68,21 @@ sub fos_user_context_recv {
         # user hash to properly separate cached data.
 
         return (hash);
+    }
+}
+
+/**
+ * When caching the hash lookup request with a session or basic auth, we should include that
+ * information in the hash.
+ *
+ * If we would only rely on Varnish keeping the variants of the response apart with the Vary
+ * header, Varnish has to lookup the right variant. With a large number of users, this is extremly
+ * inefficient as Varnish does not optimize Variant search and we get O(n) on the number of users.
+ */
+sub fos_user_context_hash {
+    if (req.http.accept == "application/vnd.fos.user-context-hash") {
+        hash_data(req.http.Cookie);
+        hash_data(req.http.Autorization);
     }
 }
 

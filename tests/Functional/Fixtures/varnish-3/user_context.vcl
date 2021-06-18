@@ -5,6 +5,10 @@ sub vcl_recv {
     call fos_user_context_recv;
 }
 
+sub vcl_hash {
+    call fos_user_context_hash;
+}
+
 sub vcl_fetch {
     call fos_user_context_fetch;
 }
