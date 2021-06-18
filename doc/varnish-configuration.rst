@@ -183,6 +183,14 @@ Tag Invalidation Using xkey
 Since Varnish 4.1, you can use the official `xkey Varnish module`_ for better
 performance with cache tags.
 
+.. tip::
+
+    If you are using the payed "Varnish Plus" offering, you should use the
+    improved ykey feature instead of xkey. The `ykey documentation`_ explains
+    how to use the xkey headers to set up the ykey information. Instead of
+    including the ``fos_tags_xkey.vcl`` you would need to write your own VCL to
+    handle ykey tagging and invalidation requests.
+
 As explained in the `Cache Invalidation chapter of the Varnish documentation`_::
 > (..), ``hashtwo``/``xkey`` is much more efficient than bans because of two reasons:
 > 1) looking up hash keys is much more efficient than traversing ban-lists, and
@@ -192,13 +200,10 @@ As explained in the `Cache Invalidation chapter of the Varnish documentation`_::
 With xkey, you can also soft purge tagged responses to allow for a grace period
 where invalidated (stale) content is still delivered to the client.
 
-Minimum version of `varnish-modules` is v0.10.2*. It's part of Ubuntu 17.10
-("Artful") and higher, otherwise see their documentation for
-`installing xkey on other platforms`_. You can technically use earlier versions
-of the varnish modules down to 0.9.x releases. However, v0.10.2 is the first
-version introducing support for purging several tags at once. If you use an
-older version, you need to invalidate only one tag at a time, and can't use
-soft purge.
+Install the varnish modules with your distribution if available, or refer to the
+Varnish documentation for `installing xkey`_. Version 0.10.2 is the first version
+to support purging more than one tag at once. With older versions you can only
+invalidate one tag at a time, and soft purge is not available.
 
 To use ``xkey``, :ref:`configure the Varnish Client for xkey <varnish_custom_tags_header>`
 and :ref:`the response tagger to use the xkey header <response_tagger_optional_parameters>`,
@@ -462,7 +467,8 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 .. _explained in the Varnish documentation: https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies
 .. _curl Varnish plugin: https://github.com/varnish/libvmod-curl
 .. _xkey Varnish module: https://github.com/varnish/varnish-modules/blob/master/docs/vmod_xkey.rst
+.. _ykey documentation: https://docs.varnish-software.com/varnish-cache-plus/vmods/ykey/
 .. _Cache Invalidation chapter of the Varnish documentation: http://book.varnish-software.com/4.0/chapters/Cache_Invalidation.html#hashtwo-xkey-varnish-software-implementation-of-surrogate-keys
-.. _installing xkey on other platforms: https://github.com/varnish/varnish-modules#installation
+.. _installing xkey: https://github.com/varnish/varnish-modules#installation
 .. _`builtin VCL`: https://github.com/varnishcache/varnish-cache/blob/5.0/bin/varnishd/builtin.vcl
 .. _`default VCL`: https://github.com/varnishcache/varnish-cache/blob/3.0/bin/varnishd/default.vcl
