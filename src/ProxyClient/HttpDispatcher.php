@@ -142,7 +142,7 @@ class HttpDispatcher implements Dispatcher
                 try {
                     $promises[] = $this->httpClient->sendAsyncRequest($proxyRequest);
                 } catch (\Exception $e) {
-                    $exceptions->add(new InvalidArgumentException($e));
+                    $exceptions->add(new InvalidArgumentException($e->getMessage(), $e->getCode(), $e));
                 }
             }
         }
@@ -156,7 +156,7 @@ class HttpDispatcher implements Dispatcher
                 $exceptions->add(ProxyUnreachableException::proxyUnreachable($exception));
             } catch (\Exception $exception) {
                 // @codeCoverageIgnoreStart
-                $exceptions->add(new InvalidArgumentException($exception));
+                $exceptions->add(new InvalidArgumentException($exception->getMessage(), $exception->getCode(), $exception));
                 // @codeCoverageIgnoreEnd
             }
         }
