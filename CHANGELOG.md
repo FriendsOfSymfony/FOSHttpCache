@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.10.1
+------
+
+### HttpDispatcher
+
+- Fix how we create exceptions to get the expected exception rather than a PHP error
+
 2.10.0
 ------
 
