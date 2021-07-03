@@ -45,12 +45,13 @@ class VarnishProxyTest extends TestCase
         $proxy->start();
 
         $this->assertEquals('/usr/sbin/varnishd', $proxy->command);
+        $vclPath = ((int) getenv('VARNISH_VERSION')) >= 5 ? 'vcl_path' : 'vcl_dir';
         $arguments = [
             '-a', '192.168.0.1:6181',
             '-T', '192.168.0.1:1331',
             '-f', 'config.vcl',
             '-n', '/tmp/cache/dir',
-            '-p', 'vcl_dir=/my/varnish/dir',
+            '-p', $vclPath.'=/my/varnish/dir',
             '-P', '/tmp/foshttpcache-varnish.pid',
         ];
         if ($inlineC) {

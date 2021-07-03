@@ -48,12 +48,14 @@ class VarnishProxy extends AbstractProxy
      */
     public function start()
     {
+        $vclPath = ((int) $this->getVarnishVersion()) >= 5 ? 'vcl_path' : 'vcl_dir';
+
         $args = [
             '-a', $this->ip.':'.$this->getPort(),
             '-T', $this->ip.':'.$this->getManagementPort(),
             '-f', $this->getConfigFile(),
             '-n', $this->getCacheDir(),
-            '-p', 'vcl_dir='.$this->getConfigDir(),
+            '-p', $vclPath.'='.$this->getConfigDir(),
 
             '-P', $this->pid,
         ];
@@ -170,5 +172,15 @@ class VarnishProxy extends AbstractProxy
     public function setAllowInlineC($allowInlineC)
     {
         $this->allowInlineC = (bool) $allowInlineC;
+    }
+
+    /**
+     * Defaults to 4.
+     *
+     * @return int
+     */
+    private function getVarnishVersion()
+    {
+        return getenv('VARNISH_VERSION') ?: '4.0';
     }
 }
