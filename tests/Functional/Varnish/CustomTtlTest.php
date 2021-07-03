@@ -23,9 +23,9 @@ class CustomTtlTest extends VarnishTestCase
     {
         switch ((int) $this->getVarnishVersion()) {
             case 3:
-                return './tests/Functional/Fixtures/varnish-3/custom_ttl.vcl';
+                return dirname(__DIR__).'/Fixtures/varnish-3/custom_ttl.vcl';
             default:
-                return './tests/Functional/Fixtures/varnish/custom_ttl.vcl';
+                return dirname(__DIR__).'/Fixtures/varnish/custom_ttl.vcl';
         }
     }
 

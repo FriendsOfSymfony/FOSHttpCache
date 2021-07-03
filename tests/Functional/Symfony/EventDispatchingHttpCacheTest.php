@@ -79,7 +79,7 @@ class AppCache extends HttpCache implements CacheInvalidation
      *
      * {@inheritdoc}
      */
-    public function fetch(Request $request, $catch = false)
+    public function fetch(Request $request, $catch = false): Response
     {
         parent::fetch($request, $catch);
     }
