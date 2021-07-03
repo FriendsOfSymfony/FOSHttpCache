@@ -97,9 +97,9 @@ class UserContextFailureTest extends VarnishTestCase
     {
         switch ((int) $this->getVarnishVersion()) {
             case 3:
-                return sprintf('./tests/Functional/Fixtures/varnish-3/user_context_%s.vcl', $this->mode);
+                return sprintf(dirname(__DIR__).'/Fixtures/varnish-3/user_context_%s.vcl', $this->mode);
             default:
-                return sprintf('./tests/Functional/Fixtures/varnish/user_context_%s.vcl', $this->mode);
+                return sprintf(dirname(__DIR__).'/Fixtures/varnish/user_context_%s.vcl', $this->mode);
         }
     }
 }
