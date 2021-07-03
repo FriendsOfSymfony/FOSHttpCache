@@ -1,0 +1,46 @@
+name: Static analysis
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  phpstan:
+    name: PHPStan src
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Pull in optional dependencies
+        run: |
+          composer require --no-update symfony/http-kernel symfony/event-dispatcher symfony/process phpunit/phpunit psr/log toflar/psr6-symfony-http-cache-store
+          composer update --no-dev --no-progress
+
+      - name: PHPStan
+        uses: docker://oskarstark/phpstan-ga
+        with:
+          args: analyze --no-progress
+
+  phpstan-tests:
+    name: PHPStan tests
+    runs-on: ubuntu-latest
+    env:
+      REQUIRE_DEV: "true"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Pull in optional dependencies
+        run: |
+          composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store
+          composer update --no-progress
+
+      - name: PHPStan
+        uses: docker://oskarstark/phpstan-ga
+        with:
+          args: analyze --no-progress -c phpstan.tests.neon.dist

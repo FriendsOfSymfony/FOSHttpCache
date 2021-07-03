@@ -12,7 +12,6 @@
 namespace FOS\HttpCache\Test\Proxy;
 
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 
 abstract class AbstractProxy implements ProxyInterface
 {
@@ -100,16 +99,7 @@ abstract class AbstractProxy implements ProxyInterface
      */
     protected function runCommand($command, array $arguments)
     {
-        if (method_exists(Process::class, 'setStdin')) {
-            // Symfony 2, process can not handle an array as command. Use the meanwhile deprecated ProcessBuilder
-            $builder = new ProcessBuilder($arguments);
-            $builder->setPrefix($command);
-
-            $process = $builder->getProcess();
-        } else {
-            $process = new Process(array_merge([$command], $arguments));
-        }
-
+        $process = new Process(array_merge([$command], $arguments));
         $process->run();
 
         if (!$process->isSuccessful()) {

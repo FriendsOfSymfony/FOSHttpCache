@@ -15,7 +15,6 @@ use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Fastly HTTP cache invalidator.
@@ -68,7 +67,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         // Split tag invalidations across several requests within Fastly's tag batch invalidations limits.
         foreach (\array_chunk($tags, self::TAG_BATCH_PURGE_LIMIT) as $tagChunk) {
             $this->queueRequest(
-                Request::METHOD_POST,
+                'POST',
                 $url,
                 $headers,
                 false,
@@ -116,7 +115,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
 
         // Secondly make sure refresh is triggered with a HEAD request
         $this->queueRequest(
-            Request::METHOD_HEAD,
+            'HEAD',
             $url,
             $headers,
             false
@@ -137,7 +136,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     public function clear()
     {
         $this->queueRequest(
-            Request::METHOD_POST,
+            'POST',
             sprintf(self::API_ENDPOINT.'/service/%s/purge_all', $this->options['service_identifier']),
             ['Accept' => 'application/json'],
             false
