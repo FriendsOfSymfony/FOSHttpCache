@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.11.0
+------
+
+### Fastly client
+
+- Marked the `@internal` constants in `FOS\HttpCache\ProxyClient\Fastly` as private
+
 2.10.1
 ------
 

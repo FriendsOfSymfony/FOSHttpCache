@@ -35,7 +35,7 @@ class CustomTtlListener implements EventSubscriberInterface
      *
      * @var string
      */
-    const SMAXAGE_BACKUP = 'FOS-Smaxage-Backup';
+    public const SMAXAGE_BACKUP = 'FOS-Smaxage-Backup';
 
     /**
      * @param string $ttlHeader The header that is used to specify the TTL header

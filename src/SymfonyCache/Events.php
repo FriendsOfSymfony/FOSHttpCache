@@ -16,11 +16,11 @@ namespace FOS\HttpCache\SymfonyCache;
  */
 final class Events
 {
-    const PRE_HANDLE = 'fos_http_cache.pre_handle';
+    public const PRE_HANDLE = 'fos_http_cache.pre_handle';
 
-    const POST_HANDLE = 'fos_http_cache.post_handle';
+    public const POST_HANDLE = 'fos_http_cache.post_handle';
 
-    const PRE_INVALIDATE = 'fos_http_cache.pre_invalidate';
+    public const PRE_INVALIDATE = 'fos_http_cache.pre_invalidate';
 
-    const PRE_STORE = 'fos_http_cache.pre_store';
+    public const PRE_STORE = 'fos_http_cache.pre_store';
 }

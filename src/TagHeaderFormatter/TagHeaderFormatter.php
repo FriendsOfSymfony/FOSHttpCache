@@ -23,7 +23,7 @@ interface TagHeaderFormatter
      *
      * @var string
      */
-    const DEFAULT_HEADER_NAME = 'X-Cache-Tags';
+    public const DEFAULT_HEADER_NAME = 'X-Cache-Tags';
 
     /**
      * Get the HTTP header name that will hold cache tags.

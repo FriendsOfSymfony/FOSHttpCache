@@ -32,24 +32,17 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
  */
 class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, RefreshCapable, TagCapable
 {
-    /**
-     * @internal
-     */
-    const HTTP_METHOD_PURGE = 'PURGE';
+    private const HTTP_METHOD_PURGE = 'PURGE';
 
     /**
-     * @internal
-     *
      * @see https://docs.fastly.com/api/purge#purge_db35b293f8a724717fcf25628d713583 Fastly's limit on batch tag purges.
      */
-    const TAG_BATCH_PURGE_LIMIT = 256;
+    private const TAG_BATCH_PURGE_LIMIT = 256;
 
     /**
-     * @internal
-     *
      * @see https://docs.fastly.com/api/purge Base url endpoint used on anything but url PURGE/GET/HEAD.
      */
-    const API_ENDPOINT = 'https://api.fastly.com';
+    private const API_ENDPOINT = 'https://api.fastly.com';
 
     /**
      * {@inheritdoc}

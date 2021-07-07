@@ -37,23 +37,23 @@ use Symfony\Component\OptionsResolver\Options;
  */
 class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, RefreshCapable, TagCapable
 {
-    const HTTP_METHOD_BAN = 'BAN';
+    public const HTTP_METHOD_BAN = 'BAN';
 
-    const HTTP_METHOD_PURGE = 'PURGE';
+    public const HTTP_METHOD_PURGE = 'PURGE';
 
-    const HTTP_METHOD_PURGEKEYS = 'PURGEKEYS';
+    public const HTTP_METHOD_PURGEKEYS = 'PURGEKEYS';
 
-    const HTTP_METHOD_REFRESH = 'GET';
+    public const HTTP_METHOD_REFRESH = 'GET';
 
-    const HTTP_HEADER_HOST = 'X-Host';
+    public const HTTP_HEADER_HOST = 'X-Host';
 
-    const HTTP_HEADER_URL = 'X-Url';
+    public const HTTP_HEADER_URL = 'X-Url';
 
-    const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
+    public const HTTP_HEADER_CONTENT_TYPE = 'X-Content-Type';
 
-    const TAG_BAN = 'ban';
+    public const TAG_BAN = 'ban';
 
-    const TAG_XKEY = 'purgekeys';
+    public const TAG_XKEY = 'purgekeys';
 
     /**
      * Default name of the header used to invalidate content with specific tags.
@@ -63,9 +63,9 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
      *
      * @var string
      */
-    const DEFAULT_HTTP_HEADER_CACHE_TAGS = 'X-Cache-Tags';
+    public const DEFAULT_HTTP_HEADER_CACHE_TAGS = 'X-Cache-Tags';
 
-    const DEFAULT_HTTP_HEADER_CACHE_XKEY = 'xkey-softpurge';
+    public const DEFAULT_HTTP_HEADER_CACHE_XKEY = 'xkey-softpurge';
 
     /**
      * {@inheritdoc}

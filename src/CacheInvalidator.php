@@ -40,27 +40,27 @@ class CacheInvalidator
     /**
      * Value to check support of invalidatePath operation.
      */
-    const PATH = 'path';
+    public const PATH = 'path';
 
     /**
      * Value to check support of refreshPath operation.
      */
-    const REFRESH = 'refresh';
+    public const REFRESH = 'refresh';
 
     /**
      * Value to check support of invalidate and invalidateRegex operations.
      */
-    const INVALIDATE = 'invalidate';
+    public const INVALIDATE = 'invalidate';
 
     /**
      * Value to check support of invalidateTags operation.
      */
-    const TAGS = 'tags';
+    public const TAGS = 'tags';
 
     /**
      * Value to check support of clearCache operation.
      */
-    const CLEAR = 'clear';
+    public const CLEAR = 'clear';
 
     /**
      * @var ProxyClient

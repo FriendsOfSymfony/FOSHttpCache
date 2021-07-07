@@ -2,5 +2,6 @@ vendor/
 composer.lock
 phpunit.xml
 doc/_build/
+.php-cs-fixer.cache
 puli.json
 .puli/

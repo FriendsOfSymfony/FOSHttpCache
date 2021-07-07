@@ -1,7 +1,0 @@
-preset: symfony
-
-enabled:
-  - alpha_ordered_imports
-
-disabled:
-  - single_line_throw
