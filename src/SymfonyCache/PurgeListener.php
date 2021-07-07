@@ -25,9 +25,9 @@ use Toflar\Psr6HttpCacheStore\ClearableInterface;
  */
 class PurgeListener extends AccessControlledListener
 {
-    const DEFAULT_PURGE_METHOD = 'PURGE';
+    public const DEFAULT_PURGE_METHOD = 'PURGE';
 
-    const DEFAULT_CLEAR_CACHE_HEADER = 'Clear-Cache';
+    public const DEFAULT_CLEAR_CACHE_HEADER = 'Clear-Cache';
 
     /**
      * The purge method to use.

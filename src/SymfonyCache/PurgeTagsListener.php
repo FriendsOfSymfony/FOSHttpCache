@@ -24,9 +24,9 @@ use Toflar\Psr6HttpCacheStore\Psr6StoreInterface;
  */
 class PurgeTagsListener extends AccessControlledListener
 {
-    const DEFAULT_TAGS_METHOD = 'PURGETAGS';
+    public const DEFAULT_TAGS_METHOD = 'PURGETAGS';
 
-    const DEFAULT_TAGS_HEADER = 'X-Cache-Tags';
+    public const DEFAULT_TAGS_HEADER = 'X-Cache-Tags';
 
     /**
      * The purge tags method to use.

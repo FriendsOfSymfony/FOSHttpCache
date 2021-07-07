@@ -29,7 +29,7 @@ use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
  */
 class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, TagCapable, ClearCapable
 {
-    const HTTP_METHOD_REFRESH = 'GET';
+    public const HTTP_METHOD_REFRESH = 'GET';
 
     /**
      * {@inheritdoc}

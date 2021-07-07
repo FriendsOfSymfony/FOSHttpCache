@@ -19,9 +19,9 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
  */
 interface BanCapable extends ProxyClient
 {
-    const REGEX_MATCH_ALL = '.*';
+    public const REGEX_MATCH_ALL = '.*';
 
-    const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;
+    public const CONTENT_TYPE_ALL = self::REGEX_MATCH_ALL;
 
     /**
      * Ban cached objects matching HTTP headers.
