@@ -1,0 +1,11 @@
+parameters:
+    level: 1
+    paths:
+        - src
+    excludePaths:
+        analyseAndScan:
+            # contains code to support legacy phpunit versions
+            # TODO: clean up the code in this namespace and support fewer phpunit versions
+            - src/Test/*
+            # contains BC code to support Symfony 3.4 that would not work with never versions
+            - src/BaseEvent.php
