@@ -14,9 +14,9 @@ To invalidate cached objects in Varnish, begin by adding an `ACL`_ (for Varnish
 3 see `ACL for Varnish 3`_) to your Varnish configuration. This ACL determines
 which IPs are allowed to issue invalidation requests. To use the provided
 configuration fragments, this ACL has to be named ``invalidators``. The most
-simple ACL, valid for all Varnish versions from 3 onwards, looks as follows:
+simple ACL, valid for Varnish version 3 or better, looks as follows:
 
-.. code-block:: varnish
+.. code-block:: varnish3
 
     # /etc/varnish/your_varnish.vcl
 
@@ -59,7 +59,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish
+    .. code-block:: varnish4
 
         include "path-to-config/varnish/fos_purge.vcl";
 
@@ -100,7 +100,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish
+    .. code-block:: varnish4
 
         include "path-to-config/varnish/fos_refresh.vcl";
 
@@ -129,7 +129,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish
+    .. code-block:: varnish4
 
         include "path-to-config/varnish/fos_ban.vcl";
 
@@ -209,19 +209,17 @@ To use ``xkey``, :ref:`configure the Varnish Client for xkey <varnish_custom_tag
 and :ref:`the response tagger to use the xkey header <response_tagger_optional_parameters>`,
 and include ``resources/config/varnish/fos_tags_xkey.vcl`` in your VCL:
 
-.. configuration-block::
+.. code-block:: varnish4
 
-    .. code-block:: varnish
+    include "path-to-config/varnish/fos_tags_xkey.vcl";
 
-        include "path-to-config/varnish/fos_tags_xkey.vcl";
+    sub vcl_recv {
+        call fos_tags_xkey_recv;
+    }
 
-        sub vcl_recv {
-            call fos_tags_xkey_recv;
-        }
-
-        sub vcl_deliver {
-            call fos_tags_xkey_deliver;
-        }
+    sub vcl_deliver {
+        call fos_tags_xkey_deliver;
+    }
 
 Note that there is no xkey VCL file for Varnish version 3 because the
 varnish-modules are only available for Varnish 4.1 or newer.
@@ -242,7 +240,7 @@ look like this:
 .. configuration-block::
 
     .. literalinclude:: ../resources/config/varnish/fos_ban.vcl
-        :language: varnish
+        :language: varnish4
         :emphasize-lines: 17-23,50-51
         :linenos:
 
@@ -288,7 +286,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish
+    .. code-block:: varnish4
 
         include "path-to-config/varnish/fos_user_context.vcl";
         include "path-to-config/varnish/fos_user_context_url.vcl";
@@ -365,7 +363,7 @@ To make the hash request cacheable, you must extract a stable user session id
 *before* calling ``fos_user_context_recv``. You can do this as
 `explained in the Varnish documentation`_:
 
-.. code-block:: varnish
+.. code-block:: varnish4
     :linenos:
 
     sub vcl_recv {
@@ -397,7 +395,7 @@ Add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish
+    .. code-block:: varnish4
 
         include "path-to-config/varnish/fos_custom_ttl.vcl";
 
@@ -421,7 +419,7 @@ The custom TTL header is removed before sending the response to the client.
     enabled for Varnish 3 by default. Check for the ``vcc_allow_inline_c``
     setting.
     If you are using Varnish 4 or newer, you are using the
-    ``varnish/fos_custom_ttl.vcl`` which uses a vmod function instead of inline C.
+    ``varnish/fos_custom_ttl.vcl`` which uses a Varnish function instead of inline C.
 
 .. _varnish_debugging:
 
@@ -438,7 +436,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. configuration-block::
 
-    .. code-block:: varnish
+    .. code-block:: varnish4
 
         include "path-to-config/varnish/fos_debug.vcl";
 

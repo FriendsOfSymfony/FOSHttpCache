@@ -9,7 +9,7 @@ from pygments.lexers.compiled import CLexer
 
 lexers['php'] = PhpLexer(startinline=True, linenos=1)
 lexers['varnish3'] = CLexer()
-lexers['varnish'] = CLexer()
+lexers['varnish4'] = CLexer()
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if not on_rtd:  # only import and set the theme if we're building docs locally
@@ -132,10 +132,14 @@ html_short_title = "FOSHttpCache"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-def setup(app):
-    app.add_javascript('tabs.js')
-    app.add_stylesheet('tabs.css')
-    app.add_stylesheet('fos.css')
+html_js_files = [
+    'tabs.js',
+]
+
+html_css_files = [
+    'tabs.css',
+    'fos.css',
+]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -265,5 +269,5 @@ extlinks = {'source': ('https://github.com/FriendsOfSymfony/FOSHttpCache/blob/ma
 
 config_block = {
     'varnish3': 'Varnish 3',
-    'varnish': 'Varnish 4 & 5'
+    'varnish4': 'Varnish 4 & 5'
 }

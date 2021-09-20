@@ -179,7 +179,7 @@ You need to pass the following options to the Fastly client:
 * ``service_identifier``: Identifier for your Fastly service account.
 * ``authentication_token``: User token for authentication against Fastly APIs.
 * NB: To be able to clear all cache(``->clear()``), you'll need a token for user with Fastly "Engineer permissions".
-* ``soft_purge`` (default: true): Boolean for doing soft purges or not on tag & url purging.
+* ``soft_purge`` (default: true): Boolean for doing soft purges or not on tag & URL purging.
   Soft purges expires the cache unlike hard purge (removal), and allow grace/stale handling within Fastly VCL.
 
 Additionally, you can specify the request factory used to build the
@@ -364,7 +364,7 @@ All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable``, ``Ta
 and ``ClearCapable`` extend this ``ProxyClient``. So each client implements at least
 one of the :ref:`invalidation methods <invalidation methods>` depending on
 the proxy server’s abilities. To interact with a proxy client directly, refer to
-the phpdoc on the interfaces.
+the documentation comments on the interfaces.
 
 The ``ProxyClient`` has one method: ``flush()``. After collecting
 invalidation requests, ``flush()`` needs to be called to actually send the

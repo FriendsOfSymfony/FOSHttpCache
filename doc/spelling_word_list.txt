@@ -1,8 +1,12 @@
 admin
+Analytics
 backend
 cacheable
 config
 css
+Fastly
+getter
+getters
 hostname
 hostnames
 http
@@ -27,3 +31,4 @@ Vcl
 inline
 Noop
 xkey
+ykey
