@@ -14,9 +14,9 @@ To invalidate cached objects in Varnish, begin by adding an `ACL`_ (for Varnish
 3 see `ACL for Varnish 3`_) to your Varnish configuration. This ACL determines
 which IPs are allowed to issue invalidation requests. To use the provided
 configuration fragments, this ACL has to be named ``invalidators``. The most
-simple ACL, valid for all Varnish versions from 3 onwards, looks as follows:
+simple ACL, valid for Varnish version 3 or better, looks as follows:
 
-.. code-block:: varnish4
+.. code-block:: varnish3
 
     # /etc/varnish/your_varnish.vcl
 
@@ -419,7 +419,7 @@ The custom TTL header is removed before sending the response to the client.
     enabled for Varnish 3 by default. Check for the ``vcc_allow_inline_c``
     setting.
     If you are using Varnish 4 or newer, you are using the
-    ``varnish/fos_custom_ttl.vcl`` which uses a vmod function instead of inline C.
+    ``varnish/fos_custom_ttl.vcl`` which uses a Varnish function instead of inline C.
 
 .. _varnish_debugging:
 
