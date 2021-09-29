@@ -44,7 +44,7 @@ class CustomTtlListener implements EventSubscriberInterface
 
     /**
      * @param string $ttlHeader The header that is used to specify the TTL header
-     * @param bool $keepTtlHeader
+     * @param bool   $keepTtlHeader Keep the custom ttl header for later usage
      */
     public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL', $keepTtlHeader = false)
     {
