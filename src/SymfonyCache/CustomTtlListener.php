@@ -43,8 +43,8 @@ class CustomTtlListener implements EventSubscriberInterface
     public const SMAXAGE_BACKUP = 'FOS-Smaxage-Backup';
 
     /**
-     * @param string $ttlHeader The header that is used to specify the TTL header
-     * @param bool   $keepTtlHeader Keep the custom ttl header for later usage
+     * @param string $ttlHeader     The header that is used to specify the TTL header
+     * @param bool   $keepTtlHeader Keep the custom TTL header for later usage
      */
     public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL', $keepTtlHeader = false)
     {
