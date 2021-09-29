@@ -31,6 +31,11 @@ class CustomTtlListener implements EventSubscriberInterface
     private $ttlHeader;
 
     /**
+     * @var bool
+     */
+    private $keepTtlHeader;
+
+    /**
      * Header used for backing up the s-maxage.
      *
      * @var string
@@ -39,10 +44,12 @@ class CustomTtlListener implements EventSubscriberInterface
 
     /**
      * @param string $ttlHeader The header that is used to specify the TTL header
+     * @param bool $keepTtlHeader
      */
-    public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL')
+    public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL', $keepTtlHeader = false)
     {
         $this->ttlHeader = $ttlHeader;
+        $this->keepTtlHeader = $keepTtlHeader;
     }
 
     /**
@@ -85,7 +92,10 @@ class CustomTtlListener implements EventSubscriberInterface
                 $response->headers->addCacheControlDirective('s-maxage', $smaxage);
             }
         }
-        $response->headers->remove($this->ttlHeader);
+
+        if (!$this->keepTtlHeader) {
+            $response->headers->remove($this->ttlHeader);
+        }
         $response->headers->remove(static::SMAXAGE_BACKUP);
     }
 
