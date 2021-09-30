@@ -6,6 +6,10 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.11.0
 ------
 
+### Symfony HttpCache
+
+* Added flag on CustomTtlListener to allow keeping the custom TTL header on the response
+
 ### Fastly client
 
 - Marked the `@internal` constants in `FOS\HttpCache\ProxyClient\Fastly` as private
