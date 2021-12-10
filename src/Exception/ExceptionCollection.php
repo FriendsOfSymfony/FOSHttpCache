@@ -59,6 +59,7 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
      *
      * @return \ArrayIterator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new \ArrayIterator($this->exceptions);
@@ -69,6 +70,7 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->exceptions);
