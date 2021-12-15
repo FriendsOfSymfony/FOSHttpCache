@@ -15,6 +15,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
+use Http\Message\RequestFactory;
 
 /**
  * Fastly HTTP cache invalidator.
@@ -43,6 +44,18 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      * @see https://docs.fastly.com/api/purge Base url endpoint used on anything but url PURGE/GET/HEAD.
      */
     private const API_ENDPOINT = 'https://api.fastly.com';
+
+    public function __construct(
+        Dispatcher $httpDispatcher,
+        array $options = [],
+        RequestFactory $messageFactory = null
+    ) {
+        if (!function_exists('json_encode')) {
+            throw new \Exception('ext-json is required for fastly invalidation');
+        }
+
+        parent::__construct($httpDispatcher, $options, $messageFactory);
+    }
 
     /**
      * {@inheritdoc}

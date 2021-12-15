@@ -26,11 +26,13 @@ Varnish       ✓       ✓       ✓       ✓
 Fastly        ✓       ✓               ✓       ✓
 NGINX         ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
+Cloudflare    ✓                       ✓ (2)   ✓
 Noop          ✓       ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓       ✓
 ============= ======= ======= ======= ======= =======
 
-(1): Only when using `Toflar Psr6Store`_.
+| (1): Only when using `Toflar Psr6Store`_.
+| (2): Only available with `Cloudflare Enterprise`_.
 
 If needed, you can also implement your own client for other needs. Have a look
 at the interfaces in namespace ``FOS\HttpCache\ProxyClient\Invalidation``.
@@ -90,7 +92,8 @@ Varnish Client
 ~~~~~~~~~~~~~~
 
 The Varnish client sends HTTP requests with the ``HttpDispatcher``. Create the
-dispatcher as explained above and pass it to the Varnish client::
+dispatcher as explained :ref:`above <HTTP client configuration>` and pass it to
+the Varnish client::
 
     use FOS\HttpCache\ProxyClient\Varnish;
 
@@ -163,11 +166,12 @@ Fastly Client
 ~~~~~~~~~~~~~~
 
 The Fastly client sends HTTP requests with the ``HttpDispatcher``. Create the
-dispatcher as explained above and pass it to the Fastly client::
+dispatcher as explained :ref:`above <HTTP client configuration>` and pass it to
+the Fastly client::
 
     use FOS\HttpCache\ProxyClient\Fastly;
 
-    $varnish = new Fastly($httpDispatcher);
+    $fastly = new Fastly($httpDispatcher);
 
 .. note::
 
@@ -195,13 +199,14 @@ A full example could look like this::
     ];
     $requestFactory = new MyRequestFactory();
 
-    $varnish = new Fastly($httpDispatcher, $options, $requestFactory);
+    $fastly = new Fastly($httpDispatcher, $options, $requestFactory);
 
 NGINX Client
 ~~~~~~~~~~~~
 
 The NGINX client sends HTTP requests with the ``HttpDispatcher``. Create the
-dispatcher as explained above and pass it to the NGINX client::
+dispatcher as explained :ref:`above <HTTP client configuration>` and pass it to
+the NGINX client::
 
     use FOS\HttpCache\ProxyClient\Nginx;
 
@@ -224,7 +229,8 @@ Symfony Client
 ~~~~~~~~~~~~~~
 
 The Symfony client sends HTTP requests with the ``HttpDispatcher``. Create the
-dispatcher as explained above and pass it to the Symfony client::
+dispatcher as explained :ref:`above <HTTP client configuration>` and pass it to
+the Symfony client::
 
     use FOS\HttpCache\ProxyClient\Symfony;
 
@@ -295,6 +301,74 @@ And adapt your bootstrapping code to use the cache kernel::
     ...
     $response = $cacheKernel->handle($request);
     ...
+
+Cloudflare Client
+~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    Cloudflare does not cache HTML pages by default. To cache them, you need to
+    enable `custom caching with page rules`_ in the Cloudflare administration
+    interface.
+
+    The Cloudflare client does invalidation requests with the `Cloudflare Purge API`_.
+
+The `Cloudflare`_ client sends HTTP requests with the ``HttpDispatcher``.
+Create the dispatcher as explained :ref:`above <HTTP client configuration>`.
+Set the `server` list to the Cloudflare API `['https://api.cloudflare.com']`.
+Do not specify a base URI. The Cloudflare client does not work with base URIs,
+you need to always specify the full URL including domain name.
+
+Then create the Cloudflare client with the dispatcher. You also need to pass
+the following options:
+
+* ``authentication_token``: User API token for authentication against
+  Cloudflare APIs, requires `Zone.Cache` Purge permissions.
+* ``zone_identifier``: Identifier for the Cloudflare zone you want to purge the
+  cache for (see below how to obtain the identifier for your domain).
+
+A full example could look like this::
+
+    use FOS\HttpCache\CacheInvalidator;
+    use FOS\HttpCache\ProxyClient\Cloudflare;
+    use FOS\HttpCache\ProxyClient\HttpDispatcher;
+
+    $options = [
+        'authentication_token' => '<user-authentication-token>',
+        'zone_identifier' => '<my-zone-identifier>',
+    ];
+
+    $httpDispatcher = new HttpDispatcher(['https://api.cloudflare.com']);
+    $cloudflare = new Cloudflare($httpDispatcher, $options);
+    $cacheInvalidator = new CacheInvalidator($cloudflare);
+
+When purging the cache by URL, see the `Cloudflare Purge by URL`_ docs for
+information about how Cloudflare purges by URL and what headers you can
+pass to a :doc:`invalidatePath() <cache-invalidator>` request to clear the
+cache correctly.
+
+You need to always specify the domain to invalidate (the base URI mechanism of
+the HttpDispatcher is not available for Cloudflare)::
+
+    $cacheInvalidator->invalidatePath('https://example.com/path')->flush();
+
+.. note::
+
+    Cloudflare supports different cache purge methods depending on your account.
+    All Cloudflare accounts support purging the cache by URL and clearing all
+    cache items. You need a `Cloudflare Enterprise`_ account to purge by cache
+    tags.
+
+Zone identifier
+^^^^^^^^^^^^^^^
+To find the zone identifier for your domain request this from the API::
+
+    curl -X GET "https://api.cloudflare.com/client/v4/zones?name={DOMAIN.COM}" \
+    -H "Authorization: Bearer {API TOKEN}" \
+    -H "Content-Type:application/json"
+
+The zone identifier is returned in the ``id`` field of the results and is a
+32-character hexadecimal string.
 
 Noop Client
 ~~~~~~~~~~~
@@ -379,3 +453,8 @@ requests.
 .. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html
 .. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store
 .. _Fastly Purge API: https://docs.fastly.com/api/purge
+.. _Cloudflare: https://developers.cloudflare.com/cache/
+.. _custom caching with page rules: https://support.cloudflare.com/hc/en-us/articles/360021023712-Best-Practices-Speed-up-your-Site-with-Custom-Caching-via-Cloudflare-Page-Rules
+.. _Cloudflare Purge API: https://api.cloudflare.com/#zone-purge-all-files
+.. _Cloudflare Enterprise: https://developers.cloudflare.com/cache/how-to/purge-cache#cache-tags-enterprise-only
+.. _Cloudflare Purge by URL: https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url

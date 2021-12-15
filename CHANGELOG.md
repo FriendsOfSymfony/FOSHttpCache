@@ -6,6 +6,13 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.12.0 (unreleased)
 -------------------
 
+### Cloudflare
+
+* Added Cloudflare ProxyClient Adapter with ClearCapable, PurgeCapable and
+  TagCapable. This allows to use FOSHttpCache to invalidate caches on
+  Cloudflare. See the "Proxy Client" section of the documentation for how to
+  configure the Cloudflare client.
+
 ### Varnish Cache
 
 * Added a `fos_user_context_hash` method to be called in `vcl_hash` when using the user context
