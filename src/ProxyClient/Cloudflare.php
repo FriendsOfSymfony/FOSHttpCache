@@ -32,20 +32,24 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     private const API_ENDPOINT = 'https://api.cloudflare.com/client/v4';
 
     /**
-     * Batch URL purge limit
+     * Batch URL purge limit.
+     *
      * @see https://api.cloudflare.com/#zone-purge-files-by-url
      */
     private const URL_BATCH_PURGE_LIMIT = 30;
 
     /**
-     * Array of data to send to Cloudflare for purge by URLs request
+     * Array of data to send to Cloudflare for purge by URLs request.
+     *
      * @var array
      */
     private $purgeByUrlsData = [];
 
     /**
-     * JSON encode data
+     * JSON encode data.
+     *
      * @param $data
+     *
      * @return false|string
      */
     protected function encode($data)
@@ -80,8 +84,8 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     {
         if (!empty($headers)) {
             $this->purgeByUrlsData[] = [
-                'url'     => $url,
-                'headers' => $headers
+                'url' => $url,
+                'headers' => $headers,
             ];
         } else {
             $this->purgeByUrlsData[] = $url;
@@ -131,7 +135,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
         foreach (\array_chunk($this->purgeByUrlsData, self::URL_BATCH_PURGE_LIMIT) as $urlChunk) {
             $this->queueRequest(
                 'POST',
-                sprintf(self::API_ENDPOINT . '/zones/%s/purge_cache', $this->options['zone_identifier']),
+                sprintf(self::API_ENDPOINT.'/zones/%s/purge_cache', $this->options['zone_identifier']),
                 [],
                 false,
                 $this->encode(['files' => $urlChunk])

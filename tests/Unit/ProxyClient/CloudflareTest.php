@@ -22,8 +22,8 @@ class CloudflareTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    const AUTH_TOKEN = 'abc123';
-    const ZONE_IDENTIFIER = 'abcdef123abcdef123';
+    public const AUTH_TOKEN = 'abc123';
+    public const ZONE_IDENTIFIER = 'abcdef123abcdef123';
 
     /**
      * @var HttpDispatcher|MockInterface
@@ -100,7 +100,7 @@ class CloudflareTest extends TestCase
         $cloudflare->purge('http://example.com/url-three', [
             'Origin' => 'https://www.cloudflare.com',
             'CF-IPCountry' => 'US',
-            'CF-Device-Type' => 'desktop'
+            'CF-Device-Type' => 'desktop',
         ]);
         $cloudflare->flush();
     }
@@ -127,5 +127,4 @@ class CloudflareTest extends TestCase
 
         $cloudflare->clear();
     }
-
 }
