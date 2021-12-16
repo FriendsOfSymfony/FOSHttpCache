@@ -26,11 +26,13 @@ Varnish       ✓       ✓       ✓       ✓
 Fastly        ✓       ✓               ✓       ✓
 NGINX         ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
+Cloudflare    ✓                       ✓ (2)   ✓
 Noop          ✓       ✓       ✓       ✓
 Multiplexer   ✓       ✓       ✓       ✓
 ============= ======= ======= ======= ======= =======
 
 (1): Only when using `Toflar Psr6Store`_.
+(2): Only available with `Cloudflare Enterprise`_.
 
 If needed, you can also implement your own client for other needs. Have a look
 at the interfaces in namespace ``FOS\HttpCache\ProxyClient\Invalidation``.
@@ -167,7 +169,7 @@ dispatcher as explained above and pass it to the Fastly client::
 
     use FOS\HttpCache\ProxyClient\Fastly;
 
-    $varnish = new Fastly($httpDispatcher);
+    $fastly = new Fastly($httpDispatcher);
 
 .. note::
 
@@ -195,7 +197,7 @@ A full example could look like this::
     ];
     $requestFactory = new MyRequestFactory();
 
-    $varnish = new Fastly($httpDispatcher, $options, $requestFactory);
+    $fastly = new Fastly($httpDispatcher, $options, $requestFactory);
 
 NGINX Client
 ~~~~~~~~~~~~
@@ -296,6 +298,50 @@ And adapt your bootstrapping code to use the cache kernel::
     $response = $cacheKernel->handle($request);
     ...
 
+Cloudflare Client
+~~~~~~~~~~~~~~~~~
+
+The Cloudflare client sends HTTP requests with the ``HttpDispatcher``. Create the
+dispatcher as explained above, making sure you set the server to the Cloudflare API `https://api.cloudflare.com`, and
+pass it to the Cloudflare client::
+
+    use FOS\HttpCache\ProxyClient\Cloudflare;
+    use FOS\HttpCache\ProxyClient\HttpDispatcher;
+
+    $httpDispatcher = new HttpDispatcher(['https://api.cloudflare.com']);
+    $cloudflare = new Cloudflare($httpDispatcher);
+
+.. note::
+
+    Unlike other supported proxies there is no configuration needed for the proxy itself as all invalidation is done
+    against `Cloudflare Purge API`_. But for optimal use make sure to tune configuration together with Cloudflare.
+
+    Cloudflare supports different cache purge methods depending on your account. All Cloudflare accounts
+    support purging the cache by URL and clearing all cache items. You need an Enterprise account to purge by cache tags.
+
+For purging the cache by URL please see the docs `Cloudflare Purge URL`_ for information about headers you can pass to
+clear the cache correctly.
+
+You need to pass the following options to the Cloudflare client:
+
+* ``zone_identifier``: Identifier for your Cloudflare zone you want to purge the cache for .
+* ``authentication_token``: User API token for authentication against Cloudflare APIs, requires `Zone.Cache` Purge permissions.
+
+To find the zone identifier for your domain you can request this from the API::
+
+    curl -X GET "https://api.cloudflare.com/client/v4/zones?name={domain.com}" \
+    -H "Authorization: Bearer {API TOKEN}" \
+    -H "Content-Type:application/json"
+
+A full example could look like this::
+
+    $options = [
+        'zone_identifier' => '<my-app-identifier>',
+        'authentication_token' => '<user-authentication-token>',
+    ];
+
+    $cloudflare = new Cloudflare($httpDispatcher, $options);
+
 Noop Client
 ~~~~~~~~~~~
 
@@ -379,3 +425,6 @@ requests.
 .. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html
 .. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store
 .. _Fastly Purge API: https://docs.fastly.com/api/purge
+.. _Cloudflare Purge API: https://api.cloudflare.com/#zone-purge-all-files
+.. _Cloudflare Purge URL: https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url
+.. _Cloudflare Enterprise: https://developers.cloudflare.com/cache/how-to/purge-cache#cache-tags-enterprise-only
