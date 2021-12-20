@@ -18,15 +18,15 @@ jobs:
     strategy:
       matrix:
         include:
-        - php: '7.2'
-        - php: '7.3'
-        - php: '7.4'
-          env:
-            DEPENDENCIES: 'symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^2.2.0\|^3.0.0'
-        - php: '7.4'
-          env:
-            DEPENDENCIES: 'symfony/flex'
-            SYMFONY_VERSION: '^4'
+#        - php: '7.2'
+#        - php: '7.3'
+#        - php: '7.4'
+#          env:
+#            DEPENDENCIES: 'symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^2.2.0\|^3.0.0'
+#        - php: '7.4'
+#          env:
+#            DEPENDENCIES: 'symfony/flex'
+#            SYMFONY_VERSION: '^4'
         - php: '8.0'
 
     steps:
@@ -54,111 +54,111 @@ jobs:
       - name: Execute tests
         run: vendor/bin/simple-phpunit -v
 
-  old-varnish:
-    name: PHP ${{ matrix.php }} Varnish
-    runs-on: ubuntu-18.04
-
-    strategy:
-      matrix:
-        php: [7.4]
-        include:
-          - env:
-              VARNISH_VERSION: '5.1'
-              VARNISH_MODULES_VERSION: '0.14.0'
-          - env:
-              VARNISH_VERSION: '4.1'
-              VARNISH_MODULES_VERSION: '0.9.1'
-
-    steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          tools: composer:v2
-          coverage: none
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Varnish and Nginx
-        run: |
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
-
-      - name: Install composer dependencies
-        run: |
-          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
-
-      - name: Execute tests
-        run: vendor/bin/simple-phpunit -v
-
-  lowest:
-    name: PHP ${{ matrix.php }} Lowest
-    runs-on: ubuntu-18.04
-    env:
-      VARNISH_VERSION: '3.0'
-      VARNISH_MODULES_VERSION: ''
-      DEPENDENCIES: ''
-
-    strategy:
-      matrix:
-        php: ['7.2']
-
-    steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          tools: composer:v2
-          coverage: none
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Varnish and Nginx
-        run: |
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
-
-      - name: Install composer dependencies
-        run: |
-          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
-
-      - name: Execute tests
-        run: vendor/bin/simple-phpunit -v
-
-  coverage:
-    name: Code Coverage
-    runs-on: ubuntu-20.04
-
-    steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          tools: composer:v2
-          coverage: xdebug
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Varnish and Nginx
-        run: |
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish.sh
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
-
-      - name: Install dependencies
-        run: |
-          composer require "friends-of-phpspec/phpspec-code-coverage:^4.3.2" --no-interaction --no-update
-          composer update --prefer-dist --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
-
-      - name: Execute tests
-        run: vendor/bin/simple-phpunit -v --coverage-text
-
-      - name: Upload coverage
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml
+#  old-varnish:
+#    name: PHP ${{ matrix.php }} Varnish
+#    runs-on: ubuntu-18.04
+#
+#    strategy:
+#      matrix:
+#        php: [7.4]
+#        include:
+#          - env:
+#              VARNISH_VERSION: '5.1'
+#              VARNISH_MODULES_VERSION: '0.14.0'
+#          - env:
+#              VARNISH_VERSION: '4.1'
+#              VARNISH_MODULES_VERSION: '0.9.1'
+#
+#    steps:
+#      - name: Setup PHP
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ matrix.php }}
+#          tools: composer:v2
+#          coverage: none
+#
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Varnish and Nginx
+#        run: |
+#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
+#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+#
+#      - name: Install composer dependencies
+#        run: |
+#          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
+#          vendor/bin/simple-phpunit install
+#
+#      - name: Execute tests
+#        run: vendor/bin/simple-phpunit -v
+#
+#  lowest:
+#    name: PHP ${{ matrix.php }} Lowest
+#    runs-on: ubuntu-18.04
+#    env:
+#      VARNISH_VERSION: '3.0'
+#      VARNISH_MODULES_VERSION: ''
+#      DEPENDENCIES: ''
+#
+#    strategy:
+#      matrix:
+#        php: ['7.2']
+#
+#    steps:
+#      - name: Setup PHP
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ matrix.php }}
+#          tools: composer:v2
+#          coverage: none
+#
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Varnish and Nginx
+#        run: |
+#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
+#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+#
+#      - name: Install composer dependencies
+#        run: |
+#          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
+#          vendor/bin/simple-phpunit install
+#
+#      - name: Execute tests
+#        run: vendor/bin/simple-phpunit -v
+#
+#  coverage:
+#    name: Code Coverage
+#    runs-on: ubuntu-20.04
+#
+#    steps:
+#      - name: Setup PHP
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: 7.4
+#          tools: composer:v2
+#          coverage: xdebug
+#
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Varnish and Nginx
+#        run: |
+#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish.sh
+#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+#
+#      - name: Install dependencies
+#        run: |
+#          composer require "friends-of-phpspec/phpspec-code-coverage:^4.3.2" --no-interaction --no-update
+#          composer update --prefer-dist --no-interaction --no-progress
+#          vendor/bin/simple-phpunit install
+#
+#      - name: Execute tests
+#        run: vendor/bin/simple-phpunit -v --coverage-text
+#
+#      - name: Upload coverage
+#        run: |
+#          wget https://scrutinizer-ci.com/ocular.phar
+#          php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml
