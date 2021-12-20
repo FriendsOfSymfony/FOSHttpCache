@@ -50,11 +50,16 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
      *
      * @param $data
      *
-     * @return false|string
+     * @return string
+     * @throws InvalidArgumentException
      */
     protected function encode($data)
     {
-        return json_encode($data, JSON_UNESCAPED_SLASHES);
+        $json = json_encode($data, JSON_UNESCAPED_SLASHES);
+        if (false === $json) {
+            throw new \InvalidArgumentException(sprintf('Cannot encode "$data": %s', json_last_error_msg()));
+        }
+        return $json;
     }
 
     /**
