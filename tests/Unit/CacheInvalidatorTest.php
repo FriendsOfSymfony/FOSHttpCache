@@ -158,46 +158,28 @@ class CacheInvalidatorTest extends TestCase
         $cacheInvalidator->invalidateRegex('/a', 'b', ['example.com']);
     }
 
-    public function testMethodException()
+    public function provideOperations(): iterable
+    {
+        yield from [
+            ['invalidatePath', '/'],
+            ['refreshPath', '/'],
+            ['invalidate', []],
+            ['invalidateRegex', '/'],
+            ['invalidateTags', []],
+        ];
+    }
+
+    /**
+     * @dataProvider provideOperations
+     */
+    public function testMethodException(string $method, $arg): void
     {
         /** @var MockInterface&ProxyClient $proxyClient */
         $proxyClient = \Mockery::mock(ProxyClient::class);
         $cacheInvalidator = new CacheInvalidator($proxyClient);
 
-        try {
-            $cacheInvalidator->invalidatePath('/');
-            $this->fail('Expected exception');
-        } catch (UnsupportedProxyOperationException $e) {
-            // success
-        }
-
-        try {
-            $cacheInvalidator->refreshPath('/');
-            $this->fail('Expected exception');
-        } catch (UnsupportedProxyOperationException $e) {
-            // success
-        }
-
-        try {
-            $cacheInvalidator->invalidate([]);
-            $this->fail('Expected exception');
-        } catch (UnsupportedProxyOperationException $e) {
-            // success
-        }
-
-        try {
-            $cacheInvalidator->invalidateRegex('/');
-            $this->fail('Expected exception');
-        } catch (UnsupportedProxyOperationException $e) {
-            // success
-        }
-
-        try {
-            $cacheInvalidator->invalidateTags([]);
-            $this->fail('Expected exception');
-        } catch (UnsupportedProxyOperationException $e) {
-            // success
-        }
+        $this->expectException(UnsupportedProxyOperationException::class);
+        $cacheInvalidator->$method($arg);
     }
 
     public function testProxyClientExceptionsAreLogged()

@@ -63,7 +63,7 @@ class UserContext implements \IteratorAggregate
         return $this->parameters;
     }
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->parameters);
     }

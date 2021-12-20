@@ -88,7 +88,7 @@ class UserContextListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::PRE_HANDLE => 'preHandle',
@@ -103,7 +103,7 @@ class UserContextListener implements EventSubscriberInterface
      * Checks if an external request tries tampering with the use context hash mechanism
      * to prevent attacks.
      */
-    public function preHandle(CacheEvent $event)
+    public function preHandle(CacheEvent $event): void
     {
         $request = $event->getRequest();
         if (!$this->isInternalRequest($request)) {
@@ -132,7 +132,7 @@ class UserContextListener implements EventSubscriberInterface
      * Cleans cookies header to only keep the session identifier cookie, so the hash lookup request
      * can be cached per session.
      */
-    protected function cleanupHashLookupRequest(Request $hashLookupRequest, Request $originalRequest)
+    protected function cleanupHashLookupRequest(Request $hashLookupRequest, Request $originalRequest): void
     {
         $sessionIds = [];
         if (!$this->options['session_name_prefix']) {
@@ -155,20 +155,16 @@ class UserContextListener implements EventSubscriberInterface
 
     /**
      * Checks if passed request object is to be considered internal (e.g. for user hash lookup).
-     *
-     * @return bool
      */
-    private function isInternalRequest(Request $request)
+    private function isInternalRequest(Request $request): bool
     {
         return true === $request->attributes->get('internalRequest', false);
     }
 
     /**
      * Returns the user context hash for $request.
-     *
-     * @return string
      */
-    private function getUserHash(HttpKernelInterface $kernel, Request $request)
+    private function getUserHash(HttpKernelInterface $kernel, Request $request): ?string
     {
         if (isset($this->userHash)) {
             return $this->userHash;
@@ -189,10 +185,8 @@ class UserContextListener implements EventSubscriberInterface
 
     /**
      * Checks if current request is considered anonymous.
-     *
-     * @return bool
      */
-    private function isAnonymous(Request $request)
+    private function isAnonymous(Request $request): bool
     {
         $anonymousRequestMatcher = new AnonymousRequestMatcher([
             'user_identifier_headers' => $this->options['user_identifier_headers'],
@@ -206,10 +200,8 @@ class UserContextListener implements EventSubscriberInterface
      * Checks if passed string can be considered as a session name, such as would be used in cookies.
      *
      * @param string $name
-     *
-     * @return bool
      */
-    private function isSessionName($name)
+    private function isSessionName($name): bool
     {
         return 0 === strpos($name, $this->options['session_name_prefix']);
     }
@@ -219,7 +211,7 @@ class UserContextListener implements EventSubscriberInterface
      *
      * @return Request the request that will return the user context hash value
      */
-    private function generateHashLookupRequest(Request $request)
+    private function generateHashLookupRequest(Request $request): Request
     {
         $hashLookupRequest = Request::create($this->options['user_hash_uri'], $this->options['user_hash_method'], [], [], [], $request->server->all());
         $hashLookupRequest->attributes->set('internalRequest', true);

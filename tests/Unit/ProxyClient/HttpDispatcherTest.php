@@ -178,6 +178,10 @@ class HttpDispatcherTest extends TestCase
 
         $request = $this->messageFactory->createRequest('BAN', '/', ['X-Url' => '/foo/.*']);
         $httpDispatcher->invalidate($request, false);
+        $httpDispatcher->flush();
+
+        $requests = $this->getRequests();
+        $this->assertSame('127.0.0.1:123', $requests[0]->getHeaderLine('Host'));
     }
 
     public function testSetBasePathWithHost()
