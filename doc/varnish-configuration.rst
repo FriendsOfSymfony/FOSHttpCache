@@ -295,6 +295,10 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_user_context_recv;
         }
 
+        sub vcl_hash {
+            call fos_user_context_hash;
+        }
+
         sub vcl_backend_response {
             call fos_user_context_backend_response;
         }
@@ -310,6 +314,10 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
         sub vcl_recv {
             call fos_user_context_recv;
+        }
+
+        sub vcl_hash {
+            call fos_user_context_hash;
         }
 
         sub vcl_fetch {
@@ -343,6 +351,13 @@ request with :ref:`a proper user hash <return context hash>`.
     The provided VCL assumes that you want the context hash to be cached, so we
     set the ``req.url`` to a fixed URL. Otherwise Varnish would cache every
     hash lookup separately.
+
+    The ``fos_user_context_hash`` should be used to separate the cache of the
+    hash lookup. If you don't do that, Varnish can run into performance issues
+    because the user hash lookup creates a `large number of variants`_. If your
+    hash is taking into account other headers than ``Authorization`` and
+    ``Cookie``, create your own ``vcl_hash`` function that adds all those
+    headers to ``hash_data`` for user context hash lookup requests.
 
     However, if you have a :ref:`paywall scenario <paywall_usage>`, you need to
     leave the original URL unchanged. For that case, you would need to write
@@ -468,5 +483,6 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 .. _ykey documentation: https://docs.varnish-software.com/varnish-cache-plus/vmods/ykey/
 .. _Cache Invalidation chapter of the Varnish documentation: http://book.varnish-software.com/4.0/chapters/Cache_Invalidation.html#hashtwo-xkey-varnish-software-implementation-of-surrogate-keys
 .. _installing xkey: https://github.com/varnish/varnish-modules#installation
+.. _large number of variants: https://github.com/varnishcache/varnish-cache/pull/3520
 .. _`builtin VCL`: https://github.com/varnishcache/varnish-cache/blob/5.0/bin/varnishd/builtin.vcl
 .. _`default VCL`: https://github.com/varnishcache/varnish-cache/blob/3.0/bin/varnishd/default.vcl

@@ -3,6 +3,17 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.12.0 (unreleased)
+-------------------
+
+### Varnish Cache
+
+* Added a `fos_user_context_hash` method to be called in `vcl_hash` when using the user context
+  hash mechanism. This can avoid performance problems Varnish can run into when the hash `Vary`s on
+  the basic authentication or session cookie.
+  If you use the user context, read the updated documentation and call `fos_user_context_hash` in
+  your `vcl_hash` function.
+
 2.11.0
 ------
 
