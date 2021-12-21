@@ -111,7 +111,7 @@ class ResponseTagger
      *
      * This must be called before any HTTP response is sent to the client.
      *
-     * @param array $tags List of tags to add
+     * @param string[] $tags List of tags to add
      *
      * @throws InvalidTagException
      *
@@ -119,7 +119,8 @@ class ResponseTagger
      */
     public function addTags(array $tags)
     {
-        $filtered = array_filter($tags, 'strlen');
+        $filtered = array_filter($tags, 'is_string');
+        $filtered = array_filter($filtered, 'strlen');
 
         if ($this->options['strict'] && array_diff($tags, $filtered)) {
             throw new InvalidTagException('Empty tags are not allowed');

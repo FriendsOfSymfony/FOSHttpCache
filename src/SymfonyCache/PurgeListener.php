@@ -66,7 +66,7 @@ class PurgeListener extends AccessControlledListener
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::PRE_INVALIDATE => 'handlePurge',

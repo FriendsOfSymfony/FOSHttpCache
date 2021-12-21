@@ -103,7 +103,7 @@ class WebServerListenerTrait
     {
         $command = sprintf(
             'php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
-            '127.0.0.1', // on travis, localhost is not 127.0.0.1 but IPv6 ::1
+            '127.0.0.1',
             $this->getPort(),
             $this->getDocRoot()
         );

@@ -20,7 +20,9 @@ class SymfonyProxyTest extends TestCase
     {
         $proxy = new SymfonyProxy();
         $proxy->start();
+        $this->addToAssertionCount(1);
         $proxy->stop();
+        $this->addToAssertionCount(1);
     }
 
     public function testInvalidDirectoryThrowsException()

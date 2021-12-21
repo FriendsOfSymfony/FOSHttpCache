@@ -20,6 +20,7 @@ use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
 use FOS\HttpCache\SymfonyCache\RefreshListener;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
@@ -53,7 +54,7 @@ class AppCache extends HttpCache implements CacheInvalidation
      *
      * {@inheritdoc}
      */
-    public function fetch(Request $request, $catch = false)
+    public function fetch(Request $request, $catch = false): Response
     {
         return parent::fetch($request, $catch);
     }

@@ -43,7 +43,7 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
         $this->options = $resolver->resolve($options);
     }
 
-    public function matches(Request $request)
+    public function matches(Request $request): bool
     {
         // You might have to enable rewriting of the Authorization header in your server config or .htaccess:
         // RewriteEngine On

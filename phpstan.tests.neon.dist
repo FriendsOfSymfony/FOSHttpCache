@@ -2,7 +2,3 @@ parameters:
     level: 1
     paths:
         - tests
-    ignoreErrors:
-        # we can add the return type declaration when dropping support for PHP < 7.4
-        - '#Method FOS\\HttpCache\\Tests\\Unit\\SymfonyCache\\AppCache::fetch\(\) should return Symfony\\Component\\HttpFoundation\\Response but return statement is missing.#'
-        - '#Method FOS\\HttpCache\\Tests\\Functional\\Symfony\\AppCache::fetch\(\) should return Symfony\\Component\\HttpFoundation\\Response but return statement is missing.#'

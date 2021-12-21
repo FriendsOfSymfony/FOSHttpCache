@@ -91,7 +91,7 @@ trait EventDispatchingHttpCache
      *
      * Adding the Events::PRE_HANDLE and Events::POST_HANDLE events.
      */
-    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
+    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true): Response
     {
         // trigger loading the CacheEvent to avoid fatal error when HttpKernel::loadClassCache is used.
         class_exists(CacheEvent::class);
@@ -122,7 +122,7 @@ trait EventDispatchingHttpCache
      *
      * Adding the Events::PRE_INVALIDATE event.
      */
-    protected function invalidate(Request $request, $catch = false)
+    protected function invalidate(Request $request, $catch = false): Response
     {
         if ($response = $this->dispatch(Events::PRE_INVALIDATE, $request)) {
             return $response;
@@ -138,9 +138,9 @@ trait EventDispatchingHttpCache
      * @param Response|null $response    If already available
      * @param int           $requestType The request type (default HttpKernelInterface::MASTER_REQUEST)
      *
-     * @return Response The response to return, which might be provided/altered by a listener
+     * @return Response|null The response to return, which might be provided/altered by a listener
      */
-    protected function dispatch($name, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
+    protected function dispatch($name, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST): ?Response
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
             $event = new CacheEvent($this, $request, $response, $requestType);
