@@ -17,7 +17,7 @@ jobs:
 
       - name: Pull in optional dependencies
         run: |
-          composer require --no-update symfony/http-kernel:^5.0 symfony/event-dispatcher:^5.0 symfony/process:^5.0 phpunit/phpunit toflar/psr6-symfony-http-cache-store
+          composer require --no-update symfony/http-kernel:^5.0 symfony/event-dispatcher:^5.0 symfony/process:^5.0 phpunit/phpunit toflar/psr6-symfony-http-cache-store:^3.0
           composer update --no-dev --no-progress
 
       - name: PHPStan
@@ -37,7 +37,7 @@ jobs:
 
       - name: Pull in optional dependencies
         run: |
-          composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store
+          composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^3.0
           composer update --no-progress
 
       - name: PHPStan
