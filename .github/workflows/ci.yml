@@ -200,7 +200,7 @@ jobs:
           vendor/bin/simple-phpunit install
 
       - name: Execute tests
-        run: vendor/bin/simple-phpunit -v --coverage-text
+        run: vendor/bin/simple-phpunit -v --coverage-text --coverage-clover build/coverage.xml
 
       - name: Upload coverage
         run: |
