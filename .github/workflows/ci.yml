@@ -205,4 +205,4 @@ jobs:
       - name: Upload coverage
         run: |
           wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml
+          php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml --revision=${{ github.event.pull_request.head.sha || github.sha }}
