@@ -29,7 +29,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     /**
      * @see https://api.cloudflare.com/#getting-started-endpoints
      */
-    private const API_ENDPOINT = 'https://api.cloudflare.com/client/v4';
+    private const API_ENDPOINT = '/client/v4';
 
     /**
      * Batch URL purge limit.
@@ -54,7 +54,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
      *
      * @throws InvalidArgumentException
      */
-    protected function encode($data)
+    private function encode($data)
     {
         $json = json_encode($data, JSON_UNESCAPED_SLASHES);
         if (false === $json) {
@@ -66,6 +66,8 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
 
     /**
      * {@inheritdoc}
+     *
+     * Tag invalidation only available with Cloudflare enterprise account
      *
      * @see https://api.cloudflare.com/#zone-purge-files-by-cache-tags,-host-or-prefix
      */
@@ -86,6 +88,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
      * {@inheritdoc}
      *
      * @see https://api.cloudflare.com/#zone-purge-files-by-url
+     * @see https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url For details on headers you can pass to clear the cache correctly
      */
     public function purge($url, array $headers = [])
     {

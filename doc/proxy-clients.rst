@@ -301,15 +301,8 @@ And adapt your bootstrapping code to use the cache kernel::
 Cloudflare Client
 ~~~~~~~~~~~~~~~~~
 
-The `Cloudflare`_ client sends HTTP requests with the ``HttpDispatcher``. Create the
-dispatcher as explained above, making sure you set the server to the Cloudflare API `https://api.cloudflare.com`, and
-pass it to the Cloudflare client::
-
-    use FOS\HttpCache\ProxyClient\Cloudflare;
-    use FOS\HttpCache\ProxyClient\HttpDispatcher;
-
-    $httpDispatcher = new HttpDispatcher(['https://api.cloudflare.com']);
-    $cloudflare = new Cloudflare($httpDispatcher);
+The `Cloudflare`_ client sends HTTP requests with the ``HttpDispatcher``. Create the dispatcher as explained above,
+making sure you set the server to the Cloudflare API `https://api.cloudflare.com`, and pass it to the Cloudflare client.
 
 .. note::
 
@@ -319,9 +312,12 @@ pass it to the Cloudflare client::
 You need to pass the following options to the Cloudflare client:
 
 * ``authentication_token``: User API token for authentication against Cloudflare APIs, requires `Zone.Cache` Purge permissions.
-* ``zone_identifier``: Identifier for the Cloudflare zone you want to purge the cache for.
+* ``zone_identifier``: Identifier for the Cloudflare zone you want to purge the cache for (see below how to obtain the identifier for your domain).
 
 A full example could look like this::
+
+    use FOS\HttpCache\ProxyClient\Cloudflare;
+    use FOS\HttpCache\ProxyClient\HttpDispatcher;
 
     $options = [
         'authentication_token' => '<user-authentication-token>',
@@ -336,8 +332,8 @@ A full example could look like this::
     Cloudflare supports different cache purge methods depending on your account. All Cloudflare accounts support purging
     the cache by URL and clearing all cache items. You need a `Cloudflare Enterprise`_ account to purge by cache tags.
 
-    For purging the cache by URL please see the docs `Cloudflare Purge by URL`_ for information about headers you can
-    pass to clear the cache correctly.
+    When purging the cache by URL see the `Cloudflare Purge by URL`_ docs for information about how Cloudflare purges by
+    URL and what headers you can pass to a :doc:`invalidatePath() <cache-invalidator>` request to clear the cache correctly.
 
 Zone identifier
 ^^^^^^^^^^^^^^^
@@ -435,5 +431,4 @@ requests.
 .. _Cloudflare: https://developers.cloudflare.com/cache/
 .. _custom caching with page rules: https://support.cloudflare.com/hc/en-us/articles/360021023712-Best-Practices-Speed-up-your-Site-with-Custom-Caching-via-Cloudflare-Page-Rules
 .. _Cloudflare Purge API: https://api.cloudflare.com/#zone-purge-all-files
-.. _Cloudflare Purge by URL: https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url
 .. _Cloudflare Enterprise: https://developers.cloudflare.com/cache/how-to/purge-cache#cache-tags-enterprise-only
