@@ -432,3 +432,4 @@ requests.
 .. _custom caching with page rules: https://support.cloudflare.com/hc/en-us/articles/360021023712-Best-Practices-Speed-up-your-Site-with-Custom-Caching-via-Cloudflare-Page-Rules
 .. _Cloudflare Purge API: https://api.cloudflare.com/#zone-purge-all-files
 .. _Cloudflare Enterprise: https://developers.cloudflare.com/cache/how-to/purge-cache#cache-tags-enterprise-only
+.. _Cloudflare Purge by URL: https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url
