@@ -26,8 +26,8 @@ Varnish       ✓       ✓       ✓       ✓
 Fastly        ✓       ✓               ✓       ✓
 NGINX         ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
-Noop          ✓       ✓       ✓       ✓
-Multiplexer   ✓       ✓       ✓       ✓
+Noop          ✓       ✓       ✓       ✓       ✓
+Multiplexer   ✓       ✓       ✓       ✓       ✓
 ============= ======= ======= ======= ======= =======
 
 (1): Only when using `Toflar Psr6Store`_.
