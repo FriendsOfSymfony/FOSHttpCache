@@ -14,6 +14,10 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
   If you use the user context, read the updated documentation and call `fos_user_context_hash` in
   your `vcl_hash` function.
 
+### Noop Client
+
+* Implemented ClearCapable.
+
 2.11.0
 ------
 
