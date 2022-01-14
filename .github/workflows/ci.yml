@@ -58,120 +58,116 @@ jobs:
       - name: Execute tests
         run: vendor/bin/simple-phpunit -v
 
-# spent hours trying to make this work
-# unfortunately, the installation always picks the varnish 5 from ubuntu instead of the specified one
-# installing with `apt-get install varnish=${VARNISH_VERSION}.*` reports that the version is not found
-#
-#  varnish5:
-#    name: PHP ${{ matrix.php }} Legacy Varnish 5
-#    runs-on: ubuntu-18.04
-#    env:
-#      VARNISH_VERSION: '5.1'
-#      VARNISH_MODULES_VERSION: '0.14.0'
-#
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        include:
-#          - php: '7.4'
-#
-#    steps:
-#      - name: Setup PHP
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: ${{ matrix.php }}
-#          tools: composer:v2
-#          coverage: none
-#
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Setup Varnish and Nginx
-#        run: |
-#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
-#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
-#
-#      - name: Install composer dependencies
-#        run: |
-#          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-#          vendor/bin/simple-phpunit install
-#
-#      - name: Execute tests
-#        run: vendor/bin/simple-phpunit -v
-#
-#  varnish4:
-#    name: PHP ${{ matrix.php }} Legacy Varnish 4
-#    runs-on: ubuntu-18.04
-#    env:
-#      VARNISH_VERSION: '4.1'
-#      VARNISH_MODULES_VERSION: '0.9.1'
-#
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        include:
-#          - php: '7.4'
-#
-#    steps:
-#      - name: Setup PHP
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: ${{ matrix.php }}
-#          tools: composer:v2
-#          coverage: none
-#
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Setup Varnish and Nginx
-#        run: |
-#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
-#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
-#
-#      - name: Install composer dependencies
-#        run: |
-#          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-#          vendor/bin/simple-phpunit install
-#
-#      - name: Execute tests
-#        run: vendor/bin/simple-phpunit -v
-#
-#  lowest:
-#    name: PHP ${{ matrix.php }} Lowest, Varnish 3
-#    runs-on: ubuntu-18.04
-#    env:
-#      VARNISH_VERSION: '3.0'
-#      VARNISH_MODULES_VERSION: ''
-#      DEPENDENCIES: ''
-#
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        php: ['7.2']
-#
-#    steps:
-#      - name: Setup PHP
-#        uses: shivammathur/setup-php@v2
-#        with:
-#          php-version: ${{ matrix.php }}
-#          tools: composer:v2
-#          coverage: none
-#
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - name: Setup Varnish and Nginx
-#        run: |
-#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
-#          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
-#
-#      - name: Install composer dependencies
-#        run: |
-#          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-#          vendor/bin/simple-phpunit install
-#
-#      - name: Execute tests
-#        run: vendor/bin/simple-phpunit -v
+  varnish5:
+    name: PHP ${{ matrix.php }} Legacy Varnish 5
+    runs-on: ubuntu-18.04
+    env:
+      VARNISH_VERSION: '5.1'
+      VARNISH_MODULES_VERSION: '0.14.0'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '7.4'
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Varnish and Nginx
+        run: |
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+
+      - name: Install composer dependencies
+        run: |
+          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
+          vendor/bin/simple-phpunit install
+
+      - name: Execute tests
+        run: vendor/bin/simple-phpunit -v
+
+  varnish4:
+    name: PHP ${{ matrix.php }} Legacy Varnish 4
+    runs-on: ubuntu-18.04
+    env:
+      VARNISH_VERSION: '4.1'
+      VARNISH_MODULES_VERSION: '' # varnish modules compilation fails, not sure why
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '7.4'
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Varnish and Nginx
+        run: |
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+
+      - name: Install composer dependencies
+        run: |
+          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
+          vendor/bin/simple-phpunit install
+
+      - name: Execute tests
+        run: vendor/bin/simple-phpunit -v
+
+  lowest:
+    name: PHP ${{ matrix.php }} Lowest, Varnish 3
+    runs-on: ubuntu-18.04
+    env:
+      VARNISH_VERSION: '3.0'
+      VARNISH_MODULES_VERSION: ''
+      DEPENDENCIES: ''
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.2']
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Varnish and Nginx
+        run: |
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish-legacy.sh
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+
+      - name: Install composer dependencies
+        run: |
+          composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
+          vendor/bin/simple-phpunit install
+
+      - name: Execute tests
+        run: vendor/bin/simple-phpunit -v
 
   coverage:
     name: Code Coverage
