@@ -26,6 +26,7 @@ use FOS\HttpCache\ProxyClient\Symfony;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
+use Symfony\Component\HttpKernel\Kernel;
 use Toflar\Psr6HttpCacheStore\Psr6Store;
 
 /**
@@ -321,13 +322,6 @@ class CacheInvalidator
 
     private function dispatch(Event $event, $eventName)
     {
-        // LegacyEventDispatcherProxy exists in Symfony >= 4.3
-        if (class_exists(LegacyEventDispatcherProxy::class)) {
-            // New Symfony 4.3 EventDispatcher signature
-            $this->getEventDispatcher()->dispatch($event, $eventName);
-        } else {
-            // Old EventDispatcher signature
-            $this->getEventDispatcher()->dispatch($eventName, $event);
-        }
+        $this->getEventDispatcher()->dispatch($event, $eventName);
     }
 }

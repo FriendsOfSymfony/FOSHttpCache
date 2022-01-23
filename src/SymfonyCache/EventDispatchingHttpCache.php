@@ -18,6 +18,7 @@ use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Trait for enhanced Symfony reverse proxy based on the symfony kernel component.
@@ -144,15 +145,7 @@ trait EventDispatchingHttpCache
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
             $event = new CacheEvent($this, $request, $response, $requestType);
-
-            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
-            if (class_exists(LegacyEventDispatcherProxy::class)) {
-                // New Symfony 4.3 EventDispatcher signature
-                $this->getEventDispatcher()->dispatch($event, $name);
-            } else {
-                // Old EventDispatcher signature
-                $this->getEventDispatcher()->dispatch($name, $event);
-            }
+            $this->getEventDispatcher()->dispatch($event, $name);
 
             $response = $event->getResponse();
         }
