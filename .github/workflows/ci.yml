@@ -21,7 +21,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - php: '7.2'
         - php: '7.3'
         - php: '7.4'
           env:
@@ -38,6 +37,35 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Varnish and Nginx
+        run: |
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish.sh
+          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+
+      - name: Install composer dependencies
+        run: |
+          composer require --no-update ${DEPENDENCIES}
+          composer update --prefer-dist --no-interaction --no-progress
+          vendor/bin/simple-phpunit install
+
+      - name: Execute tests
+        run: vendor/bin/simple-phpunit -v
+
+  legacyPHP:
+    name: PHP 7.2 Varnish 6
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.2
           tools: composer:v2
           coverage: none
 
