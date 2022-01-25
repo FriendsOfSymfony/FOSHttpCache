@@ -15,6 +15,7 @@ use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\Events;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +41,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      *
      * @param array $mockedMethods List of methods to mock
      *
-     * @return CacheInvalidation|EventDispatchingHttpCache|\PHPUnit_Framework_MockObject_MockObject
+     * @return CacheInvalidation|EventDispatchingHttpCache|MockObject
      */
     protected function getHttpCachePartialMock(array $mockedMethods = null)
     {
@@ -67,14 +68,9 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         ];
 
         $refHttpCache = new \ReflectionClass(HttpCache::class);
-        // Workaround for Symfony 2 where $options property is not defined.
-        if (!$refHttpCache->hasProperty('options')) {
-            $mock->options = $options;
-        } else {
-            $refOptions = $refHttpCache->getProperty('options');
-            $refOptions->setAccessible(true);
-            $refOptions->setValue($mock, $options);
-        }
+        $refOptions = $refHttpCache->getProperty('options');
+        $refOptions->setAccessible(true);
+        $refOptions->setValue($mock, $options);
 
         return $mock;
     }

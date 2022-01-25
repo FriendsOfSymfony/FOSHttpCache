@@ -9,13 +9,12 @@ on:
 env:
   VARNISH_VERSION: '6.6'
   VARNISH_MODULES_VERSION: '0.18.0'
-  DEPENDENCIES: 'toflar/psr6-symfony-http-cache-store:^2.2.0|^3.0.0'
+  DEPENDENCIES: 'toflar/psr6-symfony-http-cache-store:^2|^3|^4'
   SYMFONY_DEPRECATIONS_HELPER: 'max[self]=0'
-  SYMFONY_PHPUNIT_VERSION: '8'
 
 jobs:
   latest:
-    name: PHP ${{ matrix.php }} Varnish 6
+    name: PHP ${{ matrix.php }} Varnish 6 SF ${{ matrix.symfony-version }}
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
@@ -23,14 +22,12 @@ jobs:
         include:
         - php: '7.3'
         - php: '7.4'
-          env:
-            DEPENDENCIES: 'symfony/lts:^3 toflar/psr6-symfony-http-cache-store:^2.2.0\|^3.0.0'
+          symfony-version: '4.3.*'
         - php: '7.4'
-          env:
-            DEPENDENCIES: 'symfony/flex'
-            SYMFONY_VERSION: '^4'
+          symfony-version: '5.0.*'
         - php: '8.0'
         - php: '8.1'
+          symfony-version: '6.*'
 
     steps:
       - name: Setup PHP
@@ -47,6 +44,12 @@ jobs:
         run: |
           sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish.sh
           sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
+
+      - name: Symfony version
+        run: |
+          composer global require symfony/flex --no-progress --no-scripts --no-plugins
+          composer config extra.symfony.require ${{ matrix.symfony-version}}
+        if: ${{ matrix.symfony-version }}
 
       - name: Install composer dependencies
         run: |

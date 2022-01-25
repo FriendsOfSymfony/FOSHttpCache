@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
+use Toflar\Psr6HttpCacheStore\Psr6Store;
 use Toflar\Psr6HttpCacheStore\Psr6StoreInterface;
 
 class PurgeTagsListenerTest extends TestCase
@@ -29,7 +30,7 @@ class PurgeTagsListenerTest extends TestCase
 
     public function setUp(): void
     {
-        if (!class_exists(Psr6StoreInterface::class)) {
+        if (!class_exists(Psr6Store::class)) {
             $this->markTestSkipped('toflar/psr6-symfony-http-cache-store not available');
         }
     }
