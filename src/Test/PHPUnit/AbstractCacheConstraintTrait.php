@@ -61,7 +61,7 @@ trait AbstractCacheConstraintTrait
 
             foreach ($other->getHeaders() as $name => $values) {
                 foreach ($values as $value) {
-                    $message .= $name.': '.$value;
+                    $message .= $name.': '.$value."\n";
                 }
             }
 

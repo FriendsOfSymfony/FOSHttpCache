@@ -32,7 +32,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 
 class CacheInvalidatorTest extends TestCase
 {
@@ -235,12 +234,7 @@ class CacheInvalidatorTest extends TestCase
     {
         /** @var MockInterface&Varnish $proxyClient */
         $proxyClient = \Mockery::mock(Varnish::class);
-
-        if (class_exists(LegacyEventDispatcherProxy::class)) {
-            $eventDispatcher = LegacyEventDispatcherProxy::decorate(new EventDispatcher());
-        } else {
-            $eventDispatcher = new EventDispatcher();
-        }
+        $eventDispatcher = new EventDispatcher();
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
         $cacheInvalidator->setEventDispatcher($eventDispatcher);
@@ -251,12 +245,7 @@ class CacheInvalidatorTest extends TestCase
     {
         /** @var MockInterface&Varnish $proxyClient */
         $proxyClient = \Mockery::mock(Varnish::class);
-
-        if (class_exists(LegacyEventDispatcherProxy::class)) {
-            $eventDispatcher = LegacyEventDispatcherProxy::decorate(new EventDispatcher());
-        } else {
-            $eventDispatcher = new EventDispatcher();
-        }
+        $eventDispatcher = new EventDispatcher();
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
         $cacheInvalidator->setEventDispatcher($eventDispatcher);
