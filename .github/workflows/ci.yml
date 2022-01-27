@@ -34,7 +34,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          tools: composer:v2
+          tools: composer:v2, flex
           coverage: none
 
       - name: Checkout code
@@ -45,13 +45,9 @@ jobs:
           sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish.sh
           sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
 
-      - name: Symfony version
-        run: |
-          composer global require symfony/flex --no-progress --no-scripts --no-plugins
-          composer config extra.symfony.require ${{ matrix.symfony-version}}
-        if: ${{ matrix.symfony-version }}
-
       - name: Install composer dependencies
+        env:
+          SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
         run: |
           composer require --no-update ${DEPENDENCIES}
           composer update --prefer-dist --no-interaction --no-progress
