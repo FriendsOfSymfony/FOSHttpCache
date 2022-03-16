@@ -14,16 +14,16 @@ namespace FOS\HttpCache;
 use Symfony\Component\EventDispatcher\Event as OldEvent;
 use Symfony\Contracts\EventDispatcher\Event as ContractEvent;
 
-if (class_exists(ContractEvent::class)) {
-    class BaseEvent extends ContractEvent
-    {
-    }
-} else {
+if (class_exists(OldEvent::class)) {
     /**
      * @codeCoverageIgnore
      * @ignore This is purely for 3.4 comparability.
      */
     class BaseEvent extends OldEvent
+    {
+    }
+} else {
+    class BaseEvent extends ContractEvent
     {
     }
 }
