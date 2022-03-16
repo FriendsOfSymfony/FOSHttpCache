@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+unreleased
+----------
+
+### Symfony Compatibility
+
+* Removed the internal BaseEvent class and extend our events from the Symfony contracts class directly.
+
 2.13.0
 ------
 
