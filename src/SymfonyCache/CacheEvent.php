@@ -11,7 +11,7 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use FOS\HttpCache\BaseEvent;
+use Symfony\Contracts\EventDispatcher\Event as BaseEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
