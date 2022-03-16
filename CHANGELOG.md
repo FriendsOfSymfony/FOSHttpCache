@@ -3,6 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.12.1
+------
+
+### Symfony Compatibility
+
+* Do not extend the wrong Event class when installed with legacy Symfony but the Symfony contracts happen to be installed
+
 2.12.0
 ------
 
