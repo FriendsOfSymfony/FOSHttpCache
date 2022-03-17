@@ -11,10 +11,10 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Contracts\EventDispatcher\Event as BaseEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Contracts\EventDispatcher\Event as BaseEvent;
 
 /**
  * Event raised by the HttpCache kernel.
@@ -48,7 +48,7 @@ class CacheEvent extends BaseEvent
      *
      * @param CacheInvalidation $kernel      the kernel raising with this event
      * @param Request           $request     the request being processed
-     * @param Response          $response    the response, if available
+     * @param Response|null     $response    the response, if available
      * @param int               $requestType the request type (default HttpKernelInterface::MASTER_REQUEST)
      */
     public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
