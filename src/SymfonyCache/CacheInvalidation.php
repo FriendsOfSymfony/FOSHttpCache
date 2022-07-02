@@ -34,7 +34,7 @@ interface CacheInvalidation extends HttpKernelInterface
      *
      * @return Response A Response instance
      */
-    public function fetch(Request $request, $catch = false);
+    public function fetch(Request $request, bool $catch = false): Response;
 
     /**
      * Gets the store for cached responses.
