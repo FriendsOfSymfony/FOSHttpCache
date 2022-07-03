@@ -41,5 +41,5 @@ interface CacheInvalidation extends HttpKernelInterface
      *
      * @return StoreInterface $store The store used by the HttpCache
      */
-    public function getStore(): StoreInterface
+    public function getStore(): StoreInterface;
 }
