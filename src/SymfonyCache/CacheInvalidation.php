@@ -11,35 +11,32 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-/**
- * Interface for a HttpCache that supports active cache invalidation.
- */
-interface CacheInvalidation extends HttpKernelInterface
-{
-    /**
-     * Forwards the Request to the backend and determines whether the response should be stored.
-     *
-     * This methods is triggered when the cache missed or a reload is required.
-     *
-     * This method is present on HttpCache but must be public to allow event listeners to do
-     * refresh operations.
-     *
-     * @param Request $request A Request instance
-     * @param bool    $catch   Whether to process exceptions
-     *
-     * @return Response A Response instance
-     */
-    public function fetch(Request $request, bool $catch = false): Response;
+use function class_alias;
+use function class_exists;
 
+if (! interface_exists(CacheInvalidation::class) && 
+    class_exists('Symfony\Component\HttpKernel\Kernel') &&
+    \Symfony\Component\HttpKernel\Kernel::MAJOR_VERSION >= 6) {
+    // Load class for Symfony >=6.0
+    class_alias(
+        Compatibility\CacheInvalidationS6::class,
+        CacheInvalidation::class
+    );
+} else {
+    // Load class for any other cases
+    class_alias(
+        Compatibility\CacheInvalidationLegacy::class,
+        CacheInvalidation::class
+    );
+}
+
+if (! interface_exists(CacheInvalidation::class)) {
     /**
-     * Gets the store for cached responses.
-     *
-     * @return StoreInterface $store The store used by the HttpCache
+     * Provide an empty interface for code scanners
      */
-    public function getStore(): StoreInterface;
+    interface SearchHandler extends HttpKernelInterface
+    {
+    }
 }
