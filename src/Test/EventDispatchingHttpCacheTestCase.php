@@ -72,6 +72,10 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $refOptions->setAccessible(true);
         $refOptions->setValue($mock, $options);
 
+        $surrogate = $refHttpCache->getProperty('surrogate');
+        $surrogate->setAccessible(true);
+        $surrogate->setValue($mock, null);
+
         return $mock;
     }
 
