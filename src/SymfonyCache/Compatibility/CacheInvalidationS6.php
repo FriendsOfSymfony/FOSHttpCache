@@ -18,6 +18,8 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
  * Interface for a HttpCache that supports active cache invalidation.
+ * 
+ * Method signature of `fetch` and `getStore` compatible with Symfony 6 or newer.
  */
 interface CacheInvalidationS6 extends HttpKernelInterface
 {
