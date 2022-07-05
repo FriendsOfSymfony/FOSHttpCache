@@ -18,4 +18,4 @@ EOF
 sudo apt-get update
 
 sudo apt-get install varnish
-if [ "$VARNISH_MODULES_VERSION" != "" ]; then sh "${GITHUB_WORKSPACE}/tests/install-varnish-modules-legacy.sh"; fi
+if [ "$VARNISH_MODULES_VERSION" != "" ]; then sh "${GITHUB_WORKSPACE}/tests/install-varnish-modules.sh"; fi
