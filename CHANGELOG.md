@@ -3,12 +3,15 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
-unreleased
+2.14.0
 ----------
 
 ### Symfony Compatibility
 
 * Removed the internal BaseEvent class and extend our events from the Symfony contracts class directly.
+* Made the CacheInvalidation interface compatible with Symfony 6.
+  Symfony 6 does a BC break for `HttpKernelInterface::fetch` - if you implement the method in your application,
+  you need to adjust when upgrading to Symfony 6.
 
 2.13.0
 ------
