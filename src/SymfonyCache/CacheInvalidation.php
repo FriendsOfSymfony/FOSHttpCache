@@ -11,18 +11,17 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
 use function class_alias;
 use function class_exists;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 if (interface_exists(CacheInvalidation::class)) {
     return;
 }
 
 /*
- * Symfony 6 introduced a BC break in the signature of the protected method HttpKernelInterface::fetch. 
+ * Symfony 6 introduced a BC break in the signature of the protected method HttpKernelInterface::fetch.
  * Load the correct interface to match the signature.
  */
 if (class_exists(Kernel::class) && Kernel::MAJOR_VERSION >= 6) {
@@ -39,9 +38,9 @@ if (class_exists(Kernel::class) && Kernel::MAJOR_VERSION >= 6) {
     );
 }
 
-if (! interface_exists(CacheInvalidation::class)) {
+if (!interface_exists(CacheInvalidation::class)) {
     /**
-     * Provide an empty interface for code scanners
+     * Provide an empty interface for code scanners.
      */
     interface SearchHandler extends HttpKernelInterface
     {
