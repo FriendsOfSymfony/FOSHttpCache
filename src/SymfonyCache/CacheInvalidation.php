@@ -42,7 +42,7 @@ if (!interface_exists(CacheInvalidation::class)) {
     /**
      * Provide an empty interface for code scanners.
      */
-    interface SearchHandler extends HttpKernelInterface
+    interface CacheInvalidation extends HttpKernelInterface
     {
     }
 }
