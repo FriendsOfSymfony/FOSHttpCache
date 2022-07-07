@@ -3,8 +3,13 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.14.1
+------
+
+* Fixed dummy interface name for code scanners to match the expected name.
+
 2.14.0
-----------
+------
 
 ### Symfony Compatibility
 
