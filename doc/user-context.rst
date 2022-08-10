@@ -199,9 +199,9 @@ is granted extra permissions by an administrator.
 
 .. note::
 
-    If you base the user hash on the Cookie header, you should
-    :ref:`clean up that header <cookie_header>` to make the hash request
-    properly cacheable.
+    If you base the user hash on the Cookie header, you should clean up that header
+    to make the hash request properly cacheable: :ref:`Varnish <varnish_cookie_header>`,
+    :ref:`Symfony HttpCache <symfony_cookie_header>`.
 
 The Original Request
 --------------------

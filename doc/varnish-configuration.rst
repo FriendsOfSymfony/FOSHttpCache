@@ -364,6 +364,7 @@ request with :ref:`a proper user hash <return context hash>`.
     your own VCL.
 
 .. _cookie_header:
+.. _varnish_cookie_header:
 
 Cleaning the Cookie Header
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
