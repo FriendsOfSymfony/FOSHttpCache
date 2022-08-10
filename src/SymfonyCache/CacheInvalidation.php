@@ -13,6 +13,7 @@ namespace FOS\HttpCache\SymfonyCache;
 
 use function class_alias;
 use function class_exists;
+
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 

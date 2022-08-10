@@ -329,6 +329,8 @@ options through the constructor:
         RewriteEngine On
         RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+.. _symfony_cookie_header:
+
 Cleaning the Cookie Header
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
