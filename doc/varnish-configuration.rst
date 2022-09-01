@@ -470,7 +470,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 
 .. _ACL: https://www.varnish-cache.org/docs/4.0/users-guide/vcl-example-acls.html
 .. _ACL for Varnish 3: https://www.varnish-cache.org/docs/3.0/tutorial/vcl.html#example-3-acls
-.. _directory of FOSHttpCache: https://github.com/FriendsOfSymfony/FOSHttpCache/tree/master/resources/config
+.. _directory of FOSHttpCache: https://github.com/FriendsOfSymfony/FOSHttpCache/tree/2.x/resources/config
 .. _handling PURGE requests: https://www.varnish-cache.org/docs/4.0/users-guide/purging.html#bans
 .. _purging for Varnish 3: https://www.varnish-cache.org/docs/3.0/tutorial/purging.html
 .. _forcing a refresh: https://www.varnish-cache.org/docs/4.0/users-guide/purging.html#forcing-a-cache-miss
@@ -480,7 +480,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
 .. _ban lurker: https://www.varnish-software.com/blog/ban-lurker
 .. _explained in the Varnish documentation: https://www.varnish-cache.org/trac/wiki/VCLExampleRemovingSomeCookies#RemovingallBUTsomecookies
 .. _curl Varnish plugin: https://github.com/varnish/libvmod-curl
-.. _xkey Varnish module: https://github.com/varnish/varnish-modules/blob/master/docs/vmod_xkey.rst
+.. _xkey Varnish module: https://github.com/varnish/varnish-modules/blob/master/docs/vmod_xkey.vcc
 .. _ykey documentation: https://docs.varnish-software.com/varnish-cache-plus/vmods/ykey/
 .. _Cache Invalidation chapter of the Varnish documentation: http://book.varnish-software.com/4.0/chapters/Cache_Invalidation.html#hashtwo-xkey-varnish-software-implementation-of-surrogate-keys
 .. _installing xkey: https://github.com/varnish/varnish-modules#installation

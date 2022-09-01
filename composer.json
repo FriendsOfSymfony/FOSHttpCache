@@ -54,10 +54,5 @@
         "psr-4": {
             "FOS\\HttpCache\\Tests\\": "tests/"
         }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.10.x-dev"
-        }
     }
 }
