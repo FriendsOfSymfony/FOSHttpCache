@@ -153,9 +153,9 @@ class CacheInvalidator
      * @param string $path    Path or URL
      * @param array  $headers HTTP headers (optional)
      *
-     * @throws UnsupportedProxyOperationException
-     *
      * @return $this
+     *
+     * @throws UnsupportedProxyOperationException
      */
     public function invalidatePath($path, array $headers = [])
     {
@@ -176,9 +176,9 @@ class CacheInvalidator
      *
      * @see RefreshCapable::refresh()
      *
-     * @throws UnsupportedProxyOperationException
-     *
      * @return $this
+     *
+     * @throws UnsupportedProxyOperationException
      */
     public function refreshPath($path, array $headers = [])
     {
@@ -201,9 +201,9 @@ class CacheInvalidator
      *
      * @param array $headers HTTP headers that path must match to be banned
      *
-     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
-     *
      * @return $this
+     *
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      */
     public function invalidate(array $headers)
     {
@@ -223,9 +223,9 @@ class CacheInvalidator
      *
      * @param array $tags Tags that should be removed/expired from the cache
      *
-     * @throws UnsupportedProxyOperationException If HTTP cache does not support Tags invalidation
-     *
      * @return $this
+     *
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support Tags invalidation
      */
     public function invalidateTags(array $tags)
     {
@@ -255,9 +255,9 @@ class CacheInvalidator
      * @param array|string $hosts       Regular expression of a host name or list of
      *                                  exact host names to limit banning
      *
-     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
-     *
      * @return $this
+     *
+     * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      */
     public function invalidateRegex($path, $contentType = null, $hosts = null)
     {
@@ -273,9 +273,9 @@ class CacheInvalidator
     /**
      * Clear the cache completely.
      *
-     * @throws UnsupportedProxyOperationException if HTTP cache does not support clearing the cache completely
-     *
      * @return $this
+     *
+     * @throws UnsupportedProxyOperationException if HTTP cache does not support clearing the cache completely
      */
     public function clearCache()
     {

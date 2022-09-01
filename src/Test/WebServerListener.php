@@ -102,9 +102,9 @@ if (class_exists(\PHPUnit_Runner_Version::class) && version_compare(\PHPUnit_Run
         /**
          * Get web server hostname.
          *
-         * @throws \Exception
-         *
          * @return string
+         *
+         * @throws \Exception
          */
         protected function getHostName()
         {
@@ -114,9 +114,9 @@ if (class_exists(\PHPUnit_Runner_Version::class) && version_compare(\PHPUnit_Run
         /**
          * Get web server port.
          *
-         * @throws \Exception
-         *
          * @return int
+         *
+         * @throws \Exception
          */
         protected function getPort()
         {
@@ -126,9 +126,9 @@ if (class_exists(\PHPUnit_Runner_Version::class) && version_compare(\PHPUnit_Run
         /**
          * Get web server port.
          *
-         * @throws \Exception
-         *
          * @return int
+         *
+         * @throws \Exception
          */
         protected function getDocRoot()
         {

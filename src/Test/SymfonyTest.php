@@ -76,9 +76,9 @@ trait SymfonyTest
     /**
      * Get the hostname where your application can be reached.
      *
-     * @throws \Exception
-     *
      * @return string
+     *
+     * @throws \Exception
      */
     protected function getHostName()
     {

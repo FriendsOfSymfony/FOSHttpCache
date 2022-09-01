@@ -94,9 +94,9 @@ class WebServerListener6 implements TestListener
     /**
      * Get web server hostname.
      *
-     * @throws \Exception
-     *
      * @return string
+     *
+     * @throws \Exception
      */
     protected function getHostName()
     {
@@ -106,9 +106,9 @@ class WebServerListener6 implements TestListener
     /**
      * Get web server port.
      *
-     * @throws \Exception
-     *
      * @return int
+     *
+     * @throws \Exception
      */
     protected function getPort()
     {
@@ -118,9 +118,9 @@ class WebServerListener6 implements TestListener
     /**
      * Get web server port.
      *
-     * @throws \Exception
-     *
      * @return int
+     *
+     * @throws \Exception
      */
     protected function getDocRoot()
     {

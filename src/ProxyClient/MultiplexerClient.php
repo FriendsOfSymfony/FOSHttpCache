@@ -84,9 +84,9 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     /**
      * Forwards to all clients.
      *
-     * @throws ExceptionCollection If any errors occurred during flush
-     *
      * @return int The number of cache invalidations performed per caching server
+     *
+     * @throws ExceptionCollection If any errors occurred during flush
      */
     public function flush()
     {
