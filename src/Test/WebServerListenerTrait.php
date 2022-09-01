@@ -49,9 +49,9 @@ class WebServerListenerTrait
     /**
      * Get web server hostname.
      *
-     * @throws \Exception
-     *
      * @return string
+     *
+     * @throws \Exception
      */
     public function getHostName()
     {
@@ -65,9 +65,9 @@ class WebServerListenerTrait
     /**
      * Get web server port.
      *
-     * @throws \Exception
-     *
      * @return int
+     *
+     * @throws \Exception
      */
     public function getPort()
     {
@@ -81,9 +81,9 @@ class WebServerListenerTrait
     /**
      * Get web server port.
      *
-     * @throws \Exception
-     *
      * @return int
+     *
+     * @throws \Exception
      */
     public function getDocRoot()
     {

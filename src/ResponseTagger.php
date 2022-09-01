@@ -113,9 +113,9 @@ class ResponseTagger
      *
      * @param string[] $tags List of tags to add
      *
-     * @throws InvalidTagException
-     *
      * @return $this
+     *
+     * @throws InvalidTagException
      */
     public function addTags(array $tags)
     {

@@ -64,9 +64,9 @@ trait NginxTest
     /**
      * The default implementation looks at the constant NGINX_FILE.
      *
-     * @throws \Exception
-     *
      * @return string the path to the NGINX server configuration file to use with this test
+     *
+     * @throws \Exception
      */
     protected function getConfigFile()
     {
@@ -114,9 +114,9 @@ trait NginxTest
     /**
      * Get the hostname where your application can be reached.
      *
-     * @throws \Exception
-     *
      * @return string
+     *
+     * @throws \Exception
      */
     protected function getHostName()
     {
