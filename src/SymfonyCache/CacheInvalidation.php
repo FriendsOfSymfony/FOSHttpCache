@@ -11,9 +11,6 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
-use function class_alias;
-use function class_exists;
-
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -25,15 +22,15 @@ if (interface_exists(CacheInvalidation::class)) {
  * Symfony 6 introduced a BC break in the signature of the protected method HttpKernelInterface::fetch.
  * Load the correct interface to match the signature.
  */
-if (class_exists(Kernel::class) && Kernel::MAJOR_VERSION >= 6) {
+if (\class_exists(Kernel::class) && Kernel::MAJOR_VERSION >= 6) {
     // Load class for Symfony >=6.0
-    class_alias(
+    \class_alias(
         Compatibility\CacheInvalidationS6::class,
         CacheInvalidation::class
     );
 } else {
     // Load class for any other cases
-    class_alias(
+    \class_alias(
         Compatibility\CacheInvalidationLegacy::class,
         CacheInvalidation::class
     );
