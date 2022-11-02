@@ -3,6 +3,11 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.14.2
+------
+
+* Fixed varnish configuration examples to say `Authorization` and not `Autorization`.
+
 2.14.1
 ------
 
