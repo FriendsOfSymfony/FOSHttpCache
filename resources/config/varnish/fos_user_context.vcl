@@ -82,7 +82,7 @@ sub fos_user_context_recv {
 sub fos_user_context_hash {
     if (req.http.accept == "application/vnd.fos.user-context-hash") {
         hash_data(req.http.Cookie);
-        hash_data(req.http.Autorization);
+        hash_data(req.http.Authorization);
     }
 }
 
