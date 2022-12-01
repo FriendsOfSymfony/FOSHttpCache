@@ -208,8 +208,7 @@ you have the same configuration options as with the ``PurgeListener``. *Only
 set one of ``client_ips`` or ``client_matcher``*. Additionally, you can
 configure the HTTP method and header used for tag purging:
 
-* **client_ips**: String with IP or array of IPs that are allowed to
-  purge the cache.
+* **client_ips**: String with IP or array of IPs that are allowed to purge the cache.
 
   **default**: ``127.0.0.1``
 
@@ -229,6 +228,10 @@ configure the HTTP method and header used for tag purging:
 * **tags_invalidate_path**: Path on the caching proxy to which the purge tags request should be sent.
 
   **default**: ``/``
+
+* **tags_parser**: Overwrite if you use a non-default glue to combine the tags in the header.
+  This option expects a `FOS\HttpCache\TagHeaderFormatter\TagHeaderParser` instance, configured
+  with the glue you want to use.
 
 To get cache tagging support, register the ``PurgeTagsListener`` and use the
 ``Psr6Store`` in your ``AppCache``::

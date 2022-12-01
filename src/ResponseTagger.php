@@ -14,6 +14,7 @@ namespace FOS\HttpCache;
 use FOS\HttpCache\Exception\InvalidTagException;
 use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
 use FOS\HttpCache\TagHeaderFormatter\TagHeaderFormatter;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderParser;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -94,6 +95,24 @@ class ResponseTagger
     public function getTagsHeaderValue()
     {
         return $this->headerFormatter->getTagsHeaderValue($this->tags);
+    }
+
+    /**
+     * Split the tag header into a list of tags.
+     *
+     * @param string|string[] $headers
+     *
+     * @return string[]
+     */
+    protected function parseTagsHeaderValue($headers): array
+    {
+        if ($this->headerFormatter instanceof TagHeaderParser) {
+            return $this->headerFormatter->parseTagsHeaderValue($headers);
+        }
+
+        return array_merge(...array_map(function ($header) {
+            return explode(',', $header);
+        }, $headers));
     }
 
     /**

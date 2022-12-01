@@ -11,6 +11,8 @@
 
 namespace FOS\HttpCache\SymfonyCache;
 
+use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
+use FOS\HttpCache\TagHeaderFormatter\TagHeaderParser;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Toflar\Psr6HttpCacheStore\Psr6StoreInterface;
@@ -43,6 +45,11 @@ class PurgeTagsListener extends AccessControlledListener
     private $tagsHeader;
 
     /**
+     * @var TagHeaderParser
+     */
+    private $tagsParser;
+
+    /**
      * When creating the purge listener, you can configure an additional option.
      *
      * - tags_method: HTTP method that identifies purge tags requests.
@@ -65,6 +72,7 @@ class PurgeTagsListener extends AccessControlledListener
 
         $this->tagsMethod = $options['tags_method'];
         $this->tagsHeader = $options['tags_header'];
+        $this->tagsParser = $options['tags_parser'];
     }
 
     /**
@@ -125,11 +133,7 @@ class PurgeTagsListener extends AccessControlledListener
             $headers = $request->headers->get($this->tagsHeader, '', false);
         }
 
-        foreach ($headers as $header) {
-            foreach (explode(',', $header) as $tag) {
-                $tags[] = $tag;
-            }
-        }
+        $tags = $this->tagsParser->parseTagsHeaderValue($headers);
 
         if ($store->invalidateTags($tags)) {
             $response->setStatusCode(200, 'Purged');
@@ -151,9 +155,11 @@ class PurgeTagsListener extends AccessControlledListener
         $resolver->setDefaults([
             'tags_method' => static::DEFAULT_TAGS_METHOD,
             'tags_header' => static::DEFAULT_TAGS_HEADER,
+            'tags_parser' => new CommaSeparatedTagHeaderFormatter(),
         ]);
         $resolver->setAllowedTypes('tags_method', 'string');
         $resolver->setAllowedTypes('tags_header', 'string');
+        $resolver->setAllowedTypes('tags_parser', TagHeaderParser::class);
 
         return $resolver;
     }

@@ -46,4 +46,19 @@ class CommaSeparatedTagHeaderFormatterTest extends TestCase
         $this->assertSame('tag1', $formatter->getTagsHeaderValue(['tag1']));
         $this->assertSame('tag1 tag2 tag3', $formatter->getTagsHeaderValue(['tag1', 'tag2', 'tag3']));
     }
+
+    public function testParseTagsHeaderValue()
+    {
+        $parser = new CommaSeparatedTagHeaderFormatter();
+
+        $this->assertSame(['a', 'b', 'c'], $parser->parseTagsHeaderValue('a,b,c'));
+        $this->assertSame(['a', 'b', 'c'], $parser->parseTagsHeaderValue(['a', 'b,c']));
+    }
+
+    public function testParseCustomGlueTagsHeaderValue()
+    {
+        $parser = new CommaSeparatedTagHeaderFormatter(TagHeaderFormatter::DEFAULT_HEADER_NAME, ' ');
+
+        $this->assertSame(['a', 'b,c'], $parser->parseTagsHeaderValue('a b,c'));
+    }
 }
