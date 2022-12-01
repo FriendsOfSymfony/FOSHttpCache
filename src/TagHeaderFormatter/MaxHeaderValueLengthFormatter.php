@@ -21,7 +21,7 @@ use FOS\HttpCache\Exception\InvalidTagException;
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
-class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
+class MaxHeaderValueLengthFormatter implements TagHeaderFormatter, TagHeaderParser
 {
     /**
      * @var TagHeaderFormatter
@@ -81,6 +81,15 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter
         }
 
         return $newValues;
+    }
+
+    public function parseTagsHeaderValue($tags): array
+    {
+        if ($this->inner instanceof TagHeaderParser) {
+            return $this->inner->parseTagsHeaderValue($tags);
+        }
+
+        throw new \BadMethodCallException('The inner formatter does not implement '.TagHeaderParser::class);
     }
 
     /**

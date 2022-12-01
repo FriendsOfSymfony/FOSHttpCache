@@ -16,7 +16,7 @@ namespace FOS\HttpCache\TagHeaderFormatter;
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
  */
-class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter
+class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter, TagHeaderParser
 {
     /**
      * @var string
@@ -52,5 +52,16 @@ class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter
     public function getTagsHeaderValue(array $tags)
     {
         return implode($this->glue, $tags);
+    }
+
+    public function parseTagsHeaderValue($tags): array
+    {
+        if (is_string($tags)) {
+            $tags = [$tags];
+        }
+
+        return array_merge(...array_map(function ($tagsFragment) {
+            return explode($this->glue, $tagsFragment);
+        }, $tags));
     }
 }

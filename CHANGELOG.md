@@ -3,6 +3,12 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.15.0
+------
+
+* Provide a `TagHeaderParser` that can split up a tag header into the list of tags.
+  This allows to correctly handle non-default tag separators in all places.
+
 2.14.2
 ------
 
