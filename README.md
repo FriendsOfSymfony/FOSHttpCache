@@ -27,8 +27,8 @@ Features
 * Send [cache invalidation requests](http://foshttpcache.readthedocs.io/en/stable/cache-invalidator.html)
   with minimal impact on performance.
 * Cache tagging abstraction for caching proxy systems that support it.
-* Use the built-in support for [Varnish](http://foshttpcache.readthedocs.io/en/stable/varnish-configuration.html)
-  versions 3 to 6, [NGINX](http://foshttpcache.readthedocs.io/en/stable/nginx-configuration.html), the
+* Use the built-in support for [Varnish](http://foshttpcache.readthedocs.io/en/stable/varnish-configuration.html),
+  [NGINX](http://foshttpcache.readthedocs.io/en/stable/nginx-configuration.html), the
   [Symfony reverse proxy from the http-kernel component](http://foshttpcache.readthedocs.io/en/stable/symfony-cache-configuration.html),
   the CDNs [fastly](https://www.fastly.com/) and [cloudflare](https://www.cloudflare.com/),
   or implement your own caching proxy client.
