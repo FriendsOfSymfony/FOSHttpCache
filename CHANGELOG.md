@@ -3,6 +3,11 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.15.1
+------
+
+* Directly require `php-http/message-factory` to keep working with the legacy factories.
+
 2.15.0
 ------
 
