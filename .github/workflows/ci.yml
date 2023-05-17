@@ -63,7 +63,7 @@ jobs:
 
   legacyPHP:
     name: PHP 7.2 Varnish 6
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
       VARNISH_VERSION: '6.6'
       VARNISH_MODULES_VERSION: '0.18.0'
@@ -169,7 +169,7 @@ jobs:
 
   lowest:
     name: PHP ${{ matrix.php }} Lowest, Varnish 3
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env:
       VARNISH_VERSION: '3.0'
       VARNISH_MODULES_VERSION: ''
