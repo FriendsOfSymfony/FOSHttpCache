@@ -3,7 +3,7 @@
 Fastly Configuration
 -------------------
 
-Caching is enabled by default. All requests that are marked as cachable will be cached.
+Caching is enabled by default. All requests that are marked as cacheable will be cached.
 
 Tagging
 ~~~~~~~
@@ -31,7 +31,7 @@ Using this header enables you to use the ``Cache-Control`` header to specify the
 
 Actually this package doesn't support the ``Surrogate-Control`` header.
 To configure the ``Cache-Control`` you either have to set ``Surrogate-Control`` yourself or
-configure the ``Cache-Control`` header in your fastly configuration.
+configure the ``Cache-Control`` header in your Fastly configuration.
 
 .. code-block:: none
 
