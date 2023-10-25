@@ -5,6 +5,10 @@ Fastly Configuration
 
 Caching is enabled by default. All requests that are marked as cacheable will be cached.
 
+.. note::
+
+    Please read the `Fastly documentation <https://docs.fastly.com/>` carefully to set up your caching correctly.
+
 Tagging
 ~~~~~~~
 
