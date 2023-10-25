@@ -16,7 +16,7 @@ Purge
 
 Fastly supports two types of deletion of cached items using tags:
 
-1. Soft Purge: This is the default behavior. It will mark the cached item as stale and will serve the stale item until the TTL expires. Once the TTL expires, the stale item will be evicted from the cache and the next request will be fetched from the origin.
+1. Soft Purge: This is the default behavior. It will mark the cached item as stale. Stale items *may* still be served (e.g. with the ``stale-while-revalidate`` or ``stale-on-error`` cache control headers. Once the TTL expires, the stale item will be evicted from the cache and the next request must be fetched from the origin.
 2. Purge: This will immediately evict the cached item from the cache and the next request will be fetched from the origin.
 
 There are different ways to purge the cache:
