@@ -24,6 +24,7 @@ Fastly supports two types of deletion of cached items using tags:
 2. Purge: This will immediately evict the cached item from the cache and the next request will be fetched from the origin.
 
 There are different ways to purge the cache:
+
 1. Using Tags
 2. Using URLs
 
