@@ -29,7 +29,7 @@ Cache Header
 To specify how long items should be cached you can use the ``Surrogate-Control`` header.
 Using this header enables you to use the ``Cache-Control`` header to specify the cache duration for browsers.
 
-Actually this package doesn't support the ``Surrogate-Control`` header.
+Currently, FOSHttpCache does not yet support the ``Surrogate-Control`` header.
 To configure the ``Cache-Control`` you either have to set ``Surrogate-Control`` yourself or
 configure the ``Cache-Control`` header in your Fastly configuration.
 
