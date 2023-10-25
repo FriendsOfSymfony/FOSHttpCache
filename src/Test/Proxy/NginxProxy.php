@@ -34,9 +34,6 @@ class NginxProxy extends AbstractProxy
         $this->setCacheDir(sys_get_temp_dir().DIRECTORY_SEPARATOR.'foshttpcache-nginx');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function start()
     {
         $this->runCommand(
@@ -50,9 +47,6 @@ class NginxProxy extends AbstractProxy
         $this->waitFor($this->getIp(), $this->getPort(), 2000);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function stop()
     {
         if (file_exists($this->pid)) {
@@ -60,9 +54,6 @@ class NginxProxy extends AbstractProxy
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->runCommand('rm', ['-rf', $this->getCacheDir()]);

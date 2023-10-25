@@ -31,9 +31,6 @@ class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
 
     public const HTTP_HEADER_REFRESH = 'X-Refresh';
 
-    /**
-     * {@inheritdoc}
-     */
     public function refresh($url, array $headers = [])
     {
         $headers = array_merge($headers, [self::HTTP_HEADER_REFRESH => '1']);
@@ -42,9 +39,6 @@ class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function purge($url, array $headers = [])
     {
         $purgeUrl = $this->buildPurgeUrl($url);
@@ -53,9 +47,6 @@ class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions()
     {
         $resolver = parent::configureOptions();

@@ -31,9 +31,6 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
 {
     public const HTTP_METHOD_REFRESH = 'GET';
 
-    /**
-     * {@inheritdoc}
-     */
     public function purge($url, array $headers = [])
     {
         $this->queueRequest($this->options['purge_method'], $url, $headers);
@@ -41,9 +38,6 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refresh($url, array $headers = [])
     {
         $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
@@ -73,9 +67,6 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         return $resolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function invalidateTags(array $tags)
     {
         $escapedTags = $this->escapeTags($tags);

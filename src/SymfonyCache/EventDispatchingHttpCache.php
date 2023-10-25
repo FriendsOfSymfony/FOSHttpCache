@@ -37,8 +37,6 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  *
  * @author Jérôme Vieilledent <lolautruche@gmail.com> (courtesy of eZ Systems AS)
  * @author David Buchmann <mail@davidbu.ch>
- *
- * {@inheritdoc}
  */
 trait EventDispatchingHttpCache
 {

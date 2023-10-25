@@ -27,9 +27,6 @@ class UserContextCacheTest extends UserContextTestCase
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function assertContextCache($status)
     {
         $this->assertEquals('HIT', $status);

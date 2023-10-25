@@ -20,8 +20,6 @@ use Toflar\Psr6HttpCacheStore\ClearableInterface;
  *
  * @author David Buchmann <mail@davidbu.ch>
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
- *
- * {@inheritdoc}
  */
 class PurgeListener extends AccessControlledListener
 {
@@ -63,9 +61,6 @@ class PurgeListener extends AccessControlledListener
         $this->clearCacheHeader = $options['clear_cache_header'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

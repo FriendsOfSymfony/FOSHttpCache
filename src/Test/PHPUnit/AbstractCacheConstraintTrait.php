@@ -38,8 +38,6 @@ trait AbstractCacheConstraintTrait
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param ResponseInterface $other The guzzle response object
      */
     public function matches($other): bool
@@ -75,9 +73,6 @@ trait AbstractCacheConstraintTrait
         return false !== strpos((string) $other->getHeaderLine($this->header), $this->getValue());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function failureDescription($other): string
     {
         return sprintf(

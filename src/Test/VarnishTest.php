@@ -142,9 +142,6 @@ trait VarnishTest
         return getenv('VARNISH_VERSION') ?: '4.0';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getProxy()
     {
         if (null === $this->proxy) {
