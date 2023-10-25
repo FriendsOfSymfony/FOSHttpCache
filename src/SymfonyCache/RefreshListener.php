@@ -20,14 +20,9 @@ use Symfony\Component\HttpFoundation\Request;
  * public.
  *
  * @author David Buchmann <mail@davidbu.ch>
- *
- * {@inheritdoc}
  */
 class RefreshListener extends AccessControlledListener
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -47,9 +47,6 @@ class KernelDispatcher implements Dispatcher
         $this->httpCacheProvider = $httpCacheProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function invalidate(RequestInterface $invalidationRequest, $validateHost = true)
     {
         $request = Request::create(
@@ -85,9 +82,6 @@ class KernelDispatcher implements Dispatcher
         $this->queue[sha1($request)] = $request;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function flush()
     {
         if (!count($this->queue)) {

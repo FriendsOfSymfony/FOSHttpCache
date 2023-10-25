@@ -35,9 +35,8 @@ class MaxHeaderValueLengthFormatterTest extends TestCase
     /**
      * @dataProvider tooLongProvider
      *
-     * @param int   $maxLength
-     * @param array $tags
-     * @param mixed $expectedHeaderValue
+     * @param int      $maxLength
+     * @param string[] $tags
      */
     public function testTooLong($maxLength, $tags, $expectedHeaderValue)
     {

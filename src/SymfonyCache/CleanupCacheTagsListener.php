@@ -44,9 +44,6 @@ class CleanupCacheTagsListener implements EventSubscriberInterface
         $response->headers->remove($this->tagsHeader);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

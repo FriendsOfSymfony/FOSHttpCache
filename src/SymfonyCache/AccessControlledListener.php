@@ -22,8 +22,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * control on requests.
  *
  * @author David Buchmann <mail@davidbu.ch>
- *
- * {@inheritdoc}
  */
 abstract class AccessControlledListener implements EventSubscriberInterface
 {

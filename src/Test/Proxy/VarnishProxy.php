@@ -11,9 +11,6 @@
 
 namespace FOS\HttpCache\Test\Proxy;
 
-/**
- * {@inheritdoc}
- */
 class VarnishProxy extends AbstractProxy
 {
     protected $binary = 'varnishd';
@@ -43,9 +40,6 @@ class VarnishProxy extends AbstractProxy
         $this->setCacheDir(sys_get_temp_dir().DIRECTORY_SEPARATOR.'foshttpcache-varnish');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function start()
     {
         $vclPath = ((int) $this->getVarnishVersion()) >= 5 ? 'vcl_path' : 'vcl_dir';
@@ -69,9 +63,6 @@ class VarnishProxy extends AbstractProxy
         $this->waitFor($this->ip, $this->getPort(), 5000);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function stop()
     {
         if (file_exists($this->pid)) {
@@ -85,9 +76,6 @@ class VarnishProxy extends AbstractProxy
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         $this->stop();

@@ -28,57 +28,36 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
  */
 class Noop implements ProxyClient, BanCapable, PurgeCapable, RefreshCapable, TagCapable, ClearCapable
 {
-    /**
-     * {@inheritdoc}
-     */
     public function ban(array $headers)
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function banPath($path, $contentType = null, $hosts = null)
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function invalidateTags(array $tags)
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function purge($url, array $headers = [])
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refresh($url, array $headers = [])
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function flush()
     {
         return 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function clear()
     {
         return $this;

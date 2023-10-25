@@ -13,17 +13,11 @@ namespace FOS\HttpCache\Test\PHPUnit;
 
 class IsCacheMissConstraint extends AbstractCacheConstraint
 {
-    /**
-     * {@inheritdoc}
-     */
     public function toString(): string
     {
         return 'is a cache miss';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getValue()
     {
         return 'MISS';

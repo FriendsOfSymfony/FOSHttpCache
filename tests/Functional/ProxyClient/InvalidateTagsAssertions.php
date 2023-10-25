@@ -23,7 +23,6 @@ trait InvalidateTagsAssertions
      * Asserting that purging cache tags leads to invalidated content.
      *
      * @param PurgeCapable $proxyClient The client to send purge instructions to the cache
-     * @param array        $tags        The cache tags to invalidate
      * @param string       $path        The path to get and purge, defaults to /tags.php
      */
     protected function assertInvalidateTags(TagCapable $proxyClient, array $cacheTags, $path = '/tags.php')

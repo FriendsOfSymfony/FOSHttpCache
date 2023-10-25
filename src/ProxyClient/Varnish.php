@@ -67,9 +67,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
 
     public const DEFAULT_HTTP_HEADER_CACHE_XKEY = 'xkey-softpurge';
 
-    /**
-     * {@inheritdoc}
-     */
     public function invalidateTags(array $tags)
     {
         $banMode = self::TAG_BAN === $this->options['tag_mode'];
@@ -92,9 +89,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function ban(array $headers)
     {
         $headers = array_merge(
@@ -107,9 +101,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function banPath($path, $contentType = null, $hosts = null)
     {
         if (is_array($hosts)) {
@@ -133,9 +124,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this->ban($headers);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function purge($url, array $headers = [])
     {
         $this->queueRequest(self::HTTP_METHOD_PURGE, $url, $headers);
@@ -143,9 +131,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refresh($url, array $headers = [])
     {
         $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
@@ -154,9 +139,6 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions()
     {
         $resolver = parent::configureOptions();

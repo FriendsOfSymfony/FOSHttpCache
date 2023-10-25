@@ -19,14 +19,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Add debug information to the response for use in cache tests.
  *
  * @author David Buchmann <mail@davidbu.ch>
- *
- * {@inheritdoc}
  */
 class DebugListener implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [
