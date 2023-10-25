@@ -9,7 +9,7 @@ Tagging
 ~~~~~~~
 
 Fastly supports :term:`tagging` out of the box.
-Requests can be tagged using a custom header named ``Surrogate-Keys``.
+Configure the tag header to ``Surrogate-Keys``. (``fos_http_cache.tags.response_header`` if you use FOSHttpCacheBundle)
 
 Purge
 ~~~~~
