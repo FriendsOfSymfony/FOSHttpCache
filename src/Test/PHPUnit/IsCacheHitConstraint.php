@@ -13,17 +13,11 @@ namespace FOS\HttpCache\Test\PHPUnit;
 
 class IsCacheHitConstraint extends AbstractCacheConstraint
 {
-    /**
-     * {@inheritdoc}
-     */
     public function toString(): string
     {
         return 'is a cache hit';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getValue()
     {
         return 'HIT';

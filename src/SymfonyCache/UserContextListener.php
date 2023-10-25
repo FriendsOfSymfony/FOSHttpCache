@@ -22,8 +22,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Caching proxy side of the user context handling for the symfony built-in HttpCache.
  *
  * @author Jérôme Vieilledent <lolautruche@gmail.com> (courtesy of eZ Systems AS)
- *
- * {@inheritdoc}
  */
 class UserContextListener implements EventSubscriberInterface
 {
@@ -85,9 +83,6 @@ class UserContextListener implements EventSubscriberInterface
         $this->options = $resolver->resolve($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

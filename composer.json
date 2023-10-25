@@ -55,5 +55,10 @@
         "psr-4": {
             "FOS\\HttpCache\\Tests\\": "tests/"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }

@@ -58,8 +58,6 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.fastly.com/api/purge#purge_db35b293f8a724717fcf25628d713583
      */
     public function invalidateTags(array $tags)
@@ -85,8 +83,6 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.fastly.com/api/purge#soft_purge_0c4f56f3d68e9bed44fb8b638b78ea36
      * @see https://docs.fastly.com/guides/purging/authenticating-api-purge-requests#purging-urls-with-an-api-token
      */
@@ -106,9 +102,6 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function refresh($url, array $headers = [])
     {
         // First soft purge url
@@ -131,8 +124,6 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://docs.fastly.com/api/purge#purge_bee5ed1a0cfd541e8b9f970a44718546
      *
      * Warning:
@@ -165,9 +156,6 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions()
     {
         $resolver = parent::configureOptions();

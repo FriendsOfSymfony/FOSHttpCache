@@ -107,9 +107,6 @@ class HttpDispatcher implements Dispatcher
         $this->setBaseUri($baseUri);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function invalidate(RequestInterface $invalidationRequest, $validateHost = true)
     {
         if ($validateHost && !$this->baseUri && !$invalidationRequest->getUri()->getHost()) {
@@ -125,9 +122,6 @@ class HttpDispatcher implements Dispatcher
         $this->queue[$signature] = $invalidationRequest;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function flush()
     {
         $queue = $this->queue;

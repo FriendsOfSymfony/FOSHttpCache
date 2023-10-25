@@ -20,8 +20,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * keep s-maxage for 3rd party proxies.
  *
  * @author David Buchmann <mail@davidbu.ch>
- *
- * {@inheritdoc}
  */
 class CustomTtlListener implements EventSubscriberInterface
 {
@@ -99,9 +97,6 @@ class CustomTtlListener implements EventSubscriberInterface
         $response->headers->remove(static::SMAXAGE_BACKUP);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -38,17 +38,11 @@ class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter, TagHeaderP
         $this->glue = $glue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTagsHeaderName()
     {
         return $this->headerName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTagsHeaderValue(array $tags)
     {
         return implode($this->glue, $tags);

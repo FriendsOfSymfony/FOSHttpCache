@@ -21,8 +21,6 @@ use Toflar\Psr6HttpCacheStore\Psr6StoreInterface;
  * Purge tags handler for the Symfony built-in HttpCache.
  *
  * @author Yanick Witschi <yanick.witschi@terminal42.ch>
- *
- * {@inheritdoc}
  */
 class PurgeTagsListener extends AccessControlledListener
 {
@@ -75,9 +73,6 @@ class PurgeTagsListener extends AccessControlledListener
         $this->tagsParser = $options['tags_parser'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedEvents(): array
     {
         return [

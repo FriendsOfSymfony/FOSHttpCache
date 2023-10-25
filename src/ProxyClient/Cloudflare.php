@@ -82,8 +82,6 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://api.cloudflare.com/#zone-purge-files-by-url
      * @see https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url For details on headers you can pass to clear the cache correctly
      */
@@ -102,8 +100,6 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://api.cloudflare.com/#zone-purge-all-files
      */
     public function clear()
@@ -153,9 +149,6 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions()
     {
         $resolver = parent::configureOptions();

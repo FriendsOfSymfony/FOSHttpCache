@@ -63,9 +63,6 @@ abstract class HttpProxyClient implements ProxyClient
         $this->requestFactory = $messageFactory ?: MessageFactoryDiscovery::find();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function flush()
     {
         return $this->httpDispatcher->flush();
