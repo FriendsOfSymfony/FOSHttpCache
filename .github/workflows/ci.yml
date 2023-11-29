@@ -33,6 +33,16 @@ jobs:
         - php: '8.1'
           varnish-version: '7.1'
           varnish-modules-version: '0.20.0'
+        - php: '8.2'
+          symfony-version: '7.*'
+        - php: '8.2'
+          varnish-version: '7.1'
+          varnish-modules-version: '0.20.0'
+        - php: '8.3'
+          symfony-version: '7.*'
+        - php: '8.3'
+          varnish-version: '7.1'
+          varnish-modules-version: '0.20.0'
 
     steps:
       - name: Setup PHP
