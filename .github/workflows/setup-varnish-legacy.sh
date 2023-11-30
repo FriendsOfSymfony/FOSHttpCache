@@ -2,6 +2,8 @@
 
 set -e
 echo "### Installing Legacy Varnish $VARNISH_VERSION ###"
+curl -A "FOS Github" -o /tmp/libjemalloc1_3.6.0-11_amd64.deb -D - -L -s http://ftp.osuosl.org/pub/ubuntu/pool/universe/j/jemalloc/libjemalloc1_3.6.0-11_amd64.deb
+sudo dpkg -i /tmp/libjemalloc1_3.6.0-11_amd64.deb
 sudo apt-get update
 sudo apt-get install debian-archive-keyring curl gnupg apt-transport-https
 VARNISH_VERSION=$VARNISH_VERSION bash -c 'curl -s -L https://packagecloud.io/varnishcache/varnish${VARNISH_VERSION//./}/gpgkey' | sudo apt-key add -

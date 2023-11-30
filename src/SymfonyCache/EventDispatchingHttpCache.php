@@ -102,6 +102,8 @@ trait EventDispatchingHttpCache
      * {@inheritdoc}
      *
      * Trigger event to alter response before storing it in the cache.
+     *
+     * @return void
      */
     protected function store(Request $request, Response $response)
     {
