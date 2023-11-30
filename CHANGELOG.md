@@ -3,6 +3,11 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.15.2
+------
+
+* Declare incompatibility with Symfony 7 because it removes `RequestMatcher`.
+
 2.15.1
 ------
 
