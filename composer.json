@@ -40,8 +40,7 @@
         "symfony/phpunit-bridge": "^5.0 || ^6.0"
     },
     "conflict": {
-        "toflar/psr6-symfony-http-cache-store": "<2.2.1",
-        "symfony/http-foundation": ">=7"
+        "toflar/psr6-symfony-http-cache-store": "<2.2.1"
     },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",

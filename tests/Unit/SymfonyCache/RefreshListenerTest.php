@@ -18,6 +18,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 
 class RefreshListenerTest extends TestCase
@@ -42,7 +43,7 @@ class RefreshListenerTest extends TestCase
         $this->kernel->expects($this->once())
             ->method('fetch')
             ->with($request)
-            ->will($this->returnValue($response))
+            ->willReturn($response)
         ;
 
         $refreshListener = new RefreshListener();
@@ -57,7 +58,10 @@ class RefreshListenerTest extends TestCase
             ->method('fetch')
         ;
 
-        $matcher = new RequestMatcher('/forbidden');
+        $matcher = class_exists(PathRequestMatcher::class)
+            ? new PathRequestMatcher('/forbidden')
+            : new RequestMatcher('/forbidden')
+        ;
         $refreshListener = new RefreshListener(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo');
         $request->headers->addCacheControlDirective('no-cache');

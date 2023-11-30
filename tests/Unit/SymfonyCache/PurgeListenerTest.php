@@ -19,6 +19,8 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Toflar\Psr6HttpCacheStore\Psr6Store;
@@ -35,7 +37,7 @@ class PurgeListenerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('You may not set both a request matcher and an IP');
         new PurgeListener([
-            'client_matcher' => new RequestMatcher('/forbidden'),
+            'client_matcher' => $this->createRequestMatcher('/forbidden'),
             'client_ips' => ['1.2.3.4'],
         ]);
     }
@@ -129,7 +131,7 @@ class PurgeListenerTest extends TestCase
     {
         $kernel = $this->getUnusedKernelMock();
 
-        $matcher = new RequestMatcher('/forbidden');
+        $matcher = $this->createRequestMatcher('/forbidden');
         $purgeListener = new PurgeListener(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($kernel, $request);
@@ -162,7 +164,7 @@ class PurgeListenerTest extends TestCase
     public function testOtherMethod()
     {
         $kernel = $this->getUnusedKernelMock();
-        $matcher = \Mockery::mock(RequestMatcher::class)
+        $matcher = \Mockery::mock(RequestMatcherInterface::class)
             ->shouldNotReceive('isRequestAllowed')
             ->getMock();
 
@@ -182,6 +184,14 @@ class PurgeListenerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('does not exist');
         new PurgeListener(['stuff' => '1.2.3.4']);
+    }
+
+    private function createRequestMatcher(string $path): RequestMatcherInterface
+    {
+        return class_exists(PathRequestMatcher::class)
+            ? new PathRequestMatcher($path)
+            : new RequestMatcher($path)
+        ;
     }
 
     /**
