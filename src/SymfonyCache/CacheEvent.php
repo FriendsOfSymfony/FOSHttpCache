@@ -23,25 +23,13 @@ use Symfony\Contracts\EventDispatcher\Event as BaseEvent;
  */
 class CacheEvent extends BaseEvent
 {
-    /**
-     * @var CacheInvalidation
-     */
-    private $kernel;
+    private CacheInvalidation $kernel;
 
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var Response
-     */
-    private $response;
+    private ?Response $response;
 
-    /**
-     * @var int
-     */
-    private $requestType;
+    private int $requestType;
 
     /**
      * Make sure your $kernel implements CacheInvalidationInterface.
@@ -49,9 +37,9 @@ class CacheEvent extends BaseEvent
      * @param CacheInvalidation $kernel      the kernel raising with this event
      * @param Request           $request     the request being processed
      * @param Response|null     $response    the response, if available
-     * @param int               $requestType the request type (default HttpKernelInterface::MASTER_REQUEST)
+     * @param int               $requestType the request type (default HttpKernelInterface::MAIN_REQUEST)
      */
-    public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
+    public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null, int $requestType = HttpKernelInterface::MAIN_REQUEST)
     {
         $this->kernel = $kernel;
         $this->request = $request;
@@ -71,20 +59,16 @@ class CacheEvent extends BaseEvent
 
     /**
      * Get the request that is being processed.
-     *
-     * @return Request
      */
-    public function getRequest()
+    public function getRequest(): Request
     {
         return $this->request;
     }
 
     /**
-     * One of the constants HttpKernelInterface::MASTER_REQUEST or SUB_REQUEST.
-     *
-     * @return int
+     * One of the constants HttpKernelInterface::MAIN_REQUEST or SUB_REQUEST.
      */
-    public function getRequestType()
+    public function getRequestType(): int
     {
         return $this->requestType;
     }
@@ -92,10 +76,8 @@ class CacheEvent extends BaseEvent
     /**
      * Events that occur after the response is created provide the default response.
      * Event listeners can also set the response to make it available here.
-     *
-     * @return Response|null the response if one was set
      */
-    public function getResponse()
+    public function getResponse(): ?Response
     {
         return $this->response;
     }
@@ -105,7 +87,7 @@ class CacheEvent extends BaseEvent
      *
      * Setting a response stops propagation of the event to further event handlers.
      */
-    public function setResponse(Response $response)
+    public function setResponse(Response $response): void
     {
         $this->response = $response;
 

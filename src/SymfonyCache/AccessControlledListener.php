@@ -13,7 +13,6 @@ namespace FOS\HttpCache\SymfonyCache;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\IpsRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,10 +25,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 abstract class AccessControlledListener implements EventSubscriberInterface
 {
-    /**
-     * @var RequestMatcherInterface
-     */
-    private $clientMatcher;
+    private RequestMatcherInterface $clientMatcher;
 
     /**
      * When creating this event listener, you can configure a number of options.
@@ -38,7 +34,7 @@ abstract class AccessControlledListener implements EventSubscriberInterface
      * - client_ips:     IP or array of IPs of clients that are allowed to send requests.
      *
      * Only one of request matcher or IPs may be a non-null value. If you use a
-     * RequestMatcher, configure your IPs into it.
+     * RequestMatcherInterface, include an IpsRequestMatcher with your IPs.
      *
      * If neither parameter is set, the filter is IP 127.0.0.1
      *
@@ -55,10 +51,7 @@ abstract class AccessControlledListener implements EventSubscriberInterface
             throw new \InvalidArgumentException('You may not set both a request matcher and an IP.');
         }
         if (!$clientMatcher) {
-            $clientMatcher = class_exists(IpsRequestMatcher::class)
-                ? new IpsRequestMatcher($options['client_ips'] ?: '127.0.0.1')
-                : new RequestMatcher(null, null, null, $options['client_ips'] ?: '127.0.0.1')
-            ;
+            $clientMatcher = new IpsRequestMatcher($options['client_ips'] ?: '127.0.0.1');
         }
 
         $this->clientMatcher = $clientMatcher;

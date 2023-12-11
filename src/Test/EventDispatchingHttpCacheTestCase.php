@@ -110,13 +110,12 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $testListener = new TestListener($this, $httpCache, $request);
         $httpCache->addSubscriber($testListener);
         $httpCache
-            ->expects($this->any())
             ->method('lookup')
             ->with($request)
-            ->will($this->returnValue($response))
+            ->willReturn($response)
         ;
 
-        $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
+        $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MAIN_REQUEST, $catch));
         $this->assertEquals(1, $testListener->preHandleCalls);
         $this->assertEquals(1, $testListener->postHandleCalls);
     }
@@ -126,9 +125,8 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      *
      * @depends testHandleCalled
      */
-    public function testPreHandleReturnEarly()
+    public function testPreHandleReturnEarly(): void
     {
-        $catch = true;
         $request = Request::create('/foo', 'GET');
         $response = new Response();
 
@@ -141,7 +139,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
             ->method('lookup')
         ;
 
-        $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
+        $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MAIN_REQUEST));
         $this->assertEquals(1, $testListener->preHandleCalls);
         $this->assertEquals(1, $testListener->postHandleCalls);
     }
@@ -151,7 +149,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      *
      * @depends testHandleCalled
      */
-    public function testPostHandleReturn()
+    public function testPostHandleReturn(): void
     {
         $catch = true;
         $request = Request::create('/foo', 'GET');
@@ -163,13 +161,12 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $testListener->postHandleResponse = $postResponse;
         $httpCache->addSubscriber($testListener);
         $httpCache
-            ->expects($this->any())
             ->method('lookup')
             ->with($request)
-            ->will($this->returnValue($regularResponse))
+            ->willReturn($regularResponse)
         ;
 
-        $this->assertSame($postResponse, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
+        $this->assertSame($postResponse, $httpCache->handle($request, HttpKernelInterface::MAIN_REQUEST, $catch));
         $this->assertEquals(1, $testListener->preHandleCalls);
         $this->assertEquals(1, $testListener->postHandleCalls);
     }
@@ -196,7 +193,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
             ->method('lookup')
         ;
 
-        $this->assertSame($postResponse, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, $catch));
+        $this->assertSame($postResponse, $httpCache->handle($request, HttpKernelInterface::MAIN_REQUEST, $catch));
         $this->assertEquals(1, $testListener->preHandleCalls);
         $this->assertEquals(1, $testListener->postHandleCalls);
     }
@@ -258,10 +255,9 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $testListener = new TestListener($this, $httpCache, $request);
         $httpCache->addSubscriber($testListener);
         $httpCache
-            ->expects($this->any())
             ->method('pass')
             ->with($request)
-            ->will($this->returnValue($response))
+            ->willReturn($response)
         ;
         $refHttpCache = new \ReflectionObject($httpCache);
         $method = $refHttpCache->getMethod('invalidate');
@@ -276,7 +272,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      *
      * @depends testPreInvalidateCalled
      */
-    public function testPreInvalidateReturnEarly()
+    public function testPreInvalidateReturnEarly(): void
     {
         $catch = true;
         $request = Request::create('/foo', 'GET');
@@ -298,7 +294,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $this->assertEquals(1, $testListener->preInvalidateCalls);
     }
 
-    public function testAddListener()
+    public function testAddListener(): void
     {
         $request = Request::create('/foo', 'GET');
         $response = new Response();
@@ -308,13 +304,12 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $httpCache->addListener(Events::PRE_HANDLE, [$simpleListener, 'callback']);
 
         $httpCache
-            ->expects($this->any())
             ->method('lookup')
             ->with($request)
-            ->will($this->returnValue($response))
+            ->willReturn($response)
         ;
 
-        $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST));
+        $this->assertSame($response, $httpCache->handle($request, HttpKernelInterface::MAIN_REQUEST));
         $this->assertEquals(1, $simpleListener->calls);
     }
 }
@@ -322,59 +317,59 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 class TestListener implements EventSubscriberInterface
 {
     /**
-     * @var int Count how many times preHandle has been called
+     * Count how many times preHandle has been called.
      */
-    public $preHandleCalls = 0;
+    public int $preHandleCalls = 0;
 
     /**
-     * @var int Count how many times postHandle has been called
+     * Count how many times postHandle has been called.
      */
-    public $postHandleCalls = 0;
+    public int $postHandleCalls = 0;
 
     /**
-     * @var int Count how many times preStore has been called
+     * Count how many times preStore has been called.
      */
-    public $preStoreCalls = 0;
+    public int $preStoreCalls = 0;
 
     /**
-     * @var int Count how many times preInvalidate has been called
+     * Count how many times preInvalidate has been called.
      */
-    public $preInvalidateCalls = 0;
+    public int $preInvalidateCalls = 0;
 
     /**
-     * @var Response A response to set during the preHandle
+     * A response to set during the preHandle.
      */
-    public $preHandleResponse;
+    public ?Response $preHandleResponse = null;
 
     /**
-     * @var Response A response to set during the postHandle
+     * A response to set during the postHandle.
      */
-    public $postHandleResponse;
+    public ?Response $postHandleResponse = null;
 
     /**
-     * @var Response A response to set during the preStore
+     * A response to set during the preStore.
      */
-    public $preStoreResponse;
+    public ?Response $preStoreResponse = null;
 
     /**
-     * @var Response A response to set during the preInvalidate
+     * A response to set during the preInvalidate.
      */
-    public $preInvalidateResponse;
+    public ?Response $preInvalidateResponse = null;
 
     /**
-     * @var EventDispatchingHttpCacheTestCase To do assertions
+     * To do assertions.
      */
-    private $test;
+    private EventDispatchingHttpCacheTestCase $test;
 
     /**
-     * @var CacheInvalidation The kernel to ensure the event carries the correct kernel
+     * The kernel to ensure the event carries the correct kernel.
      */
-    private $kernel;
+    private CacheInvalidation $kernel;
 
     /**
-     * @var Request The request to ensure the event carries the correct request
+     * The request to ensure the event carries the correct request.
      */
-    private $request;
+    private Request $request;
 
     public function __construct(
         EventDispatchingHttpCacheTestCase $test,
@@ -396,7 +391,7 @@ class TestListener implements EventSubscriberInterface
         ];
     }
 
-    public function preHandle(CacheEvent $event)
+    public function preHandle(CacheEvent $event): void
     {
         $this->test->assertSame($this->kernel, $event->getKernel());
         $this->test->assertSame($this->request, $event->getRequest());
@@ -406,7 +401,7 @@ class TestListener implements EventSubscriberInterface
         ++$this->preHandleCalls;
     }
 
-    public function postHandle(CacheEvent $event)
+    public function postHandle(CacheEvent $event): void
     {
         $this->test->assertSame($this->kernel, $event->getKernel());
         $this->test->assertSame($this->request, $event->getRequest());
@@ -416,7 +411,7 @@ class TestListener implements EventSubscriberInterface
         ++$this->postHandleCalls;
     }
 
-    public function preStore(CacheEvent $event)
+    public function preStore(CacheEvent $event): void
     {
         $this->test->assertSame($this->kernel, $event->getKernel());
         $this->test->assertSame($this->request, $event->getRequest());
@@ -426,7 +421,7 @@ class TestListener implements EventSubscriberInterface
         ++$this->preStoreCalls;
     }
 
-    public function preInvalidate(CacheEvent $event)
+    public function preInvalidate(CacheEvent $event): void
     {
         $this->test->assertSame($this->kernel, $event->getKernel());
         $this->test->assertSame($this->request, $event->getRequest());
@@ -439,22 +434,22 @@ class TestListener implements EventSubscriberInterface
 
 class SimpleListener
 {
-    public $calls = 0;
+    public int $calls = 0;
 
     /**
-     * @var EventDispatchingHttpCacheTestCase To do assertions
+     * To do assertions.
      */
-    private $test;
+    private EventDispatchingHttpCacheTestCase $test;
 
     /**
-     * @var CacheInvalidation The kernel to ensure the event carries the correct kernel
+     * The kernel to ensure the event carries the correct kernel.
      */
-    private $kernel;
+    private CacheInvalidation $kernel;
 
     /**
-     * @var Request The request to ensure the event carries the correct request
+     * The request to ensure the event carries the correct request.
      */
-    private $request;
+    private Request $request;
 
     public function __construct(
         EventDispatchingHttpCacheTestCase $test,
@@ -466,7 +461,7 @@ class SimpleListener
         $this->request = $request;
     }
 
-    public function callback(CacheEvent $event)
+    public function callback(CacheEvent $event): void
     {
         $this->test->assertSame($this->kernel, $event->getKernel());
         $this->test->assertSame($this->request, $event->getRequest());

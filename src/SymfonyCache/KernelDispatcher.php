@@ -32,22 +32,19 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class KernelDispatcher implements Dispatcher
 {
-    /**
-     * @var HttpCacheProvider
-     */
-    private $httpCacheProvider;
+    private HttpCacheProvider $httpCacheProvider;
 
     /**
-     * @var array
+     * @var Request[]
      */
-    private $queue = [];
+    private array $queue = [];
 
     public function __construct(HttpCacheProvider $httpCacheProvider)
     {
         $this->httpCacheProvider = $httpCacheProvider;
     }
 
-    public function invalidate(RequestInterface $invalidationRequest, $validateHost = true)
+    public function invalidate(RequestInterface $invalidationRequest, $validateHost = true): void
     {
         $request = Request::create(
             $invalidationRequest->getUri(),
@@ -82,7 +79,7 @@ class KernelDispatcher implements Dispatcher
         $this->queue[sha1($request)] = $request;
     }
 
-    public function flush()
+    public function flush(): int
     {
         if (!count($this->queue)) {
             return 0;
@@ -98,7 +95,7 @@ class KernelDispatcher implements Dispatcher
 
         foreach ($queue as $request) {
             try {
-                $httpCache->handle($request, HttpKernelInterface::MASTER_REQUEST, false);
+                $httpCache->handle($request, HttpKernelInterface::MAIN_REQUEST, false);
             } catch (\Exception $e) {
                 $exceptions->add($e);
             }

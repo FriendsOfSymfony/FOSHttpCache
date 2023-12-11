@@ -43,7 +43,7 @@ class EventDispatchingHttpCacheTest extends TestCase
 
         $httpKernel = \Mockery::mock(HttpKernelInterface::class)
             ->shouldReceive('handle')
-            ->withArgs([$request, HttpKernelInterface::MASTER_REQUEST, true])
+            ->withArgs([$request, HttpKernelInterface::MAIN_REQUEST, true])
             ->andReturn($expectedResponse)
             ->getMock();
         $store = \Mockery::mock(StoreInterface::class)
