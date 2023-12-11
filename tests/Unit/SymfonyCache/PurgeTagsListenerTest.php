@@ -18,7 +18,8 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Toflar\Psr6HttpCacheStore\Psr6Store;
@@ -43,7 +44,7 @@ class PurgeTagsListenerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('You may not set both a request matcher and an IP');
         new PurgeTagsListener([
-            'client_matcher' => new RequestMatcher('/forbidden'),
+            'client_matcher' => new PathRequestMatcher('/forbidden'),
             'client_ips' => ['1.2.3.4'],
         ]);
     }
@@ -122,7 +123,7 @@ class PurgeTagsListenerTest extends TestCase
     {
         $kernel = $this->getUnusedKernelMock();
 
-        $matcher = new RequestMatcher('/forbidden');
+        $matcher = new PathRequestMatcher('/forbidden');
         $purgeTagsListener = new PurgeTagsListener(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo', 'PURGETAGS');
         $event = new CacheEvent($kernel, $request);
@@ -155,7 +156,7 @@ class PurgeTagsListenerTest extends TestCase
     public function testOtherMethod()
     {
         $kernel = $this->getUnusedKernelMock();
-        $matcher = \Mockery::mock(RequestMatcher::class)
+        $matcher = \Mockery::mock(RequestMatcherInterface::class)
             ->shouldNotReceive('isRequestAllowed')
             ->getMock();
 

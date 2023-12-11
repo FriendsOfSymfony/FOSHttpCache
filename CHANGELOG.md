@@ -3,6 +3,21 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+3.x
+===
+
+3.0.0 (unreleased)
+-----
+
+* Support Symfony 7
+* Drop support for Symfony < 6.4
+* Test with PHP 8.2 and 8.3
+* Drop support for PHP < 8.1
+* Parameter and return type declarations where possible.
+
+2.x
+===
+
 2.15.3
 ------
 

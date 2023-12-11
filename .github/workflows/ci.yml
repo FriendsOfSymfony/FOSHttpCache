@@ -22,12 +22,8 @@ jobs:
       matrix:
         varnish-version: ['6.6']
         varnish-modules-version: ['0.18.0']
-        php: ['7.3', '7.4', '8.0', '8.1']
+        php: ['8.1', '8.2', '8.3']
         include:
-        - php: '7.4'
-          symfony-version: '4.3.*'
-        - php: '7.4'
-          symfony-version: '5.0.*'
         - php: '8.1'
           symfony-version: '6.*'
         - php: '8.1'
@@ -66,42 +62,9 @@ jobs:
         run: |
           composer require --no-update ${DEPENDENCIES}
           composer update --prefer-dist --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
 
       - name: Execute tests
-        run: vendor/bin/simple-phpunit -v
-
-  legacyPHP:
-    name: PHP 7.2 Varnish 6
-    runs-on: ubuntu-20.04
-    env:
-      VARNISH_VERSION: '6.6'
-      VARNISH_MODULES_VERSION: '0.18.0'
-
-    steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.2
-          tools: composer:v2
-          coverage: none
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Varnish and Nginx
-        run: |
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-varnish.sh
-          sh ${GITHUB_WORKSPACE}/.github/workflows/setup-nginx.sh
-
-      - name: Install composer dependencies
-        run: |
-          composer require --no-update ${DEPENDENCIES}
-          composer update --prefer-dist --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
-
-      - name: Execute tests
-        run: vendor/bin/simple-phpunit -v
+        run: vendor/bin/phpunit
 
   varnish5:
     name: PHP ${{ matrix.php }} Legacy Varnish 5
@@ -114,7 +77,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '7.4'
+          - php: '8.1'
 
     steps:
       - name: Setup PHP
@@ -135,10 +98,9 @@ jobs:
       - name: Install composer dependencies
         run: |
           composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
 
       - name: Execute tests
-        run: vendor/bin/simple-phpunit -v
+        run: vendor/bin/phpunit
 
   varnish4:
     name: PHP ${{ matrix.php }} Legacy Varnish 4
@@ -151,7 +113,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '7.4'
+          - php: '8.1'
 
     steps:
       - name: Setup PHP
@@ -172,10 +134,9 @@ jobs:
       - name: Install composer dependencies
         run: |
           composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
 
       - name: Execute tests
-        run: vendor/bin/simple-phpunit -v
+        run: vendor/bin/phpunit
 
   lowest:
     name: PHP ${{ matrix.php }} Lowest, Varnish 3
@@ -188,7 +149,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2']
+        php: ['8.1']
 
     steps:
       - name: Setup PHP
@@ -209,10 +170,9 @@ jobs:
       - name: Install composer dependencies
         run: |
           composer update --prefer-dist --prefer-stable --prefer-lowest --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
 
       - name: Execute tests
-        run: vendor/bin/simple-phpunit -v
+        run: vendor/bin/phpunit
 
   coverage:
     name: Code Coverage
@@ -225,7 +185,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 7.4
+          php-version: 8.2
           tools: composer:v2
           coverage: xdebug
 
@@ -239,14 +199,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "friends-of-phpspec/phpspec-code-coverage:^4.3.2" --no-interaction --no-update
+          composer require "friends-of-phpspec/phpspec-code-coverage:^6.3.0" --no-interaction --no-update
           composer update --prefer-dist --no-interaction --no-progress
-          vendor/bin/simple-phpunit install
 
       - name: Execute tests
-        run: vendor/bin/simple-phpunit -v --coverage-text --coverage-clover build/coverage.xml
-
-      - name: Upload coverage
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml --revision=${{ github.event.pull_request.head.sha || github.sha }}
+        run: vendor/bin/phpunit --coverage-text --coverage-clover build/coverage.xml

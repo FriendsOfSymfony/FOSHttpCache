@@ -40,7 +40,7 @@ class CacheEventTest extends TestCase
         $this->assertSame($this->kernel, $event->getKernel());
         $this->assertSame($request, $event->getRequest());
         $this->assertNull($event->getResponse());
-        $this->assertSame(HttpKernelInterface::MASTER_REQUEST, $event->getRequestType());
+        $this->assertSame(HttpKernelInterface::MAIN_REQUEST, $event->getRequestType());
 
         $response = new Response();
 

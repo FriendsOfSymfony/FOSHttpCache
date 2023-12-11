@@ -17,7 +17,6 @@ use FOS\HttpCache\SymfonyCache\RefreshListener;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -58,10 +57,7 @@ class RefreshListenerTest extends TestCase
             ->method('fetch')
         ;
 
-        $matcher = class_exists(PathRequestMatcher::class)
-            ? new PathRequestMatcher('/forbidden')
-            : new RequestMatcher('/forbidden')
-        ;
+        $matcher = new PathRequestMatcher('/forbidden');
         $refreshListener = new RefreshListener(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo');
         $request->headers->addCacheControlDirective('no-cache');

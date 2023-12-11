@@ -18,7 +18,6 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,7 +36,7 @@ class PurgeListenerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('You may not set both a request matcher and an IP');
         new PurgeListener([
-            'client_matcher' => $this->createRequestMatcher('/forbidden'),
+            'client_matcher' => new PathRequestMatcher('/forbidden'),
             'client_ips' => ['1.2.3.4'],
         ]);
     }
@@ -131,7 +130,7 @@ class PurgeListenerTest extends TestCase
     {
         $kernel = $this->getUnusedKernelMock();
 
-        $matcher = $this->createRequestMatcher('/forbidden');
+        $matcher = new PathRequestMatcher('/forbidden');
         $purgeListener = new PurgeListener(['client_matcher' => $matcher]);
         $request = Request::create('http://example.com/foo', 'PURGE');
         $event = new CacheEvent($kernel, $request);
@@ -184,14 +183,6 @@ class PurgeListenerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('does not exist');
         new PurgeListener(['stuff' => '1.2.3.4']);
-    }
-
-    private function createRequestMatcher(string $path): RequestMatcherInterface
-    {
-        return class_exists(PathRequestMatcher::class)
-            ? new PathRequestMatcher($path)
-            : new RequestMatcher($path)
-        ;
     }
 
     /**

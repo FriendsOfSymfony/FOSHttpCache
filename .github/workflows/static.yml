@@ -10,15 +10,13 @@ jobs:
   phpstan-src:
     name: PHPStan src
     runs-on: ubuntu-latest
-    env:
-      REQUIRE_DEV: "true"
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Pull in optional dependencies
-        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^3.0
+        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^4.2
 
       - name: PHPStan
         uses: docker://oskarstark/phpstan-ga
@@ -36,7 +34,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Pull in optional dependencies
-        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^3.0
+        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^4.2
 
       - name: PHPStan
         uses: docker://oskarstark/phpstan-ga

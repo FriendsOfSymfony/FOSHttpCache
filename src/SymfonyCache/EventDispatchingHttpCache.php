@@ -40,17 +40,9 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 trait EventDispatchingHttpCache
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private ?EventDispatcherInterface $eventDispatcher = null;
 
-    /**
-     * Get event dispatcher.
-     *
-     * @return EventDispatcherInterface
-     */
-    public function getEventDispatcher()
+    public function getEventDispatcher(): EventDispatcherInterface
     {
         if (!$this->eventDispatcher) {
             $this->eventDispatcher = new EventDispatcher();
@@ -64,7 +56,7 @@ trait EventDispatchingHttpCache
      *
      * @see EventDispatcherInterface::addSubscriber
      */
-    public function addSubscriber(EventSubscriberInterface $subscriber)
+    public function addSubscriber(EventSubscriberInterface $subscriber): void
     {
         $this->getEventDispatcher()->addSubscriber($subscriber);
     }
@@ -74,7 +66,7 @@ trait EventDispatchingHttpCache
      *
      * @see EventDispatcherInterface::addListener
      */
-    public function addListener($eventName, $listener, $priority = 0)
+    public function addListener($eventName, $listener, $priority = 0): void
     {
         $this->getEventDispatcher()->addListener($eventName, $listener, $priority);
     }
@@ -84,7 +76,7 @@ trait EventDispatchingHttpCache
      *
      * Adding the Events::PRE_HANDLE and Events::POST_HANDLE events.
      */
-    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true): Response
+    public function handle(Request $request, $type = HttpKernelInterface::MAIN_REQUEST, $catch = true): Response
     {
         // trigger loading the CacheEvent to avoid fatal error when HttpKernel::loadClassCache is used.
         class_exists(CacheEvent::class);
@@ -102,10 +94,8 @@ trait EventDispatchingHttpCache
      * {@inheritdoc}
      *
      * Trigger event to alter response before storing it in the cache.
-     *
-     * @return void
      */
-    protected function store(Request $request, Response $response)
+    protected function store(Request $request, Response $response): void
     {
         $response = $this->dispatch(Events::PRE_STORE, $request, $response);
 
@@ -131,11 +121,11 @@ trait EventDispatchingHttpCache
      *
      * @param string        $name        Name of the event to trigger. One of the constants in FOS\HttpCache\SymfonyCache\Events
      * @param Response|null $response    If already available
-     * @param int           $requestType The request type (default HttpKernelInterface::MASTER_REQUEST)
+     * @param int           $requestType The request type (default HttpKernelInterface::MAIN_REQUEST)
      *
      * @return Response|null The response to return, which might be provided/altered by a listener
      */
-    protected function dispatch($name, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST): ?Response
+    protected function dispatch(string $name, Request $request, Response $response = null, int $requestType = HttpKernelInterface::MAIN_REQUEST): ?Response
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
             $event = new CacheEvent($this, $request, $response, $requestType);

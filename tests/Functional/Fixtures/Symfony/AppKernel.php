@@ -25,7 +25,7 @@ class AppKernel implements HttpKernelInterface
      *
      * {@inheritdoc}
      */
-    public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true): Response
+    public function handle(Request $request, $type = HttpKernelInterface::MAIN_REQUEST, $catch = true): Response
     {
         switch ($request->getPathInfo()) {
             case '/cache':
