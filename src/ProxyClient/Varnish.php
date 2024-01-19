@@ -69,6 +69,10 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
 
     public function invalidateTags(array $tags)
     {
+        if (!$tags) {
+            return $this;
+        }
+
         $banMode = self::TAG_BAN === $this->options['tag_mode'];
 
         // If using BAN's, escape each tag
