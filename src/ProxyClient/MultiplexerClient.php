@@ -107,6 +107,10 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
      */
     public function invalidateTags(array $tags)
     {
+        if (!$tags) {
+            return $this;
+        }
+
         $this->invoke(TagCapable::class, 'invalidateTags', [$tags]);
 
         return $this;

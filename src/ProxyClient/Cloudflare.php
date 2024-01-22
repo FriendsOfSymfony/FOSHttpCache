@@ -70,6 +70,10 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
      */
     public function invalidateTags(array $tags)
     {
+        if (!$tags) {
+            return $this;
+        }
+
         $this->queueRequest(
             'POST',
             sprintf(self::API_ENDPOINT.'/zones/%s/purge_cache', $this->options['zone_identifier']),

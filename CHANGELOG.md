@@ -14,6 +14,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 * Test with PHP 8.2 and 8.3
 * Drop support for PHP < 8.1
 * Parameter and return type declarations where possible.
+* Ignore empty tag lists passed to `TagCapable::invalidateTags` so you don't need to check if there are tags or not.
 
 2.x
 ===
