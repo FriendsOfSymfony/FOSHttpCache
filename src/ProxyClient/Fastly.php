@@ -62,6 +62,10 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      */
     public function invalidateTags(array $tags)
     {
+        if (!$tags) {
+            return $this;
+        }
+
         $url = sprintf(self::API_ENDPOINT.'/service/%s/purge', $this->options['service_identifier']);
         $headers = ['Accept' => 'application/json'];
         if (true === $this->options['soft_purge']) {

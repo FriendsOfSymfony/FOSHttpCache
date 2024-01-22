@@ -69,6 +69,10 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
 
     public function invalidateTags(array $tags)
     {
+        if (!$tags) {
+            return $this;
+        }
+
         $escapedTags = $this->escapeTags($tags);
 
         $chunkSize = $this->determineTagsPerHeader($escapedTags, ',');

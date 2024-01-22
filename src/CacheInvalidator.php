@@ -221,7 +221,7 @@ class CacheInvalidator
      *
      * @see TagCapable::tags()
      *
-     * @param array $tags Tags that should be removed/expired from the cache
+     * @param array $tags Tags that should be removed/expired from the cache. An empty tag list is ignored.
      *
      * @return $this
      *
@@ -232,6 +232,10 @@ class CacheInvalidator
         if (!$this->cache instanceof TagCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('Tags');
         }
+        if (!$tags) {
+            return $this;
+        }
+
         $this->cache->invalidateTags($tags);
 
         return $this;
