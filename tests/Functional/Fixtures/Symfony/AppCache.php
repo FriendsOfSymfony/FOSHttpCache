@@ -31,7 +31,7 @@ class AppCache extends HttpCache implements CacheInvalidation
 {
     use EventDispatchingHttpCache;
 
-    public function __construct(HttpKernelInterface $kernel, StoreInterface $store, SurrogateInterface $surrogate = null, array $options = [])
+    public function __construct(HttpKernelInterface $kernel, StoreInterface $store, ?SurrogateInterface $surrogate = null, array $options = [])
     {
         parent::__construct($kernel, $store, $surrogate, $options);
 

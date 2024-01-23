@@ -48,7 +48,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     public function __construct(
         Dispatcher $httpDispatcher,
         array $options = [],
-        RequestFactory $messageFactory = null
+        ?RequestFactory $messageFactory = null
     ) {
         if (!function_exists('json_encode')) {
             throw new \Exception('ext-json is required for fastly invalidation');

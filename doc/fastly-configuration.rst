@@ -1,7 +1,7 @@
 .. _fastly configuration:
 
 Fastly Configuration
--------------------
+--------------------
 
 Caching is enabled by default. All requests that are marked as cacheable will be cached.
 
@@ -12,7 +12,7 @@ Caching is enabled by default. All requests that are marked as cacheable will be
 Tagging
 ~~~~~~~
 
-Fastly supports :term:`tagging` out of the box.
+Fastly supports cache tagging out of the box.
 Configure the tag header to ``Surrogate-Keys``. (``fos_http_cache.tags.response_header`` if you use FOSHttpCacheBundle)
 
 Purge
