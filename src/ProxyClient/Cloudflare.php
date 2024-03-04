@@ -14,7 +14,7 @@ namespace FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
-use Http\Message\RequestFactory;
+use Psr\Http\Message\RequestFactoryInterface;
 
 /**
  * Cloudflare HTTP cache invalidator.
@@ -52,7 +52,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     public function __construct(
         Dispatcher $httpDispatcher,
         array $options = [],
-        RequestFactory $messageFactory = null
+        RequestFactoryInterface $messageFactory = null
     ) {
         if (!function_exists('json_encode')) {
             throw new \Exception('ext-json is required for cloudflare invalidation');

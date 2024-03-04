@@ -23,11 +23,13 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\HttpAsyncClient;
 use Http\Discovery\HttpAsyncClientDiscovery;
-use Http\Discovery\UriFactoryDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Message\UriFactory;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use Http\Discovery\UriFactoryDiscovery;
 
 /**
  * Queue and send HTTP requests with a Httplug asynchronous client.
@@ -42,7 +44,7 @@ class HttpDispatcher implements Dispatcher
     private $httpClient;
 
     /**
-     * @var UriFactory
+     * @var UriFactoryInterface
      */
     private $uriFactory;
 
@@ -85,14 +87,15 @@ class HttpDispatcher implements Dispatcher
      *                                         absolute URLs
      * @param HttpAsyncClient|null $httpClient Client capable of sending HTTP requests. If no
      *                                         client is supplied, a default one is created
-     * @param UriFactory|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
+     * @param UriFactoryInterface|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
      *                                         default one is created
      */
     public function __construct(
         array $servers,
         $baseUri = '',
         HttpAsyncClient $httpClient = null,
-        UriFactory $uriFactory = null
+        Psr17FactoryDiscovery $uriFactory = null,
+        UriFactoryDiscovery $legacyUriFactory = null
     ) {
         if (!$httpClient) {
             $httpClient = new PluginClient(
@@ -101,7 +104,10 @@ class HttpDispatcher implements Dispatcher
             );
         }
         $this->httpClient = $httpClient;
-        $this->uriFactory = $uriFactory ?: UriFactoryDiscovery::find();
+        $this->uriFactory = $uriFactory ?: Psr17FactoryDiscovery::findUriFactory();
+        if(!$this->uriFactory) {
+            $this->uriFactory = $uriFactory ?: $legacyUriFactory::find();
+        }
 
         $this->setServers($servers);
         $this->setBaseUri($baseUri);

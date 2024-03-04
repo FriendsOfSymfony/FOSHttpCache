@@ -12,7 +12,8 @@
 namespace FOS\HttpCache\ProxyClient;
 
 use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\RequestFactory;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -32,7 +33,7 @@ abstract class HttpProxyClient implements ProxyClient
     private $httpDispatcher;
 
     /**
-     * @var RequestFactory
+     * @var RequestFactoryInterface
      */
     private $requestFactory;
 
@@ -50,17 +51,20 @@ abstract class HttpProxyClient implements ProxyClient
      *
      * @param Dispatcher          $httpDispatcher Helper to send HTTP requests to caching proxy
      * @param array               $options        Options for this client
-     * @param RequestFactory|null $messageFactory Factory for PSR-7 messages. If none supplied,
+     * @param RequestFactoryInterface|null $messageFactory Factory for PSR-7 messages. If none supplied,
      *                                            a default one is created
      */
     public function __construct(
         Dispatcher $httpDispatcher,
         array $options = [],
-        RequestFactory $messageFactory = null
+        RequestFactoryInterface $messageFactory = null
     ) {
         $this->httpDispatcher = $httpDispatcher;
         $this->options = $this->configureOptions()->resolve($options);
-        $this->requestFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+        $this->requestFactory = $messageFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        if(!$this->requestFactory) {
+            $this->requestFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+        }
     }
 
     public function flush()
