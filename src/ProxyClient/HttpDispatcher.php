@@ -23,10 +23,10 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\HttpAsyncClient;
 use Http\Discovery\HttpAsyncClientDiscovery;
-use Http\Discovery\UriFactoryDiscovery;
-use Http\Message\UriFactory;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Promise\Promise;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -37,7 +37,7 @@ use Psr\Http\Message\UriInterface;
 class HttpDispatcher implements Dispatcher
 {
     private HttpAsyncClient $httpClient;
-    private UriFactory $uriFactory;
+    private UriFactoryInterface $uriFactory;
 
     /**
      * Queued requests.
@@ -76,14 +76,14 @@ class HttpDispatcher implements Dispatcher
      *                                         absolute URLs
      * @param HttpAsyncClient|null $httpClient Client capable of sending HTTP requests. If no
      *                                         client is supplied, a default one is created
-     * @param UriFactory|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
+     * @param UriFactoryInterface|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
      *                                         default one is created
      */
     public function __construct(
         array $servers,
         string $baseUri = '',
         ?HttpAsyncClient $httpClient = null,
-        ?UriFactory $uriFactory = null
+        ?UriFactoryInterface $uriFactory = null,
     ) {
         if (!$httpClient) {
             $httpClient = new PluginClient(
@@ -92,7 +92,7 @@ class HttpDispatcher implements Dispatcher
             );
         }
         $this->httpClient = $httpClient;
-        $this->uriFactory = $uriFactory ?: UriFactoryDiscovery::find();
+        $this->uriFactory = $uriFactory ?: Psr17FactoryDiscovery::findUriFactory();
 
         $this->setServers($servers);
         $this->setBaseUri($baseUri);

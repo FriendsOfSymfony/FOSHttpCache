@@ -18,6 +18,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Http\Message\RequestFactory;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Psr\Http\Message\RequestFactoryInterface;
 
 /**
  * Fastly HTTP cache invalidator.
@@ -50,7 +51,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     public function __construct(
         Dispatcher $dispatcher,
         array $options = [],
-        ?RequestFactory $messageFactory = null
+        ?RequestFactoryInterface $messageFactory = null
     ) {
         if (!function_exists('json_encode')) {
             throw new \Exception('ext-json is required for fastly invalidation');
