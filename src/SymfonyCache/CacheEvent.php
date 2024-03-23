@@ -39,7 +39,7 @@ class CacheEvent extends BaseEvent
      * @param Response|null     $response    the response, if available
      * @param int               $requestType the request type (default HttpKernelInterface::MAIN_REQUEST)
      */
-    public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null, int $requestType = HttpKernelInterface::MAIN_REQUEST)
+    public function __construct(CacheInvalidation $kernel, Request $request, ?Response $response = null, int $requestType = HttpKernelInterface::MAIN_REQUEST)
     {
         $this->kernel = $kernel;
         $this->request = $request;
@@ -49,10 +49,8 @@ class CacheEvent extends BaseEvent
 
     /**
      * Get the cache kernel that raised this event.
-     *
-     * @return CacheInvalidation
      */
-    public function getKernel()
+    public function getKernel(): CacheInvalidation
     {
         return $this->kernel;
     }

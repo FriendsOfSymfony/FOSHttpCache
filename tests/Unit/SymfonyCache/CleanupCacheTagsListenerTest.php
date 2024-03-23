@@ -59,7 +59,7 @@ class CleanupCacheTagsListenerTest extends TestCase
         $this->assertFalse($response->headers->has('Foobar'));
     }
 
-    private function createEvent(Response $response = null)
+    private function createEvent(?Response $response = null)
     {
         return new CacheEvent(
             $this->createMock(CacheInvalidation::class),

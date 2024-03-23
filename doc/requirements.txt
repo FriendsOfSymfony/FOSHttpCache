@@ -1,8 +1,6 @@
-sphinx==1.8.5
-git+https://github.com/fabpot/sphinx-php.git
-sphinx-rtd-theme==1.0.0
-sphinxcontrib-spelling
+sphinx
+sphinx-rtd-theme
+sphinx-tabs
 sphinxcontrib-phpdomain
+sphinxcontrib-spelling
 pyenchant
-docutils==0.17.1
-jinja2<3.1.0

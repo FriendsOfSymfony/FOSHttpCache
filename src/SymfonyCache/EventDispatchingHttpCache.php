@@ -125,7 +125,7 @@ trait EventDispatchingHttpCache
      *
      * @return Response|null The response to return, which might be provided/altered by a listener
      */
-    protected function dispatch(string $name, Request $request, Response $response = null, int $requestType = HttpKernelInterface::MAIN_REQUEST): ?Response
+    protected function dispatch(string $name, Request $request, ?Response $response = null, int $requestType = HttpKernelInterface::MAIN_REQUEST): ?Response
     {
         if ($this->getEventDispatcher()->hasListeners($name)) {
             $event = new CacheEvent($this, $request, $response, $requestType);

@@ -48,7 +48,7 @@ use PHP’s built in web server. Include the WebServerListener in your
 .. literalinclude:: ../phpunit.xml.dist
     :prepend:
         <?xml version="1.0" encoding="UTF-8"?>
-        <phpunit ...>
+        <phpunit>
             <listeners>
     :language: xml
     :start-after: <listeners>
@@ -80,7 +80,8 @@ Compare this library’s configuration to see how the constants are set:
 .. literalinclude:: ../phpunit.xml.dist
     :prepend:
         <?xml version="1.0" encoding="UTF-8"?>
-        <phpunit ...>
+        <phpunit>
+            <php>
     :language: xml
     :start-after: <php>
 
@@ -332,4 +333,4 @@ correctly::
     }
 
 For more ideas, see this library’s functional tests in the
-:source:`tests/Functional/` directory.
+``tests/Functional/`` directory.

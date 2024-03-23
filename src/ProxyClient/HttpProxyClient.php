@@ -56,7 +56,7 @@ abstract class HttpProxyClient implements ProxyClient
     public function __construct(
         Dispatcher $httpDispatcher,
         array $options = [],
-        RequestFactory $messageFactory = null
+        ?RequestFactory $messageFactory = null
     ) {
         $this->httpDispatcher = $httpDispatcher;
         $this->options = $this->configureOptions()->resolve($options);

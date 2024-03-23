@@ -433,7 +433,7 @@ The recommended usage of the proxy client is to create an instance of
 Implementation Notes
 --------------------
 
-Each client is an implementation of :source:`ProxyClient <src/ProxyClient/ProxyClient.php>`.
+Each client is an implementation of ``ProxyClient``.
 All other interfaces, ``PurgeCapable``, ``RefreshCapable``, ``BanCapable``, ``TagCapable``
 and ``ClearCapable`` extend this ``ProxyClient``. So each client implements at least
 one of the :ref:`invalidation methods <invalidation methods>` depending on
