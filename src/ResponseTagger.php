@@ -90,7 +90,7 @@ class ResponseTagger
      *
      * This concatenates all tags and ensures correct encoding.
      *
-     * @return string
+     * @erturn string
      */
     public function getTagsHeaderValue()
     {
@@ -104,7 +104,7 @@ class ResponseTagger
      *
      * @return string[]
      */
-    protected function parseTagsHeaderValue($headers): array
+    protected function parseTagsHeaderValue(array|string $headers)
     {
         if ($this->headerFormatter instanceof TagHeaderParser) {
             return $this->headerFormatter->parseTagsHeaderValue($headers);
@@ -118,7 +118,7 @@ class ResponseTagger
     /**
      * Check whether the tag handler has any tags to set on the response.
      *
-     * @return bool True if this handler will set at least one tag
+     * @return bool
      */
     public function hasTags()
     {
@@ -156,7 +156,7 @@ class ResponseTagger
      * This is usually called after adding the tags header to a response. It is
      * automatically called by the tagResponse method.
      */
-    public function clear()
+    public function clear(): void
     {
         $this->tags = [];
     }
@@ -168,9 +168,9 @@ class ResponseTagger
      * @param bool              $replace  Whether to replace the current tags
      *                                    on the response
      *
-     * @return ResponseInterface Tagged response
+     * @return ResponseInterface
      */
-    public function tagResponse(ResponseInterface $response, $replace = false)
+    public function tagResponse(ResponseInterface $response, bool $replace = false)
     {
         if (!$this->hasTags()) {
             return $response;

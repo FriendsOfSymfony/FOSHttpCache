@@ -39,7 +39,7 @@ class PurgeTagsListenerTest extends TestCase
     /**
      * This tests a sanity check in the AbstractControlledListener.
      */
-    public function testConstructorOverspecified()
+    public function testConstructorOverspecified(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('You may not set both a request matcher and an IP');
@@ -49,7 +49,7 @@ class PurgeTagsListenerTest extends TestCase
         ]);
     }
 
-    public function testBadRequestIfWrongStore()
+    public function testBadRequestIfWrongStore(): void
     {
         /** @var StoreInterface $store */
         $store = \Mockery::mock(StoreInterface::class)
@@ -73,7 +73,7 @@ class PurgeTagsListenerTest extends TestCase
         $this->assertSame('Store must be an instance of '.Psr6StoreInterface::class.'. Please check your proxy configuration.', $response->getContent());
     }
 
-    public function testPurgeAllowed()
+    public function testPurgeAllowed(): void
     {
         /** @var StoreInterface $store */
         $store = \Mockery::mock(Psr6StoreInterface::class)
@@ -96,7 +96,7 @@ class PurgeTagsListenerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function testPurgeAllowedMiss()
+    public function testPurgeAllowedMiss(): void
     {
         /** @var StoreInterface $store */
         $store = \Mockery::mock(Psr6StoreInterface::class)
@@ -119,7 +119,7 @@ class PurgeTagsListenerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function testPurgeForbiddenMatcher()
+    public function testPurgeForbiddenMatcher(): void
     {
         $kernel = $this->getUnusedKernelMock();
 
@@ -135,7 +135,7 @@ class PurgeTagsListenerTest extends TestCase
         $this->assertSame(400, $response->getStatusCode());
     }
 
-    public function testPurgeForbiddenIp()
+    public function testPurgeForbiddenIp(): void
     {
         $kernel = $this->getUnusedKernelMock();
 
@@ -153,7 +153,7 @@ class PurgeTagsListenerTest extends TestCase
     /**
      * Configuring the method to something else should make this listener skip the request.
      */
-    public function testOtherMethod()
+    public function testOtherMethod(): void
     {
         $kernel = $this->getUnusedKernelMock();
         $matcher = \Mockery::mock(RequestMatcherInterface::class)
@@ -171,17 +171,14 @@ class PurgeTagsListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    public function testInvalidConfiguration()
+    public function testInvalidConfiguration(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('does not exist');
         new PurgeTagsListener(['stuff' => '1.2.3.4']);
     }
 
-    /**
-     * @return CacheInvalidation|MockInterface
-     */
-    private function getKernelMock(StoreInterface $store)
+    private function getKernelMock(StoreInterface $store): CacheInvalidation&MockInterface
     {
         return \Mockery::mock(CacheInvalidation::class)
             ->shouldReceive('getStore')
@@ -190,10 +187,7 @@ class PurgeTagsListenerTest extends TestCase
             ->getMock();
     }
 
-    /**
-     * @return CacheInvalidation|MockInterface
-     */
-    private function getUnusedKernelMock()
+    private function getUnusedKernelMock(): CacheInvalidation&MockInterface
     {
         return \Mockery::mock(CacheInvalidation::class)
             ->shouldNotReceive('getStore')

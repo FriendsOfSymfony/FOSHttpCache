@@ -22,10 +22,7 @@ class FastlyTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var HttpDispatcher|MockInterface
-     */
-    private $httpDispatcher;
+    private HttpDispatcher&MockInterface $httpDispatcher;
 
     protected function setUp(): void
     {
@@ -39,7 +36,7 @@ class FastlyTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getProxyClient(array $options = [])
+    protected function getProxyClient(array $options = []): Fastly
     {
         $options = [
             'authentication_token' => 'o43r8j34hr',
@@ -49,7 +46,7 @@ class FastlyTest extends TestCase
         return new Fastly($this->httpDispatcher, $options);
     }
 
-    public function testInvalidateTagsDefaultSoftPurge()
+    public function testInvalidateTagsDefaultSoftPurge(): void
     {
         $fastly = $this->getProxyClient();
 
@@ -76,7 +73,7 @@ class FastlyTest extends TestCase
         $fastly->invalidateTags(['post-1', 'post,type-3']);
     }
 
-    public function testInvalidateTagsHardPurge()
+    public function testInvalidateTagsHardPurge(): void
     {
         $fastly = $this->getProxyClient(['soft_purge' => false]);
 
@@ -99,7 +96,7 @@ class FastlyTest extends TestCase
         $fastly->invalidateTags(['post-1', 'post,type-3']);
     }
 
-    public function testInvalidateTagsHeadersSplit()
+    public function testInvalidateTagsHeadersSplit(): void
     {
         $fastly = $this->getProxyClient();
 
@@ -112,7 +109,7 @@ class FastlyTest extends TestCase
         $fastly->invalidateTags($tags);
     }
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $fastly = $this->getProxyClient();
 
@@ -139,7 +136,7 @@ class FastlyTest extends TestCase
         $fastly->purge('/url', ['X-Foo' => 'bar']);
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $fastly = $this->getProxyClient();
 
@@ -159,7 +156,7 @@ class FastlyTest extends TestCase
         $fastly->refresh('/fresh');
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $fastly = $this->getProxyClient();
 

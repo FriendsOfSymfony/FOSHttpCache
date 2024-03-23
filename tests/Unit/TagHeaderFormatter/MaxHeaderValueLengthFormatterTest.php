@@ -18,13 +18,13 @@ use PHPUnit\Framework\TestCase;
 
 class MaxHeaderValueLengthFormatterTest extends TestCase
 {
-    public function testGetTagsHeaderName()
+    public function testGetTagsHeaderName(): void
     {
         $formatter = $this->getFormatter(50);
         $this->assertSame('X-Cache-Tags', $formatter->getTagsHeaderName());
     }
 
-    public function testNotTooLong()
+    public function testNotTooLong(): void
     {
         $formatter = $this->getFormatter(50);
         $tags = ['foo', 'bar', 'baz'];
@@ -35,16 +35,15 @@ class MaxHeaderValueLengthFormatterTest extends TestCase
     /**
      * @dataProvider tooLongProvider
      *
-     * @param int      $maxLength
      * @param string[] $tags
      */
-    public function testTooLong($maxLength, $tags, $expectedHeaderValue)
+    public function testTooLong(int $maxLength, array $tags, string|array $expectedHeaderValue): void
     {
         $formatter = $this->getFormatter($maxLength);
         $this->assertSame($expectedHeaderValue, $formatter->getTagsHeaderValue($tags));
     }
 
-    public function testOneTagExceedsMaximum()
+    public function testOneTagExceedsMaximum(): void
     {
         $this->expectException(InvalidTagException::class);
         $this->expectExceptionMessage('You configured a maximum header length of 3 but the tag "way-too-long-tag" is too long.');
@@ -53,12 +52,7 @@ class MaxHeaderValueLengthFormatterTest extends TestCase
         $formatter->getTagsHeaderValue(['way-too-long-tag']);
     }
 
-    /**
-     * @param int $maxLength
-     *
-     * @return MaxHeaderValueLengthFormatter
-     */
-    private function getFormatter($maxLength)
+    private function getFormatter(int $maxLength): MaxHeaderValueLengthFormatter
     {
         return new MaxHeaderValueLengthFormatter(
             new CommaSeparatedTagHeaderFormatter(),
@@ -66,7 +60,7 @@ class MaxHeaderValueLengthFormatterTest extends TestCase
         );
     }
 
-    public function tooLongProvider()
+    public function tooLongProvider(): array
     {
         return [
             [3, ['foo', 'bar', 'baz'], ['foo', 'bar', 'baz']],

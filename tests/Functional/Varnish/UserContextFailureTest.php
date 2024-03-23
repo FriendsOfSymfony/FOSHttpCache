@@ -23,10 +23,8 @@ class UserContextFailureTest extends VarnishTestCase
 {
     /**
      * Can be "cache" or "failure" and is used to determine the correct .vcl file.
-     *
-     * @var string
      */
-    private $mode = 'cache';
+    private string $mode = 'cache';
 
     public function setUp(): void
     {
@@ -41,7 +39,7 @@ class UserContextFailureTest extends VarnishTestCase
     /**
      * The user hash must not be exposed to the client under any circumstances.
      */
-    public function testUserContextNoExposeHash()
+    public function testUserContextNoExposeHash(): void
     {
         $response = $this->getResponse(
             '/user_context_hash_nocache.php',
@@ -57,7 +55,7 @@ class UserContextFailureTest extends VarnishTestCase
     /**
      * A hash sent by the client must not be used by varnish.
      */
-    public function testUserContextNoForgedHash()
+    public function testUserContextNoForgedHash(): void
     {
         $response = $this->getResponse(
             '/user_context_hash_nocache.php',
@@ -72,7 +70,7 @@ class UserContextFailureTest extends VarnishTestCase
     /**
      * A request on POST should not use the context.
      */
-    public function testUserContextNotUsed()
+    public function testUserContextNotUsed(): void
     {
         // First request in GET
         $this->getResponse('/user_context.php', ['Cookie' => '0=foo']);
@@ -89,13 +87,13 @@ class UserContextFailureTest extends VarnishTestCase
         $this->assertMiss($postResponse);
     }
 
-    public function testHashRequestFailure()
+    public function testHashRequestFailure(): void
     {
         $response = $this->getResponse('/user_context.php', ['Cookie' => '0=foo']);
         $this->assertEquals(503, $response->getStatusCode());
     }
 
-    protected function getConfigFile()
+    protected function getConfigFile(): ?string
     {
         switch ((int) $this->getVarnishVersion()) {
             case 3:

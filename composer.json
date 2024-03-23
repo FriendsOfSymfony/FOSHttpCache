@@ -40,7 +40,8 @@
         "phpunit/phpunit": "^9"
     },
     "conflict": {
-        "toflar/psr6-symfony-http-cache-store": "<2.2.1"
+        "toflar/psr6-symfony-http-cache-store": "<2.2.1",
+        "phpunit/phpunit": "<8"
     },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",

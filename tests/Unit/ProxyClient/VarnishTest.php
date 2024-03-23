@@ -23,17 +23,14 @@ class VarnishTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var HttpDispatcher|MockInterface
-     */
-    private $httpDispatcher;
+    private HttpDispatcher&MockInterface $httpDispatcher;
 
     protected function setUp(): void
     {
         $this->httpDispatcher = \Mockery::mock(HttpDispatcher::class);
     }
 
-    public function testBanHeaders()
+    public function testBanHeaders(): void
     {
         $options = [
             'default_ban_headers' => [
@@ -67,7 +64,7 @@ class VarnishTest extends TestCase
         ]);
     }
 
-    public function testBanPath()
+    public function testBanPath(): void
     {
         $varnish = new Varnish($this->httpDispatcher);
         $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
@@ -87,7 +84,7 @@ class VarnishTest extends TestCase
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
     }
 
-    public function testPurgekeys()
+    public function testPurgekeys(): void
     {
         $options = [
             'tag_mode' => 'purgekeys',
@@ -109,7 +106,7 @@ class VarnishTest extends TestCase
         $varnish->invalidateTags(['post-1', 'post,type-3']);
     }
 
-    public function testHardPurgekeys()
+    public function testHardPurgekeys(): void
     {
         $options = [
             'tag_mode' => 'purgekeys',
@@ -132,7 +129,7 @@ class VarnishTest extends TestCase
         $varnish->invalidateTags(['post-1', 'post,type-3']);
     }
 
-    public function testBanPathEmptyHost()
+    public function testBanPathEmptyHost(): void
     {
         $varnish = new Varnish($this->httpDispatcher);
 
@@ -141,7 +138,7 @@ class VarnishTest extends TestCase
         $varnish->banPath('/articles/.*', 'text/html', $hosts);
     }
 
-    public function testTagsHeaders()
+    public function testTagsHeaders(): void
     {
         $options = [
             'default_ban_headers' => [
@@ -170,7 +167,7 @@ class VarnishTest extends TestCase
         $varnish->invalidateTags(['mytag', 'othertag']);
     }
 
-    public function testTagsHeadersEscapingAndCustomHeader()
+    public function testTagsHeadersEscapingAndCustomHeader(): void
     {
         $options = [
             'tags_header' => 'X-Tags-TRex',
@@ -192,7 +189,7 @@ class VarnishTest extends TestCase
         $varnish->invalidateTags(['post-1', 'post,type-3']);
     }
 
-    public function testTagsHeadersSplit()
+    public function testTagsHeadersSplit(): void
     {
         $varnish = new Varnish($this->httpDispatcher, ['header_length' => 7]);
         $this->httpDispatcher->shouldReceive('invalidate')->twice();
@@ -200,7 +197,7 @@ class VarnishTest extends TestCase
         $varnish->invalidateTags(['post-1', 'post-2']);
     }
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $varnish = new Varnish($this->httpDispatcher);
 
@@ -221,7 +218,7 @@ class VarnishTest extends TestCase
         $varnish->purge('/url', ['X-Foo' => 'bar']);
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $varnish = new Varnish($this->httpDispatcher);
         $this->httpDispatcher->shouldReceive('invalidate')->once()->with(

@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
  */
 class EventDispatchingHttpCacheTest extends EventDispatchingHttpCacheTestCase
 {
-    protected function getCacheClass()
+    protected function getCacheClass(): string
     {
         return AppCache::class;
     }

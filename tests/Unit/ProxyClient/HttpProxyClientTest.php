@@ -24,9 +24,9 @@ class HttpProxyClientTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testFlush()
+    public function testFlush(): void
     {
-        /** @var HttpDispatcher|MockInterface $httpDispatcher */
+        /** @var HttpDispatcher&MockInterface $httpDispatcher */
         $httpDispatcher = \Mockery::mock(HttpDispatcher::class)
             ->shouldReceive('flush')
             ->once()

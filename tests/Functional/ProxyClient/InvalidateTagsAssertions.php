@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
-use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 
 /**
@@ -22,10 +21,10 @@ trait InvalidateTagsAssertions
     /**
      * Asserting that purging cache tags leads to invalidated content.
      *
-     * @param PurgeCapable $proxyClient The client to send purge instructions to the cache
-     * @param string       $path        The path to get and purge, defaults to /tags.php
+     * @param TagCapable $proxyClient The client to send purge instructions to the cache
+     * @param string     $path        The path to get and purge, defaults to /tags.php
      */
-    protected function assertInvalidateTags(TagCapable $proxyClient, array $cacheTags, $path = '/tags.php')
+    protected function assertInvalidateTags(TagCapable $proxyClient, array $cacheTags, string $path = '/tags.php'): void
     {
         $this->assertMiss($this->getResponse($path));
         $this->assertHit($this->getResponse($path));

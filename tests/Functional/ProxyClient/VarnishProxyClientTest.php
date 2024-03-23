@@ -24,47 +24,47 @@ class VarnishProxyClientTest extends VarnishTestCase
     use PurgeAssertions;
     use RefreshAssertions;
 
-    public function testBanAll()
+    public function testBanAll(): void
     {
         $this->assertBanAll($this->getProxyClient(), Varnish::HTTP_HEADER_URL);
     }
 
-    public function testBanHost()
+    public function testBanHost(): void
     {
         $this->assertBanHost($this->getProxyClient(), Varnish::HTTP_HEADER_HOST, $this->getHostName());
     }
 
-    public function testBanPathAll()
+    public function testBanPathAll(): void
     {
         $this->assertBanPath($this->getProxyClient());
     }
 
-    public function testBanPathContentType()
+    public function testBanPathContentType(): void
     {
         $this->assertBanPathContentType($this->getProxyClient());
     }
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $this->assertPurge($this->getProxyClient());
     }
 
-    public function testPurgeContentType()
+    public function testPurgeContentType(): void
     {
         $this->assertPurgeContentType($this->getProxyClient());
     }
 
-    public function testPurgeHost()
+    public function testPurgeHost(): void
     {
         $this->assertPurgeHost($this->getProxyClient(), 'http://localhost:6181');
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $this->assertRefresh($this->getProxyClient());
     }
 
-    public function testRefreshContentType()
+    public function testRefreshContentType(): void
     {
         $this->assertRefreshContentType($this->getProxyClient());
     }

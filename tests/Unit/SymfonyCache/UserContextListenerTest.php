@@ -16,6 +16,7 @@ use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,10 +25,7 @@ class UserContextListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var CacheInvalidation|MockInterface
-     */
-    private $kernel;
+    private CacheInvalidation&MockInterface $kernel;
 
     public function setUp(): void
     {
@@ -36,15 +34,12 @@ class UserContextListenerTest extends TestCase
 
     /**
      * UserContextListener default options to simulate the correct headers.
-     *
-     * @return array
      */
-    public function provideConfigOptions()
+    public function provideConfigOptions(): array
     {
         $userContextListener = new UserContextListener();
         $ref = new \ReflectionObject($userContextListener);
         $prop = $ref->getProperty('options');
-        $prop->setAccessible(true);
         $options = $prop->getValue($userContextListener);
 
         $custom = [
@@ -63,7 +58,7 @@ class UserContextListenerTest extends TestCase
     /**
      * @dataProvider provideConfigOptions
      */
-    public function testGenerateUserHashNotAllowed($arg, $options)
+    public function testGenerateUserHashNotAllowed(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
 
@@ -82,7 +77,7 @@ class UserContextListenerTest extends TestCase
     /**
      * @dataProvider provideConfigOptions
      */
-    public function testPassingUserHashNotAllowed($arg, $options)
+    public function testPassingUserHashNotAllowed(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
 
@@ -101,7 +96,7 @@ class UserContextListenerTest extends TestCase
     /**
      * @dataProvider provideConfigOptions
      */
-    public function testUserHashAnonymous($arg, $options)
+    public function testUserHashAnonymous(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
         $request = new Request();
@@ -122,7 +117,7 @@ class UserContextListenerTest extends TestCase
 
             $expectedContextHash = 'my_generated_hash';
             // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
-            /** @var Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
+            /** @var Response&MockObject $hashResponse */
             $hashResponse = $this->getMockBuilder(Response::class)
                 ->setMethods(['prepare'])
                 ->getMock();
@@ -134,7 +129,7 @@ class UserContextListenerTest extends TestCase
                 ->once()
                 ->with(
                     \Mockery::on(
-                        function (Request $request) use ($that, $hashRequest) {
+                        static function (Request $request) use ($that, $hashRequest) {
                             // we need to call some methods to get the internal fields initialized
                             $request->getMethod();
                             $request->getPathInfo();
@@ -167,7 +162,7 @@ class UserContextListenerTest extends TestCase
     /**
      * @dataProvider provideConfigOptions
      */
-    public function testUserHashUserWithSession($arg, $options)
+    public function testUserHashUserWithSession(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
 
@@ -193,7 +188,7 @@ class UserContextListenerTest extends TestCase
 
         $expectedContextHash = 'my_generated_hash';
         // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
-        /** @var Response|\PHPUnit_Framework_MockObject_MockObject $hashResponse */
+        /** @var Response&MockObject $hashResponse */
         $hashResponse = $this->getMockBuilder(Response::class)
             ->setMethods(['prepare'])
             ->getMock();
@@ -205,7 +200,7 @@ class UserContextListenerTest extends TestCase
             ->once()
             ->with(
                 \Mockery::on(
-                    function (Request $request) use ($that, $hashRequest) {
+                    static function (Request $request) use ($that, $hashRequest) {
                         // we need to call some methods to get the internal fields initialized
                         $request->getMethod();
                         $request->getPathInfo();
@@ -234,7 +229,7 @@ class UserContextListenerTest extends TestCase
      *
      * This test does not have authentication headers and thus considers the request anonymous.
      */
-    public function testUserHashUserIgnoreCookies()
+    public function testUserHashUserIgnoreCookies(): void
     {
         $userContextListener = new UserContextListener([
             'session_name_prefix' => false,
@@ -262,7 +257,7 @@ class UserContextListenerTest extends TestCase
     /**
      * @dataProvider provideConfigOptions
      */
-    public function testUserHashUserWithAuthorizationHeader($arg, $options)
+    public function testUserHashUserWithAuthorizationHeader(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
 
@@ -311,14 +306,14 @@ class UserContextListenerTest extends TestCase
         $this->assertSame($expectedContextHash, $request->headers->get($options['user_hash_header']));
     }
 
-    public function testInvalidConfiguration()
+    public function testInvalidConfiguration(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('does not exist');
         new UserContextListener(['foo' => 'bar']);
     }
 
-    public function testHttpMethodParameterOverride()
+    public function testHttpMethodParameterOverride(): void
     {
         $userContextListener = new UserContextListener();
         $request = Request::create('/foo', 'POST', ['_method' => 'PUT']);

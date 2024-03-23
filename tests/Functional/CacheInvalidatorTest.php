@@ -19,7 +19,7 @@ use FOS\HttpCache\Test\VarnishTestCase;
  */
 class CacheInvalidatorTest extends VarnishTestCase
 {
-    public function testInvalidateTags()
+    public function testInvalidateTags(): void
     {
         if (getenv('VARNISH_MODULES_VERSION')) {
             $uri = '/tags_xkey.php';

@@ -24,21 +24,21 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CleanupCacheTagsListenerTest extends TestCase
 {
-    public function testSubscribedEvents()
+    public function testSubscribedEvents(): void
     {
         $this->assertEquals([
             Events::POST_HANDLE => 'removeTagsHeader',
         ], CleanupCacheTagsListener::getSubscribedEvents());
     }
 
-    public function testNoResponse()
+    public function testNoResponse(): void
     {
         $listener = new CleanupCacheTagsListener();
         $listener->removeTagsHeader($this->createEvent());
         $this->addToAssertionCount(1); // Nothing should happen, just asserting the "response is null" case
     }
 
-    public function testResponseHeaderIsCleanedUp()
+    public function testResponseHeaderIsCleanedUp(): void
     {
         // Default cache tags header
         $response = new Response();
@@ -59,7 +59,7 @@ class CleanupCacheTagsListenerTest extends TestCase
         $this->assertFalse($response->headers->has('Foobar'));
     }
 
-    private function createEvent(?Response $response = null)
+    private function createEvent(?Response $response = null): CacheEvent
     {
         return new CacheEvent(
             $this->createMock(CacheInvalidation::class),

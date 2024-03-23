@@ -25,10 +25,7 @@ class CloudflareTest extends TestCase
     public const AUTH_TOKEN = 'abc123';
     public const ZONE_IDENTIFIER = 'abcdef123abcdef123';
 
-    /**
-     * @var HttpDispatcher|MockInterface
-     */
-    private $httpDispatcher;
+    private HttpDispatcher&MockInterface $httpDispatcher;
 
     protected function setUp(): void
     {
@@ -42,7 +39,7 @@ class CloudflareTest extends TestCase
         parent::tearDown();
     }
 
-    protected function getProxyClient(array $options = [])
+    protected function getProxyClient(array $options = []): Cloudflare
     {
         $options = [
             'authentication_token' => self::AUTH_TOKEN,
@@ -52,7 +49,7 @@ class CloudflareTest extends TestCase
         return new Cloudflare($this->httpDispatcher, $options);
     }
 
-    public function testInvalidateTagsPurge()
+    public function testInvalidateTagsPurge(): void
     {
         $cloudflare = $this->getProxyClient();
 
@@ -74,7 +71,7 @@ class CloudflareTest extends TestCase
         $cloudflare->invalidateTags(['tag-one', 'tag-two']);
     }
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $cloudflare = $this->getProxyClient();
 
@@ -105,7 +102,7 @@ class CloudflareTest extends TestCase
         $cloudflare->flush();
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $cloudflare = $this->getProxyClient();
 
