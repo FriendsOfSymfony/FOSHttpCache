@@ -5,6 +5,7 @@ cacheable
 config
 css
 Fastly
+formatter
 getter
 getters
 hostname

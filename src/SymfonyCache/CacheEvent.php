@@ -51,7 +51,7 @@ class CacheEvent extends BaseEvent
      * @param Response|null     $response    the response, if available
      * @param int               $requestType the request type (default HttpKernelInterface::MASTER_REQUEST)
      */
-    public function __construct(CacheInvalidation $kernel, Request $request, Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
+    public function __construct(CacheInvalidation $kernel, Request $request, ?Response $response = null, $requestType = HttpKernelInterface::MASTER_REQUEST)
     {
         $this->kernel = $kernel;
         $this->request = $request;

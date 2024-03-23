@@ -74,7 +74,6 @@ up one header into multiple ones.
 This library ships with a ``MaxHeaderValueLengthFormatter`` that does
 the splitting for you. You give it an inner formatter and the maximum length like so::
 
-
     use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
     use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter
 

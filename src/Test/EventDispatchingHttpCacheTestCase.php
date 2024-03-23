@@ -43,7 +43,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      *
      * @return CacheInvalidation|EventDispatchingHttpCache|MockObject
      */
-    protected function getHttpCachePartialMock(array $mockedMethods = null)
+    protected function getHttpCachePartialMock(?array $mockedMethods = null)
     {
         $mock = $this
             ->getMockBuilder($this->getCacheClass())

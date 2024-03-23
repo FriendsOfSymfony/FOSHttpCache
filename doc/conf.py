@@ -11,12 +11,6 @@ lexers['php'] = PhpLexer(startinline=True, linenos=1)
 lexers['varnish3'] = CLexer()
 lexers['varnish4'] = CLexer()
 
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if not on_rtd:  # only import and set the theme if we're building docs locally
-    import sphinx_rtd_theme
-    html_theme = 'sphinx_rtd_theme'
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-
 primary_domain = 'php'
 highlight_language = 'php'
 
@@ -29,10 +23,9 @@ highlight_language = 'php'
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     'sphinx.ext.coverage',
-    'sphinx.ext.extlinks',
+    'sphinx_rtd_theme',
+    'sphinx_tabs.tabs',
     'sphinxcontrib.phpdomain',
-    'sensio.sphinx.configurationblock',
-    'sensio.sphinx.phpcode',
     'sphinxcontrib.spelling'
 ]
 
@@ -102,6 +95,8 @@ pygments_style = 'sphinx'
 
 # -- Options for HTML output ---------------------------------------------------
 
+html_theme = 'sphinx_rtd_theme'
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -132,12 +127,8 @@ html_short_title = "FOSHttpCache"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-html_js_files = [
-    'tabs.js',
-]
-
 html_css_files = [
-    'tabs.css',
+    'custom.css',
     'fos.css',
 ]
 
@@ -226,48 +217,7 @@ latex_documents = [
 # If false, no module index is generated.
 #latex_domain_indices = True
 
-
-# -- Options for manual page output --------------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    ('index', 'foshttpcache', 'FOSHttpCache Documentation',
-     ['David Buchmann, David de Boer'], 1)
-]
-
-# If true, show URL addresses after external links.
-#man_show_urls = False
-
-
-# -- Options for Texinfo output ------------------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-  ('index', 'FOSHttpCache', 'FOSHttpCache Documentation',
-   'David Buchmann, David de Boer', 'FOSHttpCache', 'One line description of project.',
-   'Miscellaneous'),
-]
-
-# Documents to append as an appendix to all manuals.
-#texinfo_appendices = []
-
-# If false, no module index is generated.
-#texinfo_domain_indices = True
-
-# How to display URL addresses: 'footnote', 'no', or 'inline'.
-#texinfo_show_urls = 'footnote'
-
 rst_epilog = """
 .. _FOSHttpCacheBundle: https://github.com/FriendsOfSymfony/FOSHttpCacheBundle
 .. _GitHub: https://github.com/FriendsOfSymfony/FOSHttpCache
 """
-
-extlinks = {'source': ('https://github.com/FriendsOfSymfony/FOSHttpCache/blob/master/%s', '') }
-
-config_block = {
-    'varnish3': 'Varnish 3',
-    'varnish4': 'Varnish 4 - 6'
-}
