@@ -178,11 +178,6 @@ one of ``client_ips`` or ``client_matcher``*.
 Tagging
 ~~~~~~~
 
-.. versionadded:: 2.1
-
-    Support for tag invalidation with Symfony HttpCache has been added in
-    version 2.1.
-
 To support :doc:`cache tags <response-tagging>`, require the additional package
 ``toflar/psr6-symfony-http-cache-store:^1.0`` with composer and register the
 ``PurgeTagsListener`` in your cache kernel. The purge listener needs your cache

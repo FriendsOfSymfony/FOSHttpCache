@@ -14,12 +14,6 @@ extend your own (or your framework’s) base test classes. For convenience, you
 can also extend the FOSHttpCache base test class suitable for your proxy
 server, which includes a sensible set of traits.
 
-.. versionadded:: 2.1
-
-    The testing has been updated to support PHPUnit 6 in version 2.1. If you
-    an older version of FOSHttpCache and want to use the features described in
-    this chapter, you need to use PHPUnit 5 to run the tests.
-
 By using the traits, you get:
 
 * independent tests: all previously cached content is removed in the test’s
