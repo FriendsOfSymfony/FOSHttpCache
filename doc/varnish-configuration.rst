@@ -4,8 +4,8 @@ Varnish Configuration
 ---------------------
 
 Below you will find detailed Varnish configuration recommendations for the
-features provided by this library. The configuration is provided for Varnish 3,
-4 and 5.
+features provided by this library. The configuration is provided for Varnish 4 and newer,
+and - when it is different - for Varnish 3.
 
 Basic Varnish Configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,7 +16,7 @@ which IPs are allowed to issue invalidation requests. To use the provided
 configuration fragments, this ACL has to be named ``invalidators``. The most
 simple ACL, valid for Varnish version 3 or better, looks as follows:
 
-.. code-block:: varnish3
+.. code-block:: C
 
     # /etc/varnish/your_varnish.vcl
 
@@ -57,9 +57,9 @@ specified by the ``Vary`` header).
 Subroutines are provided in ``resources/config/varnish-[version]/fos_purge.vcl``.
 To enable this feature, add the following to ``your_varnish.vcl``:
 
-.. configuration-block::
+.. tabs::
 
-    .. code-block:: varnish4
+    .. code-tab:: C Varnish 4-6
 
         include "path-to-config/varnish/fos_purge.vcl";
 
@@ -67,7 +67,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_purge_recv;
         }
 
-    .. code-block:: varnish3
+    .. code-tab:: C Varnish 3
 
         include "path-to-config/varnish-3/fos_purge.vcl";
 
@@ -98,9 +98,9 @@ its variants.
 Subroutines are provided in ``resources/config/varnish-[version]/fos_refresh.vcl``.
 To enable this feature, add the following to ``your_varnish.vcl``:
 
-.. configuration-block::
+.. tabs::
 
-    .. code-block:: varnish4
+    .. code-tab:: C Varnish 4-6
 
         include "path-to-config/varnish/fos_refresh.vcl";
 
@@ -108,7 +108,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_refresh_recv;
         }
 
-    .. code-block:: varnish3
+    .. code-tab:: C Varnish 3
 
         include "path-to-config/varnish-3/fos_refresh.vcl";
 
@@ -127,9 +127,9 @@ Banning invalidates whole groups of cached entries with regular expressions.
 Subroutines are provided in ``resources/config/varnish-[version]/fos_ban.vcl``
 To enable this feature, add the following to ``your_varnish.vcl``:
 
-.. configuration-block::
+.. tabs::
 
-    .. code-block:: varnish4
+    .. code-tab:: C Varnish 4-6
 
         include "path-to-config/varnish/fos_ban.vcl";
 
@@ -145,7 +145,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_ban_deliver;
         }
 
-    .. code-block:: varnish3
+    .. code-tab:: C Varnish 3
 
         include "path-to-config/varnish-3/fos_ban.vcl";
 
@@ -209,7 +209,7 @@ To use ``xkey``, :ref:`configure the Varnish Client for xkey <varnish_custom_tag
 and :ref:`the response tagger to use the xkey header <response_tagger_optional_parameters>`,
 and include ``resources/config/varnish/fos_tags_xkey.vcl`` in your VCL:
 
-.. code-block:: varnish4
+.. code-block:: C
 
     include "path-to-config/varnish/fos_tags_xkey.vcl";
 
@@ -237,17 +237,24 @@ invalidate in your :ref:`cache invalidator configuration <varnish_custom_tags_he
 you have to write your own VCL code for tag invalidation. Your custom VCL will
 look like this:
 
-.. configuration-block::
+.. tabs::
+    .. tab:: Varnish 4-6
 
-    .. literalinclude:: ../resources/config/varnish/fos_ban.vcl
-        :language: varnish4
-        :emphasize-lines: 17-23,50-51
-        :linenos:
+        .. code-block:: C
 
-    .. literalinclude:: ../resources/config/varnish-3/fos_ban.vcl
-        :language: varnish3
-        :emphasize-lines: 17-23,50-51
-        :linenos:
+            .. literalinclude:: ../resources/config/varnish/fos_ban.vcl
+                :language: C
+                :emphasize-lines: 17-23,50-51
+                :linenos:
+
+    .. tab:: Varnish 3
+
+        .. code-block:: C
+
+            .. literalinclude:: ../resources/config/varnish-3/fos_ban.vcl
+                :language: C
+                :emphasize-lines: 17-23,50-51
+                :linenos:
 
 .. hint::
 
@@ -284,9 +291,9 @@ configuration to provide this. If you need a different URL, write your own
 
 To enable this feature, add the following to ``your_varnish.vcl``:
 
-.. configuration-block::
+.. tabs::
 
-    .. code-block:: varnish4
+    .. code-tab:: C Varnish 4-6
 
         include "path-to-config/varnish/fos_user_context.vcl";
         include "path-to-config/varnish/fos_user_context_url.vcl";
@@ -307,7 +314,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_user_context_deliver;
         }
 
-    .. code-block:: varnish3
+    .. code-tab:: C Varnish 3
 
         include "path-to-config/varnish-3/fos_user_context.vcl";
         include "path-to-config/varnish/fos_user_context_url.vcl";
@@ -379,7 +386,7 @@ To make the hash request cacheable, you must extract a stable user session id
 *before* calling ``fos_user_context_recv``. You can do this as
 `explained in the Varnish documentation`_:
 
-.. code-block:: varnish4
+.. code-block:: C
     :linenos:
 
     sub vcl_recv {
@@ -409,9 +416,9 @@ Custom TTL
 Subroutines are provided in ``resources/config/varnish-[version]/fos_custom_ttl.vcl``.
 Add the following to ``your_varnish.vcl``:
 
-.. configuration-block::
+.. tabs::
 
-    .. code-block:: varnish4
+    .. code-tab:: C Varnish 4-6
 
         include "path-to-config/varnish/fos_custom_ttl.vcl";
 
@@ -419,7 +426,7 @@ Add the following to ``your_varnish.vcl``:
             call fos_custom_ttl_backend_response;
         }
 
-    .. code-block:: varnish3
+    .. code-tab:: C Varnish 3
 
         include "path-to-config/varnish-3/fos_custom_ttl.vcl";
 
@@ -450,9 +457,9 @@ Subroutines are provided in ``fos_debug.vcl``.
 
 To enable this feature, add the following to ``your_varnish.vcl``:
 
-.. configuration-block::
+.. tabs::
 
-    .. code-block:: varnish4
+    .. code-tab:: C Varnish 4-6
 
         include "path-to-config/varnish/fos_debug.vcl";
 
@@ -460,7 +467,7 @@ To enable this feature, add the following to ``your_varnish.vcl``:
             call fos_debug_deliver;
         }
 
-    .. code-block:: varnish3
+    .. code-tab:: C Varnish 3
 
         include "path-to-config/varnish-3/fos_debug.vcl";
 

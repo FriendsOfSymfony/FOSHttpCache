@@ -189,8 +189,7 @@ multiple times. If there are no requests to be sent, flush will simply do nothin
 Error handling
 --------------
 
-If an error occurs during ``flush()``, the method throws an
-:source:`ExceptionCollection <src/Exception/ExceptionCollection.php>`
+If an error occurs during ``flush()``, the method throws an ``ExceptionCollection``
 that contains an exception for each failed request to the proxy server.
 
 These exception are of two types:

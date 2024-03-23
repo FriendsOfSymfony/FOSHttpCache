@@ -91,8 +91,8 @@ class HttpDispatcher implements Dispatcher
     public function __construct(
         array $servers,
         $baseUri = '',
-        HttpAsyncClient $httpClient = null,
-        UriFactory $uriFactory = null
+        ?HttpAsyncClient $httpClient = null,
+        ?UriFactory $uriFactory = null
     ) {
         if (!$httpClient) {
             $httpClient = new PluginClient(
