@@ -15,11 +15,6 @@ use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
 use GuzzleHttp\Psr7\Stream;
 use PHPUnit\Framework\ExpectationFailedException;
 
-// phpunit 5 has forward compatibility classes but missed this one
-if (!class_exists('\PHPUnit\Framework\ExpectationFailedException')) {
-    class_alias('\PHPUnit_Framework_ExpectationFailedException', '\PHPUnit\Framework\ExpectationFailedException');
-}
-
 class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
 {
     /**

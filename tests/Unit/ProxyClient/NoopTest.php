@@ -16,42 +16,39 @@ use PHPUnit\Framework\TestCase;
 
 class NoopTest extends TestCase
 {
-    /**
-     * @var Noop
-     */
-    private $noop;
+    private Noop $noop;
 
     protected function setUp(): void
     {
         $this->noop = new Noop();
     }
 
-    public function testBan()
+    public function testBan(): void
     {
         $this->assertSame($this->noop, $this->noop->ban(['header-123']));
     }
 
-    public function testInvalidateTags()
+    public function testInvalidateTags(): void
     {
         $this->assertSame($this->noop, $this->noop->invalidateTags(['tag123']));
     }
 
-    public function testBanPath()
+    public function testBanPath(): void
     {
         $this->assertSame($this->noop, $this->noop->banPath('/123'));
     }
 
-    public function testFlush()
+    public function testFlush(): void
     {
-        $this->assertTrue(is_int($this->noop->flush()));
+        $this->assertSame(0, $this->noop->flush());
     }
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $this->assertSame($this->noop, $this->noop->purge('/123', ['x-123' => 'yes']));
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $this->assertSame($this->noop, $this->noop->refresh('/123'));
     }

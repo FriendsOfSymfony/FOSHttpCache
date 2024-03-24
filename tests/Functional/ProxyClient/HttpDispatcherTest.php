@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 
 class HttpDispatcherTest extends TestCase
 {
-    public function testNetworkError()
+    public function testNetworkError(): void
     {
         $requestFactory = MessageFactoryDiscovery::find();
         $dispatcher = new HttpDispatcher(['localhost:1']);
@@ -34,7 +34,7 @@ class HttpDispatcherTest extends TestCase
         }
     }
 
-    public function testClientError()
+    public function testClientError(): void
     {
         $requestFactory = MessageFactoryDiscovery::find();
         $dispatcher = new HttpDispatcher(['http://foshttpcache.readthedocs.io']);

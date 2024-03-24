@@ -15,22 +15,14 @@ use Symfony\Contracts\EventDispatcher\Event as BaseEvent;
 
 class Event extends BaseEvent
 {
-    private $exception;
+    private \Throwable $exception;
 
-    /**
-     * Set exception.
-     */
-    public function setException(\Exception $exception)
+    public function setException(\Throwable $exception): void
     {
         $this->exception = $exception;
     }
 
-    /**
-     * Get exception.
-     *
-     * @return \Exception
-     */
-    public function getException()
+    public function getException(): \Throwable
     {
         return $this->exception;
     }

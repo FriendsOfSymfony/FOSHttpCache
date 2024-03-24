@@ -17,18 +17,16 @@ namespace FOS\HttpCache\Tests\Functional\Varnish;
  */
 class UserContextCacheTest extends UserContextTestCase
 {
-    protected function getConfigFile()
+    protected function getConfigFile(): string
     {
-        switch ((int) $this->getVarnishVersion()) {
-            case 3:
-                return dirname(__DIR__).'/Fixtures/varnish-3/user_context_cache.vcl';
-            default:
-                return dirname(__DIR__).'/Fixtures/varnish/user_context_cache.vcl';
-        }
+        return match ((int) $this->getVarnishVersion()) {
+            3 => dirname(__DIR__).'/Fixtures/varnish-3/user_context_cache.vcl',
+            default => dirname(__DIR__).'/Fixtures/varnish/user_context_cache.vcl',
+        };
     }
 
-    protected function assertContextCache($status)
+    protected function assertContextCache(string $hashCache): void
     {
-        $this->assertEquals('HIT', $status);
+        $this->assertEquals('HIT', $hashCache);
     }
 }

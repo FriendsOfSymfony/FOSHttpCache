@@ -36,22 +36,11 @@ class HttpDispatcherTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * Mock HTTP client.
-     *
-     * @var Client
-     */
-    private $httpClient;
+    private Client $httpClient;
 
-    /**
-     * @var MessageFactory
-     */
-    private $messageFactory;
+    private MessageFactory $messageFactory;
 
-    /**
-     * @var UriFactory
-     */
-    private $uriFactory;
+    private UriFactory $uriFactory;
 
     protected function setUp(): void
     {
@@ -60,7 +49,7 @@ class HttpDispatcherTest extends TestCase
         $this->uriFactory = UriFactoryDiscovery::find();
     }
 
-    public function testInstantiateWithNonUri()
+    public function testInstantiateWithNonUri(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('URI parameter must be a string, object given');
@@ -74,11 +63,11 @@ class HttpDispatcherTest extends TestCase
     /**
      * @dataProvider exceptionProvider
      *
-     * @param \Exception $exception Exception thrown by HTTP client
-     * @param string     $type      The returned exception class to be expected
-     * @param string     $message   Optional exception message to match against
+     * @param \Exception  $exception Exception thrown by HTTP client
+     * @param string      $type      The returned exception class to be expected
+     * @param string|null $message   Optional exception message to match against
      */
-    public function testExceptions(\Exception $exception, $type, $message = null)
+    public function testExceptions(\Exception $exception, string $type, ?string $message = null): void
     {
         $this->doTestException($exception, $type, $message);
     }
@@ -88,12 +77,12 @@ class HttpDispatcherTest extends TestCase
      *
      * @group legacy
      */
-    public function testLegacyException()
+    public function testLegacyException(): void
     {
         $this->doTestException(new \Exception('something went completely wrong'), InvalidArgumentException::class, 'something went completely wrong');
     }
 
-    private function doTestException(\Exception $exception, $type, $message)
+    private function doTestException(\Exception $exception, string $type, string $message): void
     {
         $this->httpClient->addException($exception);
         $httpDispatcher = new HttpDispatcher(
@@ -119,7 +108,7 @@ class HttpDispatcherTest extends TestCase
         $httpDispatcher->flush();
     }
 
-    public function exceptionProvider()
+    public function exceptionProvider(): array
     {
         /** @var RequestInterface $request */
         $request = \Mockery::mock(RequestInterface::class)
@@ -153,7 +142,7 @@ class HttpDispatcherTest extends TestCase
         ];
     }
 
-    public function testMissingHostExceptionIsThrown()
+    public function testMissingHostExceptionIsThrown(): void
     {
         $this->expectException(MissingHostException::class);
         $this->expectExceptionMessage('cannot be invalidated without a host');
@@ -168,7 +157,7 @@ class HttpDispatcherTest extends TestCase
         $httpDispatcher->invalidate($request);
     }
 
-    public function testBanWithoutBaseUri()
+    public function testBanWithoutBaseUri(): void
     {
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1:123'],
@@ -184,7 +173,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertSame('127.0.0.1:123', $requests[0]->getHeaderLine('Host'));
     }
 
-    public function testSetBasePathWithHost()
+    public function testSetBasePathWithHost(): void
     {
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1'],
@@ -200,7 +189,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('fos.lo', $requests[0]->getHeaderLine('Host'));
     }
 
-    public function testServerWithUserInfo()
+    public function testServerWithUserInfo(): void
     {
         $httpDispatcher = new HttpDispatcher(
             ['http://userone:passone@127.0.0.1', 'http://127.0.0.2', 'http://usertwo:passtwo@127.0.0.2'],
@@ -220,7 +209,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('usertwo:passtwo', $requests[2]->getUri()->getUserInfo());
     }
 
-    public function testSetBasePathWithPath()
+    public function testSetBasePathWithPath(): void
     {
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1:8080'],
@@ -236,7 +225,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('http://127.0.0.1:8080/my/path/append', (string) $requests[0]->getUri());
     }
 
-    public function testSetServersDefaultSchemeIsAdded()
+    public function testSetServersDefaultSchemeIsAdded(): void
     {
         $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->httpClient);
         $request = $this->messageFactory->createRequest('PURGE', '/some/path');
@@ -247,7 +236,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('http://127.0.0.1/some/path', $requests[0]->getUri());
     }
 
-    public function testSchemeIsAdded()
+    public function testSchemeIsAdded(): void
     {
         $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->httpClient);
         $uri = $this->uriFactory->createUri('/some/path')->withHost('goo.bar');
@@ -259,7 +248,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('http://127.0.0.1/some/path', $requests[0]->getUri());
     }
 
-    public function testPortIsAdded()
+    public function testPortIsAdded(): void
     {
         $httpDispatcher = new HttpDispatcher(['127.0.0.1:8080'], 'fos.lo', $this->httpClient);
         $request = $this->messageFactory->createRequest('PURGE', '/some/path');
@@ -270,7 +259,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertEquals('http://127.0.0.1:8080/some/path', $requests[0]->getUri());
     }
 
-    public function testSetServersThrowsInvalidUrlException()
+    public function testSetServersThrowsInvalidUrlException(): void
     {
         $this->expectException(InvalidUrlException::class);
         $this->expectExceptionMessage('URL "http:///this is no url" is invalid.');
@@ -278,7 +267,7 @@ class HttpDispatcherTest extends TestCase
         new HttpDispatcher(['http:///this is no url']);
     }
 
-    public function testSetServersThrowsWeirdInvalidUrlException()
+    public function testSetServersThrowsWeirdInvalidUrlException(): void
     {
         $this->expectException(InvalidUrlException::class);
         $this->expectExceptionMessage('"this ://is no url" is invalid.');
@@ -286,7 +275,7 @@ class HttpDispatcherTest extends TestCase
         new HttpDispatcher(['this ://is no url']);
     }
 
-    public function testSetServersThrowsInvalidServerException()
+    public function testSetServersThrowsInvalidServerException(): void
     {
         $this->expectException(InvalidUrlException::class);
         $this->expectExceptionMessage('Server "http://127.0.0.1:80/some/path" is invalid. Only scheme, user, pass, host, port URL parts are allowed');
@@ -294,7 +283,7 @@ class HttpDispatcherTest extends TestCase
         new HttpDispatcher(['http://127.0.0.1:80/some/path']);
     }
 
-    public function testFlushEmpty()
+    public function testFlushEmpty(): void
     {
         $httpDispatcher = new HttpDispatcher(
             ['127.0.0.1', '127.0.0.2'],
@@ -306,7 +295,7 @@ class HttpDispatcherTest extends TestCase
         $this->assertCount(0, $this->httpClient->getRequests());
     }
 
-    public function testFlushCountSuccess()
+    public function testFlushCountSuccess(): void
     {
         $httpClient = \Mockery::mock(HttpAsyncClient::class)
             ->shouldReceive('sendAsyncRequest')
@@ -346,7 +335,7 @@ class HttpDispatcherTest extends TestCase
         );
     }
 
-    public function testEliminateDuplicates()
+    public function testEliminateDuplicates(): void
     {
         $httpClient = \Mockery::mock(HttpAsyncClient::class)
             ->shouldReceive('sendAsyncRequest')
@@ -389,7 +378,7 @@ class HttpDispatcherTest extends TestCase
     /**
      * @return RequestInterface[]
      */
-    protected function getRequests()
+    protected function getRequests(): array
     {
         return $this->httpClient->getRequests();
     }

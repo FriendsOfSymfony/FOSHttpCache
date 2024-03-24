@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
  */
 class KernelDispatcherTest extends TestCase
 {
-    public function testFlush()
+    public function testFlush(): void
     {
         $httpCache = $this->createMock(HttpCache::class);
         $httpCache->expects($this->once())
@@ -37,10 +37,10 @@ class KernelDispatcherTest extends TestCase
                 $valid = $valid && 'PURGETAGS' === $request->getMethod();
                 $valid = $valid && 'foobar' === $request->headers->get('content-type');
                 $valid = $valid && 'foo,bar,stuff' === $request->headers->get('x-cache-tags');
-                $valid = $valid && ['query' => 'string', 'more' => 'stuff'] == $request->query->all();
-                $valid = $valid && 'awesome' == $request->cookies->get('foscacheis');
-                $valid = $valid && 'bar' == $request->cookies->get('foo');
-                $valid = $valid && 'super content' == $request->getContent();
+                $valid = $valid && ['query' => 'string', 'more' => 'stuff'] === $request->query->all();
+                $valid = $valid && 'awesome' === $request->cookies->get('foscacheis');
+                $valid = $valid && 'bar' === $request->cookies->get('foo');
+                $valid = $valid && 'super content' === $request->getContent();
 
                 return $valid;
             }))
@@ -57,7 +57,7 @@ class KernelDispatcherTest extends TestCase
         $dispatcher->flush();
     }
 
-    public function testFlushWithoutHttpCache()
+    public function testFlushWithoutHttpCache(): void
     {
         $this->expectException(ProxyUnreachableException::class);
         $this->expectExceptionMessage('Kernel did not return a HttpCache instance. Did you forget $kernel->setHttpCache($cacheKernel) in your front controller?');
@@ -73,10 +73,7 @@ class KernelDispatcherTest extends TestCase
         $dispatcher->flush();
     }
 
-    /**
-     * @return Psr7Request
-     */
-    private function getRequest()
+    private function getRequest(): Psr7Request
     {
         $headers = [
             'Content-Type' => 'foobar',

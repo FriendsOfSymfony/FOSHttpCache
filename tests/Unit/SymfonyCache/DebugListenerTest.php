@@ -15,7 +15,7 @@ use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\DebugListener;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,17 +24,14 @@ class DebugListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var CacheInvalidation&MockObject
-     */
-    private $kernel;
+    private CacheInvalidation&MockInterface $kernel;
 
     public function setUp(): void
     {
         $this->kernel = \Mockery::mock(CacheInvalidation::class);
     }
 
-    public function testDebugHit()
+    public function testDebugHit(): void
     {
         $debugListener = new DebugListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -50,7 +47,7 @@ class DebugListenerTest extends TestCase
         $this->assertSame('HIT', $response->headers->get('X-Cache'));
     }
 
-    public function testDebugMiss()
+    public function testDebugMiss(): void
     {
         $debugListener = new DebugListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -66,7 +63,7 @@ class DebugListenerTest extends TestCase
         $this->assertSame('MISS', $response->headers->get('X-Cache'));
     }
 
-    public function testDebugUndefined()
+    public function testDebugUndefined(): void
     {
         $debugListener = new DebugListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -82,7 +79,7 @@ class DebugListenerTest extends TestCase
         $this->assertSame('UNDETERMINED', $response->headers->get('X-Cache'));
     }
 
-    public function testNoHeader()
+    public function testNoHeader(): void
     {
         $debugListener = new DebugListener();
         $request = Request::create('http://example.com/foo', 'GET');

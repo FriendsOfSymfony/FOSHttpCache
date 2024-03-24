@@ -22,17 +22,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RefreshListenerTest extends TestCase
 {
-    /**
-     * @var CacheInvalidation&MockObject
-     */
-    private $kernel;
+    private CacheInvalidation&MockObject $kernel;
 
     public function setUp(): void
     {
         $this->kernel = $this->createMock(CacheInvalidation::class);
     }
 
-    public function testRefreshAllowed()
+    public function testRefreshAllowed(): void
     {
         $request = Request::create('http://example.com/foo');
         $request->headers->addCacheControlDirective('no-cache');
@@ -51,7 +48,7 @@ class RefreshListenerTest extends TestCase
         $this->assertSame($response, $event->getResponse());
     }
 
-    public function testRefreshForbiddenMatcher()
+    public function testRefreshForbiddenMatcher(): void
     {
         $this->kernel->expects($this->never())
             ->method('fetch')
@@ -68,7 +65,7 @@ class RefreshListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    public function testRefreshForbiddenIp()
+    public function testRefreshForbiddenIp(): void
     {
         $this->kernel->expects($this->never())
             ->method('fetch')
@@ -86,7 +83,7 @@ class RefreshListenerTest extends TestCase
     /**
      * Configuring the method to something else should make this listener skip the request.
      */
-    public function testUnsafe()
+    public function testUnsafe(): void
     {
         $this->kernel->expects($this->never())
             ->method('fetch')
@@ -105,7 +102,7 @@ class RefreshListenerTest extends TestCase
     /**
      * Refresh only happens if no-cache is sent.
      */
-    public function testNoRefresh()
+    public function testNoRefresh(): void
     {
         $this->kernel->expects($this->never())
             ->method('fetch')
@@ -120,7 +117,7 @@ class RefreshListenerTest extends TestCase
         $this->assertNull($event->getResponse());
     }
 
-    public function testInvalidConfiguration()
+    public function testInvalidConfiguration(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('does not exist');

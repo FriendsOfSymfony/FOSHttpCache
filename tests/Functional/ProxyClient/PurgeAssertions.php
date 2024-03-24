@@ -24,7 +24,7 @@ trait PurgeAssertions
      * @param PurgeCapable $proxyClient The client to send purge instructions to the cache
      * @param string       $path        The path to get and purge, defaults to /cache.php
      */
-    protected function assertPurge(PurgeCapable $proxyClient, $path = '/cache.php')
+    protected function assertPurge(PurgeCapable $proxyClient, string $path = '/cache.php'): void
     {
         $this->assertMiss($this->getResponse($path));
         $this->assertHit($this->getResponse($path));
@@ -40,7 +40,7 @@ trait PurgeAssertions
      * @param string       $host        The host name to use in the purge request
      * @param string       $path        The path to get and purge, defaults to /cache.php
      */
-    protected function assertPurgeHost(PurgeCapable $proxyClient, $host, $path = '/cache.php')
+    protected function assertPurgeHost(PurgeCapable $proxyClient, string $host, string $path = '/cache.php'): void
     {
         $this->assertMiss($this->getResponse($path));
         $this->assertHit($this->getResponse($path));
@@ -49,7 +49,7 @@ trait PurgeAssertions
         $this->assertMiss($this->getResponse($path));
     }
 
-    protected function assertPurgeContentType(PurgeCapable $proxyClient, $path = '/negotiation.php')
+    protected function assertPurgeContentType(PurgeCapable $proxyClient, string $path = '/negotiation.php'): void
     {
         $json = ['Accept' => 'application/json'];
         $html = ['Accept' => 'text/html'];

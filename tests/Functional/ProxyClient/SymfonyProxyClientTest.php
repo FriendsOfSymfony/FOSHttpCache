@@ -24,32 +24,32 @@ class SymfonyProxyClientTest extends SymfonyTestCase
     use PurgeAssertions;
     use RefreshAssertions;
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $this->assertPurge($this->getProxyClient(), '/symfony.php/cache');
     }
 
-    public function testPurgeContentType()
+    public function testPurgeContentType(): void
     {
         $this->assertPurge($this->getProxyClient(), '/symfony.php/negotiation');
     }
 
-    public function testPurgeHost()
+    public function testPurgeHost(): void
     {
         $this->assertPurgeHost($this->getProxyClient(), 'http://localhost:8080', '/symfony.php/cache');
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $this->assertRefresh($this->getProxyClient(), '/symfony.php/cache');
     }
 
-    public function testRefreshContentType()
+    public function testRefreshContentType(): void
     {
         $this->assertRefresh($this->getProxyClient(), '/symfony.php/negotiation');
     }
 
-    public function testInvalidateTags()
+    public function testInvalidateTags(): void
     {
         if (!class_exists(Psr6Store::class)) {
             $this->markTestSkipped('Needs PSR-6 store to be installed.');
@@ -58,7 +58,7 @@ class SymfonyProxyClientTest extends SymfonyTestCase
         $this->assertInvalidateTags($this->getProxyClient(), ['tag1'], '/symfony.php/tags');
     }
 
-    public function testInvalidateTagsMultiHeader()
+    public function testInvalidateTagsMultiHeader(): void
     {
         if (!class_exists(Psr6Store::class)) {
             $this->markTestSkipped('Needs PSR-6 store to be installed.');

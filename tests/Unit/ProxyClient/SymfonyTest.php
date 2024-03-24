@@ -15,6 +15,7 @@ use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use FOS\HttpCache\ProxyClient\Symfony;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
@@ -22,17 +23,14 @@ class SymfonyTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var HttpDispatcher|MockInterface
-     */
-    private $httpDispatcher;
+    private HttpDispatcher&MockInterface $httpDispatcher;
 
     protected function setUp(): void
     {
         $this->httpDispatcher = \Mockery::mock(HttpDispatcher::class);
     }
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $symfony = new Symfony($this->httpDispatcher);
 
@@ -53,7 +51,7 @@ class SymfonyTest extends TestCase
         $symfony->purge('/url', ['X-Foo' => 'bar']);
     }
 
-    public function testInvalidateTags()
+    public function testInvalidateTags(): void
     {
         $symfony = new Symfony($this->httpDispatcher);
 
@@ -74,9 +72,9 @@ class SymfonyTest extends TestCase
         $symfony->invalidateTags(['foobar', 'other tag']);
     }
 
-    public function testInvalidateTagsWithALotOfTags()
+    public function testInvalidateTagsWithALotOfTags(): void
     {
-        /** @var HttpDispatcher|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+        /** @var HttpDispatcher&MockObject $dispatcher */
         $dispatcher = $this->createMock(HttpDispatcher::class);
         $dispatcher
             ->expects($this->exactly(3))
@@ -143,7 +141,7 @@ class SymfonyTest extends TestCase
         ]);
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $symfony = new Symfony($this->httpDispatcher);
 
@@ -164,7 +162,7 @@ class SymfonyTest extends TestCase
         $symfony->clear();
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $symfony = new Symfony($this->httpDispatcher);
 

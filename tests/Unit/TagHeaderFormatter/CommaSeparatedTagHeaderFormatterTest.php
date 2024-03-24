@@ -17,19 +17,19 @@ use PHPUnit\Framework\TestCase;
 
 class CommaSeparatedTagHeaderFormatterTest extends TestCase
 {
-    public function testGetDefaultTagsHeaderName()
+    public function testGetDefaultTagsHeaderName(): void
     {
         $formatter = new CommaSeparatedTagHeaderFormatter();
         $this->assertSame('X-Cache-Tags', $formatter->getTagsHeaderName());
     }
 
-    public function testGetCustomTagsHeaderName()
+    public function testGetCustomTagsHeaderName(): void
     {
         $formatter = new CommaSeparatedTagHeaderFormatter('Foobar');
         $this->assertSame('Foobar', $formatter->getTagsHeaderName());
     }
 
-    public function testGetTagsHeaderValue()
+    public function testGetTagsHeaderValue(): void
     {
         $formatter = new CommaSeparatedTagHeaderFormatter();
 
@@ -38,7 +38,7 @@ class CommaSeparatedTagHeaderFormatterTest extends TestCase
         $this->assertSame('tag1,tag2,tag3', $formatter->getTagsHeaderValue(['tag1', 'tag2', 'tag3']));
     }
 
-    public function testGetCustomGlueTagsHeaderValue()
+    public function testGetCustomGlueTagsHeaderValue(): void
     {
         $formatter = new CommaSeparatedTagHeaderFormatter(TagHeaderFormatter::DEFAULT_HEADER_NAME, ' ');
 
@@ -47,7 +47,7 @@ class CommaSeparatedTagHeaderFormatterTest extends TestCase
         $this->assertSame('tag1 tag2 tag3', $formatter->getTagsHeaderValue(['tag1', 'tag2', 'tag3']));
     }
 
-    public function testParseTagsHeaderValue()
+    public function testParseTagsHeaderValue(): void
     {
         $parser = new CommaSeparatedTagHeaderFormatter();
 
@@ -55,7 +55,7 @@ class CommaSeparatedTagHeaderFormatterTest extends TestCase
         $this->assertSame(['a', 'b', 'c'], $parser->parseTagsHeaderValue(['a', 'b,c']));
     }
 
-    public function testParseCustomGlueTagsHeaderValue()
+    public function testParseCustomGlueTagsHeaderValue(): void
     {
         $parser = new CommaSeparatedTagHeaderFormatter(TagHeaderFormatter::DEFAULT_HEADER_NAME, ' ');
 

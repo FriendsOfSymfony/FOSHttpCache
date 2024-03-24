@@ -24,17 +24,14 @@ class CustomTtlListenerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    /**
-     * @var CacheInvalidation&MockInterface
-     */
-    private $kernel;
+    private CacheInvalidation&MockInterface $kernel;
 
     public function setUp(): void
     {
         $this->kernel = \Mockery::mock(CacheInvalidation::class);
     }
 
-    public function testCustomTtl()
+    public function testCustomTtl(): void
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -52,7 +49,7 @@ class CustomTtlListenerTest extends TestCase
         $this->assertSame('60', $response->headers->get(CustomTtlListener::SMAXAGE_BACKUP));
     }
 
-    public function testCustomTtlNoSmaxage()
+    public function testCustomTtlNoSmaxage(): void
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -70,7 +67,7 @@ class CustomTtlListenerTest extends TestCase
         $this->assertSame('false', $response->headers->get(CustomTtlListener::SMAXAGE_BACKUP));
     }
 
-    public function testNoCustomTtl()
+    public function testNoCustomTtl(): void
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -87,7 +84,7 @@ class CustomTtlListenerTest extends TestCase
         $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
     }
 
-    public function testCleanup()
+    public function testCleanup(): void
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -108,7 +105,7 @@ class CustomTtlListenerTest extends TestCase
         $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
     }
 
-    public function testCleanupNoSmaxage()
+    public function testCleanupNoSmaxage(): void
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');
@@ -128,7 +125,7 @@ class CustomTtlListenerTest extends TestCase
         $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
     }
 
-    public function testCleanupNoCustomTtl()
+    public function testCleanupNoCustomTtl(): void
     {
         $ttlListener = new CustomTtlListener();
         $request = Request::create('http://example.com/foo', 'GET');

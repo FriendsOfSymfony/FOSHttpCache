@@ -17,7 +17,7 @@ namespace FOS\HttpCache\Tests\Functional\Varnish;
  */
 class UserContextNocacheTest extends UserContextTestCase
 {
-    protected function getConfigFile()
+    protected function getConfigFile(): ?string
     {
         switch ((int) $this->getVarnishVersion()) {
             case 3:
@@ -27,8 +27,8 @@ class UserContextNocacheTest extends UserContextTestCase
         }
     }
 
-    protected function assertContextCache($status)
+    protected function assertContextCache(string $hashCache): void
     {
-        $this->assertEquals('MISS', $status);
+        $this->assertEquals('MISS', $hashCache);
     }
 }

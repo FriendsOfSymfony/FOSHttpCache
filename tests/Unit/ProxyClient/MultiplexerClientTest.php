@@ -26,7 +26,7 @@ class MultiplexerClientTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testBan()
+    public function testBan(): void
     {
         $headers = ['Header1' => 'Header1-Value'];
 
@@ -47,7 +47,7 @@ class MultiplexerClientTest extends TestCase
         $this->assertSame($multiplexer, $multiplexer->ban($headers));
     }
 
-    public function testBanPath()
+    public function testBanPath(): void
     {
         $path = 'path/to/ban';
         $contentType = 'text/css';
@@ -69,7 +69,7 @@ class MultiplexerClientTest extends TestCase
         $this->assertSame($multiplexer, $multiplexer->banPath($path, $contentType, $hosts));
     }
 
-    public function testFlush()
+    public function testFlush(): void
     {
         $mockClient1 = \Mockery::mock(ProxyClient::class)
             ->shouldReceive('flush')
@@ -87,7 +87,7 @@ class MultiplexerClientTest extends TestCase
         $this->assertEquals(10, $multiplexer->flush());
     }
 
-    public function testInvalidateTags()
+    public function testInvalidateTags(): void
     {
         $tags = ['tag-1', 'tag-2'];
 
@@ -102,7 +102,7 @@ class MultiplexerClientTest extends TestCase
         $this->assertSame($multiplexer, $multiplexer->invalidateTags($tags));
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $url = 'example.com';
         $headers = ['Header1' => 'Header1-Value'];
@@ -124,7 +124,7 @@ class MultiplexerClientTest extends TestCase
         $this->assertSame($multiplexer, $multiplexer->refresh($url, $headers));
     }
 
-    public function testPurge()
+    public function testPurge(): void
     {
         $url = 'example.com';
         $headers = ['Header1' => 'Header1-Value'];
@@ -146,7 +146,7 @@ class MultiplexerClientTest extends TestCase
         $this->assertSame($multiplexer, $multiplexer->purge($url, $headers));
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $mockClient1 = \Mockery::mock(ClearCapable::class)
             ->shouldReceive('clear')
@@ -163,7 +163,7 @@ class MultiplexerClientTest extends TestCase
         $this->assertSame($multiplexer, $multiplexer->clear());
     }
 
-    public function provideInvalidClient()
+    public function provideInvalidClient(): array
     {
         return [
             [['this-is-not-an-object']],
@@ -176,7 +176,7 @@ class MultiplexerClientTest extends TestCase
      *
      * @dataProvider provideInvalidClient
      */
-    public function testInvalidClientTest(array $clients)
+    public function testInvalidClientTest(array $clients): void
     {
         $this->expectException(InvalidArgumentException::class);
         new MultiplexerClient($clients);

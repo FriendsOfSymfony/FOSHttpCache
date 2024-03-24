@@ -95,7 +95,7 @@ class CacheInvalidator
      *
      * @throws InvalidArgumentException
      */
-    public function supports($operation)
+    public function supports(string $operation)
     {
         switch ($operation) {
             case self::PATH:
@@ -123,7 +123,7 @@ class CacheInvalidator
      *
      * @throws \Exception when trying to override the event dispatcher
      */
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
     {
         if ($this->eventDispatcher) {
             // if you want to set a custom event dispatcher, do so right after instantiating
@@ -157,7 +157,7 @@ class CacheInvalidator
      *
      * @throws UnsupportedProxyOperationException
      */
-    public function invalidatePath($path, array $headers = [])
+    public function invalidatePath($path, array $headers = []): static
     {
         if (!$this->cache instanceof PurgeCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('PURGE');
@@ -180,7 +180,7 @@ class CacheInvalidator
      *
      * @throws UnsupportedProxyOperationException
      */
-    public function refreshPath($path, array $headers = [])
+    public function refreshPath($path, array $headers = []): static
     {
         if (!$this->cache instanceof RefreshCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('REFRESH');
@@ -205,7 +205,7 @@ class CacheInvalidator
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      */
-    public function invalidate(array $headers)
+    public function invalidate(array $headers): static
     {
         if (!$this->cache instanceof BanCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
@@ -227,7 +227,7 @@ class CacheInvalidator
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support Tags invalidation
      */
-    public function invalidateTags(array $tags)
+    public function invalidateTags(array $tags): static
     {
         if (!$this->cache instanceof TagCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('Tags');
@@ -250,20 +250,20 @@ class CacheInvalidator
      * ['example.com', 'other.net']. If the parameter is empty, all hosts
      * are matched.
      *
-     * @see BanCapable::banPath()
-     *
-     * @param string       $path        Regular expression pattern for URI to
-     *                                  invalidate
-     * @param string       $contentType Regular expression pattern for the content
-     *                                  type to limit banning, for instance 'text'
-     * @param array|string $hosts       Regular expression of a host name or list of
-     *                                  exact host names to limit banning
+     * @param string            $path        Regular expression pattern for URI to
+     *                                       invalidate
+     * @param string|null       $contentType Regular expression pattern for the content
+     *                                       type to limit banning, for instance 'text'
+     * @param array|string|null $hosts       Regular expression of a host name or list of
+     *                                       exact host names to limit banning
      *
      * @return $this
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
+     *
+     *@see BanCapable::banPath()
      */
-    public function invalidateRegex($path, $contentType = null, $hosts = null)
+    public function invalidateRegex(string $path, ?string $contentType = null, array|string|null $hosts = null): static
     {
         if (!$this->cache instanceof BanCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('BAN');
@@ -281,7 +281,7 @@ class CacheInvalidator
      *
      * @throws UnsupportedProxyOperationException if HTTP cache does not support clearing the cache completely
      */
-    public function clearCache()
+    public function clearCache(): static
     {
         if (!$this->cache instanceof ClearCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('CLEAR');

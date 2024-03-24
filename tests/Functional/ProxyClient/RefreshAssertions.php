@@ -25,7 +25,7 @@ trait RefreshAssertions
      * @param RefreshCapable $proxyClient The client to send refresh instructions to the cache
      * @param string         $path        The path to get and refresh, defaults to /cache.php
      */
-    protected function assertRefresh(RefreshCapable $proxyClient, $path = '/cache.php')
+    protected function assertRefresh(RefreshCapable $proxyClient, string $path = '/cache.php'): void
     {
         $this->assertMiss($this->getResponse($path));
         $response = $this->getResponse($path);
@@ -50,7 +50,7 @@ trait RefreshAssertions
      * @param RefreshCapable $proxyClient The client to send refresh instructions to the cache
      * @param string         $path        The path to get and refresh, defaults to /negotiation.php
      */
-    protected function assertRefreshContentType(RefreshCapable $proxyClient, $path = '/negotiation.php')
+    protected function assertRefreshContentType(RefreshCapable $proxyClient, string $path = '/negotiation.php'): void
     {
         $json = ['Accept' => 'application/json'];
         $html = ['Accept' => 'text/html'];

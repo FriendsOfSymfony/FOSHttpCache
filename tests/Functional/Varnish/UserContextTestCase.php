@@ -26,13 +26,13 @@ abstract class UserContextTestCase extends VarnishTestCase
      *
      * @param string $hashCache the cache status of the context request
      */
-    abstract protected function assertContextCache($hashCache);
+    abstract protected function assertContextCache(string $hashCache): void;
 
     /**
      * Sending requests without an Accept: header so none should arrive at the
      * backend for the actual request.
      */
-    public function testUserContextHash()
+    public function testUserContextHash(): void
     {
         $response1 = $this->getResponse('/user_context.php', ['Cookie' => ['0=foo']]);
         $this->assertEquals('foo', (string) $response1->getBody());
@@ -66,7 +66,7 @@ abstract class UserContextTestCase extends VarnishTestCase
     /**
      * Making sure that non-authenticated and authenticated cache are not mixed up.
      */
-    public function testUserContextNoAuth()
+    public function testUserContextNoAuth(): void
     {
         $response1 = $this->getResponse('/user_context_anon.php');
         $this->assertEquals('anonymous', $response1->getBody());
@@ -86,7 +86,7 @@ abstract class UserContextTestCase extends VarnishTestCase
         $this->assertHit($cachedResponse2);
     }
 
-    public function testAcceptHeader()
+    public function testAcceptHeader(): void
     {
         $response1 = $this->getResponse(
             '/user_context.php?accept=text/plain',
@@ -98,7 +98,7 @@ abstract class UserContextTestCase extends VarnishTestCase
         $this->assertEquals('foo', $response1->getBody());
     }
 
-    public function testUserContextUnauthorized()
+    public function testUserContextUnauthorized(): void
     {
         $response = $this->getResponse('/user_context.php', ['Cookie' => ['0=miam']]);
         $this->assertEquals(403, $response->getStatusCode());

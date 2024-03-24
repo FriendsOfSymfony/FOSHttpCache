@@ -34,7 +34,7 @@ class EventDispatchingHttpCacheTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testEventListeners()
+    public function testEventListeners(): void
     {
         $request = new Request();
         $expectedResponse = new Response();

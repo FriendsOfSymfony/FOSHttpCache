@@ -21,17 +21,14 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CacheEventTest extends TestCase
 {
-    /**
-     * @var CacheInvalidation&MockObject
-     */
-    private $kernel;
+    private CacheInvalidation&MockObject $kernel;
 
     public function setUp(): void
     {
         $this->kernel = $this->createMock(CacheInvalidation::class);
     }
 
-    public function testEventGetters()
+    public function testEventGetters(): void
     {
         $request = Request::create('/');
 

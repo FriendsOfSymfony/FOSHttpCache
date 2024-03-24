@@ -22,39 +22,39 @@ class NginxProxyClientTest extends NginxTestCase
     use PurgeAssertions;
     use RefreshAssertions;
 
-    public function testPurgeSeparateLocation()
+    public function testPurgeSeparateLocation(): void
     {
         $this->assertPurge($this->getProxyClient('/purge'));
     }
 
-    public function testPurgeSameLocation()
+    public function testPurgeSameLocation(): void
     {
         $this->assertPurge($this->getProxyClient());
     }
 
-    public function testPurgeContentType()
+    public function testPurgeContentType(): void
     {
         $this->markTestSkipped('Not working with nginx, it can only purge one type');
 
         $this->assertPurgeContentType($this->getProxyClient());
     }
 
-    public function testPurgeSeparateLocationHost()
+    public function testPurgeSeparateLocationHost(): void
     {
         $this->assertPurgeHost($this->getProxyClient('/purge'), sprintf('http://%s', $this->getHostName()));
     }
 
-    public function testPurgeSameLocationHost()
+    public function testPurgeSameLocationHost(): void
     {
         $this->assertPurgeHost($this->getProxyClient(), sprintf('http://%s', $this->getHostName()));
     }
 
-    public function testRefresh()
+    public function testRefresh(): void
     {
         $this->assertRefresh($this->getProxyClient());
     }
 
-    public function testRefreshContentType()
+    public function testRefreshContentType(): void
     {
         $this->markTestSkipped('TODO: is nginx mixing up variants?');
 

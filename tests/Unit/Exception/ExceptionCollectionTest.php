@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExceptionCollectionTest extends TestCase
 {
-    public function testCollectionConstructor()
+    public function testCollectionConstructor(): void
     {
         $e1 = new \RuntimeException();
         $e2 = new \RuntimeException('Message');
@@ -33,7 +33,7 @@ class ExceptionCollectionTest extends TestCase
         $this->assertEquals([$e1, $e2], $actual);
     }
 
-    public function testCollectionAdd()
+    public function testCollectionAdd(): void
     {
         $collection = new ExceptionCollection();
         $this->assertNull($collection->getFirst());

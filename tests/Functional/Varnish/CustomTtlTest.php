@@ -19,17 +19,15 @@ use FOS\HttpCache\Test\VarnishTestCase;
  */
 class CustomTtlTest extends VarnishTestCase
 {
-    protected function getConfigFile()
+    protected function getConfigFile(): string
     {
-        switch ((int) $this->getVarnishVersion()) {
-            case 3:
-                return dirname(__DIR__).'/Fixtures/varnish-3/custom_ttl.vcl';
-            default:
-                return dirname(__DIR__).'/Fixtures/varnish/custom_ttl.vcl';
-        }
+        return match ((int) $this->getVarnishVersion()) {
+            3 => dirname(__DIR__).'/Fixtures/varnish-3/custom_ttl.vcl',
+            default => dirname(__DIR__).'/Fixtures/varnish/custom_ttl.vcl',
+        };
     }
 
-    public function testCustomTtl()
+    public function testCustomTtl(): void
     {
         $this->assertMiss($this->getResponse('/custom-ttl.php'));
         $this->assertHit($this->getResponse('/custom-ttl.php'));

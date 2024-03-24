@@ -25,7 +25,7 @@ trait BanAssertions
      * @param string     $header      The header that holds the URLs
      * @param array      $paths       The paths to get, defaults to [/cache.php, json.php]
      */
-    protected function assertBanAll(BanCapable $proxyClient, $header, array $paths = ['/cache.php', '/json.php'])
+    protected function assertBanAll(BanCapable $proxyClient, string $header, array $paths = ['/cache.php', '/json.php']): void
     {
         foreach ($paths as $path) {
             $this->assertMiss($this->getResponse($path));
@@ -47,7 +47,7 @@ trait BanAssertions
      * @param string     $hostname    Name of the host so we can invalidate that host
      * @param string     $path        The path to get, defaults to /cache.php
      */
-    protected function assertBanHost(BanCapable $proxyClient, $header, $hostname, $path = '/cache.php')
+    protected function assertBanHost(BanCapable $proxyClient, string $header, string $hostname, string $path = '/cache.php'): void
     {
         $this->assertMiss($this->getResponse($path));
         $this->assertHit($this->getResponse($path));
@@ -65,7 +65,7 @@ trait BanAssertions
      * @param BanCapable $proxyClient The client to send ban instructions to the cache
      * @param array      $paths       The paths to get, defaults to [/cache.php, json.php]
      */
-    protected function assertBanPath(BanCapable $proxyClient, array $paths = ['/cache.php', '/json.php'])
+    protected function assertBanPath(BanCapable $proxyClient, array $paths = ['/cache.php', '/json.php']): void
     {
         foreach ($paths as $path) {
             $this->assertMiss($this->getResponse($path));
@@ -86,7 +86,7 @@ trait BanAssertions
      * @param string     $htmlPath    Path to a HTML content, defaults to /cache.php
      * @param string     $otherPath   Path to a non-HTML content, defaults to json.php
      */
-    protected function assertBanPathContentType(BanCapable $proxyClient, $htmlPath = '/cache.php', $otherPath = '/json.php')
+    protected function assertBanPathContentType(BanCapable $proxyClient, string $htmlPath = '/cache.php', string $otherPath = '/json.php'): void
     {
         $this->assertMiss($this->getResponse($htmlPath));
         $this->assertHit($this->getResponse($htmlPath));
