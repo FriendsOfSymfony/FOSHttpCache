@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
@@ -29,7 +28,7 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     /**
      * @var ProxyClient[]
      */
-    private $proxyClients;
+    private array $proxyClients;
 
     /**
      * MultiplexerClient constructor.
@@ -41,8 +40,7 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
         foreach ($proxyClients as $proxyClient) {
             if (!$proxyClient instanceof ProxyClient) {
                 throw new InvalidArgumentException(
-                    'Expected ProxyClientInterface, got: '.
-                    (is_object($proxyClient) ? get_class($proxyClient) : gettype($proxyClient))
+                    'Expected ProxyClientInterface, got: '.get_debug_type($proxyClient)
                 );
             }
         }
@@ -50,31 +48,14 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
         $this->proxyClients = $proxyClients;
     }
 
-    /**
-     * Forwards to all clients.
-     *
-     * @param array $headers HTTP headers that path must match to be banned
-     *
-     * @return $this
-     */
-    public function ban(array $headers)
+    public function ban(array $headers): static
     {
         $this->invoke(BanCapable::class, 'ban', [$headers]);
 
         return $this;
     }
 
-    /**
-     * Forwards to all clients.
-     *
-     * @param string       $path        Regular expression pattern for URI to invalidate
-     * @param string       $contentType Regular expression pattern for the content type to limit banning, for instance
-     *                                  'text'
-     * @param array|string $hosts       Regular expression of a host name or list of exact host names to limit banning
-     *
-     * @return $this
-     */
-    public function banPath($path, $contentType = null, $hosts = null)
+    public function banPath(string $path, ?string $contentType = null, array|string|null $hosts = null): static
     {
         $this->invoke(BanCapable::class, 'banPath', [$path, $contentType, $hosts]);
 
@@ -82,13 +63,11 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Forwards to all clients.
-     *
-     * @return int The number of cache invalidations performed per caching server
-     *
-     * @throws ExceptionCollection If any errors occurred during flush
      */
-    public function flush()
+    public function flush(): int
     {
         $count = 0;
         foreach ($this->proxyClients as $proxyClient) {
@@ -102,10 +81,8 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
      * Forwards tag invalidation request to all clients.
      *
      * {@inheritdoc}
-     *
-     * @return $this
      */
-    public function invalidateTags(array $tags)
+    public function invalidateTags(array $tags): static
     {
         if (!$tags) {
             return $this;
@@ -119,12 +96,9 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     /**
      * Forwards to all clients.
      *
-     * @param string $url     Path or URL to purge
-     * @param array  $headers Extra HTTP headers to send to the caching proxy (optional)
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function purge($url, array $headers = [])
+    public function purge(string $url, array $headers = []): static
     {
         $this->invoke(PurgeCapable::class, 'purge', [$url, $headers]);
 
@@ -134,12 +108,9 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     /**
      * Forwards to all clients.
      *
-     * @param string $url     Path or URL to refresh
-     * @param array  $headers Extra HTTP headers to send to the caching proxy (optional)
-     *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function refresh($url, array $headers = [])
+    public function refresh(string $url, array $headers = []): static
     {
         $this->invoke(RefreshCapable::class, 'refresh', [$url, $headers]);
 
@@ -149,9 +120,9 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     /**
      * Forwards to all clients.
      *
-     * @return $this
+     * {@inheritdoc}
      */
-    public function clear()
+    public function clear(): static
     {
         $this->invoke(ClearCapable::class, 'clear', []);
 
@@ -162,11 +133,11 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
      * Invoke the given $method on all available ProxyClients implementing the
      * given $interface.
      *
-     * @param string $interface The FQN of the interface
-     * @param string $method    The method to invoke
-     * @param array  $arguments The arguments to be passed to the method
+     * @param string       $interface The FQN of the interface
+     * @param string       $method    The method to invoke
+     * @param array<mixed> $arguments The arguments to be passed to the method
      */
-    private function invoke($interface, $method, array $arguments)
+    private function invoke(string $interface, string $method, array $arguments): void
     {
         foreach ($this->getProxyClients($interface) as $proxyClient) {
             call_user_func_array([$proxyClient, $method], $arguments);
@@ -176,15 +147,15 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     /**
      * Get proxy clients that implement a feature interface.
      *
-     * @param string $interface
+     * @param class-string $interface
      *
      * @return ProxyClient[]
      */
-    private function getProxyClients($interface)
+    private function getProxyClients(string $interface): array
     {
         return array_filter(
             $this->proxyClients,
-            function ($proxyClient) use ($interface) {
+            static function ($proxyClient) use ($interface) {
                 return is_subclass_of($proxyClient, $interface);
             }
         );

@@ -30,22 +30,15 @@ class PurgeTagsListener extends AccessControlledListener
 
     /**
      * The purge tags method to use.
-     *
-     * @var string
      */
-    private $tagsMethod;
+    private string $tagsMethod;
 
     /**
      * The purge tags header to use.
-     *
-     * @var string
      */
-    private $tagsHeader;
+    private string $tagsHeader;
 
-    /**
-     * @var TagHeaderParser
-     */
-    private $tagsParser;
+    private TagHeaderParser $tagsParser;
 
     /**
      * When creating the purge listener, you can configure an additional option.
@@ -85,7 +78,7 @@ class PurgeTagsListener extends AccessControlledListener
      *
      * Prevents access when the request comes from a non-authorized client.
      */
-    public function handlePurgeTags(CacheEvent $event)
+    public function handlePurgeTags(CacheEvent $event): void
     {
         $request = $event->getRequest();
         if ($this->tagsMethod !== $request->getMethod()) {
@@ -141,10 +134,8 @@ class PurgeTagsListener extends AccessControlledListener
 
     /**
      * Add the purge_method option.
-     *
-     * @return OptionsResolver
      */
-    protected function getOptionsResolver()
+    protected function getOptionsResolver(): OptionsResolver
     {
         $resolver = parent::getOptionsResolver();
         $resolver->setDefaults([

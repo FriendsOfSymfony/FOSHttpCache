@@ -18,37 +18,27 @@ namespace FOS\HttpCache\TagHeaderFormatter;
  */
 class CommaSeparatedTagHeaderFormatter implements TagHeaderFormatter, TagHeaderParser
 {
-    /**
-     * @var string
-     */
-    private $headerName;
+    private string $headerName;
 
-    /**
-     * @var string
-     */
-    private $glue;
+    private string $glue;
 
-    /**
-     * @param string $headerName
-     * @param string $glue       Separator character for the tag header
-     */
-    public function __construct($headerName = TagHeaderFormatter::DEFAULT_HEADER_NAME, $glue = ',')
+    public function __construct(string $headerName = TagHeaderFormatter::DEFAULT_HEADER_NAME, string $glue = ',')
     {
         $this->headerName = $headerName;
         $this->glue = $glue;
     }
 
-    public function getTagsHeaderName()
+    public function getTagsHeaderName(): string
     {
         return $this->headerName;
     }
 
-    public function getTagsHeaderValue(array $tags)
+    public function getTagsHeaderValue(array $tags): array|string
     {
         return implode($this->glue, $tags);
     }
 
-    public function parseTagsHeaderValue($tags): array
+    public function parseTagsHeaderValue(array|string $tags): array
     {
         if (is_string($tags)) {
             $tags = [$tags];

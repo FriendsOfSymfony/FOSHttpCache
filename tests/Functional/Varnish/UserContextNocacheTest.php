@@ -17,14 +17,12 @@ namespace FOS\HttpCache\Tests\Functional\Varnish;
  */
 class UserContextNocacheTest extends UserContextTestCase
 {
-    protected function getConfigFile(): ?string
+    protected function getConfigFile(): string
     {
-        switch ((int) $this->getVarnishVersion()) {
-            case 3:
-                return dirname(__DIR__).'/Fixtures/varnish-3/user_context_nocache.vcl';
-            default:
-                return dirname(__DIR__).'/Fixtures/varnish/user_context_nocache.vcl';
-        }
+        return match ((int) $this->getVarnishVersion()) {
+            3 => dirname(__DIR__).'/Fixtures/varnish-3/user_context_nocache.vcl',
+            default => dirname(__DIR__).'/Fixtures/varnish/user_context_nocache.vcl',
+        };
     }
 
     protected function assertContextCache(string $hashCache): void

@@ -12,12 +12,9 @@
 namespace FOS\HttpCache\UserContext;
 
 /**
- * Generate a hash.
+ * Generate a hash for distinguishing user contexts.
  */
 interface HashGenerator
 {
-    /**
-     * @return string The hash generated
-     */
-    public function generateHash();
+    public function generateHash(): string;
 }

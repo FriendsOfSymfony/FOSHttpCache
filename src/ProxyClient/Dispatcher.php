@@ -25,12 +25,11 @@ interface Dispatcher
     /**
      * Queue invalidation request.
      *
-     * @param bool $validateHost If false, do not validate
-     *                           that we either have a base
-     *                           uri or the invalidation
-     *                           request specifies the host
+     * @param bool $validateHost If false, do not validate that we either have
+     *                           a base uri or the invalidation request
+     *                           specifies the host
      */
-    public function invalidate(RequestInterface $invalidationRequest, $validateHost = true);
+    public function invalidate(RequestInterface $invalidationRequest, bool $validateHost = true);
 
     /**
      * Send all pending invalidation requests and make sure the requests have
@@ -41,5 +40,5 @@ interface Dispatcher
      *
      * @throws ExceptionCollection If any errors occurred during flush
      */
-    public function flush();
+    public function flush(): int;
 }

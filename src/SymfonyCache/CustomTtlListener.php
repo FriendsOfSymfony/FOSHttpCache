@@ -23,20 +23,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class CustomTtlListener implements EventSubscriberInterface
 {
-    /**
-     * @var string
-     */
-    private $ttlHeader;
+    private string $ttlHeader;
 
-    /**
-     * @var bool
-     */
-    private $keepTtlHeader;
+    private bool $keepTtlHeader;
 
     /**
      * Header used for backing up the s-maxage.
-     *
-     * @var string
      */
     public const SMAXAGE_BACKUP = 'FOS-Smaxage-Backup';
 
@@ -44,7 +36,7 @@ class CustomTtlListener implements EventSubscriberInterface
      * @param string $ttlHeader     The header name that is used to specify the time to live
      * @param bool   $keepTtlHeader Keep the custom TTL header on the response for later usage (e.g. debugging)
      */
-    public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL', $keepTtlHeader = false)
+    public function __construct(string $ttlHeader = 'X-Reverse-Proxy-TTL', bool $keepTtlHeader = false)
     {
         $this->ttlHeader = $ttlHeader;
         $this->keepTtlHeader = $keepTtlHeader;
@@ -56,9 +48,12 @@ class CustomTtlListener implements EventSubscriberInterface
      * If there is such a header, the original s_maxage is backed up to the
      * static::SMAXAGE_BACKUP header.
      */
-    public function useCustomTtl(CacheEvent $e)
+    public function useCustomTtl(CacheEvent $e): void
     {
         $response = $e->getResponse();
+        if (!$response) {
+            return;
+        }
         if (!$response->headers->has($this->ttlHeader)) {
             return;
         }
@@ -73,9 +68,12 @@ class CustomTtlListener implements EventSubscriberInterface
     /**
      * Remove the custom TTL header and restore s_maxage from the backup.
      */
-    public function cleanResponse(CacheEvent $e)
+    public function cleanResponse(CacheEvent $e): void
     {
         $response = $e->getResponse();
+        if (!$response) {
+            return;
+        }
         if (!$response->headers->has($this->ttlHeader)
             && !$response->headers->has(static::SMAXAGE_BACKUP)
         ) {

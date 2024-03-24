@@ -19,31 +19,21 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait AbstractCacheConstraintTrait
 {
-    protected $header = 'X-Cache';
+    protected string $header;
 
-    /**
-     * Constructor.
-     *
-     * @param string $header Cache debug header; defaults to X-Cache-Debug
-     */
-    public function __construct($header = null)
+    public function __construct(string $header = 'X-Cache')
     {
-        if ($header) {
-            $this->header = $header;
-        }
+        $this->header = $header;
 
         if (version_compare(Version::id(), '8.0.0', '<')) {
             parent::__construct();
         }
     }
 
-    /**
-     * @param ResponseInterface $other The guzzle response object
-     */
     public function matches($other): bool
     {
         if (!$other instanceof ResponseInterface) {
-            throw new \RuntimeException(sprintf('Expected a GuzzleHttp\Psr7\Response but got %s', get_class($other)));
+            throw new \InvalidArgumentException('compare must compare with '.ResponseInterface::class.' got '.get_debug_type($other));
         }
         if (!$other->hasHeader($this->header)) {
             $message = sprintf(
@@ -70,7 +60,7 @@ trait AbstractCacheConstraintTrait
             throw new \RuntimeException($message);
         }
 
-        return false !== strpos((string) $other->getHeaderLine($this->header), $this->getValue());
+        return str_contains($other->getHeaderLine($this->header), $this->getValue());
     }
 
     public function failureDescription($other): string

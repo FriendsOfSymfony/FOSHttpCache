@@ -41,15 +41,8 @@ use FOS\HttpCache\Test\Proxy\NginxProxy;
  */
 trait NginxTest
 {
-    /**
-     * @var Nginx
-     */
-    protected $proxyClient;
-
-    /**
-     * @var NginxProxy
-     */
-    protected $proxy;
+    protected Nginx $proxyClient;
+    protected NginxProxy $proxy;
 
     protected function setUp(): void
     {
@@ -68,7 +61,7 @@ trait NginxTest
      *
      * @throws \Exception
      */
-    protected function getConfigFile()
+    protected function getConfigFile(): string
     {
         // @codeCoverageIgnoreStart
         if (!defined('NGINX_FILE')) {
@@ -85,20 +78,16 @@ trait NginxTest
 
     /**
      * Defaults to "nginx".
-     *
-     * @return string
      */
-    protected function getBinary()
+    protected function getBinary(): ?string
     {
         return defined('NGINX_BINARY') ? NGINX_BINARY : null;
     }
 
     /**
      * Defaults to 8088.
-     *
-     * @return int
      */
-    protected function getCachingProxyPort()
+    protected function getCachingProxyPort(): int
     {
         return defined('NGINX_PORT') ? NGINX_PORT : 8088;
     }
@@ -106,7 +95,7 @@ trait NginxTest
     /**
      * Get NGINX cache directory.
      */
-    protected function getCacheDir()
+    protected function getCacheDir(): ?string
     {
         return defined('NGINX_CACHE_PATH') ? NGINX_CACHE_PATH : null;
     }
@@ -114,11 +103,9 @@ trait NginxTest
     /**
      * Get the hostname where your application can be reached.
      *
-     * @return string
-     *
      * @throws \Exception
      */
-    protected function getHostName()
+    protected function getHostName(): string
     {
         // @codeCoverageIgnoreStart
         if (!defined('WEB_SERVER_HOSTNAME')) {
@@ -131,12 +118,9 @@ trait NginxTest
         return WEB_SERVER_HOSTNAME;
     }
 
-    /**
-     * @return NginxProxy
-     */
-    protected function getProxy()
+    protected function getProxy(): NginxProxy
     {
-        if (null === $this->proxy) {
+        if (!isset($this->proxy)) {
             $this->proxy = new NginxProxy($this->getConfigFile());
             $this->proxy->setPort($this->getCachingProxyPort());
 
@@ -156,12 +140,10 @@ trait NginxTest
      * Get proxy client.
      *
      * @param string $purgeLocation Optional purgeLocation
-     *
-     * @return Nginx
      */
-    protected function getProxyClient($purgeLocation = '')
+    protected function getProxyClient(string $purgeLocation = ''): Nginx
     {
-        if (null === $this->proxyClient) {
+        if (!isset($this->proxyClient)) {
             $httpDispatcher = new HttpDispatcher(
                 ['http://127.0.0.1:'.$this->getCachingProxyPort()],
                 $this->getHostName().':'.$this->getCachingProxyPort()

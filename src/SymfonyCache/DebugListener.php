@@ -35,13 +35,16 @@ class DebugListener implements EventSubscriberInterface
      * For this header to be present, the HttpCache must be created with the
      * debug option set to true.
      */
-    public function handleDebug(CacheEvent $event)
+    public function handleDebug(CacheEvent $event): void
     {
         $response = $event->getResponse();
+        if (!$response) {
+            return;
+        }
         if ($response->headers->has('X-Symfony-Cache')) {
-            if (false !== strpos($response->headers->get('X-Symfony-Cache'), 'miss')) {
+            if (str_contains($response->headers->get('X-Symfony-Cache'), 'miss')) {
                 $state = 'MISS';
-            } elseif (false !== strpos($response->headers->get('X-Symfony-Cache'), 'fresh')) {
+            } elseif (str_contains($response->headers->get('X-Symfony-Cache'), 'fresh')) {
                 $state = 'HIT';
             } else {
                 $state = 'UNDETERMINED';

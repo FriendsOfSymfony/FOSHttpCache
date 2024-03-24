@@ -17,8 +17,14 @@ namespace FOS\HttpCache\Exception;
  */
 class ExceptionCollection extends \Exception implements \IteratorAggregate, \Countable, HttpCacheException
 {
-    private $exceptions = [];
+    /**
+     * @var \Throwable[]
+     */
+    private array $exceptions = [];
 
+    /**
+     * @param \Throwable[] $exceptions
+     */
     public function __construct(array $exceptions = [])
     {
         foreach ($exceptions as $exception) {
@@ -28,10 +34,8 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
 
     /**
      * Add an exception to the collection.
-     *
-     * @return $this
      */
-    public function add(\Exception $e)
+    public function add(\Throwable $e): static
     {
         if (!$this->message) {
             $this->message = $e->getMessage();
@@ -44,34 +48,25 @@ class ExceptionCollection extends \Exception implements \IteratorAggregate, \Cou
 
     /**
      * Get first exception in collection or null, if there is none.
-     *
-     * @return \Exception|null
      */
-    public function getFirst()
+    public function getFirst(): ?\Throwable
     {
         if ($this->count() > 0) {
             return $this->exceptions[0];
         }
+
+        return null;
     }
 
-    /**
-     * Get exception iterator.
-     *
-     * @return \ArrayIterator
-     */
-    #[\ReturnTypeWillChange]
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->exceptions);
     }
 
     /**
      * Get number of exceptions in collection.
-     *
-     * @return int
      */
-    #[\ReturnTypeWillChange]
-    public function count()
+    public function count(): int
     {
         return count($this->exceptions);
     }

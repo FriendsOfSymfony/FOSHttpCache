@@ -52,8 +52,8 @@ class AppKernel implements HttpKernelInterface
                 $response->setVary('Accept');
 
                 return $response;
+            default:
+                return new Response('Unknown request '.$request->getPathInfo(), 404);
         }
-
-        return new Response('Unknown request '.$request->getPathInfo(), 404);
     }
 }

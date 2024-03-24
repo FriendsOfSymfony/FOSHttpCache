@@ -26,54 +26,45 @@ abstract class HttpProxyClient implements ProxyClient
 {
     /**
      * Dispatcher for invalidation HTTP requests.
-     *
-     * @var HttpDispatcher
      */
-    private $httpDispatcher;
+    private Dispatcher $httpDispatcher;
 
-    /**
-     * @var RequestFactory
-     */
-    private $requestFactory;
+    private RequestFactory $requestFactory;
 
     /**
      * The options configured in the constructor argument or default values.
      *
      * @var array The resolved options
      */
-    protected $options;
+    protected array $options;
 
     /**
-     * Constructor.
-     *
      * The base class has no options.
      *
-     * @param Dispatcher          $httpDispatcher Helper to send HTTP requests to caching proxy
+     * @param Dispatcher          $dispatcher     Helper to send instructions to the caching proxy
      * @param array               $options        Options for this client
      * @param RequestFactory|null $messageFactory Factory for PSR-7 messages. If none supplied,
      *                                            a default one is created
      */
     public function __construct(
-        Dispatcher $httpDispatcher,
+        Dispatcher $dispatcher,
         array $options = [],
         ?RequestFactory $messageFactory = null
     ) {
-        $this->httpDispatcher = $httpDispatcher;
+        $this->httpDispatcher = $dispatcher;
         $this->options = $this->configureOptions()->resolve($options);
         $this->requestFactory = $messageFactory ?: MessageFactoryDiscovery::find();
     }
 
-    public function flush()
+    public function flush(): int
     {
         return $this->httpDispatcher->flush();
     }
 
     /**
      * Get options resolver with default settings.
-     *
-     * @return OptionsResolver
      */
-    protected function configureOptions()
+    protected function configureOptions(): OptionsResolver
     {
         return new OptionsResolver();
     }
@@ -81,12 +72,11 @@ abstract class HttpProxyClient implements ProxyClient
     /**
      * Create a request and queue it with the HTTP dispatcher.
      *
-     * @param string                               $method
-     * @param string|UriInterface                  $url
+     * @param array<string, string>                $headers
      * @param bool                                 $validateHost see Dispatcher::invalidate
      * @param resource|string|StreamInterface|null $body
      */
-    protected function queueRequest($method, $url, array $headers, $validateHost = true, $body = null)
+    protected function queueRequest(string $method, UriInterface|string $url, array $headers, bool $validateHost = true, $body = null): void
     {
         $this->httpDispatcher->invalidate(
             $this->requestFactory->createRequest($method, $url, $headers, $body),
@@ -106,13 +96,13 @@ abstract class HttpProxyClient implements ProxyClient
      * collisions would in the worst case lead to unintended invalidations,
      * which is not a bug.
      *
-     * @param array $tags The tags to escape
+     * @param string[] $tags The tags to escape
      *
-     * @return array Sane tags
+     * @return string[] Sane tags
      */
-    protected function escapeTags(array $tags)
+    protected function escapeTags(array $tags): array
     {
-        array_walk($tags, function (&$tag) {
+        array_walk($tags, static function (&$tag) {
             // WARNING: changing the list of characters that are escaped is a BC break for existing installations,
             // as existing tags on the cache would not be invalidated anymore if they contain a character that is
             // newly escaped
@@ -132,7 +122,7 @@ abstract class HttpProxyClient implements ProxyClient
      *
      * @return int Number of tags per tag invalidation request
      */
-    protected function determineTagsPerHeader($escapedTags, $glue)
+    protected function determineTagsPerHeader(array $escapedTags, string $glue): int
     {
         if (mb_strlen(implode($glue, $escapedTags)) < $this->options['header_length']) {
             return count($escapedTags);

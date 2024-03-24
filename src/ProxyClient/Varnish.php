@@ -17,6 +17,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Varnish HTTP cache invalidator.
@@ -60,14 +61,12 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
      *
      * This happens to be the same as TagHeaderFormatter::DEFAULT_HEADER_NAME
      * but does not technically need to be the same.
-     *
-     * @var string
      */
     public const DEFAULT_HTTP_HEADER_CACHE_TAGS = 'X-Cache-Tags';
 
     public const DEFAULT_HTTP_HEADER_CACHE_XKEY = 'xkey-softpurge';
 
-    public function invalidateTags(array $tags)
+    public function invalidateTags(array $tags): static
     {
         if (!$tags) {
             return $this;
@@ -93,7 +92,7 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this;
     }
 
-    public function ban(array $headers)
+    public function ban(array $headers): static
     {
         $headers = array_merge(
             $this->options['default_ban_headers'],
@@ -105,7 +104,7 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this;
     }
 
-    public function banPath($path, $contentType = null, $hosts = null)
+    public function banPath(string $path, ?string $contentType = null, array|string|null $hosts = null): static
     {
         if (is_array($hosts)) {
             if (!count($hosts)) {
@@ -128,14 +127,14 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this->ban($headers);
     }
 
-    public function purge($url, array $headers = [])
+    public function purge(string $url, array $headers = []): static
     {
         $this->queueRequest(self::HTTP_METHOD_PURGE, $url, $headers);
 
         return $this;
     }
 
-    public function refresh($url, array $headers = [])
+    public function refresh(string $url, array $headers = []): static
     {
         $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
@@ -143,7 +142,7 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $this;
     }
 
-    protected function configureOptions()
+    protected function configureOptions(): OptionsResolver
     {
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
@@ -174,13 +173,19 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         return $resolver;
     }
 
-    private function invalidateByBan(array $tagchunk)
+    /**
+     * @param string[] $tagchunk
+     */
+    private function invalidateByBan(array $tagchunk): void
     {
         $tagExpression = sprintf('(^|,)(%s)(,|$)', implode('|', $tagchunk));
         $this->ban([$this->options['tags_header'] => $tagExpression]);
     }
 
-    private function invalidateByPurgekeys(array $tagchunk)
+    /**
+     * @param string[] $tagchunk
+     */
+    private function invalidateByPurgekeys(array $tagchunk): void
     {
         $this->queueRequest(
             self::HTTP_METHOD_PURGEKEYS,

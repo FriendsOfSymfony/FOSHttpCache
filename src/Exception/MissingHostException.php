@@ -19,10 +19,8 @@ class MissingHostException extends \RuntimeException implements HttpCacheExcepti
 {
     /**
      * @param string $path the path that was asked to be invalidated
-     *
-     * @return MissingHostException
      */
-    public static function missingHost($path)
+    public static function missingHost(string $path): MissingHostException
     {
         $msg = sprintf(
             'Path "%s" cannot be invalidated without a host. '

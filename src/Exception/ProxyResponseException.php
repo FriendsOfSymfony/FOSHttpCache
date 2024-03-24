@@ -18,10 +18,7 @@ use Http\Client\Exception\HttpException;
  */
 class ProxyResponseException extends \RuntimeException implements HttpCacheException
 {
-    /**
-     * @return ProxyResponseException
-     */
-    public static function proxyResponse(HttpException $exception)
+    public static function proxyResponse(HttpException $exception): ProxyResponseException
     {
         $message = sprintf(
             '%s error response "%s" from caching proxy',

@@ -27,5 +27,5 @@ interface ProxyClient
      *
      * @throws ExceptionCollection if any errors occurred during flush
      */
-    public function flush();
+    public function flush(): int;
 }

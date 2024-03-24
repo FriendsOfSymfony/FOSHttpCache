@@ -18,20 +18,14 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 trait HttpCacheAware
 {
-    /**
-     * @var HttpKernelInterface|null
-     */
-    private $httpCache;
+    private ?HttpKernelInterface $httpCache;
 
-    /**
-     * @return HttpKernelInterface|null
-     */
-    public function getHttpCache()
+    public function getHttpCache(): ?HttpKernelInterface
     {
         return $this->httpCache;
     }
 
-    public function setHttpCache(HttpKernelInterface $httpCache)
+    public function setHttpCache(HttpKernelInterface $httpCache): void
     {
         $this->httpCache = $httpCache;
     }

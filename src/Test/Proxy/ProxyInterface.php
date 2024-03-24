@@ -19,15 +19,15 @@ interface ProxyInterface
     /**
      * Start the proxy server.
      */
-    public function start();
+    public function start(): void;
 
     /**
      * Stop the proxy server.
      */
-    public function stop();
+    public function stop(): void;
 
     /**
      * Clear all cached content from the proxy server.
      */
-    public function clear();
+    public function clear(): void;
 }

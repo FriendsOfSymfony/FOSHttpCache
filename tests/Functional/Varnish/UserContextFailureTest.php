@@ -93,13 +93,11 @@ class UserContextFailureTest extends VarnishTestCase
         $this->assertEquals(503, $response->getStatusCode());
     }
 
-    protected function getConfigFile(): ?string
+    protected function getConfigFile(): string
     {
-        switch ((int) $this->getVarnishVersion()) {
-            case 3:
-                return sprintf(dirname(__DIR__).'/Fixtures/varnish-3/user_context_%s.vcl', $this->mode);
-            default:
-                return sprintf(dirname(__DIR__).'/Fixtures/varnish/user_context_%s.vcl', $this->mode);
-        }
+        return match ((int) $this->getVarnishVersion()) {
+            3 => sprintf(dirname(__DIR__).'/Fixtures/varnish-3/user_context_%s.vcl', $this->mode),
+            default => sprintf(dirname(__DIR__).'/Fixtures/varnish/user_context_%s.vcl', $this->mode),
+        };
     }
 }

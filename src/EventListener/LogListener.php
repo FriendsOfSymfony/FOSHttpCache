@@ -22,10 +22,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class LogListener implements EventSubscriberInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(LoggerInterface $logger)
     {
@@ -40,22 +37,22 @@ class LogListener implements EventSubscriberInterface
         ];
     }
 
-    public function onProxyUnreachableError(Event $event)
+    public function onProxyUnreachableError(Event $event): void
     {
-        $this->log(LogLevel::CRITICAL, $event->getException());
+        $this->log($event->getException());
     }
 
-    public function onProxyResponseError(Event $event)
+    public function onProxyResponseError(Event $event): void
     {
-        $this->log(LogLevel::CRITICAL, $event->getException());
+        $this->log($event->getException());
     }
 
-    private function log($level, \Exception $exception)
+    private function log(\Throwable $exception): void
     {
         $context = [
             'exception' => $exception,
         ];
 
-        $this->logger->log($level, $exception->getMessage(), $context);
+        $this->logger->log(LogLevel::CRITICAL, $exception->getMessage(), $context);
     }
 }

@@ -1,6 +1,4 @@
 parameters:
     level: 1
-    bootstrapFiles:
-        - .phpstan/classAliases.php
     paths:
         - tests

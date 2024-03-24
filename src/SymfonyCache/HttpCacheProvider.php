@@ -15,8 +15,5 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 interface HttpCacheProvider
 {
-    /**
-     * @return HttpKernelInterface|null
-     */
-    public function getHttpCache();
+    public function getHttpCache(): ?HttpKernelInterface;
 }

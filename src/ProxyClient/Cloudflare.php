@@ -15,6 +15,8 @@ use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Http\Message\RequestFactory;
+use Psr\Http\Message\UriInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Cloudflare HTTP cache invalidator.
@@ -47,10 +49,10 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
      *
      * @var array<string|array{url: string, headers: string[]}>
      */
-    private $purgeByUrlsData = [];
+    private array $purgeByUrlsData = [];
 
     public function __construct(
-        Dispatcher $httpDispatcher,
+        Dispatcher $dispatcher,
         array $options = [],
         ?RequestFactory $messageFactory = null
     ) {
@@ -58,7 +60,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
             throw new \Exception('ext-json is required for cloudflare invalidation');
         }
 
-        parent::__construct($httpDispatcher, $options, $messageFactory);
+        parent::__construct($dispatcher, $options, $messageFactory);
     }
 
     /**
@@ -68,7 +70,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
      *
      * @see https://api.cloudflare.com/#zone-purge-files-by-cache-tags,-host-or-prefix
      */
-    public function invalidateTags(array $tags)
+    public function invalidateTags(array $tags): static
     {
         if (!$tags) {
             return $this;
@@ -89,7 +91,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
      * @see https://api.cloudflare.com/#zone-purge-files-by-url
      * @see https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url For details on headers you can pass to clear the cache correctly
      */
-    public function purge($url, array $headers = [])
+    public function purge(string $url, array $headers = []): static
     {
         if (!empty($headers)) {
             $this->purgeByUrlsData[] = [
@@ -106,7 +108,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     /**
      * @see https://api.cloudflare.com/#zone-purge-all-files
      */
-    public function clear()
+    public function clear(): static
     {
         $this->queueRequest(
             'POST',
@@ -119,10 +121,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
         return $this;
     }
 
-    /**
-     * {@inheritdoc} Queue requests for purge by URLs
-     */
-    public function flush()
+    public function flush(): int
     {
         // Queue requests for purge by URL
         foreach (\array_chunk($this->purgeByUrlsData, self::URL_BATCH_PURGE_LIMIT) as $urlChunk) {
@@ -140,9 +139,11 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     }
 
     /**
-     * {@inheritdoc} Always provides authentication token
+     * {@inheritdoc}
+     *
+     * Always provides authentication token
      */
-    protected function queueRequest($method, $url, array $headers, $validateHost = true, $body = null)
+    protected function queueRequest(string $method, UriInterface|string $url, array $headers, bool $validateHost = true, $body = null): void
     {
         parent::queueRequest(
             $method,
@@ -153,7 +154,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
         );
     }
 
-    protected function configureOptions()
+    protected function configureOptions(): OptionsResolver
     {
         $resolver = parent::configureOptions();
 
@@ -167,7 +168,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
 
     private function json_encode(array $data): string
     {
-        $json = json_encode($data, JSON_UNESCAPED_SLASHES);
+        $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
         if (false === $json) {
             throw new \InvalidArgumentException(sprintf('Cannot encode "$data": %s', json_last_error_msg()));
         }

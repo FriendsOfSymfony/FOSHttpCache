@@ -47,11 +47,9 @@ interface RefreshCapable extends ProxyClient
      *        ->flush()
      *    ;
      *
-     * @param string $url     Path or URL to refresh
-     * @param array  $headers Extra HTTP headers to send to the caching proxy
-     *                        (optional)
-     *
-     * @return $this
+     * @param string                $url     Path or URL to refresh
+     * @param array<string, string> $headers Extra HTTP headers to send to the caching proxy
+     *                                       (optional)
      */
-    public function refresh($url, array $headers = []);
+    public function refresh(string $url, array $headers = []): static;
 }

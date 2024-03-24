@@ -24,8 +24,6 @@ interface ClearCapable extends ProxyClient
 {
     /**
      * Remove all cache items from this cache.
-     *
-     * @return $this
      */
-    public function clear();
+    public function clear(): static;
 }

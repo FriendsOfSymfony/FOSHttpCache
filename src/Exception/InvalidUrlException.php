@@ -17,12 +17,10 @@ namespace FOS\HttpCache\Exception;
 class InvalidUrlException extends InvalidArgumentException
 {
     /**
-     * @param string $url    the invalid URL
-     * @param string $reason Further explanation why the URL was invalid (optional)
-     *
-     * @return self
+     * @param string      $url    the invalid URL
+     * @param string|null $reason Further explanation why the URL was invalid (optional)
      */
-    public static function invalidUrl($url, $reason = null)
+    public static function invalidUrl(string $url, ?string $reason = null): InvalidUrlException
     {
         $msg = sprintf('URL "%s" is invalid.', $url);
         if ($reason) {
@@ -33,12 +31,10 @@ class InvalidUrlException extends InvalidArgumentException
     }
 
     /**
-     * @param string $server  Invalid server
-     * @param array  $allowed Allowed URL parts
-     *
-     * @return self
+     * @param string   $server  Invalid server
+     * @param string[] $allowed Allowed URL parts
      */
-    public static function invalidUrlParts($server, array $allowed)
+    public static function invalidUrlParts(string $server, array $allowed): InvalidUrlException
     {
         return new self(sprintf(
             'Server "%s" is invalid. Only %s URL parts are allowed.',

@@ -27,17 +27,13 @@ class UserContextListener implements EventSubscriberInterface
 {
     /**
      * The options configured in the constructor argument or default values.
-     *
-     * @var array
      */
-    private $options;
+    private array $options;
 
     /**
      * Generated user hash.
-     *
-     * @var string
      */
-    private $userHash;
+    private ?string $userHash;
 
     /**
      * When creating this listener, you can configure a number of options.
@@ -193,12 +189,10 @@ class UserContextListener implements EventSubscriberInterface
 
     /**
      * Checks if passed string can be considered as a session name, such as would be used in cookies.
-     *
-     * @param string $name
      */
-    private function isSessionName($name): bool
+    private function isSessionName(string $name): bool
     {
-        return 0 === strpos($name, $this->options['session_name_prefix']);
+        return str_starts_with($name, $this->options['session_name_prefix']);
     }
 
     /**

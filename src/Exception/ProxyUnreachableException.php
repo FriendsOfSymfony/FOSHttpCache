@@ -19,10 +19,7 @@ use Http\Client\Exception\NetworkException;
  */
 class ProxyUnreachableException extends \RuntimeException implements HttpCacheException
 {
-    /**
-     * @return ProxyUnreachableException
-     */
-    public static function proxyUnreachable(NetworkException $requestException)
+    public static function proxyUnreachable(NetworkException $requestException): ProxyUnreachableException
     {
         $message = sprintf(
             'Request to caching proxy at %s failed with message "%s"',

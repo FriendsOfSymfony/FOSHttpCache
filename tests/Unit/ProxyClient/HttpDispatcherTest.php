@@ -49,17 +49,6 @@ class HttpDispatcherTest extends TestCase
         $this->uriFactory = UriFactoryDiscovery::find();
     }
 
-    public function testInstantiateWithNonUri(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('URI parameter must be a string, object given');
-
-        new HttpDispatcher(
-            ['127.0.0.1:123'],
-            $this
-        );
-    }
-
     /**
      * @dataProvider exceptionProvider
      *

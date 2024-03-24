@@ -35,15 +35,8 @@ use Toflar\Psr6HttpCacheStore\Psr6Store;
  */
 trait SymfonyTest
 {
-    /**
-     * @var Symfony
-     */
-    protected $proxyClient;
-
-    /**
-     * @var SymfonyProxy
-     */
-    protected $proxy;
+    protected Symfony $proxyClient;
+    protected SymfonyProxy $proxy;
 
     /**
      * Clear Symfony HttpCache.
@@ -58,11 +51,9 @@ trait SymfonyTest
     /**
      * Get server port.
      *
-     * @return int
-     *
      * @throws \Exception
      */
-    protected function getCachingProxyPort()
+    protected function getCachingProxyPort(): int
     {
         // @codeCoverageIgnoreStart
         if (!defined('WEB_SERVER_PORT')) {
@@ -76,11 +67,9 @@ trait SymfonyTest
     /**
      * Get the hostname where your application can be reached.
      *
-     * @return string
-     *
      * @throws \Exception
      */
-    protected function getHostName()
+    protected function getHostName(): string
     {
         // @codeCoverageIgnoreStart
         if (!defined('WEB_SERVER_HOSTNAME')) {
@@ -93,12 +82,9 @@ trait SymfonyTest
         return WEB_SERVER_HOSTNAME;
     }
 
-    /**
-     * @return SymfonyProxy
-     */
-    protected function getProxy()
+    protected function getProxy(): SymfonyProxy
     {
-        if (null === $this->proxy) {
+        if (!isset($this->proxy)) {
             $this->proxy = new SymfonyProxy();
         }
 
@@ -111,12 +97,10 @@ trait SymfonyTest
      * We use a non-default method for PURGE because the built-in PHP webserver
      * does not allow arbitrary HTTP methods.
      * https://github.com/php/php-src/blob/PHP-5.4.1/sapi/cli/php_http_parser.c#L78-L102
-     *
-     * @return Symfony
      */
-    protected function getProxyClient()
+    protected function getProxyClient(): Symfony
     {
-        if (null === $this->proxyClient) {
+        if (!isset($this->proxyClient)) {
             $httpDispatcher = new HttpDispatcher(
                 ['http://127.0.0.1:'.$this->getCachingProxyPort()],
                 $this->getHostName().':'.$this->getCachingProxyPort()

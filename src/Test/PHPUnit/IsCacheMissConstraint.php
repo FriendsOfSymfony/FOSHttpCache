@@ -18,7 +18,7 @@ class IsCacheMissConstraint extends AbstractCacheConstraint
         return 'is a cache miss';
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return 'MISS';
     }

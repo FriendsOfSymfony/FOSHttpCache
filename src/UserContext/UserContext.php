@@ -20,15 +20,17 @@ namespace FOS\HttpCache\UserContext;
  */
 class UserContext implements \IteratorAggregate
 {
-    private $parameters = [];
+    /**
+     * @var array<string, mixed>
+     */
+    private array $parameters = [];
 
     /**
      * Set a parameter for this context.
      *
-     * @param string $key   Parameter identifier
-     * @param mixed  $value Parameter value (it should be serializable)
+     * @param mixed $value Parameter value (it should be serializable)
      */
-    public function addParameter($key, $value)
+    public function addParameter(string $key, $value): void
     {
         $this->parameters[$key] = $value;
     }
@@ -36,19 +38,15 @@ class UserContext implements \IteratorAggregate
     /**
      * Set all the parameters of this context.
      */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): void
     {
         $this->parameters = $parameters;
     }
 
     /**
      * Determine whether a parameter exists.
-     *
-     * @param string $key
-     *
-     * @return bool
      */
-    public function hasParameter($key)
+    public function hasParameter(string $key): bool
     {
         return array_key_exists($key, $this->parameters);
     }
@@ -56,9 +54,9 @@ class UserContext implements \IteratorAggregate
     /**
      * Return all parameters of this context.
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }

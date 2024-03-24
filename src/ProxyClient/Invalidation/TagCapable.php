@@ -25,9 +25,7 @@ interface TagCapable extends ProxyClient
     /**
      * Remove/Expire cache objects based on cache tags.
      *
-     * @param array $tags Tags that should be removed/expired from the cache. An empty tag list should be ignored.
-     *
-     * @return $this
+     * @param string[] $tags Tags that should be removed/expired from the cache. An empty tag list should be ignored.
      */
-    public function invalidateTags(array $tags);
+    public function invalidateTags(array $tags): static;
 }

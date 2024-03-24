@@ -17,6 +17,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\SymfonyCache\PurgeListener;
 use FOS\HttpCache\SymfonyCache\PurgeTagsListener;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Symfony HttpCache invalidator.
@@ -31,14 +32,14 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
 {
     public const HTTP_METHOD_REFRESH = 'GET';
 
-    public function purge($url, array $headers = [])
+    public function purge(string $url, array $headers = []): static
     {
         $this->queueRequest($this->options['purge_method'], $url, $headers);
 
         return $this;
     }
 
-    public function refresh($url, array $headers = [])
+    public function refresh(string $url, array $headers = []): static
     {
         $headers = array_merge($headers, ['Cache-Control' => 'no-cache']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
@@ -46,7 +47,7 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         return $this;
     }
 
-    protected function configureOptions()
+    protected function configureOptions(): OptionsResolver
     {
         $resolver = parent::configureOptions();
         $resolver->setDefaults([
@@ -67,7 +68,7 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
         return $resolver;
     }
 
-    public function invalidateTags(array $tags)
+    public function invalidateTags(array $tags): static
     {
         if (!$tags) {
             return $this;
@@ -94,10 +95,8 @@ class Symfony extends HttpProxyClient implements PurgeCapable, RefreshCapable, T
      *
      * Clearing the cache is implemented with a purge request with a special
      * header to indicate that the whole cache should be removed.
-     *
-     * @return $this
      */
-    public function clear()
+    public function clear(): static
     {
         $this->queueRequest(
             $this->options['purge_method'],

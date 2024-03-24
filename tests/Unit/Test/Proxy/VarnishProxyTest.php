@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class VarnishProxyTest extends TestCase
 {
-    public function testInvalidConfigFileThrowsException()
+    public function testInvalidConfigFileThrowsException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot find config file: nope.vcl');
@@ -24,7 +24,7 @@ class VarnishProxyTest extends TestCase
         new VarnishProxy('nope.vcl');
     }
 
-    public function allowInlineFlagProvider()
+    public function allowInlineFlagProvider(): array
     {
         return [[true], [false]];
     }
@@ -32,7 +32,7 @@ class VarnishProxyTest extends TestCase
     /**
      * @dataProvider allowInlineFlagProvider
      */
-    public function testStart($inlineC)
+    public function testStart(bool $inlineC): void
     {
         $proxy = new VarnishProxyMock('config.vcl');
         $proxy->setBinary('/usr/sbin/varnishd');
@@ -75,24 +75,24 @@ class VarnishProxyTest extends TestCase
 
 class VarnishProxyMock extends VarnishProxy
 {
-    public $command;
+    public string $command;
 
-    public $arguments;
+    public array $arguments;
 
-    public $wait = true;
+    public bool $wait = true;
 
-    public function setConfigFile($configFile)
+    public function setConfigFile(string $configFile): void
     {
         $this->configFile = $configFile;
     }
 
-    protected function runCommand($command, array $arguments)
+    protected function runCommand(string $command, array $arguments): void
     {
         $this->command = $command;
         $this->arguments = $arguments;
     }
 
-    protected function wait($timeout, $callback)
+    protected function wait($timeout, $callback): bool
     {
         return $this->wait;
     }

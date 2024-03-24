@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractProxyTest extends TestCase
 {
-    public function testWaitTimeout()
+    public function testWaitTimeout(): void
     {
         $proxy = new ProxyPartial();
         $this->expectException(\RuntimeException::class);
@@ -24,7 +24,7 @@ class AbstractProxyTest extends TestCase
         $proxy->start();
     }
 
-    public function testRunFailure()
+    public function testRunFailure(): void
     {
         $proxy = new ProxyPartial();
         $this->expectException(\RuntimeException::class);
@@ -35,20 +35,20 @@ class AbstractProxyTest extends TestCase
 
 class ProxyPartial extends AbstractProxy
 {
-    public function start()
+    public function start(): void
     {
         $this->waitUntil('localhost', 6666, 0);
     }
 
-    public function stop()
+    public function stop(): void
     {
     }
 
-    public function clear()
+    public function clear(): void
     {
     }
 
-    public function run()
+    public function run(): void
     {
         $this->runCommand('/path/to/not/exists', []);
     }

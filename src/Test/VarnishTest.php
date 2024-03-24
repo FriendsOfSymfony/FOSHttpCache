@@ -46,15 +46,9 @@ use FOS\HttpCache\Test\Proxy\VarnishProxy;
  */
 trait VarnishTest
 {
-    /**
-     * @var VarnishProxy
-     */
-    protected $proxy;
+    protected VarnishProxy $proxy;
 
-    /**
-     * @var Varnish
-     */
-    protected $proxyClient;
+    protected Varnish $proxyClient;
 
     /**
      * Start Varnish and discard any cached content.
@@ -79,7 +73,7 @@ trait VarnishTest
      *
      * @throws \Exception
      */
-    protected function getConfigFile()
+    protected function getConfigFile(): string
     {
         // @codeCoverageIgnoreStart
         if (!defined('VARNISH_FILE')) {
@@ -93,58 +87,48 @@ trait VarnishTest
     }
 
     /**
-     * Get Varnish binary.
-     *
-     * @return string
+     * Get path to Varnish binary.
      */
-    protected function getBinary()
+    protected function getBinary(): ?string
     {
         return defined('VARNISH_BINARY') ? VARNISH_BINARY : null;
     }
 
     /**
      * Get Varnish port.
-     *
-     * @return int
      */
-    protected function getCachingProxyPort()
+    protected function getCachingProxyPort(): int
     {
         return defined('VARNISH_PORT') ? VARNISH_PORT : 6181;
     }
 
     /**
      * Get Varnish management port.
-     *
-     * @return int
      */
-    protected function getVarnishMgmtPort()
+    protected function getVarnishMgmtPort(): ?int
     {
         return defined('VARNISH_MGMT_PORT') ? VARNISH_MGMT_PORT : null;
     }
 
     /**
      * Get Varnish cache directory.
-     *
-     * @return string
      */
-    protected function getCacheDir()
+    protected function getCacheDir(): ?string
     {
         return defined('VARNISH_CACHE_DIR') ? VARNISH_CACHE_DIR : null;
     }
 
     /**
      * Defaults to 4.
-     *
-     * @return int
      */
-    protected function getVarnishVersion()
+    protected function getVarnishVersion(): string
     {
         return getenv('VARNISH_VERSION') ?: '4.0';
     }
 
-    protected function getProxy()
+    protected function getProxy(): VarnishProxy
     {
-        if (null === $this->proxy) {
+        if (!isset($this->proxy)) {
             $this->proxy = new VarnishProxy($this->getConfigFile());
             if ($this->getBinary()) {
                 $this->proxy->setBinary($this->getBinary());
@@ -166,14 +150,9 @@ trait VarnishTest
         return $this->proxy;
     }
 
-    /**
-     * Get Varnish proxy client.
-     *
-     * @return Varnish
-     */
-    protected function getProxyClient()
+    protected function getProxyClient(): Varnish
     {
-        if (null === $this->proxyClient) {
+        if (!isset($this->proxyClient)) {
             $httpDispatcher = new HttpDispatcher(
                 ['http://127.0.0.1:'.$this->getCachingProxyPort()],
                 $this->getHostName().':'.$this->getCachingProxyPort()
@@ -197,11 +176,9 @@ trait VarnishTest
     /**
      * Get the hostname where your application can be reached.
      *
-     * @return string
-     *
      * @throws \Exception
      */
-    protected function getHostName()
+    protected function getHostName(): string
     {
         // @codeCoverageIgnoreStart
         if (!defined('WEB_SERVER_HOSTNAME')) {

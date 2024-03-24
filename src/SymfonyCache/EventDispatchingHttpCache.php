@@ -66,7 +66,7 @@ trait EventDispatchingHttpCache
      *
      * @see EventDispatcherInterface::addListener
      */
-    public function addListener($eventName, $listener, $priority = 0): void
+    public function addListener(string $eventName, callable $listener, int $priority = 0): void
     {
         $this->getEventDispatcher()->addListener($eventName, $listener, $priority);
     }
@@ -76,7 +76,7 @@ trait EventDispatchingHttpCache
      *
      * Adding the Events::PRE_HANDLE and Events::POST_HANDLE events.
      */
-    public function handle(Request $request, $type = HttpKernelInterface::MAIN_REQUEST, $catch = true): Response
+    public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true): Response
     {
         // trigger loading the CacheEvent to avoid fatal error when HttpKernel::loadClassCache is used.
         class_exists(CacheEvent::class);
@@ -107,7 +107,7 @@ trait EventDispatchingHttpCache
      *
      * Adding the Events::PRE_INVALIDATE event.
      */
-    protected function invalidate(Request $request, $catch = false): Response
+    protected function invalidate(Request $request, bool $catch = false): Response
     {
         if ($response = $this->dispatch(Events::PRE_INVALIDATE, $request)) {
             return $response;

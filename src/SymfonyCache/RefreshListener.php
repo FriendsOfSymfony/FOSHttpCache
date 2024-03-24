@@ -36,7 +36,7 @@ class RefreshListener extends AccessControlledListener
      * When the request comes from a non-authorized client, ignore refresh to
      * let normal lookup happen.
      */
-    public function handleRefresh(CacheEvent $event)
+    public function handleRefresh(CacheEvent $event): void
     {
         $request = $event->getRequest();
         // BC - we can drop this check when we only support Symfony 3.1 and newer
