@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 class HashGeneratorTest extends TestCase
 {
-    public function testGenerateHash()
+    public function testGenerateHash(): void
     {
         $hashGenerator = new DefaultHashGenerator([new FooProvider()]);
 
@@ -28,7 +28,7 @@ class HashGeneratorTest extends TestCase
         $this->assertEquals($expectedHash, $hashGenerator->generateHash());
     }
 
-    public function testConstructorError()
+    public function testConstructorError(): void
     {
         $this->expectException(InvalidArgumentException::class);
         new DefaultHashGenerator([]);
@@ -37,7 +37,7 @@ class HashGeneratorTest extends TestCase
 
 class FooProvider implements ContextProvider
 {
-    public function updateUserContext(UserContext $context)
+    public function updateUserContext(UserContext $context): void
     {
         $context->addParameter('foo', 'bar');
     }

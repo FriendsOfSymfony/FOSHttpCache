@@ -12,7 +12,6 @@
 namespace FOS\HttpCache\Tests\Unit\Test;
 
 use FOS\HttpCache\Test\NginxTest;
-use FOS\HttpCache\Test\Proxy\NginxProxy;
 use PHPUnit\Framework\TestCase;
 
 class NginxTestTest extends TestCase
@@ -24,20 +23,19 @@ class NginxTestTest extends TestCase
         // do not try to set up proxy
     }
 
-    protected function getBinary()
+    protected function getBinary(): string
     {
         return '/test/binary';
     }
 
-    protected function getCacheDir()
+    protected function getCacheDir(): string
     {
         return '/tmp/foobar';
     }
 
-    public function testGetProxy()
+    public function testGetProxy(): void
     {
         $proxy = $this->getProxy();
-        $this->assertInstanceOf(NginxProxy::class, $proxy);
 
         $this->assertEquals('/test/binary', $proxy->getBinary());
         $this->assertEquals('/tmp/foobar', $proxy->getCacheDir());

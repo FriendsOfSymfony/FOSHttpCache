@@ -62,7 +62,7 @@ class VarnishProxyTest extends TestCase
         $this->assertEquals($arguments, $proxy->arguments);
     }
 
-    public function testWaitThrowsException()
+    public function testWaitThrowsException(): void
     {
         $proxy = new VarnishProxyMock('config.vcl');
         $proxy->wait = false;

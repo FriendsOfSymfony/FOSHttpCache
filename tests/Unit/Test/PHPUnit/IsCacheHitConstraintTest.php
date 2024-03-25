@@ -17,17 +17,14 @@ use PHPUnit\Framework\ExpectationFailedException;
 
 class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
 {
-    /**
-     * @var IsCacheHitConstraint
-     */
-    private $constraint;
+    private IsCacheHitConstraint $constraint;
 
     public function setUp(): void
     {
         $this->constraint = new IsCacheHitConstraint('cache-header');
     }
 
-    public function testMatches()
+    public function testMatches(): void
     {
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
@@ -42,7 +39,7 @@ class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
         $this->constraint->evaluate($response);
     }
 
-    public function testMatchesThrowsExceptionIfHeaderIsMissing()
+    public function testMatchesThrowsExceptionIfHeaderIsMissing(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Response has no "cache-header" header');

@@ -29,7 +29,7 @@ interface Dispatcher
      *                           a base uri or the invalidation request
      *                           specifies the host
      */
-    public function invalidate(RequestInterface $invalidationRequest, bool $validateHost = true);
+    public function invalidate(RequestInterface $invalidationRequest, bool $validateHost = true): void;
 
     /**
      * Send all pending invalidation requests and make sure the requests have

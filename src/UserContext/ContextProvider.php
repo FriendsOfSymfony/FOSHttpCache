@@ -19,7 +19,7 @@ interface ContextProvider
     /**
      * This function is called before generating the hash of a UserContext.
      *
-     * This allow to add a parameter on UserContext or set the whole array of parameters
+     * This allows to add parameters on UserContext or replace the whole array of parameters
      */
-    public function updateUserContext(UserContext $context);
+    public function updateUserContext(UserContext $context): void;
 }

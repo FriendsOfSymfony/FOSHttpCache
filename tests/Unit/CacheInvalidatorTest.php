@@ -37,7 +37,7 @@ class CacheInvalidatorTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testSupportsTrue()
+    public function testSupportsTrue(): void
     {
         /** @var MockInterface&Varnish $proxyClient */
         $proxyClient = \Mockery::mock(Varnish::class);
@@ -50,7 +50,7 @@ class CacheInvalidatorTest extends TestCase
         $this->assertTrue($cacheInvalidator->supports(CacheInvalidator::TAGS));
     }
 
-    public function testSupportsFalse()
+    public function testSupportsFalse(): void
     {
         /** @var MockInterface&ProxyClient $proxyClient */
         $proxyClient = \Mockery::mock(ProxyClient::class);
@@ -63,7 +63,7 @@ class CacheInvalidatorTest extends TestCase
         $this->assertFalse($cacheInvalidator->supports(CacheInvalidator::TAGS));
     }
 
-    public function testSupportsInvalid()
+    public function testSupportsInvalid(): void
     {
         /** @var MockInterface&ProxyClient $proxyClient */
         $proxyClient = \Mockery::mock(ProxyClient::class);
@@ -74,7 +74,7 @@ class CacheInvalidatorTest extends TestCase
         $cacheInvalidator->supports('garbage');
     }
 
-    public function testInvalidatePath()
+    public function testInvalidatePath(): void
     {
         /** @var MockInterface&PurgeCapable $purge */
         $purge = \Mockery::mock(PurgeCapable::class)
@@ -92,7 +92,7 @@ class CacheInvalidatorTest extends TestCase
         ;
     }
 
-    public function testRefreshPath()
+    public function testRefreshPath(): void
     {
         $headers = ['X' => 'Y'];
         /** @var MockInterface&RefreshCapable $refresh */
@@ -108,7 +108,7 @@ class CacheInvalidatorTest extends TestCase
         ;
     }
 
-    public function testInvalidate()
+    public function testInvalidate(): void
     {
         $headers = [
             'X-Header' => '^value.*$',
@@ -126,7 +126,7 @@ class CacheInvalidatorTest extends TestCase
         $cacheInvalidator->invalidate($headers);
     }
 
-    public function testInvalidateTags()
+    public function testInvalidateTags(): void
     {
         $tags = [
             'post-8',
@@ -144,7 +144,7 @@ class CacheInvalidatorTest extends TestCase
         $cacheInvalidator->invalidateTags($tags);
     }
 
-    public function testInvalidateRegex()
+    public function testInvalidateRegex(): void
     {
         /** @var MockInterface&BanCapable $ban */
         $ban = \Mockery::mock(BanCapable::class)
@@ -181,7 +181,7 @@ class CacheInvalidatorTest extends TestCase
         $cacheInvalidator->$method($arg);
     }
 
-    public function testProxyClientExceptionsAreLogged()
+    public function testProxyClientExceptionsAreLogged(): void
     {
         /** @var MockInterface&RequestInterface $failedRequest */
         $failedRequest = \Mockery::mock(RequestInterface::class)
@@ -230,7 +230,7 @@ class CacheInvalidatorTest extends TestCase
         ;
     }
 
-    public function testEventDispatcher()
+    public function testEventDispatcher(): void
     {
         /** @var MockInterface&Varnish $proxyClient */
         $proxyClient = \Mockery::mock(Varnish::class);
@@ -241,7 +241,7 @@ class CacheInvalidatorTest extends TestCase
         $this->assertSame($eventDispatcher, $cacheInvalidator->getEventDispatcher());
     }
 
-    public function testEventDispatcherImmutable()
+    public function testEventDispatcherImmutable(): void
     {
         /** @var MockInterface&Varnish $proxyClient */
         $proxyClient = \Mockery::mock(Varnish::class);
