@@ -13,7 +13,6 @@ namespace FOS\HttpCache\Test;
 
 use FOS\HttpCache\SymfonyCache\CacheEvent;
 use FOS\HttpCache\SymfonyCache\CacheInvalidation;
-use FOS\HttpCache\SymfonyCache\EventDispatchingHttpCache;
 use FOS\HttpCache\SymfonyCache\Events;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -41,14 +40,9 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      *
      * @param string[] $mockedMethods List of methods to mock
      */
-    protected function getHttpCachePartialMock(?array $mockedMethods = null): MockObject|CacheInvalidation|EventDispatchingHttpCache
+    protected function getHttpCachePartialMock(array $mockedMethods = []): MockObject&CacheInvalidation
     {
-        $mock = $this
-            ->getMockBuilder($this->getCacheClass())
-            ->setMethods($mockedMethods)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $mock = $this->createPartialMock($this->getCacheClass(), $mockedMethods);
 
         $this->assertInstanceOf(CacheInvalidation::class, $mock);
 
@@ -103,6 +97,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 
         $httpCache = $this->getHttpCachePartialMock(['lookup']);
         $testListener = new TestListener($this, $httpCache, $request);
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
         $httpCache
             ->method('lookup')
@@ -128,6 +123,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $httpCache = $this->getHttpCachePartialMock(['lookup']);
         $testListener = new TestListener($this, $httpCache, $request);
         $testListener->preHandleResponse = $response;
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->never())
@@ -154,6 +150,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $httpCache = $this->getHttpCachePartialMock(['lookup']);
         $testListener = new TestListener($this, $httpCache, $request);
         $testListener->postHandleResponse = $postResponse;
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
         $httpCache
             ->method('lookup')
@@ -182,6 +179,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $testListener = new TestListener($this, $httpCache, $request);
         $testListener->preHandleResponse = $preResponse;
         $testListener->postHandleResponse = $postResponse;
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
         $httpCache
             ->expects($this->never())
@@ -203,6 +201,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 
         $httpCache = $this->getHttpCachePartialMock();
         $testListener = new TestListener($this, $httpCache, $request);
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
 
         $this->setStoreMock($httpCache, $request, $response);
@@ -225,6 +224,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $httpCache = $this->getHttpCachePartialMock();
         $testListener = new TestListener($this, $httpCache, $request);
         $testListener->preStoreResponse = $preStoreResponse;
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
 
         $this->setStoreMock($httpCache, $request, $preStoreResponse);
@@ -247,6 +247,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $httpCache = $this->getHttpCachePartialMock(['pass']);
         $testListener = new TestListener($this, $httpCache, $request);
         $httpCache->addSubscriber($testListener);
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache
             ->method('pass')
             ->with($request)
@@ -274,6 +275,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $testListener = new TestListener($this, $httpCache, $request);
         $testListener->preInvalidateResponse = $response;
         $httpCache->addSubscriber($testListener);
+        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache
             ->expects($this->never())
             ->method('pass')

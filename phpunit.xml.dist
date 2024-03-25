@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit bootstrap="./tests/bootstrap.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+    bootstrap="./tests/bootstrap.php"
+    colors="true"
 >
-    <testsuites>
-        <testsuite name="FOSHttpCache tests">
-            <directory suffix="Test.php">./tests/</directory>
-        </testsuite>
-    </testsuites>
 
-    <filter>
-        <whitelist>
-            <directory>./src</directory>
-        </whitelist>
-    </filter>
+  <testsuites>
+    <testsuite name="FOSHttpCache tests">
+      <directory suffix="Test.php">./tests/</directory>
+    </testsuite>
+  </testsuites>
 
-    <listeners>
-        <listener class="\FOS\HttpCache\Test\WebServerListener" />
-    </listeners>
+  <extensions>
+    <bootstrap class="FOS\HttpCache\Test\WebServerSubscriberExtension"/>
+  </extensions>
 
     <php>
-        <const name="NGINX_FILE" value="./tests/Functional/Fixtures/nginx/fos.conf" />
-        <const name="WEB_SERVER_HOSTNAME" value="localhost" />
-        <const name="WEB_SERVER_PORT" value="8080" />
-        <const name="WEB_SERVER_DOCROOT" value="./tests/Functional/Fixtures/web" />
-    </php>
+    <const name="NGINX_FILE" value="./tests/Functional/Fixtures/nginx/fos.conf"/>
+    <const name="WEB_SERVER_HOSTNAME" value="localhost"/>
+    <const name="WEB_SERVER_PORT" value="8080"/>
+    <const name="WEB_SERVER_DOCROOT" value="./tests/Functional/Fixtures/web"/>
+  </php>
+
+  <source>
+    <include>
+      <directory>./src</directory>
+    </include>
+  </source>
 </phpunit>

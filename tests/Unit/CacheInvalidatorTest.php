@@ -157,7 +157,7 @@ class CacheInvalidatorTest extends TestCase
         $cacheInvalidator->invalidateRegex('/a', 'b', ['example.com']);
     }
 
-    public function provideOperations(): iterable
+    public static function provideOperations(): iterable
     {
         yield from [
             ['invalidatePath', '/'],

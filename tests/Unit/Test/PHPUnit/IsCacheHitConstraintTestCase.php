@@ -15,7 +15,7 @@ use FOS\HttpCache\Test\PHPUnit\IsCacheHitConstraint;
 use GuzzleHttp\Psr7\Stream;
 use PHPUnit\Framework\ExpectationFailedException;
 
-class IsCacheHitConstraintTest extends AbstractCacheConstraintTest
+class IsCacheHitConstraintTestCase extends AbstractCacheConstraintTestCase
 {
     private IsCacheHitConstraint $constraint;
 

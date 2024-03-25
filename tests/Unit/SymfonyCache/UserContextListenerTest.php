@@ -35,7 +35,7 @@ class UserContextListenerTest extends TestCase
     /**
      * UserContextListener default options to simulate the correct headers.
      */
-    public function provideConfigOptions(): array
+    public static function provideConfigOptions(): array
     {
         $userContextListener = new UserContextListener();
         $ref = new \ReflectionObject($userContextListener);
@@ -119,8 +119,9 @@ class UserContextListenerTest extends TestCase
             // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
             /** @var Response&MockObject $hashResponse */
             $hashResponse = $this->getMockBuilder(Response::class)
-                ->setMethods(['prepare'])
-                ->getMock();
+                ->onlyMethods(['prepare'])
+                ->getMock()
+            ;
             $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
             $that = $this;
@@ -190,8 +191,9 @@ class UserContextListenerTest extends TestCase
         // Just avoid the response to modify the request object, otherwise it's impossible to test objects equality.
         /** @var Response&MockObject $hashResponse */
         $hashResponse = $this->getMockBuilder(Response::class)
-            ->setMethods(['prepare'])
-            ->getMock();
+            ->onlyMethods(['prepare'])
+            ->getMock()
+        ;
         $hashResponse->headers->set($options['user_hash_header'], $expectedContextHash);
 
         $that = $this;

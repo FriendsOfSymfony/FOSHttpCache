@@ -74,40 +74,28 @@ class SymfonyTest extends TestCase
 
     public function testInvalidateTagsWithALotOfTags(): void
     {
+        $tags = [
+            'foobar,foobar1,foobar2,foobar3,foobar4,foobar5,foobar6,foobar7,foobar8,foobar9,foobar10' => true,
+            'foobar11,foobar12,foobar13,foobar14,foobar15,foobar16,foobar17,foobar18,foobar19,foobar20,foobar21' => true,
+            'foobar22,foobar23,foobar24,foobar25' => true,
+        ];
+
         /** @var HttpDispatcher&MockObject $dispatcher */
         $dispatcher = $this->createMock(HttpDispatcher::class);
         $dispatcher
             ->expects($this->exactly(3))
             ->method('invalidate')
-            ->withConsecutive(
-                [
-                    $this->callback(function (RequestInterface $request) {
-                        $this->assertEquals('PURGETAGS', $request->getMethod());
-                        $this->assertEquals('foobar,foobar1,foobar2,foobar3,foobar4,foobar5,foobar6,foobar7,foobar8,foobar9,foobar10', $request->getHeaderLine('X-Cache-Tags'));
+            ->with($this->callback(function (RequestInterface $request) use (&$tags): bool {
+                $this->assertSame('PURGETAGS', $request->getMethod());
+                $purgeTags = $request->getHeaderLine('X-Cache-Tags');
+                if (!array_key_exists($purgeTags, $tags)) {
+                    $this->fail("Unexpected request to purge $purgeTags");
+                }
+                unset($tags[$purgeTags]);
 
-                        return true;
-                    }),
-                    false,
-                ],
-                [
-                    $this->callback(function (RequestInterface $request) {
-                        $this->assertEquals('PURGETAGS', $request->getMethod());
-                        $this->assertEquals('foobar11,foobar12,foobar13,foobar14,foobar15,foobar16,foobar17,foobar18,foobar19,foobar20,foobar21', $request->getHeaderLine('X-Cache-Tags'));
-
-                        return true;
-                    }),
-                    false,
-                ],
-                [
-                    $this->callback(function (RequestInterface $request) {
-                        $this->assertEquals('PURGETAGS', $request->getMethod());
-                        $this->assertEquals('foobar22,foobar23,foobar24,foobar25', $request->getHeaderLine('X-Cache-Tags'));
-
-                        return true;
-                    }),
-                    false,
-                ]
-            );
+                return true;
+            }))
+        ;
 
         $symfony = new Symfony($dispatcher, ['header_length' => 100]);
 
@@ -139,6 +127,8 @@ class SymfonyTest extends TestCase
             'foobar24',
             'foobar25',
         ]);
+
+        $this->assertCount(0, $tags);
     }
 
     public function testClear(): void
