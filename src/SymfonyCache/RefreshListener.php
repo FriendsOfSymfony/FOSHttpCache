@@ -39,12 +39,7 @@ class RefreshListener extends AccessControlledListener
     public function handleRefresh(CacheEvent $event): void
     {
         $request = $event->getRequest();
-        // BC - we can drop this check when we only support Symfony 3.1 and newer
-        $cacheable = method_exists(Request::class, 'isMethodCacheable')
-            ? $request->isMethodCacheable()
-            : $request->isMethodSafe(false);
-
-        if (!$cacheable
+        if (!$request->isMethodCacheable()
             || !$request->isNoCache()
             || !$this->isRequestAllowed($request)
         ) {
