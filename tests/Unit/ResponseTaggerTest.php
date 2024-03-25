@@ -23,13 +23,13 @@ class ResponseTaggerTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    public function testDefaultFormatter()
+    public function testDefaultFormatter(): void
     {
         $tagger = new ResponseTagger();
         $this->assertEquals('X-Cache-Tags', $tagger->getTagsHeaderName());
     }
 
-    public function testGetTagsHeaderValue()
+    public function testGetTagsHeaderValue(): void
     {
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
@@ -46,7 +46,7 @@ class ResponseTaggerTest extends TestCase
         $this->assertTrue($tagger->hasTags()); // getting the header does not clear the tags
     }
 
-    public function testTagResponseReplace()
+    public function testTagResponseReplace(): void
     {
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
@@ -63,6 +63,7 @@ class ResponseTaggerTest extends TestCase
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withHeader')
             ->with('FOS-Tags', 'tag-1,tag-2')
+            ->andReturn($this->createMock(ResponseInterface::class))
             ->getMock();
 
         $tagger->addTags(['tag-1', 'tag-2']);
@@ -70,7 +71,7 @@ class ResponseTaggerTest extends TestCase
         $this->assertFalse($tagger->hasTags());
     }
 
-    public function testTagResponseAdd()
+    public function testTagResponseAdd(): void
     {
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
@@ -87,6 +88,7 @@ class ResponseTaggerTest extends TestCase
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withAddedHeader')
             ->with('FOS-Tags', 'tag-1,tag-2')
+            ->andReturn($this->createMock(ResponseInterface::class))
             ->getMock();
 
         $tagger->addTags(['tag-1', 'tag-2']);
@@ -94,7 +96,7 @@ class ResponseTaggerTest extends TestCase
         $this->assertFalse($tagger->hasTags());
     }
 
-    public function testTagResponseNoTags()
+    public function testTagResponseNoTags(): void
     {
         /** @var TagHeaderFormatter $headerFormatter */
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
@@ -111,7 +113,7 @@ class ResponseTaggerTest extends TestCase
         $tagger->tagResponse($response, true);
     }
 
-    public function testStrictEmptyTag()
+    public function testStrictEmptyTag(): void
     {
         $headerFormatter = new CommaSeparatedTagHeaderFormatter('FOS-Tags');
 
@@ -121,7 +123,7 @@ class ResponseTaggerTest extends TestCase
         $tagHandler->addTags(['post-1', false]);
     }
 
-    public function testNonStrictEmptyTag()
+    public function testNonStrictEmptyTag(): void
     {
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
@@ -136,7 +138,7 @@ class ResponseTaggerTest extends TestCase
         $this->assertEquals('post-1', $tagHandler->getTagsHeaderValue());
     }
 
-    public function testUniqueTags()
+    public function testUniqueTags(): void
     {
         $headerFormatter = new CommaSeparatedTagHeaderFormatter('FOS-Tags');
 
@@ -148,7 +150,7 @@ class ResponseTaggerTest extends TestCase
         $this->assertEquals('post-1,post-2,post-3', $tagHandler->getTagsHeaderValue());
     }
 
-    public function testClear()
+    public function testClear(): void
     {
         $tagger = new ResponseTagger();
         $this->assertFalse($tagger->hasTags());

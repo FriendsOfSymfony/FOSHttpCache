@@ -59,10 +59,8 @@ abstract class AccessControlledListener implements EventSubscriberInterface
 
     /**
      * Get the options resolver for the constructor arguments.
-     *
-     * @return OptionsResolver
      */
-    protected function getOptionsResolver()
+    protected function getOptionsResolver(): OptionsResolver
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
@@ -75,14 +73,7 @@ abstract class AccessControlledListener implements EventSubscriberInterface
         return $resolver;
     }
 
-    /**
-     * Check whether the request is allowed.
-     *
-     * @param Request $request The request to check
-     *
-     * @return bool Whether access is granted
-     */
-    protected function isRequestAllowed(Request $request)
+    protected function isRequestAllowed(Request $request): bool
     {
         return $this->clientMatcher->matches($request);
     }

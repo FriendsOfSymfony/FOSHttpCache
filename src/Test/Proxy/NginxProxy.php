@@ -13,28 +13,23 @@ namespace FOS\HttpCache\Test\Proxy;
 
 class NginxProxy extends AbstractProxy
 {
-    protected $binary = 'nginx';
+    protected string $binary = 'nginx';
 
-    protected $configFile;
+    protected string $configFile;
 
-    protected $port = 8080;
+    protected int $port = 8080;
 
-    protected $pid = '/tmp/foshttpcache-nginx.pid';
+    protected string $pid = '/tmp/foshttpcache-nginx.pid';
 
-    protected $cacheDir;
+    protected string $cacheDir;
 
-    /**
-     * Constructor.
-     *
-     * @param string $configFile Path to NGINX configuration file
-     */
-    public function __construct($configFile)
+    public function __construct(string $configFile)
     {
         $this->setConfigFile($configFile);
         $this->setCacheDir(sys_get_temp_dir().DIRECTORY_SEPARATOR.'foshttpcache-nginx');
     }
 
-    public function start()
+    public function start(): void
     {
         $this->runCommand(
             $this->getBinary(),
@@ -47,31 +42,25 @@ class NginxProxy extends AbstractProxy
         $this->waitFor($this->getIp(), $this->getPort(), 2000);
     }
 
-    public function stop()
+    public function stop(): void
     {
         if (file_exists($this->pid)) {
             $this->runCommand('kill', [trim(file_get_contents($this->pid))]);
         }
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->runCommand('rm', ['-rf', $this->getCacheDir()]);
         $this->start();
     }
 
-    /**
-     * @param string $cacheDir
-     */
-    public function setCacheDir($cacheDir)
+    public function setCacheDir(string $cacheDir): void
     {
         $this->cacheDir = $cacheDir;
     }
 
-    /**
-     * @return string
-     */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->cacheDir;
     }

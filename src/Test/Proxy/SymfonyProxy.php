@@ -19,12 +19,7 @@ namespace FOS\HttpCache\Test\Proxy;
  */
 class SymfonyProxy implements ProxyInterface
 {
-    /**
-     * Get Symfony cache directory.
-     *
-     * @return string
-     */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         $path = defined('SYMFONY_CACHE_DIR') ? SYMFONY_CACHE_DIR : sys_get_temp_dir().'/foshttpcache-symfony';
         if (!$path || '/' === $path) {
@@ -34,26 +29,17 @@ class SymfonyProxy implements ProxyInterface
         return $path;
     }
 
-    /**
-     * Start the proxy server.
-     */
-    public function start()
+    public function start(): void
     {
         $this->clear();
     }
 
-    /**
-     * Stop the proxy server.
-     */
-    public function stop()
+    public function stop(): void
     {
         // nothing to do
     }
 
-    /**
-     * Clear all cached content from the proxy server.
-     */
-    public function clear()
+    public function clear(): void
     {
         $path = realpath($this->getCacheDir());
 
@@ -63,7 +49,7 @@ class SymfonyProxy implements ProxyInterface
         }
 
         $path = $this->getCacheDir();
-        if (0 === stripos(PHP_OS, 'WIN')) {
+        if (0 === stripos(PHP_OS_FAMILY, 'WIN')) {
             // @codeCoverageIgnoreStart
             system('DEL /S '.$path);
         } else {

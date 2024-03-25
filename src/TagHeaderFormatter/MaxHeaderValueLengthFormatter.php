@@ -23,43 +23,35 @@ use FOS\HttpCache\Exception\InvalidTagException;
  */
 class MaxHeaderValueLengthFormatter implements TagHeaderFormatter, TagHeaderParser
 {
-    /**
-     * @var TagHeaderFormatter
-     */
-    private $inner;
+    private TagHeaderFormatter $inner;
 
-    /**
-     * @var int
-     */
-    private $maxHeaderValueLength;
+    private int $maxHeaderValueLength;
 
     /**
      * The default value of the maximum header length is 4096 because most
      * servers limit header values to 4kb.
      * HTTP messages cannot carry characters outside the ISO-8859-1 standard so they all
      * use up just one byte.
-     *
-     * @param int $maxHeaderValueLength
      */
-    public function __construct(TagHeaderFormatter $inner, $maxHeaderValueLength = 4096)
+    public function __construct(TagHeaderFormatter $inner, int $maxHeaderValueLength = 4096)
     {
         $this->inner = $inner;
         $this->maxHeaderValueLength = $maxHeaderValueLength;
     }
 
-    public function getTagsHeaderName()
+    public function getTagsHeaderName(): string
     {
         return $this->inner->getTagsHeaderName();
     }
 
-    public function getTagsHeaderValue(array $tags)
+    public function getTagsHeaderValue(array $tags): array|string
     {
         $values = (array) $this->inner->getTagsHeaderValue($tags);
         $newValues = [[]];
 
         foreach ($values as $value) {
             if ($this->isHeaderTooLong($value)) {
-                list($firstTags, $secondTags) = $this->splitTagsInHalves($tags);
+                [$firstTags, $secondTags] = $this->splitTagsInHalves($tags);
 
                 $newValues[] = (array) $this->getTagsHeaderValue($firstTags);
                 $newValues[] = (array) $this->getTagsHeaderValue($secondTags);
@@ -77,7 +69,7 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter, TagHeaderPars
         return $newValues;
     }
 
-    public function parseTagsHeaderValue($tags): array
+    public function parseTagsHeaderValue(array|string $tags): array
     {
         if ($this->inner instanceof TagHeaderParser) {
             return $this->inner->parseTagsHeaderValue($tags);
@@ -86,12 +78,7 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter, TagHeaderPars
         throw new \BadMethodCallException('The inner formatter does not implement '.TagHeaderParser::class);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    private function isHeaderTooLong($value)
+    private function isHeaderTooLong(string $value): bool
     {
         return mb_strlen($value) > $this->maxHeaderValueLength;
     }
@@ -99,11 +86,11 @@ class MaxHeaderValueLengthFormatter implements TagHeaderFormatter, TagHeaderPars
     /**
      * Split an array of tags in two more or less equal sized arrays.
      *
-     * @return array
+     * @return string[][]
      *
      * @throws InvalidTagException
      */
-    private function splitTagsInHalves(array $tags)
+    private function splitTagsInHalves(array $tags): array
     {
         if (1 === count($tags)) {
             throw new InvalidTagException(sprintf(

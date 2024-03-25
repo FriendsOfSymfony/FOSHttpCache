@@ -25,5 +25,5 @@ interface TagHeaderParser
      *
      * @return string[]
      */
-    public function parseTagsHeaderValue($tags): array;
+    public function parseTagsHeaderValue(array|string $tags): array;
 }

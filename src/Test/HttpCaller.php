@@ -20,23 +20,18 @@ trait HttpCaller
 {
     /**
      * HTTP client for requests to the application.
-     *
-     * @var HttpClient
      */
-    private $httpClient;
+    private HttpClient $httpClient;
 
     /**
      * Call a HTTP resource from your test.
      *
-     * @param string $uri     HTTP URI, domain and port are added from the embedding class if not specified
-     * @param array  $headers HTTP headers
-     * @param string $method  HTTP method
-     *
-     * @return ResponseInterface
+     * @param string                $uri     HTTP URI, domain and port are added from the embedding class if not specified
+     * @param array<string, string> $headers HTTP headers
      */
-    protected function getResponse($uri, array $headers = [], $method = 'GET')
+    protected function getResponse(string $uri, array $headers = [], string $method = 'GET'): ResponseInterface
     {
-        if (!$this->httpClient) {
+        if (!isset($this->httpClient)) {
             $this->httpClient = new HttpClient($this->getHostName(), $this->getCachingProxyPort());
         }
 
@@ -45,15 +40,11 @@ trait HttpCaller
 
     /**
      * Get the default host name to use.
-     *
-     * @return string
      */
-    abstract protected function getHostName();
+    abstract protected function getHostName(): string;
 
     /**
      * Get the default port to use.
-     *
-     * @return string
      */
-    abstract protected function getCachingProxyPort();
+    abstract protected function getCachingProxyPort(): int;
 }

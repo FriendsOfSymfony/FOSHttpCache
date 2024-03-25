@@ -35,11 +35,9 @@ interface BanCapable extends ProxyClient
      * host name, configure your proxy to copy the host to a custom HTTP header
      * such as X-Host.
      *
-     * @param array $headers HTTP headers that path must match to be banned
-     *
-     * @return $this
+     * @param array<string, string> $headers HTTP headers that path must match to be banned
      */
-    public function ban(array $headers);
+    public function ban(array $headers): static;
 
     /**
      * Ban URLs based on a regular expression for the URI, an optional
@@ -65,14 +63,12 @@ interface BanCapable extends ProxyClient
      *
      *    $client->banPath('*.png$', null, '^www.example.com$');
      *
-     * @param string       $path        regular expression pattern for URI to
-     *                                  invalidate
-     * @param string       $contentType regular expression pattern for the content
-     *                                  type to limit banning, for instance 'text'
-     * @param array|string $hosts       regular expression of a host name or list
-     *                                  of exact host names to limit banning
-     *
-     * @return $this
+     * @param string            $path        regular expression pattern for URI to
+     *                                       invalidate
+     * @param string|null       $contentType regular expression pattern for the content
+     *                                       type to limit banning, for instance 'text'
+     * @param array|string|null $hosts       regular expression of a host name or list
+     *                                       of exact host names to limit banning
      */
-    public function banPath($path, $contentType = null, $hosts = null);
+    public function banPath(string $path, ?string $contentType = null, array|string|null $hosts = null): static;
 }

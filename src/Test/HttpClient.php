@@ -26,26 +26,18 @@ class HttpClient
 {
     /**
      * HTTP client for requests to the application.
-     *
-     * @var PhpHttpClient
      */
-    private $httpClient;
+    private PhpHttpClient $httpClient;
 
-    /**
-     * @var string
-     */
-    private $hostname;
+    private string $hostname;
 
-    /**
-     * @var string
-     */
-    private $port;
+    private string $port;
 
     /**
      * @param string $hostname Default hostname if not specified in the URL
      * @param string $port     Default port if not specified in the URL
      */
-    public function __construct($hostname, $port)
+    public function __construct(string $hostname, string $port)
     {
         $this->hostname = $hostname;
         $this->port = $port;
@@ -57,10 +49,8 @@ class HttpClient
      * @param string $uri     HTTP URI
      * @param array  $headers HTTP headers
      * @param string $method  HTTP method
-     *
-     * @return ResponseInterface
      */
-    public function getResponse($uri, array $headers, $method)
+    public function getResponse(string $uri, array $headers, string $method): ResponseInterface
     {
         $request = $this->createRequest($method, $uri, $headers);
 
@@ -69,10 +59,8 @@ class HttpClient
 
     /**
      * Send PSR HTTP request to your application.
-     *
-     * @return ResponseInterface
      */
-    public function sendRequest(RequestInterface $request)
+    public function sendRequest(RequestInterface $request): ResponseInterface
     {
         // Close connections to make sure invalidation (PURGE/BAN) requests will
         // not interfere with content (GET) requests.
@@ -83,12 +71,10 @@ class HttpClient
 
     /**
      * Get HTTP client for your application.
-     *
-     * @return PhpHttpClient
      */
-    private function getHttpClient()
+    private function getHttpClient(): PhpHttpClient
     {
-        if (null === $this->httpClient) {
+        if (!isset($this->httpClient)) {
             $this->httpClient = HttpClientDiscovery::find();
         }
 
@@ -96,17 +82,11 @@ class HttpClient
     }
 
     /**
-     * Create a request.
-     *
-     * @param string $method
-     * @param string $uri
-     * @param array  $headers
-     *
-     * @return RequestInterface
+     * @param array<string, string> $headers
      *
      * @throws \Exception
      */
-    private function createRequest($method, $uri, $headers)
+    private function createRequest(string $method, string $uri, array $headers): RequestInterface
     {
         $uri = $this->createUri($uri);
         if ('' === $uri->getHost()) {
@@ -131,12 +111,8 @@ class HttpClient
 
     /**
      * Create PSR-7 URI object from URI string.
-     *
-     * @param string $uriString
-     *
-     * @return UriInterface
      */
-    private function createUri($uriString)
+    private function createUri(string $uriString): UriInterface
     {
         return UriFactoryDiscovery::find()->createUri($uriString);
     }

@@ -36,11 +36,9 @@ interface PurgeCapable extends ProxyClient
      * Please note that purge will invalidate all variants, so you do not need
      * to specify variants headers, such as ``Accept``.
      *
-     * @param string $url     Path or URL to purge
-     * @param array  $headers Extra HTTP headers to send to the caching proxy
-     *                        (optional)
-     *
-     * @return $this
+     * @param string                $url     Path or URL to purge
+     * @param array<string, string> $headers Extra HTTP headers to send to the caching proxy
+     *                                       (optional)
      */
-    public function purge($url, array $headers = []);
+    public function purge(string $url, array $headers = []): static;
 }

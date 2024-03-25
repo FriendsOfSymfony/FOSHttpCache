@@ -18,7 +18,7 @@ class IsCacheHitConstraint extends AbstractCacheConstraint
         return 'is a cache hit';
     }
 
-    public function getValue()
+    public function getValue(): string
     {
         return 'HIT';
     }

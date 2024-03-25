@@ -44,7 +44,7 @@ class KernelDispatcher implements Dispatcher
         $this->httpCacheProvider = $httpCacheProvider;
     }
 
-    public function invalidate(RequestInterface $invalidationRequest, $validateHost = true): void
+    public function invalidate(RequestInterface $invalidationRequest, bool $validateHost = true): void
     {
         $request = Request::create(
             $invalidationRequest->getUri(),

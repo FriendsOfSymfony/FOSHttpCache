@@ -29,17 +29,13 @@ class PurgeListener extends AccessControlledListener
 
     /**
      * The purge method to use.
-     *
-     * @var string
      */
-    private $purgeMethod;
+    private string $purgeMethod;
 
     /**
      * The clear cache header to use.
-     *
-     * @var string
      */
-    private $clearCacheHeader;
+    private string $clearCacheHeader;
 
     /**
      * When creating the purge listener, you can configure an additional option.
@@ -73,7 +69,7 @@ class PurgeListener extends AccessControlledListener
      *
      * Prevents access when the request comes from a non-authorized client.
      */
-    public function handlePurge(CacheEvent $event)
+    public function handlePurge(CacheEvent $event): void
     {
         $request = $event->getRequest();
         if ($this->purgeMethod !== $request->getMethod()) {
@@ -117,10 +113,8 @@ class PurgeListener extends AccessControlledListener
 
     /**
      * Add the purge_method option.
-     *
-     * @return OptionsResolver
      */
-    protected function getOptionsResolver()
+    protected function getOptionsResolver(): OptionsResolver
     {
         $resolver = parent::getOptionsResolver();
         $resolver->setDefault('purge_method', static::DEFAULT_PURGE_METHOD);

@@ -61,21 +61,10 @@ class CacheInvalidator
      */
     public const CLEAR = 'clear';
 
-    /**
-     * @var ProxyClient
-     */
-    private $cache;
+    private ProxyClient $cache;
 
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * Constructor.
-     *
-     * @param ProxyClient $cache HTTP cache
-     */
     public function __construct(ProxyClient $cache)
     {
         $this->cache = $cache;
@@ -91,11 +80,9 @@ class CacheInvalidator
      *
      * @param string $operation one of the class constants
      *
-     * @return bool
-     *
      * @throws InvalidArgumentException
      */
-    public function supports(string $operation)
+    public function supports(string $operation): bool
     {
         switch ($operation) {
             case self::PATH:
@@ -125,7 +112,7 @@ class CacheInvalidator
      */
     public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): void
     {
-        if ($this->eventDispatcher) {
+        if (isset($this->eventDispatcher)) {
             // if you want to set a custom event dispatcher, do so right after instantiating
             // the invalidator.
             throw new \Exception('You may not change the event dispatcher once it is set.');
@@ -135,12 +122,10 @@ class CacheInvalidator
 
     /**
      * Get the event dispatcher used by the cache invalidator.
-     *
-     * @return EventDispatcherInterface
      */
-    public function getEventDispatcher()
+    public function getEventDispatcher(): EventDispatcherInterface
     {
-        if (!$this->eventDispatcher) {
+        if (!isset($this->eventDispatcher)) {
             $this->eventDispatcher = new EventDispatcher();
         }
 
@@ -150,14 +135,12 @@ class CacheInvalidator
     /**
      * Invalidate a path or URL.
      *
-     * @param string $path    Path or URL
-     * @param array  $headers HTTP headers (optional)
-     *
-     * @return $this
+     * @param string                $path    Path or URL
+     * @param array<string, string> $headers HTTP headers (optional)
      *
      * @throws UnsupportedProxyOperationException
      */
-    public function invalidatePath($path, array $headers = []): static
+    public function invalidatePath(string $path, array $headers = []): static
     {
         if (!$this->cache instanceof PurgeCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('PURGE');
@@ -171,16 +154,14 @@ class CacheInvalidator
     /**
      * Refresh a path or URL.
      *
-     * @param string $path    Path or URL
-     * @param array  $headers HTTP headers (optional)
+     * @param string                $path    Path or URL
+     * @param array<string, string> $headers HTTP headers (optional)
      *
      * @see RefreshCapable::refresh()
      *
-     * @return $this
-     *
      * @throws UnsupportedProxyOperationException
      */
-    public function refreshPath($path, array $headers = []): static
+    public function refreshPath(string $path, array $headers = []): static
     {
         if (!$this->cache instanceof RefreshCapable) {
             throw UnsupportedProxyOperationException::cacheDoesNotImplement('REFRESH');
@@ -199,9 +180,7 @@ class CacheInvalidator
      *
      * @see BanCapable::ban()
      *
-     * @param array $headers HTTP headers that path must match to be banned
-     *
-     * @return $this
+     * @param array<string, string> $headers HTTP headers that path must match to be banned
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      */
@@ -221,9 +200,7 @@ class CacheInvalidator
      *
      * @see TagCapable::tags()
      *
-     * @param array $tags Tags that should be removed/expired from the cache. An empty tag list is ignored.
-     *
-     * @return $this
+     * @param string[] $tags Tags that should be removed/expired from the cache. An empty tag list is ignored.
      *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support Tags invalidation
      */
@@ -257,8 +234,6 @@ class CacheInvalidator
      * @param array|string|null $hosts       Regular expression of a host name or list of
      *                                       exact host names to limit banning
      *
-     * @return $this
-     *
      * @throws UnsupportedProxyOperationException If HTTP cache does not support BAN requests
      *
      *@see BanCapable::banPath()
@@ -276,8 +251,6 @@ class CacheInvalidator
 
     /**
      * Clear the cache completely.
-     *
-     * @return $this
      *
      * @throws UnsupportedProxyOperationException if HTTP cache does not support clearing the cache completely
      */
@@ -299,7 +272,7 @@ class CacheInvalidator
      *
      * @throws ExceptionCollection if any errors occurred during flush
      */
-    public function flush()
+    public function flush(): int
     {
         try {
             return $this->cache->flush();

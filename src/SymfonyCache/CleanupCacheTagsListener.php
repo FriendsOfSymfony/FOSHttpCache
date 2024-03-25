@@ -22,20 +22,17 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class CleanupCacheTagsListener implements EventSubscriberInterface
 {
-    /**
-     * @var string
-     */
-    private $tagsHeader;
+    private string $tagsHeader;
 
     /**
      * @param string $tagsHeader The header that is used for cache tags
      */
-    public function __construct($tagsHeader = TagHeaderFormatter::DEFAULT_HEADER_NAME)
+    public function __construct(string $tagsHeader = TagHeaderFormatter::DEFAULT_HEADER_NAME)
     {
         $this->tagsHeader = $tagsHeader;
     }
 
-    public function removeTagsHeader(CacheEvent $e)
+    public function removeTagsHeader(CacheEvent $e): void
     {
         if (null === $response = $e->getResponse()) {
             return;

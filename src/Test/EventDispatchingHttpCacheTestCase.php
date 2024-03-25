@@ -32,18 +32,16 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
     /**
      * Specify the CacheInvalidationInterface HttpCache class to test.
      *
-     * @return string Fully qualified class name of the AppCache
+     * @return class-string Fully qualified class name of the AppCache
      */
-    abstract protected function getCacheClass();
+    abstract protected function getCacheClass(): string;
 
     /**
      * Create a partial mock of the HttpCache to only test some methods.
      *
-     * @param array $mockedMethods List of methods to mock
-     *
-     * @return CacheInvalidation|EventDispatchingHttpCache|MockObject
+     * @param string[] $mockedMethods List of methods to mock
      */
-    protected function getHttpCachePartialMock(?array $mockedMethods = null)
+    protected function getHttpCachePartialMock(?array $mockedMethods = null): MockObject|CacheInvalidation|EventDispatchingHttpCache
     {
         $mock = $this
             ->getMockBuilder($this->getCacheClass())
@@ -70,11 +68,9 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 
         $refHttpCache = new \ReflectionClass(HttpCache::class);
         $refOptions = $refHttpCache->getProperty('options');
-        $refOptions->setAccessible(true);
         $refOptions->setValue($mock, $options);
 
         $surrogate = $refHttpCache->getProperty('surrogate');
-        $surrogate->setAccessible(true);
         $surrogate->setValue($mock, null);
 
         return $mock;
@@ -83,7 +79,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
     /**
      * Set the store property on a HttpCache to a StoreInterface expecting one write with request and response.
      */
-    protected function setStoreMock(CacheInvalidation $httpCache, Request $request, Response $response)
+    protected function setStoreMock(CacheInvalidation $httpCache, Request $request, Response $response): void
     {
         $store = $this->createMock(StoreInterface::class);
         $store
@@ -93,14 +89,13 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         ;
         $refHttpCache = new \ReflectionClass(HttpCache::class);
         $refStore = $refHttpCache->getProperty('store');
-        $refStore->setAccessible(true);
         $refStore->setValue($httpCache, $store);
     }
 
     /**
      * Assert that preHandle and postHandle are called.
      */
-    public function testHandleCalled()
+    public function testHandleCalled(): void
     {
         $catch = true;
         $request = Request::create('/foo', 'GET');
@@ -176,7 +171,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
      *
      * @depends testHandleCalled
      */
-    public function testPostHandleAfterPreHandle()
+    public function testPostHandleAfterPreHandle(): void
     {
         $catch = true;
         $request = Request::create('/foo', 'GET');
@@ -201,7 +196,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
     /**
      * Assert that preStore is called.
      */
-    public function testPreStoreCalled()
+    public function testPreStoreCalled(): void
     {
         $request = Request::create('/foo', 'GET');
         $response = new Response();
@@ -214,7 +209,6 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 
         $refHttpCache = new \ReflectionObject($httpCache);
         $method = $refHttpCache->getMethod('store');
-        $method->setAccessible(true);
         $method->invokeArgs($httpCache, [$request, $response]);
         $this->assertEquals(1, $testListener->preStoreCalls);
     }
@@ -222,7 +216,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
     /**
      * Assert that preStore response is used when provided.
      */
-    public function testPreStoreResponse()
+    public function testPreStoreResponse(): void
     {
         $request = Request::create('/foo', 'GET');
         $regularResponse = new Response();
@@ -237,7 +231,6 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 
         $refHttpCache = new \ReflectionObject($httpCache);
         $method = $refHttpCache->getMethod('store');
-        $method->setAccessible(true);
         $method->invokeArgs($httpCache, [$request, $regularResponse]);
         $this->assertEquals(1, $testListener->preStoreCalls);
     }
@@ -245,7 +238,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
     /**
      * Assert that preInvalidate is called.
      */
-    public function testPreInvalidateCalled()
+    public function testPreInvalidateCalled(): void
     {
         $catch = true;
         $request = Request::create('/foo', 'GET');
@@ -261,7 +254,6 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         ;
         $refHttpCache = new \ReflectionObject($httpCache);
         $method = $refHttpCache->getMethod('invalidate');
-        $method->setAccessible(true);
 
         $this->assertSame($response, $method->invokeArgs($httpCache, [$request, $catch]));
         $this->assertEquals(1, $testListener->preInvalidateCalls);
@@ -288,7 +280,6 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         ;
         $refHttpCache = new \ReflectionObject($httpCache);
         $method = $refHttpCache->getMethod('invalidate');
-        $method->setAccessible(true);
 
         $this->assertSame($response, $method->invokeArgs($httpCache, [$request, $catch]));
         $this->assertEquals(1, $testListener->preInvalidateCalls);

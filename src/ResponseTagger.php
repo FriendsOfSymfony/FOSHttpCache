@@ -34,20 +34,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ResponseTagger
 {
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
+
+    private TagHeaderFormatter $headerFormatter;
 
     /**
-     * @var TagHeaderFormatter
+     * @var string[]
      */
-    private $headerFormatter;
-
-    /**
-     * @var array
-     */
-    private $tags = [];
+    private array $tags = [];
 
     /**
      * Create the response tagger with a tag header formatter and options.
@@ -77,10 +71,8 @@ class ResponseTagger
 
     /**
      * Get the HTTP header name that will hold cache tags.
-     *
-     * @return string
      */
-    public function getTagsHeaderName()
+    public function getTagsHeaderName(): string
     {
         return $this->headerFormatter->getTagsHeaderName();
     }
@@ -90,9 +82,9 @@ class ResponseTagger
      *
      * This concatenates all tags and ensures correct encoding.
      *
-     * @erturn string
+     * @return string|string[]
      */
-    public function getTagsHeaderValue()
+    public function getTagsHeaderValue(): string|array
     {
         return $this->headerFormatter->getTagsHeaderValue($this->tags);
     }
@@ -104,23 +96,21 @@ class ResponseTagger
      *
      * @return string[]
      */
-    protected function parseTagsHeaderValue(array|string $headers)
+    protected function parseTagsHeaderValue(array|string $headers): array
     {
         if ($this->headerFormatter instanceof TagHeaderParser) {
             return $this->headerFormatter->parseTagsHeaderValue($headers);
         }
 
-        return array_merge(...array_map(function ($header) {
+        return array_merge(...array_map(static function ($header) {
             return explode(',', $header);
         }, $headers));
     }
 
     /**
      * Check whether the tag handler has any tags to set on the response.
-     *
-     * @return bool
      */
-    public function hasTags()
+    public function hasTags(): bool
     {
         return 0 < count($this->tags);
     }
@@ -132,11 +122,9 @@ class ResponseTagger
      *
      * @param string[] $tags List of tags to add
      *
-     * @return $this
-     *
      * @throws InvalidTagException
      */
-    public function addTags(array $tags)
+    public function addTags(array $tags): self
     {
         $filtered = array_filter($tags, 'is_string');
         $filtered = array_filter($filtered, 'strlen');
@@ -166,11 +154,9 @@ class ResponseTagger
      *
      * @param ResponseInterface $response Original response
      * @param bool              $replace  Whether to replace the current tags
-     *                                    on the response
-     *
-     * @return ResponseInterface
+     *                                    on the response or add them additionally
      */
-    public function tagResponse(ResponseInterface $response, bool $replace = false)
+    public function tagResponse(ResponseInterface $response, bool $replace = false): ResponseInterface
     {
         if (!$this->hasTags()) {
             return $response;
@@ -179,6 +165,7 @@ class ResponseTagger
         $tagsHeaderValue = $this->getTagsHeaderValue();
         $this->clear();
 
+        // withHeader accepts a single header or an array of multiple headers.
         if ($replace) {
             return $response->withHeader($this->getTagsHeaderName(), $tagsHeaderValue);
         }

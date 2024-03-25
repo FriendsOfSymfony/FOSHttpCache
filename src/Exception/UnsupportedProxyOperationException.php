@@ -19,10 +19,8 @@ class UnsupportedProxyOperationException extends \RuntimeException implements Ht
 {
     /**
      * @param string $method name of the HTTP method that would be required
-     *
-     * @return UnsupportedProxyOperationException
      */
-    public static function cacheDoesNotImplement($method)
+    public static function cacheDoesNotImplement(string $method): UnsupportedProxyOperationException
     {
         return new self(sprintf('HTTP cache does not support %s requests', $method));
     }

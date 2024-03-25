@@ -20,10 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AnonymousRequestMatcher implements RequestMatcherInterface
 {
-    /**
-     * @var array
-     */
-    private $options;
+    private array $options;
 
     /**
      * @param array $options Configuration for the matcher. All options are required because this matcher is usually
@@ -56,7 +53,7 @@ class AnonymousRequestMatcher implements RequestMatcherInterface
 
         if ($this->options['session_name_prefix']) {
             foreach ($request->cookies as $name => $value) {
-                if (0 === strpos($name, $this->options['session_name_prefix'])) {
+                if (str_starts_with($name, $this->options['session_name_prefix'])) {
                     return false;
                 }
             }

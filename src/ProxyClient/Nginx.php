@@ -13,6 +13,7 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * NGINX HTTP cache invalidator.
@@ -31,7 +32,7 @@ class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
 
     public const HTTP_HEADER_REFRESH = 'X-Refresh';
 
-    public function refresh($url, array $headers = [])
+    public function refresh(string $url, array $headers = []): static
     {
         $headers = array_merge($headers, [self::HTTP_HEADER_REFRESH => '1']);
         $this->queueRequest(self::HTTP_METHOD_REFRESH, $url, $headers);
@@ -39,7 +40,7 @@ class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
         return $this;
     }
 
-    public function purge($url, array $headers = [])
+    public function purge(string $url, array $headers = []): static
     {
         $purgeUrl = $this->buildPurgeUrl($url);
         $this->queueRequest(self::HTTP_METHOD_PURGE, $purgeUrl, $headers);
@@ -47,7 +48,7 @@ class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
         return $this;
     }
 
-    protected function configureOptions()
+    protected function configureOptions(): OptionsResolver
     {
         $resolver = parent::configureOptions();
         $resolver->setDefaults(['purge_location' => false]);
@@ -57,12 +58,8 @@ class Nginx extends HttpProxyClient implements PurgeCapable, RefreshCapable
 
     /**
      * Create the correct URL to purge a resource.
-     *
-     * @param string $url URL
-     *
-     * @return string Rewritten URL
      */
-    private function buildPurgeUrl($url)
+    private function buildPurgeUrl(string $url): string
     {
         if (!$this->options['purge_location']) {
             return $url;

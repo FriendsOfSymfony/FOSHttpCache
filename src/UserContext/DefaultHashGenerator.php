@@ -21,7 +21,7 @@ class DefaultHashGenerator implements HashGenerator
     /**
      * @var ContextProvider[]
      */
-    private $providers = [];
+    private array $providers = [];
 
     /**
      * Constructor.
@@ -43,10 +43,8 @@ class DefaultHashGenerator implements HashGenerator
 
     /**
      * Collect UserContext parameters and generate a hash from that.
-     *
-     * @return string The hash generated
      */
-    public function generateHash()
+    public function generateHash(): string
     {
         $userContext = new UserContext();
 
@@ -67,7 +65,7 @@ class DefaultHashGenerator implements HashGenerator
      *
      * @param ContextProvider $provider A context provider to be called to get context information about the current request
      */
-    private function registerProvider(ContextProvider $provider)
+    private function registerProvider(ContextProvider $provider): void
     {
         $this->providers[] = $provider;
     }

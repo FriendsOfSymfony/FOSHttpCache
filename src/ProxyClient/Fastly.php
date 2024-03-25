@@ -16,6 +16,8 @@ use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Http\Message\RequestFactory;
+use Psr\Http\Message\UriInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Fastly HTTP cache invalidator.
@@ -46,7 +48,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     private const API_ENDPOINT = 'https://api.fastly.com';
 
     public function __construct(
-        Dispatcher $httpDispatcher,
+        Dispatcher $dispatcher,
         array $options = [],
         ?RequestFactory $messageFactory = null
     ) {
@@ -54,13 +56,13 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
             throw new \Exception('ext-json is required for fastly invalidation');
         }
 
-        parent::__construct($httpDispatcher, $options, $messageFactory);
+        parent::__construct($dispatcher, $options, $messageFactory);
     }
 
     /**
      * @see https://docs.fastly.com/api/purge#purge_db35b293f8a724717fcf25628d713583
      */
-    public function invalidateTags(array $tags)
+    public function invalidateTags(array $tags): static
     {
         if (!$tags) {
             return $this;
@@ -90,7 +92,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      * @see https://docs.fastly.com/api/purge#soft_purge_0c4f56f3d68e9bed44fb8b638b78ea36
      * @see https://docs.fastly.com/guides/purging/authenticating-api-purge-requests#purging-urls-with-an-api-token
      */
-    public function purge($url, array $headers = [])
+    public function purge(string $url, array $headers = []): static
     {
         if (true === $this->options['soft_purge']) {
             $headers['Fastly-Soft-Purge'] = 1;
@@ -106,7 +108,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         return $this;
     }
 
-    public function refresh($url, array $headers = [])
+    public function refresh(string $url, array $headers = []): static
     {
         // First soft purge url
         $this->queueRequest(
@@ -134,7 +136,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
      * - Does not support soft purge, for that use an "all" key.
      * - Requires a API token of a user with at least Engineer permissions.
      */
-    public function clear()
+    public function clear(): static
     {
         $this->queueRequest(
             'POST',
@@ -149,7 +151,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     /**
      * {@inheritdoc} Always provides default authentication token on "Fastly-Key" header.
      */
-    protected function queueRequest($method, $url, array $headers, $validateHost = true, $body = null)
+    protected function queueRequest(string $method, UriInterface|string $url, array $headers, bool $validateHost = true, $body = null): void
     {
         parent::queueRequest(
             $method,
@@ -160,7 +162,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
         );
     }
 
-    protected function configureOptions()
+    protected function configureOptions(): OptionsResolver
     {
         $resolver = parent::configureOptions();
 

@@ -13,34 +13,32 @@ namespace FOS\HttpCache\Test\Proxy;
 
 class VarnishProxy extends AbstractProxy
 {
-    protected $binary = 'varnishd';
+    protected string $binary = 'varnishd';
 
-    protected $port = 6181;
+    protected int $port = 6181;
 
-    protected $managementPort = 6182;
+    protected int $managementPort = 6182;
 
-    protected $pid = '/tmp/foshttpcache-varnish.pid';
+    protected string $pid = '/tmp/foshttpcache-varnish.pid';
 
-    protected $configFile;
+    protected string $configFile;
 
-    protected $configDir;
+    protected ?string $configDir = null;
 
-    protected $cacheDir;
+    protected string $cacheDir;
 
-    protected $allowInlineC = false;
+    protected bool $allowInlineC = false;
 
     /**
-     * Constructor.
-     *
      * @param string $configFile Path to VCL file
      */
-    public function __construct($configFile)
+    public function __construct(string $configFile)
     {
         $this->setConfigFile($configFile);
         $this->setCacheDir(sys_get_temp_dir().DIRECTORY_SEPARATOR.'foshttpcache-varnish');
     }
 
-    public function start()
+    public function start(): void
     {
         $vclPath = ((int) $this->getVarnishVersion()) >= 5 ? 'vcl_path' : 'vcl_dir';
 
@@ -63,7 +61,7 @@ class VarnishProxy extends AbstractProxy
         $this->waitFor($this->ip, $this->getPort(), 5000);
     }
 
-    public function stop()
+    public function stop(): void
     {
         if (file_exists($this->pid)) {
             try {
@@ -76,26 +74,20 @@ class VarnishProxy extends AbstractProxy
         }
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->stop();
         $this->start();
     }
 
-    /**
-     * @param string $configDir
-     */
-    public function setConfigDir($configDir)
+    public function setConfigDir(string $configDir): void
     {
         $this->configDir = $configDir;
     }
 
-    /**
-     * @return string
-     */
-    public function getConfigDir()
+    public function getConfigDir(): string
     {
-        if (null === $this->configDir && null !== $this->configFile) {
+        if (null === $this->configDir) {
             return dirname(realpath($this->getConfigFile()));
         }
 
@@ -104,70 +96,38 @@ class VarnishProxy extends AbstractProxy
 
     /**
      * Set Varnish management port (defaults to 6182).
-     *
-     * @param int $managementPort
      */
-    public function setManagementPort($managementPort)
+    public function setManagementPort(int $managementPort): void
     {
         $this->managementPort = $managementPort;
     }
 
-    /**
-     * Get Varnish management port.
-     *
-     * @return int
-     */
-    public function getManagementPort()
+    public function getManagementPort(): int
     {
         return $this->managementPort;
     }
 
-    /**
-     * Set Varnish cache directory.
-     *
-     * @param string $cacheDir
-     */
-    public function setCacheDir($cacheDir)
+    public function setCacheDir(string $cacheDir): void
     {
         $this->cacheDir = $cacheDir;
     }
 
-    /**
-     * Get Varnish cache directory.
-     *
-     * @return string
-     */
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->cacheDir;
     }
 
-    /**
-     * Whether the inline C flag should be set.
-     *
-     * @return bool
-     */
-    public function getAllowInlineC()
+    public function getAllowInlineC(): bool
     {
         return $this->allowInlineC;
     }
 
-    /**
-     * Set whether the inline c flag should be on or off.
-     *
-     * @param bool $allowInlineC True for on, false for off
-     */
-    public function setAllowInlineC($allowInlineC)
+    public function setAllowInlineC(bool $allowInlineC): void
     {
         $this->allowInlineC = (bool) $allowInlineC;
     }
 
-    /**
-     * Defaults to 4.
-     *
-     * @return int
-     */
-    private function getVarnishVersion()
+    private function getVarnishVersion(): string
     {
         return getenv('VARNISH_VERSION') ?: '4.0';
     }

@@ -36,36 +36,27 @@ use Psr\Http\Message\UriInterface;
  */
 class HttpDispatcher implements Dispatcher
 {
-    /**
-     * @var HttpAsyncClient
-     */
-    private $httpClient;
-
-    /**
-     * @var UriFactory
-     */
-    private $uriFactory;
+    private HttpAsyncClient $httpClient;
+    private UriFactory $uriFactory;
 
     /**
      * Queued requests.
      *
      * @var RequestInterface[]
      */
-    private $queue = [];
+    private array $queue = [];
 
     /**
      * Caching proxy server host names or IP addresses.
      *
      * @var UriInterface[]
      */
-    private $servers;
+    private array $servers;
 
     /**
      * Application host name and optional base URL.
-     *
-     * @var UriInterface
      */
-    private $baseUri;
+    private ?UriInterface $baseUri;
 
     /**
      * If you specify a custom HTTP client, make sure that it converts HTTP
@@ -90,7 +81,7 @@ class HttpDispatcher implements Dispatcher
      */
     public function __construct(
         array $servers,
-        $baseUri = '',
+        string $baseUri = '',
         ?HttpAsyncClient $httpClient = null,
         ?UriFactory $uriFactory = null
     ) {
@@ -107,7 +98,7 @@ class HttpDispatcher implements Dispatcher
         $this->setBaseUri($baseUri);
     }
 
-    public function invalidate(RequestInterface $invalidationRequest, $validateHost = true)
+    public function invalidate(RequestInterface $invalidationRequest, bool $validateHost = true): void
     {
         if ($validateHost && !$this->baseUri && !$invalidationRequest->getUri()->getHost()) {
             throw MissingHostException::missingHost((string) $invalidationRequest->getUri());
@@ -122,7 +113,7 @@ class HttpDispatcher implements Dispatcher
         $this->queue[$signature] = $invalidationRequest;
     }
 
-    public function flush()
+    public function flush(): int
     {
         $queue = $this->queue;
         $this->queue = [];
@@ -167,7 +158,7 @@ class HttpDispatcher implements Dispatcher
      *
      * @return UriInterface[]
      */
-    protected function getServers()
+    protected function getServers(): array
     {
         return $this->servers;
     }
@@ -179,7 +170,7 @@ class HttpDispatcher implements Dispatcher
      *
      * @return RequestInterface[]
      */
-    private function fanOut(RequestInterface $request)
+    private function fanOut(RequestInterface $request): array
     {
         $requests = [];
 
@@ -244,7 +235,7 @@ class HttpDispatcher implements Dispatcher
      * @throws InvalidUrlException If server is invalid or contains URL
      *                             parts other than scheme, host, port
      */
-    private function setServers(array $servers)
+    private function setServers(array $servers): void
     {
         $this->servers = [];
         foreach ($servers as $server) {
@@ -256,11 +247,11 @@ class HttpDispatcher implements Dispatcher
      * Set application base URI that will be prefixed to relative purge and
      * refresh requests, and validate it.
      *
-     * @param string $uriString Your application’s base URI
+     * @param string|null $uriString Your application’s base URI
      *
      * @throws InvalidUrlException If the base URI is not a valid URI
      */
-    private function setBaseUri($uriString = null)
+    private function setBaseUri(?string $uriString = null): void
     {
         if (!$uriString) {
             $this->baseUri = null;
@@ -277,7 +268,6 @@ class HttpDispatcher implements Dispatcher
      * Prefix the URL with "http://" if it has no scheme, then check the URL
      * for validity. You can specify what parts of the URL are allowed.
      *
-     * @param string   $uriString
      * @param string[] $allowedParts Array of allowed URL parts (optional)
      *
      * @return UriInterface Filtered URI (with default scheme if there was no scheme)
@@ -285,19 +275,12 @@ class HttpDispatcher implements Dispatcher
      * @throws InvalidUrlException If URL is invalid, the scheme is not http or
      *                             contains parts that are not expected
      */
-    private function filterUri($uriString, array $allowedParts = [])
+    private function filterUri(string $uriString, array $allowedParts = []): UriInterface
     {
-        if (!is_string($uriString)) {
-            throw new \InvalidArgumentException(sprintf(
-                'URI parameter must be a string, %s given',
-                gettype($uriString)
-            ));
-        }
-
         // Creating a PSR-7 URI without scheme (with parse_url) results in the
         // original hostname to be seen as path. So first add a scheme if none
         // is given.
-        if (false === strpos($uriString, '://')) {
+        if (!str_contains($uriString, '://')) {
             $uriString = sprintf('%s://%s', 'http', $uriString);
         }
 
@@ -327,12 +310,8 @@ class HttpDispatcher implements Dispatcher
      * for the same requests.
      *
      * This signature is used to avoid sending the same invalidation request twice.
-     *
-     * @param RequestInterface $request An invalidation request
-     *
-     * @return string A signature for this request
      */
-    private function getRequestSignature(RequestInterface $request)
+    private function getRequestSignature(RequestInterface $request): string
     {
         $headers = $request->getHeaders();
         ksort($headers);

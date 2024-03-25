@@ -27,10 +27,8 @@ interface TagHeaderFormatter
 
     /**
      * Get the HTTP header name that will hold cache tags.
-     *
-     * @return string
      */
-    public function getTagsHeaderName();
+    public function getTagsHeaderName(): string;
 
     /**
      * Get the value for the HTTP tag header.
@@ -39,5 +37,5 @@ interface TagHeaderFormatter
      *
      * @return string|string[]
      */
-    public function getTagsHeaderValue(array $tags);
+    public function getTagsHeaderValue(array $tags): array|string;
 }
