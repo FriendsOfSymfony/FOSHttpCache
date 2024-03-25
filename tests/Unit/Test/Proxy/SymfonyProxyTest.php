@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class SymfonyProxyTest extends TestCase
 {
-    public function testStart()
+    public function testStart(): void
     {
         $proxy = new SymfonyProxy();
         $proxy->start();
@@ -25,7 +25,7 @@ class SymfonyProxyTest extends TestCase
         $this->addToAssertionCount(1);
     }
 
-    public function testInvalidDirectoryThrowsException()
+    public function testInvalidDirectoryThrowsException(): void
     {
         define('SYMFONY_CACHE_DIR', '/');
         $proxy = new SymfonyProxy();

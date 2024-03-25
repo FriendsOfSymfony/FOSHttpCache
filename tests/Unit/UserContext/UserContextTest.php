@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class UserContextTest extends TestCase
 {
-    public function testAddParameter()
+    public function testAddParameter(): void
     {
         $userContext = new UserContext();
         $userContext->addParameter('authenticated', true);
@@ -25,10 +25,10 @@ class UserContextTest extends TestCase
 
         $parameters = $userContext->getParameters();
 
-        $this->assertEquals(true, $parameters['authenticated']);
+        $this->assertTrue($parameters['authenticated']);
     }
 
-    public function testSetParameters()
+    public function testSetParameters(): void
     {
         $userContext = new UserContext();
 

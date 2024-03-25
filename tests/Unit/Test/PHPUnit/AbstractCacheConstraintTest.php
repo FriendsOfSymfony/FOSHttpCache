@@ -12,18 +12,18 @@
 namespace FOS\HttpCache\Tests\Unit\Test\PHPUnit;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractCacheConstraintTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
-    protected function getResponseMock()
+    protected function getResponseMock(): ResponseInterface&MockInterface
     {
-        $mock = \Mockery::mock(
+        return \Mockery::mock(
             '\Psr\Http\Message\ResponseInterface[hasHeader,getHeaderLine,getStatusCode,getHeaders,getBody]'
         );
-
-        return $mock;
     }
 }

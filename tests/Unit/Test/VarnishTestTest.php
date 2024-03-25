@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCache\Tests\Unit\Test;
 
-use FOS\HttpCache\Test\Proxy\VarnishProxy;
 use FOS\HttpCache\Test\VarnishTest;
 use PHPUnit\Framework\TestCase;
 
@@ -24,30 +23,29 @@ class VarnishTestTest extends TestCase
         // do not try to set up proxy
     }
 
-    protected function getBinary()
+    protected function getBinary(): string
     {
         return '/test/binary';
     }
 
-    protected function getCachingProxyPort()
+    protected function getCachingProxyPort(): int
     {
         return 123;
     }
 
-    protected function getVarnishMgmtPort()
+    protected function getVarnishMgmtPort(): int
     {
         return 321;
     }
 
-    protected function getCacheDir()
+    protected function getCacheDir(): string
     {
         return '/tmp/foobar';
     }
 
-    public function testGetProxy()
+    public function testGetProxy(): void
     {
         $proxy = $this->getProxy();
-        $this->assertInstanceOf(VarnishProxy::class, $proxy);
 
         $this->assertEquals('/test/binary', $proxy->getBinary());
         $this->assertEquals(123, $proxy->getPort());
