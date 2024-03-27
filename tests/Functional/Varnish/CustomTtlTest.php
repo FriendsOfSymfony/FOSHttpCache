@@ -12,11 +12,10 @@
 namespace FOS\HttpCache\Tests\Functional\Varnish;
 
 use FOS\HttpCache\Test\VarnishTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group webserver
- * @group varnish
- */
+#[Group('webserver')]
+#[Group('varnish')]
 class CustomTtlTest extends VarnishTestCase
 {
     protected function getConfigFile(): string

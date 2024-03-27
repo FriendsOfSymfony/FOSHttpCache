@@ -24,7 +24,7 @@ class VarnishProxyTest extends TestCase
         new VarnishProxy('nope.vcl');
     }
 
-    public function allowInlineFlagProvider(): array
+    public static function allowInlineFlagProvider(): array
     {
         return [[true], [false]];
     }

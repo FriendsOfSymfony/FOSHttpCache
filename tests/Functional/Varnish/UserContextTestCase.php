@@ -12,13 +12,10 @@
 namespace FOS\HttpCache\Tests\Functional\Varnish;
 
 use FOS\HttpCache\Test\VarnishTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * Test case for VCL handling the user context.
- *
- * @group webserver
- * @group varnish
- */
+#[Group('webserver')]
+#[Group('varnish')]
 abstract class UserContextTestCase extends VarnishTestCase
 {
     /**

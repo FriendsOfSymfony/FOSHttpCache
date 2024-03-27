@@ -12,11 +12,10 @@
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
 use FOS\HttpCache\Test\NginxTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group webserver
- * @group nginx
- */
+#[Group('webserver')]
+#[Group('nginx')]
 class NginxProxyClientTest extends NginxTestCase
 {
     use PurgeAssertions;

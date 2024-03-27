@@ -36,19 +36,19 @@ Web Server
 
 You will need to run a web server to provide the PHP application you want to
 test. The test cases only handle running the proxy server. It’s easiest to
-use PHP’s built in web server. Include the WebServerListener in your
-``phpunit.xml``:
+use PHP’s built in web server. Include the WebServerSubscriber in your
+``phpunit.xml``, either using the extension provided by this package or your own:
 
 .. literalinclude:: ../phpunit.xml.dist
     :prepend:
         <?xml version="1.0" encoding="UTF-8"?>
         <phpunit>
-            <listeners>
+            <extensions>
     :language: xml
-    :start-after: <listeners>
-    :end-before: </listeners>
+    :start-after: <extensions>
+    :end-before: </extensions>
     :append:
-            </listeners>
+            </extensions>
         </phpunit>
 
 Then set the ``webserver`` group on your test to start PHP’s web server before

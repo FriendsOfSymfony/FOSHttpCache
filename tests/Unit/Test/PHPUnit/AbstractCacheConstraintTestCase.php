@@ -16,7 +16,7 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
-abstract class AbstractCacheConstraintTest extends TestCase
+abstract class AbstractCacheConstraintTestCase extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

@@ -60,7 +60,7 @@ class MaxHeaderValueLengthFormatterTest extends TestCase
         );
     }
 
-    public function tooLongProvider(): array
+    public static function tooLongProvider(): array
     {
         return [
             [3, ['foo', 'bar', 'baz'], ['foo', 'bar', 'baz']],

@@ -97,7 +97,7 @@ class HttpDispatcherTest extends TestCase
         $httpDispatcher->flush();
     }
 
-    public function exceptionProvider(): array
+    public static function exceptionProvider(): array
     {
         /** @var RequestInterface $request */
         $request = \Mockery::mock(RequestInterface::class)

@@ -13,11 +13,10 @@ namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Varnish;
 use FOS\HttpCache\Test\VarnishTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * @group webserver
- * @group varnish
- */
+#[Group('webserver')]
+#[Group('varnish')]
 class VarnishProxyClientTest extends VarnishTestCase
 {
     use BanAssertions;

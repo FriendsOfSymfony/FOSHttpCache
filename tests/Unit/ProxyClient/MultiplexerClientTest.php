@@ -163,11 +163,11 @@ class MultiplexerClientTest extends TestCase
         $this->assertSame($multiplexer, $multiplexer->clear());
     }
 
-    public function provideInvalidClient(): array
+    public static function provideInvalidClient(): array
     {
         return [
             [['this-is-not-an-object']],
-            [[$this]],
+            [[new \stdClass()]],
         ];
     }
 

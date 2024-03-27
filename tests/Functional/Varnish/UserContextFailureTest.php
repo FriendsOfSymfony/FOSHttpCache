@@ -12,13 +12,10 @@
 namespace FOS\HttpCache\Tests\Functional\Varnish;
 
 use FOS\HttpCache\Test\VarnishTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
-/**
- * Test edge conditions and attacks.
- *
- * @group webserver
- * @group varnish
- */
+#[Group('webserver')]
+#[Group('varnish')]
 class UserContextFailureTest extends VarnishTestCase
 {
     /**

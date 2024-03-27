@@ -14,7 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\Test\PHPUnit;
 use FOS\HttpCache\Test\PHPUnit\IsCacheMissConstraint;
 use PHPUnit\Framework\ExpectationFailedException;
 
-class IsCacheMissConstraintTest extends AbstractCacheConstraintTest
+class IsCacheMissConstraintTestCase extends AbstractCacheConstraintTestCase
 {
     private IsCacheMissConstraint $constraint;
 
