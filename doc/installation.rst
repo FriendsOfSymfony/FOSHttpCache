@@ -9,28 +9,15 @@ and its dependencies using Composer_:
 
 .. code-block:: bash
 
-    $ composer require friendsofsymfony/http-cache 
+    $ composer require friendsofsymfony/http-cache
 
-The library relies on HTTPlug_ for sending invalidation requests over HTTP, so
-you need to install an HTTPlug-compatible client or adapter first:
-
-.. code-block:: bash
-
-    $ composer require php-http/guzzle6-adapter
-
-You also need a `PSR-7 message implementation`_. If you use Guzzle 6, Guzzle’s
-implementation is already included. If you use another client, you need to
-install one of the message implementations. Recommended:
+The library relies on HTTPlug_ for asynchronously sending invalidation requests
+over HTTP. There is no PSR for asynchronous HTTP client, you need to install an
+HTTPlug-compatible client or adapter:
 
 .. code-block:: bash
 
-    $ composer require guzzlehttp/psr7
-
-Alternatively:
-
-.. code-block:: bash
-
-    $ composer require zendframework/zend-diactoros
+    $ composer require php-http/guzzle7-adapter
 
 Then install the FOSHttpCache library itself:
 
@@ -73,6 +60,5 @@ invalidation requests:
 
 .. _Packagist: https://packagist.org/packages/friendsofsymfony/http-cache
 .. _Composer: http://getcomposer.org
-.. _PSR-7 message implementation: https://packagist.org/providers/psr/http-message-implementation
 .. _Semantic Versioning: http://semver.org/
 .. _HTTPlug: http://httplug.io

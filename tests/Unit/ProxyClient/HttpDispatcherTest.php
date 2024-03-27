@@ -21,16 +21,15 @@ use FOS\HttpCache\ProxyClient\HttpDispatcher;
 use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Http\Client\HttpAsyncClient;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\UriFactoryDiscovery;
-use Http\Message\MessageFactory;
-use Http\Message\UriFactory;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Mock\Client;
 use Http\Promise\Promise;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriFactoryInterface;
 
 class HttpDispatcherTest extends TestCase
 {
@@ -38,15 +37,15 @@ class HttpDispatcherTest extends TestCase
 
     private Client $httpClient;
 
-    private MessageFactory $messageFactory;
+    private RequestFactoryInterface $requestFactory;
 
-    private UriFactory $uriFactory;
+    private UriFactoryInterface $uriFactory;
 
     protected function setUp(): void
     {
         $this->httpClient = new Client();
-        $this->messageFactory = MessageFactoryDiscovery::find();
-        $this->uriFactory = UriFactoryDiscovery::find();
+        $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
+        $this->uriFactory = Psr17FactoryDiscovery::findUriFactory();
     }
 
     /**
@@ -79,7 +78,7 @@ class HttpDispatcherTest extends TestCase
             'my_hostname.dev',
             $this->httpClient
         );
-        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/path'));
+        $httpDispatcher->invalidate($this->requestFactory->createRequest('PURGE', '/path'));
 
         try {
             $httpDispatcher->flush();
@@ -93,7 +92,7 @@ class HttpDispatcherTest extends TestCase
         }
 
         // Queue must now be empty, so exception above must not be thrown again.
-        $httpDispatcher->invalidate($this->messageFactory->createRequest('GET', '/path'));
+        $httpDispatcher->invalidate($this->requestFactory->createRequest('GET', '/path'));
         $httpDispatcher->flush();
     }
 
@@ -142,7 +141,7 @@ class HttpDispatcherTest extends TestCase
             $this->httpClient
         );
 
-        $request = $this->messageFactory->createRequest('PURGE', '/path/without/hostname');
+        $request = $this->requestFactory->createRequest('PURGE', '/path/without/hostname');
         $httpDispatcher->invalidate($request);
     }
 
@@ -154,7 +153,7 @@ class HttpDispatcherTest extends TestCase
             $this->httpClient
         );
 
-        $request = $this->messageFactory->createRequest('BAN', '/', ['X-Url' => '/foo/.*']);
+        $request = $this->requestFactory->createRequest('BAN', '/')->withHeader('X-Url', '/foo/.*');
         $httpDispatcher->invalidate($request, false);
         $httpDispatcher->flush();
 
@@ -170,7 +169,7 @@ class HttpDispatcherTest extends TestCase
             $this->httpClient
         );
 
-        $request = $this->messageFactory->createRequest('PURGE', '/path');
+        $request = $this->requestFactory->createRequest('PURGE', '/path');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
 
@@ -186,7 +185,7 @@ class HttpDispatcherTest extends TestCase
             $this->httpClient
         );
 
-        $request = $this->messageFactory->createRequest('PURGE', '/path');
+        $request = $this->requestFactory->createRequest('PURGE', '/path');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
 
@@ -205,7 +204,7 @@ class HttpDispatcherTest extends TestCase
             'http://fos.lo/my/path',
             $this->httpClient
         );
-        $request = $this->messageFactory->createRequest('PURGE', '/append');
+        $request = $this->requestFactory->createRequest('PURGE', '/append');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
 
@@ -217,7 +216,7 @@ class HttpDispatcherTest extends TestCase
     public function testSetServersDefaultSchemeIsAdded(): void
     {
         $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->httpClient);
-        $request = $this->messageFactory->createRequest('PURGE', '/some/path');
+        $request = $this->requestFactory->createRequest('PURGE', '/some/path');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
 
@@ -229,7 +228,7 @@ class HttpDispatcherTest extends TestCase
     {
         $httpDispatcher = new HttpDispatcher(['127.0.0.1'], 'fos.lo', $this->httpClient);
         $uri = $this->uriFactory->createUri('/some/path')->withHost('goo.bar');
-        $request = $this->messageFactory->createRequest('PURGE', $uri);
+        $request = $this->requestFactory->createRequest('PURGE', $uri);
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
 
@@ -240,7 +239,7 @@ class HttpDispatcherTest extends TestCase
     public function testPortIsAdded(): void
     {
         $httpDispatcher = new HttpDispatcher(['127.0.0.1:8080'], 'fos.lo', $this->httpClient);
-        $request = $this->messageFactory->createRequest('PURGE', '/some/path');
+        $request = $this->requestFactory->createRequest('PURGE', '/some/path');
         $httpDispatcher->invalidate($request);
         $httpDispatcher->flush();
 
@@ -315,8 +314,8 @@ class HttpDispatcherTest extends TestCase
             'fos.lo',
             $httpClient
         );
-        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/a'));
-        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/b'));
+        $httpDispatcher->invalidate($this->requestFactory->createRequest('PURGE', '/a'));
+        $httpDispatcher->invalidate($this->requestFactory->createRequest('PURGE', '/b'));
 
         $this->assertEquals(
             2,
@@ -348,15 +347,15 @@ class HttpDispatcherTest extends TestCase
 
         $httpDispatcher = new HttpDispatcher(['127.0.0.1', '127.0.0.2'], 'fos.lo', $httpClient);
         $httpDispatcher->invalidate(
-            $this->messageFactory->createRequest('PURGE', '/c', ['a' => 'b', 'c' => 'd'])
+            $this->requestFactory->createRequest('PURGE', '/c')->withHeader('a', 'b')->withHeader('c', 'd')
         );
         $httpDispatcher->invalidate(
             // same request (header order is not significant)
-            $this->messageFactory->createRequest('PURGE', '/c', ['c' => 'd', 'a' => 'b'])
+            $this->requestFactory->createRequest('PURGE', '/c')->withHeader('c', 'd')->withHeader('a', 'b')
         );
         // different request as headers different
-        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/c'));
-        $httpDispatcher->invalidate($this->messageFactory->createRequest('PURGE', '/c'));
+        $httpDispatcher->invalidate($this->requestFactory->createRequest('PURGE', '/c'));
+        $httpDispatcher->invalidate($this->requestFactory->createRequest('PURGE', '/c'));
 
         $this->assertEquals(
             2,

@@ -11,10 +11,9 @@
 
 namespace FOS\HttpCache\Test;
 
-use Http\Client\HttpClient as PhpHttpClient;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Discovery\UriFactoryDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
@@ -27,7 +26,7 @@ class HttpClient
     /**
      * HTTP client for requests to the application.
      */
-    private PhpHttpClient $httpClient;
+    private ClientInterface $httpClient;
 
     private string $hostname;
 
@@ -72,10 +71,10 @@ class HttpClient
     /**
      * Get HTTP client for your application.
      */
-    private function getHttpClient(): PhpHttpClient
+    private function getHttpClient(): ClientInterface
     {
         if (!isset($this->httpClient)) {
-            $this->httpClient = HttpClientDiscovery::find();
+            $this->httpClient = Psr18ClientDiscovery::find();
         }
 
         return $this->httpClient;
@@ -102,11 +101,15 @@ class HttpClient
             $uri = $uri->withScheme('http');
         }
 
-        return MessageFactoryDiscovery::find()->createRequest(
+        $request = Psr17FactoryDiscovery::findRequestFactory()->createRequest(
             $method,
-            $uri,
-            $headers
+            $uri
         );
+        foreach ($headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+
+        return $request;
     }
 
     /**
@@ -114,6 +117,6 @@ class HttpClient
      */
     private function createUri(string $uriString): UriInterface
     {
-        return UriFactoryDiscovery::find()->createUri($uriString);
+        return Psr17FactoryDiscovery::findUriFactory()->createUri($uriString);
     }
 }

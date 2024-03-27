@@ -66,18 +66,18 @@ class HttpDispatcher implements Dispatcher
      * class and overwrite getServers. Be sure to have some caching in
      * getServers.
      *
-     * @param string[]             $servers    Caching proxy server hostnames or IP
-     *                                         addresses, including port if not port 80.
-     *                                         E.g. ['127.0.0.1:6081']
-     * @param string               $baseUri    Default application hostname, optionally
-     *                                         including base URL, for purge and refresh
-     *                                         requests (optional). This is required if
-     *                                         you purge and refresh paths instead of
-     *                                         absolute URLs
-     * @param HttpAsyncClient|null $httpClient Client capable of sending HTTP requests. If no
-     *                                         client is supplied, a default one is created
-     * @param UriFactoryInterface|null      $uriFactory Factory for PSR-7 URIs. If not specified, a
-     *                                         default one is created
+     * @param string[]                 $servers    Caching proxy server hostnames or IP
+     *                                             addresses, including port if not port 80.
+     *                                             E.g. ['127.0.0.1:6081']
+     * @param string                   $baseUri    Default application hostname, optionally
+     *                                             including base URL, for purge and refresh
+     *                                             requests (optional). This is required if
+     *                                             you purge and refresh paths instead of
+     *                                             absolute URLs
+     * @param HttpAsyncClient|null     $httpClient Client capable of sending HTTP requests. If no
+     *                                             client is supplied, a default one is created
+     * @param UriFactoryInterface|null $uriFactory Factory for PSR-7 URIs. If not specified, a
+     *                                             default one is created
      */
     public function __construct(
         array $servers,
@@ -286,7 +286,7 @@ class HttpDispatcher implements Dispatcher
 
         try {
             $uri = $this->uriFactory->createUri($uriString);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
             throw InvalidUrlException::invalidUrl($uriString);
         }
 
