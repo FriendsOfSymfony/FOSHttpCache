@@ -11,8 +11,11 @@
 
 namespace FOS\HttpCache\Test;
 
+use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\TestRunner\ExecutionStarted;
 use PHPUnit\Event\TestRunner\ExecutionStartedSubscriber;
+use PHPUnit\Event\TestSuite\TestSuite;
+use PHPUnit\Metadata\Group;
 
 class WebServerSubscriber implements ExecutionStartedSubscriber
 {
@@ -20,11 +23,18 @@ class WebServerSubscriber implements ExecutionStartedSubscriber
      * PHP web server PID.
      */
     private int $pid;
+    private bool $isTopLevel = true;
 
     public function notify(ExecutionStarted $event): void
     {
-        if (isset($this->pid)) {
-            // TODO: can we detect if 'webserver' is in the list of groups of the test suite?
+        if (!$this->isTopLevel) {
+            return;
+        }
+        $this->isTopLevel = false;
+
+        if (isset($this->pid)
+            || !$this->hasTestsWithGroup($event->testSuite(), 'webserver')
+        ) {
             return;
         }
 
@@ -33,6 +43,27 @@ class WebServerSubscriber implements ExecutionStartedSubscriber
         register_shutdown_function(static function () use ($pid): void {
             exec('kill '.$pid);
         });
+    }
+
+    private function hasTestsWithGroup(TestSuite $testSuite, string $group): bool
+    {
+        foreach ($testSuite->tests() as $test) {
+            if (!$test->isTestMethod()) {
+                continue;
+            }
+
+            assert($test instanceof TestMethod);
+
+            foreach ($test->metadata()->isGroup() as $testGroup) {
+                assert($testGroup instanceof Group);
+
+                if ($testGroup->groupName() === $group) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
