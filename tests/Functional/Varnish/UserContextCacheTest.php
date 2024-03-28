@@ -11,10 +11,10 @@
 
 namespace FOS\HttpCache\Tests\Functional\Varnish;
 
-use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes as PHPUnit;
 
-#[Group('webserver')]
-#[Group('varnish')]
+#[PHPUnit\Group('webserver')]
+#[PHPUnit\Group('varnish')]
 class UserContextCacheTest extends UserContextTestCase
 {
     protected function getConfigFile(): string
