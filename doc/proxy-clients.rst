@@ -447,10 +447,9 @@ all requests together, reducing the performance impact of sending invalidation
 requests.
 
 .. _HTTPlug: http://httplug.io/
-.. _HTTPlug discovery: http://php-http.readthedocs.io/en/latest/discovery.html
-.. _in the HTTPlug documentation: http://php-http.readthedocs.io/en/latest/clients.html
-.. _HTTPlug plugins: http://php-http.readthedocs.io/en/latest/plugins/index.html
-.. _message factory and URI factory: http://php-http.readthedocs.io/en/latest/message/message-factory.html
+.. _HTTPlug discovery: https://docs.php-http.org/en/latest/discovery.html
+.. _in the HTTPlug documentation: https://docs.php-http.org/en/latest/clients.html
+.. _HTTPlug plugins: https://docs.php-http.org/en/latest/plugins/index.html
 .. _Toflar Psr6Store: https://github.com/Toflar/psr6-symfony-http-cache-store
 .. _Fastly Purge API: https://docs.fastly.com/api/purge
 .. _Cloudflare: https://developers.cloudflare.com/cache/

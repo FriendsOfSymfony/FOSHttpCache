@@ -11,8 +11,9 @@
 
 namespace FOS\HttpCache\ProxyClient;
 
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\RequestFactory;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,7 +30,8 @@ abstract class HttpProxyClient implements ProxyClient
      */
     private Dispatcher $httpDispatcher;
 
-    private RequestFactory $requestFactory;
+    private RequestFactoryInterface $requestFactory;
+    private StreamFactoryInterface $streamFactory;
 
     /**
      * The options configured in the constructor argument or default values.
@@ -41,19 +43,23 @@ abstract class HttpProxyClient implements ProxyClient
     /**
      * The base class has no options.
      *
-     * @param Dispatcher          $dispatcher     Helper to send instructions to the caching proxy
-     * @param array               $options        Options for this client
-     * @param RequestFactory|null $messageFactory Factory for PSR-7 messages. If none supplied,
-     *                                            a default one is created
+     * @param Dispatcher                   $dispatcher     Helper to send instructions to the caching proxy
+     * @param array                        $options        Options for this client
+     * @param RequestFactoryInterface|null $requestFactory Factory for PSR-7 messages. If none supplied,
+     *                                                     a default one is created
+     * @param StreamFactoryInterface|null  $streamFactory  Factory for PSR-7 streams. If none supplied,
+     *                                                     a default one is created
      */
     public function __construct(
         Dispatcher $dispatcher,
         array $options = [],
-        ?RequestFactory $messageFactory = null
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
         $this->httpDispatcher = $dispatcher;
         $this->options = $this->configureOptions()->resolve($options);
-        $this->requestFactory = $messageFactory ?: MessageFactoryDiscovery::find();
+        $this->requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        $this->streamFactory = $streamFactory ?: Psr17FactoryDiscovery::findStreamFactory();
     }
 
     public function flush(): int
@@ -78,10 +84,20 @@ abstract class HttpProxyClient implements ProxyClient
      */
     protected function queueRequest(string $method, UriInterface|string $url, array $headers, bool $validateHost = true, $body = null): void
     {
-        $this->httpDispatcher->invalidate(
-            $this->requestFactory->createRequest($method, $url, $headers, $body),
-            $validateHost
-        );
+        $request = $this->requestFactory->createRequest($method, $url);
+        foreach ($headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+        if ($body) {
+            if (is_string($body)) {
+                $body = $this->streamFactory->createStream($body);
+            } elseif (is_resource($body)) {
+                $body = $this->streamFactory->createStreamFromResource($body);
+            }
+            $request = $request->withBody($body);
+        }
+
+        $this->httpDispatcher->invalidate($request, $validateHost);
     }
 
     /**

@@ -24,11 +24,11 @@
         "php": "^8.1",
         "symfony/event-dispatcher": "^6.4 || ^7.0",
         "symfony/options-resolver": "^6.4 || ^7.0",
-        "php-http/client-implementation": "^1.0 || ^2.0",
         "php-http/client-common": "^1.1.0 || ^2.0",
-        "php-http/message": "^1.0 || ^2.0",
-        "php-http/message-factory": "^1.0",
-        "php-http/discovery": "^1.12"
+        "php-http/discovery": "^1.12",
+        "php-http/async-client-implementation": "^1.1.0 || ^2.0",
+        "psr/http-client-implementation": "^1.0 || ^2.0",
+        "psr/http-factory": "^1.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.6.0",
@@ -41,7 +41,8 @@
     },
     "conflict": {
         "toflar/psr6-symfony-http-cache-store": "<2.2.1",
-        "phpunit/phpunit": "<10"
+        "phpunit/phpunit": "<10",
+        "guzzlehttp/psr7": "<2"
     },
     "suggest": {
         "friendsofsymfony/http-cache-bundle": "For integration with the Symfony framework",

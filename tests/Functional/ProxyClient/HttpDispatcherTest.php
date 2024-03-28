@@ -15,14 +15,14 @@ use FOS\HttpCache\Exception\ExceptionCollection;
 use FOS\HttpCache\Exception\ProxyResponseException;
 use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\ProxyClient\HttpDispatcher;
-use Http\Discovery\MessageFactoryDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
 use PHPUnit\Framework\TestCase;
 
 class HttpDispatcherTest extends TestCase
 {
     public function testNetworkError(): void
     {
-        $requestFactory = MessageFactoryDiscovery::find();
+        $requestFactory = Psr17FactoryDiscovery::findRequestFactory();
         $dispatcher = new HttpDispatcher(['localhost:1']);
         $dispatcher->invalidate($requestFactory->createRequest('GET', 'http://fos.test/foobar'));
 
@@ -36,7 +36,7 @@ class HttpDispatcherTest extends TestCase
 
     public function testClientError(): void
     {
-        $requestFactory = MessageFactoryDiscovery::find();
+        $requestFactory = Psr17FactoryDiscovery::findRequestFactory();
         $dispatcher = new HttpDispatcher(['http://foshttpcache.readthedocs.io']);
         $dispatcher->invalidate($requestFactory->createRequest('GET', 'http://fos.test/this-url-should-not-exist'));
 

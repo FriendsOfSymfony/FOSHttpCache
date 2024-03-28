@@ -15,7 +15,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
-use Http\Message\RequestFactory;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\UriInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -50,13 +50,13 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
     public function __construct(
         Dispatcher $dispatcher,
         array $options = [],
-        ?RequestFactory $messageFactory = null
+        ?RequestFactoryInterface $requestFactory = null
     ) {
         if (!function_exists('json_encode')) {
             throw new \Exception('ext-json is required for fastly invalidation');
         }
 
-        parent::__construct($dispatcher, $options, $messageFactory);
+        parent::__construct($dispatcher, $options, $requestFactory);
     }
 
     /**
@@ -81,7 +81,7 @@ class Fastly extends HttpProxyClient implements ClearCapable, PurgeCapable, Refr
                 $url,
                 $headers,
                 false,
-                json_encode(['surrogate_keys' => $tagChunk])
+                json_encode(['surrogate_keys' => $tagChunk], JSON_THROW_ON_ERROR)
             );
         }
 
