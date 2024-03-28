@@ -12,11 +12,11 @@
 namespace FOS\HttpCache\Tests\Functional\ProxyClient;
 
 use FOS\HttpCache\Test\SymfonyTestCase;
-use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use Toflar\Psr6HttpCacheStore\Psr6Store;
 
-#[Group('webserver')]
-#[Group('symfony')]
+#[PHPUnit\Group('webserver')]
+#[PHPUnit\Group('symfony')]
 class SymfonyProxyClientTest extends SymfonyTestCase
 {
     use InvalidateTagsAssertions;

@@ -13,9 +13,9 @@ namespace FOS\HttpCache\Tests\Functional;
 
 use FOS\HttpCache\CacheInvalidator;
 use FOS\HttpCache\Test\VarnishTestCase;
-use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes as PHPUnit;
 
-#[Group('webserver')]
+#[PHPUnit\Group('webserver')]
 class CacheInvalidatorTest extends VarnishTestCase
 {
     public function testInvalidateTags(): void

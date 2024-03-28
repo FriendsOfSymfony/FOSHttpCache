@@ -54,11 +54,11 @@ use PHP’s built in web server. Include the WebServerSubscriber in your
 Then set the ``webserver`` group on your test to start PHP’s web server before
 it runs::
 
+    use PHPUnit\Framework\Attributes as PHPUnit;
+
     class YourTest extends \PHPUnit_Framework_TestCase
     {
-        /**
-         * @group webserver
-         */
+        #[PHPUnit\Group('webserver')]
         public function testYourApp()
         {
             // The web server will be started before this test code runs and
