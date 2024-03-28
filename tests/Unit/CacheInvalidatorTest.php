@@ -27,6 +27,7 @@ use Http\Client\Exception\HttpException;
 use Http\Client\Exception\NetworkException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -168,9 +169,7 @@ class CacheInvalidatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideOperations
-     */
+    #[PHPUnit\DataProvider('provideOperations')]
     public function testMethodException(string $method, $arg): void
     {
         /** @var MockInterface&ProxyClient $proxyClient */

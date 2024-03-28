@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\TagHeaderFormatter;
 use FOS\HttpCache\Exception\InvalidTagException;
 use FOS\HttpCache\TagHeaderFormatter\CommaSeparatedTagHeaderFormatter;
 use FOS\HttpCache\TagHeaderFormatter\MaxHeaderValueLengthFormatter;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 
 class MaxHeaderValueLengthFormatterTest extends TestCase
@@ -33,10 +34,9 @@ class MaxHeaderValueLengthFormatterTest extends TestCase
     }
 
     /**
-     * @dataProvider tooLongProvider
-     *
      * @param string[] $tags
      */
+    #[PHPUnit\DataProvider('tooLongProvider')]
     public function testTooLong(int $maxLength, array $tags, string|array $expectedHeaderValue): void
     {
         $formatter = $this->getFormatter($maxLength);

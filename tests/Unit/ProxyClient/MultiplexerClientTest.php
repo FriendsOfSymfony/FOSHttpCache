@@ -20,6 +20,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use FOS\HttpCache\ProxyClient\MultiplexerClient;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 
 class MultiplexerClientTest extends TestCase
@@ -173,9 +174,8 @@ class MultiplexerClientTest extends TestCase
 
     /**
      * @param ProxyClient[] $clients
-     *
-     * @dataProvider provideInvalidClient
      */
+    #[PHPUnit\DataProvider('provideInvalidClient')]
     public function testInvalidClientTest(array $clients): void
     {
         $this->expectException(InvalidArgumentException::class);

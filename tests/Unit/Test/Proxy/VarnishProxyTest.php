@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\Tests\Unit\Test\Proxy;
 
 use FOS\HttpCache\Test\Proxy\VarnishProxy;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 
 class VarnishProxyTest extends TestCase
@@ -29,9 +30,7 @@ class VarnishProxyTest extends TestCase
         return [[true], [false]];
     }
 
-    /**
-     * @dataProvider allowInlineFlagProvider
-     */
+    #[PHPUnit\DataProvider('allowInlineFlagProvider')]
     public function testStart(bool $inlineC): void
     {
         $proxy = new VarnishProxyMock('config.vcl');

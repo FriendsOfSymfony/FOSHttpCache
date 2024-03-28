@@ -25,6 +25,7 @@ use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Mock\Client;
 use Http\Promise\Promise;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
@@ -49,12 +50,11 @@ class HttpDispatcherTest extends TestCase
     }
 
     /**
-     * @dataProvider exceptionProvider
-     *
      * @param \Exception  $exception Exception thrown by HTTP client
      * @param string      $type      The returned exception class to be expected
      * @param string|null $message   Optional exception message to match against
      */
+    #[PHPUnit\DataProvider('exceptionProvider')]
     public function testExceptions(\Exception $exception, string $type, ?string $message = null): void
     {
         $this->doTestException($exception, $type, $message);

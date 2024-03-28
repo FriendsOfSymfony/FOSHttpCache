@@ -16,6 +16,7 @@ use FOS\HttpCache\SymfonyCache\CacheInvalidation;
 use FOS\HttpCache\SymfonyCache\UserContextListener;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes as PHPUnit;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,9 +56,7 @@ class UserContextListenerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideConfigOptions
-     */
+    #[PHPUnit\DataProvider('provideConfigOptions')]
     public function testGenerateUserHashNotAllowed(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
@@ -74,9 +73,7 @@ class UserContextListenerTest extends TestCase
         $this->assertSame('Bad Request', $response->getContent());
     }
 
-    /**
-     * @dataProvider provideConfigOptions
-     */
+    #[PHPUnit\DataProvider('provideConfigOptions')]
     public function testPassingUserHashNotAllowed(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
@@ -93,9 +90,7 @@ class UserContextListenerTest extends TestCase
         $this->assertSame('Bad Request', $response->getContent());
     }
 
-    /**
-     * @dataProvider provideConfigOptions
-     */
+    #[PHPUnit\DataProvider('provideConfigOptions')]
     public function testUserHashAnonymous(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
@@ -160,9 +155,7 @@ class UserContextListenerTest extends TestCase
         $this->assertNull($response);
     }
 
-    /**
-     * @dataProvider provideConfigOptions
-     */
+    #[PHPUnit\DataProvider('provideConfigOptions')]
     public function testUserHashUserWithSession(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
@@ -256,9 +249,7 @@ class UserContextListenerTest extends TestCase
         $this->assertSame('38015b703d82206ebc01d17a39c727e5', $request->headers->get('X-User-Context-Hash'));
     }
 
-    /**
-     * @dataProvider provideConfigOptions
-     */
+    #[PHPUnit\DataProvider('provideConfigOptions')]
     public function testUserHashUserWithAuthorizationHeader(array $arg, array $options): void
     {
         $userContextListener = new UserContextListener($arg);
