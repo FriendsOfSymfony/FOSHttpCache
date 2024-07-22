@@ -208,6 +208,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
     {
         $request = Request::create('/foo', 'GET');
         $response = new Response();
+        $response->setTtl(42);
 
         $httpCache = $this->getHttpCachePartialMock();
         $testListener = new TestListener($this, $httpCache, $request);
@@ -230,6 +231,7 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $request = Request::create('/foo', 'GET');
         $regularResponse = new Response();
         $preStoreResponse = new Response();
+        $preStoreResponse->setTtl(42);
 
         $httpCache = $this->getHttpCachePartialMock();
         $testListener = new TestListener($this, $httpCache, $request);
@@ -237,6 +239,37 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $httpCache->addSubscriber($testListener);
 
         $this->setStoreMock($httpCache, $request, $preStoreResponse);
+
+        $refHttpCache = new \ReflectionObject($httpCache);
+        $method = $refHttpCache->getMethod('store');
+        $method->setAccessible(true);
+        $method->invokeArgs($httpCache, [$request, $regularResponse]);
+        $this->assertEquals(1, $testListener->preStoreCalls);
+    }
+
+    /**
+     * Assert that preStore response is used when provided.
+     */
+    public function testPreStoreResponseNoStore()
+    {
+        $request = Request::create('/foo', 'GET');
+        $regularResponse = new Response();
+        $regularResponse->setTtl(42);
+        $preStoreResponse = new Response();
+        $preStoreResponse->setTtl(0);
+
+        $httpCache = $this->getHttpCachePartialMock();
+        $testListener = new TestListener($this, $httpCache, $request);
+        $testListener->preStoreResponse = $preStoreResponse;
+        $httpCache->addSubscriber($testListener);
+
+        $store = $this->createMock(StoreInterface::class);
+        $store->expects($this->never())->method('write');
+
+        $refHttpCache = new \ReflectionClass(HttpCache::class);
+        $refStore = $refHttpCache->getProperty('store');
+        $refStore->setAccessible(true);
+        $refStore->setValue($httpCache, $store);
 
         $refHttpCache = new \ReflectionObject($httpCache);
         $method = $refHttpCache->getMethod('store');
