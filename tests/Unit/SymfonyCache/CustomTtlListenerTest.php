@@ -83,8 +83,8 @@ class CustomTtlListenerTest extends TestCase
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
-        $this->assertSame('33', $response->headers->getCacheControlDirective('s-maxage'));
-        $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
+        $this->assertSame('0', $response->headers->getCacheControlDirective('s-maxage'));
+        $this->assertTrue($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
     }
 
     public function testCleanup()
