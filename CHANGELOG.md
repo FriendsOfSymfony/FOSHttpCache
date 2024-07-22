@@ -3,6 +3,12 @@ Changelog
 
 See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpCache/releases).
 
+2.15.4
+------
+
+* Fix always use defined `CustomTtlListener` header even if not set.
+* Fix not calling store if Response object is not longer cachable after event listeners.
+
 2.15.3
 ------
 
