@@ -109,7 +109,11 @@ trait EventDispatchingHttpCache
     {
         $response = $this->dispatch(Events::PRE_STORE, $request, $response);
 
-        parent::store($request, $response);
+        // CustomTtlListener or other Listener or Subscribers might have set a non-cacheable response so we need revalidate this
+        // So store is only called when cacheable like Symfony core would do: https://github.com/symfony/symfony/blob/v7.1.2/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php#L409
+        if ($response->isCacheable()) {
+            parent::store($request, $response);
+        }
     }
 
     /**
