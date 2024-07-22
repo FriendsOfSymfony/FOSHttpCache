@@ -59,15 +59,16 @@ class CustomTtlListener implements EventSubscriberInterface
     public function useCustomTtl(CacheEvent $e)
     {
         $response = $e->getResponse();
-        if (!$response->headers->has($this->ttlHeader)) {
-            return;
-        }
         $backup = $response->headers->hasCacheControlDirective('s-maxage')
             ? $response->headers->getCacheControlDirective('s-maxage')
             : 'false'
         ;
         $response->headers->set(static::SMAXAGE_BACKUP, $backup);
-        $response->setTtl($response->headers->get($this->ttlHeader));
+        $response->setTtl(
+            $response->headers->has($this->ttlHeader)
+                ? $response->headers->get($this->ttlHeader)
+                : 0
+        );
     }
 
     /**
