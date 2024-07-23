@@ -83,6 +83,23 @@ class CustomTtlListenerTest extends TestCase
         $response = $event->getResponse();
 
         $this->assertInstanceOf(Response::class, $response);
+        $this->assertSame('33', $response->headers->getCacheControlDirective('s-maxage'));
+        $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
+    }
+
+    public function testNoCustomTtlNoFallback()
+    {
+        $ttlListener = new CustomTtlListener('X-Reverse-Proxy-TTL', false, true);
+        $request = Request::create('http://example.com/foo', 'GET');
+        $response = new Response('', 200, [
+            'Cache-Control' => 'max-age=30, s-maxage=33',
+        ]);
+        $event = new CacheEvent($this->kernel, $request, $response);
+
+        $ttlListener->useCustomTtl($event);
+        $response = $event->getResponse();
+
+        $this->assertInstanceOf(Response::class, $response);
         $this->assertSame('0', $response->headers->getCacheControlDirective('s-maxage'));
         $this->assertTrue($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
     }
@@ -94,6 +111,26 @@ class CustomTtlListenerTest extends TestCase
         $response = new Response('', 200, [
             'X-Reverse-Proxy-TTL' => '120',
             'Cache-Control' => 's-maxage=120, max-age=30',
+            CustomTtlListener::SMAXAGE_BACKUP => '60',
+        ]);
+        $event = new CacheEvent($this->kernel, $request, $response);
+
+        $ttlListener->cleanResponse($event);
+        $response = $event->getResponse();
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertTrue($response->headers->hasCacheControlDirective('s-maxage'));
+        $this->assertSame('60', $response->headers->getCacheControlDirective('s-maxage'));
+        $this->assertFalse($response->headers->has('X-Reverse-Proxy-TTL'));
+        $this->assertFalse($response->headers->has(CustomTtlListener::SMAXAGE_BACKUP));
+    }
+
+    public function testCleanupNoReverseProxyTtl()
+    {
+        $ttlListener = new CustomTtlListener();
+        $request = Request::create('http://example.com/foo', 'GET');
+        $response = new Response('', 200, [
+            'Cache-Control' => 's-maxage=0, max-age=30',
             CustomTtlListener::SMAXAGE_BACKUP => '60',
         ]);
         $event = new CacheEvent($this->kernel, $request, $response);

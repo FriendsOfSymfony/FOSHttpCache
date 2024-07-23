@@ -91,11 +91,6 @@ class CustomTtlListener implements EventSubscriberInterface
     public function cleanResponse(CacheEvent $e)
     {
         $response = $e->getResponse();
-        if (!$response->headers->has($this->ttlHeader)
-            && !$response->headers->has(static::SMAXAGE_BACKUP)
-        ) {
-            return;
-        }
 
         if ($response->headers->has(static::SMAXAGE_BACKUP)) {
             $smaxage = $response->headers->get(static::SMAXAGE_BACKUP);
@@ -104,12 +99,15 @@ class CustomTtlListener implements EventSubscriberInterface
             } else {
                 $response->headers->addCacheControlDirective('s-maxage', $smaxage);
             }
+
+            $response->headers->remove(static::SMAXAGE_BACKUP);
         }
 
-        if (!$this->keepTtlHeader) {
+        if ($response->headers->has($this->ttlHeader)
+            && !$this->keepTtlHeader
+        ) {
             $response->headers->remove($this->ttlHeader);
         }
-        $response->headers->remove(static::SMAXAGE_BACKUP);
     }
 
     public static function getSubscribedEvents(): array
