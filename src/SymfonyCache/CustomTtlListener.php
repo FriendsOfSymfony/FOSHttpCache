@@ -46,8 +46,8 @@ class CustomTtlListener implements EventSubscriberInterface
     public const SMAXAGE_BACKUP = 'FOS-Smaxage-Backup';
 
     /**
-     * @param string $ttlHeader       The header name that is used to specify the time to live
-     * @param bool   $keepTtlHeader   Keep the custom TTL header on the response for later usage (e.g. debugging)
+     * @param string $ttlHeader         The header name that is used to specify the time to live
+     * @param bool   $keepTtlHeader     Keep the custom TTL header on the response for later usage (e.g. debugging)
      * @param bool   $fallbackToSmaxage If the custom TTL header is not set, should s-maxage be used?
      */
     public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL', $keepTtlHeader = false, $fallbackToSmaxage = true)
