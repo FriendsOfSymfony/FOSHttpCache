@@ -361,7 +361,7 @@ You can enable keeping the custom header with the `keepTtlHeader` parameter::
     new CustomTtlListener('My-TTL-Header', keepTtlHeader: true);
 
 By default if the custom ttl header is not present, the listener falls back to the s-maxage cache-control directive.
-To disable this behavior you can set the `fallbackToSmaxage` parameter to false::
+To disable this behavior, you can set the `fallbackToSmaxage` parameter to false::
 
     new CustomTtlListener('My-TTL-Header', keepTtlHeader: true, fallbackToSmaxage: false);
 
