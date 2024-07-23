@@ -356,6 +356,14 @@ but you can customize that in the listener constructor::
     new CustomTtlListener('My-TTL-Header');
 
 The custom header is removed before sending the response to the client.
+You can enable keeping the custom header with the `keepTtlHeader` parameter::
+
+    new CustomTtlListener('My-TTL-Header', keepTtlHeader: true);
+
+By default if the custom ttl header is not found it will fallback to s-maxage.
+To disable this behavior you can set the `fallbackToSmaxage` parameter to false::
+
+    new CustomTtlListener('My-TTL-Header', keepTtlHeader: true, fallbackToSmaxage: false);
 
 .. _symfony-cache x-debugging:
 
