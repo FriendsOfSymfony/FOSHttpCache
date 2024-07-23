@@ -7,7 +7,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 ------
 
 * Add flag `fallbackToSmaxage` to `CustomTtlListener` to allow controlling fallback to s-maxage if custom TTL header is not defined on the response.
-* Fix: Do not call store if Response object is not longer cacheable after event listeners.
+* Fix for Symfony HttpCache: Do not call store if Response object is not longer cacheable after event listeners. If you use the custom TTL system, this is only a performance improvement, because the TTL of the response would still be 0. With a custom listener that changes the response explicitly to not be cached but does not change s-maxage, this bug might have led to caching responses that should not have been cached
 
 2.15.3
 ------
