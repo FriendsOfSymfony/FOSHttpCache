@@ -6,7 +6,7 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 2.15.4
 ------
 
-* Fix always use defined `CustomTtlListener` header even if not set.
+* Add flag to `CustomTtlListener` for disabling fallback to s-maxage if header not defined.
 * Fix not calling store if Response object is not longer cachable after event listeners.
 
 2.15.3
