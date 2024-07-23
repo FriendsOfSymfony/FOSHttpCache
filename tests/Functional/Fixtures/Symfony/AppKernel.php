@@ -31,21 +31,18 @@ class AppKernel implements HttpKernelInterface
             case '/cache':
                 $response = new Response(microtime(true));
                 $response->setCache(['max_age' => 3600, 'public' => true]);
-                $response->headers->set('X-Reverse-Proxy-TTL', '3600');
 
                 return $response;
             case '/tags':
                 $response = new Response(microtime(true));
                 $response->setCache(['max_age' => 3600, 'public' => true]);
                 $response->headers->set('X-Cache-Tags', 'tag1,tag2');
-                $response->headers->set('X-Reverse-Proxy-TTL', '3600');
 
                 return $response;
             case '/tags_multi_header':
                 $response = new Response(microtime(true));
                 $response->setCache(['max_age' => 3600, 'public' => true]);
                 $response->headers->set('X-Cache-Tags', ['tag1', 'tag2']);
-                $response->headers->set('X-Reverse-Proxy-TTL', '3600');
 
                 return $response;
             case '/negotiation':
@@ -53,7 +50,6 @@ class AppKernel implements HttpKernelInterface
                 $response->setCache(['max_age' => 3600, 'public' => true]);
                 $response->headers->set('Content-Type', $request->headers->get('Accept'));
                 $response->setVary('Accept');
-                $response->headers->set('X-Reverse-Proxy-TTL', '3600');
 
                 return $response;
         }
