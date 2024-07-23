@@ -36,7 +36,7 @@ class CustomTtlListener implements EventSubscriberInterface
     /**
      * @var bool
      */
-    private $disableFallback;
+    private $fallbackToSmaxage;
 
     /**
      * Header used for backing up the s-maxage.
@@ -48,13 +48,13 @@ class CustomTtlListener implements EventSubscriberInterface
     /**
      * @param string $ttlHeader       The header name that is used to specify the time to live
      * @param bool   $keepTtlHeader   Keep the custom TTL header on the response for later usage (e.g. debugging)
-     * @param bool   $disableFallback If the custom TTL header is not set, do not fall back to s-maxage
+     * @param bool   $fallbackToSmaxage If the custom TTL header is not set, should s-maxage be used?
      */
-    public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL', $keepTtlHeader = false, $disableFallback = false)
+    public function __construct($ttlHeader = 'X-Reverse-Proxy-TTL', $keepTtlHeader = false, $fallbackToSmaxage = true)
     {
         $this->ttlHeader = $ttlHeader;
         $this->keepTtlHeader = $keepTtlHeader;
-        $this->disableFallback = $disableFallback;
+        $this->fallbackToSmaxage = $fallbackToSmaxage;
     }
 
     /**
@@ -68,7 +68,7 @@ class CustomTtlListener implements EventSubscriberInterface
         $response = $e->getResponse();
 
         if (!$response->headers->has($this->ttlHeader)
-            && false === $this->disableFallback
+            && true === $this->fallbackToSmaxage
         ) {
             return;
         }
@@ -103,9 +103,7 @@ class CustomTtlListener implements EventSubscriberInterface
             $response->headers->remove(static::SMAXAGE_BACKUP);
         }
 
-        if ($response->headers->has($this->ttlHeader)
-            && !$this->keepTtlHeader
-        ) {
+        if (!$this->keepTtlHeader) {
             $response->headers->remove($this->ttlHeader);
         }
     }

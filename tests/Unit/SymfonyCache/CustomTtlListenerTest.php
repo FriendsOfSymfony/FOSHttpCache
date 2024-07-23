@@ -89,7 +89,7 @@ class CustomTtlListenerTest extends TestCase
 
     public function testNoCustomTtlNoFallback()
     {
-        $ttlListener = new CustomTtlListener('X-Reverse-Proxy-TTL', false, true);
+        $ttlListener = new CustomTtlListener('X-Reverse-Proxy-TTL', false, false);
         $request = Request::create('http://example.com/foo', 'GET');
         $response = new Response('', 200, [
             'Cache-Control' => 'max-age=30, s-maxage=33',
