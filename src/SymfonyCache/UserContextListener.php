@@ -171,7 +171,7 @@ class UserContextListener implements EventSubscriberInterface
 
         // Hash lookup request to let the backend generate the user hash
         $hashLookupRequest = $this->generateHashLookupRequest($request);
-        $resp = $kernel->handle($hashLookupRequest);
+        $resp = $kernel->handle($hashLookupRequest, HttpKernelInterface::SUB_REQUEST);
         // Store the user hash in memory for sub-requests (processed in the same thread).
         $this->userHash = $resp->headers->get($this->options['user_hash_header']);
 
