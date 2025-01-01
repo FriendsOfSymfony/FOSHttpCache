@@ -21,6 +21,8 @@ abstract class AbstractCacheConstraint extends Constraint
     ) {
     }
 
+    abstract public function getValue(): string;
+
     public function matches($other): bool
     {
         if (!$other instanceof ResponseInterface) {

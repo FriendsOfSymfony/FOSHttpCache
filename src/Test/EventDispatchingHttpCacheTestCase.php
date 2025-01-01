@@ -400,7 +400,7 @@ class TestListener implements EventSubscriberInterface
     public function __construct(
         EventDispatchingHttpCacheTestCase $test,
         CacheInvalidation $kernel,
-        Request $request
+        Request $request,
     ) {
         $this->test = $test;
         $this->kernel = $kernel;
@@ -480,7 +480,7 @@ class SimpleListener
     public function __construct(
         EventDispatchingHttpCacheTestCase $test,
         CacheInvalidation $kernel,
-        Request $request
+        Request $request,
     ) {
         $this->test = $test;
         $this->kernel = $kernel;

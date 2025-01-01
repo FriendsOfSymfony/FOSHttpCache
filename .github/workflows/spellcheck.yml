@@ -15,8 +15,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
-        with:
-          python-version: 3.7
       - name: Install dependencies
         run: |
           python -m pip install --upgrade setuptools
@@ -25,7 +23,4 @@ jobs:
         run: |
           make -C doc/ spelling
           if [[ -s "doc/_build/spelling/output.txt" ]]; then echo "\nSpelling errors found\n" && cat "doc/_build/spelling/output.txt"; fi
-      - name: Spellcheck
-        run: |
-          if [[ -s "doc/_build/spelling/output.txt" ]]; then cat "doc/_build/spelling/output.txt"; fi
           if [[ -s "doc/_build/spelling/output.txt" ]]; then false; fi
