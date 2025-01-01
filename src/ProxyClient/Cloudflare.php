@@ -54,7 +54,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
     public function __construct(
         Dispatcher $dispatcher,
         array $options = [],
-        ?RequestFactoryInterface $requestFactory = null
+        ?RequestFactoryInterface $requestFactory = null,
     ) {
         if (!function_exists('json_encode')) {
             throw new \Exception('ext-json is required for cloudflare invalidation');

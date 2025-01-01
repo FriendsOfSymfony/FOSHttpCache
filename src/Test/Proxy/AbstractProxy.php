@@ -93,6 +93,9 @@ abstract class AbstractProxy implements ProxyInterface
      */
     protected function runCommand(string $command, array $arguments): void
     {
+        if (!class_exists(Process::class)) {
+            throw new \RuntimeException('Running commands requires the symfony/process component');
+        }
         $process = new Process(array_merge([$command], $arguments));
         $process->run();
 

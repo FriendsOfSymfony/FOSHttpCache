@@ -351,12 +351,12 @@ but you can customize that in the listener constructor::
     new CustomTtlListener('My-TTL-Header');
 
 The custom header is removed before sending the response to the client.
-You can enable keeping the custom header with the `keepTtlHeader` parameter::
+You can enable keeping the custom header with the ``keepTtlHeader`` parameter::
 
     new CustomTtlListener('My-TTL-Header', keepTtlHeader: true);
 
-By default if the custom ttl header is not present, the listener falls back to the s-maxage cache-control directive.
-To disable this behavior, you can set the `fallbackToSmaxage` parameter to false::
+By default if the custom TTL header is not present, the listener falls back to the ``s-maxage`` cache-control directive.
+To disable this behavior, you can set the ``fallbackToSmaxage`` parameter to false::
 
     new CustomTtlListener('My-TTL-Header', fallbackToSmaxage: false);
 
