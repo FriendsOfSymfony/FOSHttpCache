@@ -282,7 +282,6 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $testListener = new TestListener($this, $httpCache, $request);
         $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
-        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache
             ->method('pass')
             ->with($request)
@@ -311,7 +310,6 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
         $testListener->preInvalidateResponse = $response;
         $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache->addSubscriber($testListener);
-        $this->assertTrue(method_exists($httpCache, 'addSubscriber'));
         $httpCache
             ->expects($this->never())
             ->method('pass')

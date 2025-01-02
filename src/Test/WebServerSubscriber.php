@@ -83,7 +83,7 @@ class WebServerSubscriber implements ExecutionStartedSubscriber
 
         $this->waitFor($this->getHostName(), (int) $this->getPort(), 2000);
 
-        return $output[0];
+        return (int) $output[0];
     }
 
     public function getHostName(): string
