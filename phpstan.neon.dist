@@ -1,5 +1,8 @@
 parameters:
-    level: 3
+    level: 4
     paths:
         - src
+        - tests
 
+includes:
+    - vendor/phpstan/phpstan-mockery/extension.neon
