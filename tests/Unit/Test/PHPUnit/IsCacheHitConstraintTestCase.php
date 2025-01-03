@@ -26,6 +26,8 @@ class IsCacheHitConstraintTestCase extends AbstractCacheConstraintTestCase
 
     public function testMatches(): void
     {
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
             ->shouldReceive('getHeaderLine')->with('cache-header')->once()->andReturn('MISS')
@@ -44,6 +46,8 @@ class IsCacheHitConstraintTestCase extends AbstractCacheConstraintTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Response has no "cache-header" header');
 
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->once()->andReturn(false)
             ->shouldReceive('getStatusCode')->andReturn(200)

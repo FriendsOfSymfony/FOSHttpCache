@@ -35,7 +35,7 @@ class NginxProxyClientTest extends NginxTestCase
     {
         $this->markTestSkipped('Not working with nginx, it can only purge one type');
 
-        $this->assertPurgeContentType($this->getProxyClient());
+        // $this->assertPurgeContentType($this->getProxyClient());
     }
 
     public function testPurgeSeparateLocationHost(): void
@@ -57,6 +57,6 @@ class NginxProxyClientTest extends NginxTestCase
     {
         $this->markTestSkipped('TODO: is nginx mixing up variants?');
 
-        $this->assertRefreshContentType($this->getProxyClient());
+        // $this->assertRefreshContentType($this->getProxyClient());
     }
 }

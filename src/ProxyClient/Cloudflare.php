@@ -81,7 +81,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
             sprintf(self::API_ENDPOINT.'/zones/%s/purge_cache', $this->options['zone_identifier']),
             [],
             false,
-            $this->json_encode(['tags' => $tags])
+            json_encode(['tags' => $tags], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)
         );
 
         return $this;
@@ -115,7 +115,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
             sprintf(self::API_ENDPOINT.'/zones/%s/purge_cache', $this->options['zone_identifier']),
             ['Accept' => 'application/json'],
             false,
-            $this->json_encode(['purge_everything' => true])
+            json_encode(['purge_everything' => true], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)
         );
 
         return $this;
@@ -130,7 +130,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
                 sprintf(self::API_ENDPOINT.'/zones/%s/purge_cache', $this->options['zone_identifier']),
                 [],
                 false,
-                $this->json_encode(['files' => $urlChunk])
+                json_encode(['files' => $urlChunk], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)
             );
         }
         $this->purgeByUrlsData = [];
@@ -164,15 +164,5 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
         ]);
 
         return $resolver;
-    }
-
-    private function json_encode(array $data): string
-    {
-        $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
-        if (false === $json) {
-            throw new \InvalidArgumentException(sprintf('Cannot encode "$data": %s', json_last_error_msg()));
-        }
-
-        return $json;
     }
 }

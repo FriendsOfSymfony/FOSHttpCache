@@ -118,7 +118,7 @@ class PurgeTagsListener extends AccessControlledListener
         if (1 === $reflection->getMethod('all')->getNumberOfParameters()) {
             $headers = $request->headers->all($this->tagsHeader);
         } else {
-            $headers = $request->headers->get($this->tagsHeader, '', false);
+            $headers = $request->headers->get($this->tagsHeader, '');
         }
 
         $tags = $this->tagsParser->parseTagsHeaderValue($headers);

@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCache\Test;
 
-use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\TestRunner\ExecutionStarted;
 use PHPUnit\Event\TestRunner\ExecutionStartedSubscriber;
 use PHPUnit\Event\TestSuite\TestSuite;
@@ -52,8 +51,6 @@ class WebServerSubscriber implements ExecutionStartedSubscriber
                 continue;
             }
 
-            assert($test instanceof TestMethod);
-
             foreach ($test->metadata()->isGroup() as $testGroup) {
                 assert($testGroup instanceof Group);
 
@@ -83,7 +80,7 @@ class WebServerSubscriber implements ExecutionStartedSubscriber
 
         $this->waitFor($this->getHostName(), (int) $this->getPort(), 2000);
 
-        return $output[0];
+        return (int) $output[0];
     }
 
     public function getHostName(): string
