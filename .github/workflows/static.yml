@@ -41,7 +41,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Pull in optional dependencies
-        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^4.2
+        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^4.2 phpstan/phpstan-mockery
+
 
       - name: Cache Vendor
         id: cache-vendor

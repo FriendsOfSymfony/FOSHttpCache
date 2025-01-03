@@ -44,6 +44,8 @@ class EventDispatchingHttpCacheTest extends TestCase
             ->shouldReceive('handle')
             ->andReturn($expectedResponse)
             ->getMock();
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $store = \Mockery::mock(StoreInterface::class)
             ->shouldReceive('lookup')->andReturn(null)->times(1)
             ->shouldReceive('write')->times(1)

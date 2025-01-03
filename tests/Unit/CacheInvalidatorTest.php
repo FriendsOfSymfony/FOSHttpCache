@@ -78,6 +78,8 @@ class CacheInvalidatorTest extends TestCase
     public function testInvalidatePath(): void
     {
         /** @var MockInterface&PurgeCapable $purge */
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $purge = \Mockery::mock(PurgeCapable::class)
             ->shouldReceive('purge')->once()->with('/my/route', [])
             ->shouldReceive('purge')->once()->with('/my/route', ['X-Test-Header' => 'xyz'])
@@ -97,6 +99,8 @@ class CacheInvalidatorTest extends TestCase
     {
         $headers = ['X' => 'Y'];
         /** @var MockInterface&RefreshCapable $refresh */
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $refresh = \Mockery::mock(RefreshCapable::class)
             ->shouldReceive('refresh')->once()->with('/my/route', $headers)
             ->shouldReceive('flush')->never()
@@ -190,6 +194,8 @@ class CacheInvalidatorTest extends TestCase
 
         $unreachableException = ProxyUnreachableException::proxyUnreachable($clientException);
 
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('getStatusCode')->andReturn(403)
             ->shouldReceive('getReasonPhrase')->andReturn('Forbidden')
@@ -206,6 +212,8 @@ class CacheInvalidatorTest extends TestCase
 
         $cacheInvalidator = new CacheInvalidator($proxyClient);
 
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $logger = \Mockery::mock(LoggerInterface::class)
             ->shouldReceive('log')->once()
             ->with(

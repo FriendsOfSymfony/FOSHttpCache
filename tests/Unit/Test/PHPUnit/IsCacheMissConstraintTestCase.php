@@ -25,6 +25,8 @@ class IsCacheMissConstraintTestCase extends AbstractCacheConstraintTestCase
 
     public function testMatches(): void
     {
+        // https://github.com/phpstan/phpstan-mockery/issues/8
+        /** @phpstan-ignore-next-line */
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
             ->shouldReceive('getHeaderLine')->with('cache-header')->once()->andReturn('HIT')
