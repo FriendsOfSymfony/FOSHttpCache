@@ -181,7 +181,7 @@ class PurgeTagsListenerTest extends TestCase
     private function getKernelMock(StoreInterface $store): CacheInvalidation&MockInterface
     {
         // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         return \Mockery::mock(CacheInvalidation::class)
             ->shouldReceive('getStore')
             ->once()
@@ -192,7 +192,7 @@ class PurgeTagsListenerTest extends TestCase
     private function getUnusedKernelMock(): CacheInvalidation&MockInterface
     {
         // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         return \Mockery::mock(CacheInvalidation::class)
             ->shouldNotReceive('getStore')
             ->getMock();

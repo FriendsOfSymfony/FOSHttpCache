@@ -14,7 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\SymfonyCache;
 use FOS\HttpCache\SymfonyCache\HttpCacheAware;
 use FOS\HttpCache\SymfonyCache\HttpCacheProvider;
 use PHPUnit\Framework\TestCase;
-    use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class CacheAwareTest extends TestCase
 {

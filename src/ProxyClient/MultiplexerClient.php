@@ -133,7 +133,7 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
      * Invoke the given $method on all available ProxyClients implementing the
      * given $interface.
      *
-     * @param string       $interface The FQN of the interface
+     * @param class-string $interface The FQN of the interface
      * @param string       $method    The method to invoke
      * @param array<mixed> $arguments The arguments to be passed to the method
      */
@@ -155,7 +155,9 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
     {
         return array_filter(
             $this->proxyClients,
-            static function ($proxyClient) use ($interface) {
+            static function (ProxyClient $proxyClient) use ($interface) {
+                // https://github.com/phpstan/phpstan/issues/8464
+                // @phpstan-ignore-next-line
                 return is_subclass_of($proxyClient, $interface);
             }
         );

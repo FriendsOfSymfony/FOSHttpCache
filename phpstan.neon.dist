@@ -4,5 +4,4 @@ parameters:
         - src
         - tests
 
-includes:
-    - vendor/phpstan/phpstan-mockery/extension.neon
+    treatPhpDocTypesAsCertain: false

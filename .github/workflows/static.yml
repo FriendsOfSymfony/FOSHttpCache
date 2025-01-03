@@ -8,7 +8,7 @@ on:
 
 jobs:
   phpstan-src:
-    name: PHPStan src
+    name: PHPStan
     runs-on: ubuntu-latest
 
     steps:
@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Pull in optional dependencies
-        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^4.2 symfony/process phpstan/phpstan-mockery
+        run: composer require --no-update phpunit/phpunit toflar/psr6-symfony-http-cache-store:^4.2 symfony/process mockery/mockery phpstan/phpstan-mockery guzzlehttp/guzzle php-http/mock-client
 
       - name: Cache Vendor
         id: cache-vendor

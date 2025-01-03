@@ -11,7 +11,6 @@
 
 namespace FOS\HttpCache\Test;
 
-use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\TestRunner\ExecutionStarted;
 use PHPUnit\Event\TestRunner\ExecutionStartedSubscriber;
 use PHPUnit\Event\TestSuite\TestSuite;
@@ -51,8 +50,6 @@ class WebServerSubscriber implements ExecutionStartedSubscriber
             if (!$test->isTestMethod()) {
                 continue;
             }
-
-            assert($test instanceof TestMethod);
 
             foreach ($test->metadata()->isGroup() as $testGroup) {
                 assert($testGroup instanceof Group);

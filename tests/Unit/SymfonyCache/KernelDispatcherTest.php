@@ -33,8 +33,7 @@ class KernelDispatcherTest extends TestCase
             ->with($this->callback(function (Request $request) {
                 // Test if the Symfony request contains the relevant information
                 // from the PSR-7 request
-                $valid = true;
-                $valid = $valid && 'PURGETAGS' === $request->getMethod();
+                $valid = 'PURGETAGS' === $request->getMethod();
                 $valid = $valid && 'foobar' === $request->headers->get('content-type');
                 $valid = $valid && 'foo,bar,stuff' === $request->headers->get('x-cache-tags');
                 $valid = $valid && ['query' => 'string', 'more' => 'stuff'] === $request->query->all();
