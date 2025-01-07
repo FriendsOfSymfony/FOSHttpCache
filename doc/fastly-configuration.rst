@@ -13,7 +13,7 @@ Tagging
 ~~~~~~~
 
 Fastly supports cache tagging out of the box.
-Configure the tag header to ``Surrogate-Key``. (``fos_http_cache.tags.response_header`` if you use FOSHttpCacheBundle)
+Configure the tag header to ``Surrogate-Key``. (``fos_http_cache.tags.response_header`` as well as ``fos_http_cache.tags.separator`` to `` `` if you use FOSHttpCacheBundle)
 
 Purge
 ~~~~~
