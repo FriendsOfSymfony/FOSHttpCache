@@ -110,7 +110,7 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
             if (!count($hosts)) {
                 throw new InvalidArgumentException('Either supply a list of hosts or null, but not an empty array.');
             }
-            $hosts = '^('.implode('|', $hosts).')$';
+            $hosts = '^('.implode('|', array_map('preg_quote', $hosts)).')$';
         }
 
         $headers = [
