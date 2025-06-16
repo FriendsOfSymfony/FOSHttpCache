@@ -71,7 +71,7 @@ class VarnishTest extends TestCase
             \Mockery::on(
                 function (RequestInterface $request) {
                     $this->assertEquals('BAN', $request->getMethod());
-                    $this->assertEquals('^(fos.lo|fos2.lo)$', $request->getHeaderLine('X-Host'));
+                    $this->assertEquals('^(fos\.lo|fos2\.lo)$', $request->getHeaderLine('X-Host'));
                     $this->assertEquals('/articles/.*', $request->getHeaderLine('X-Url'));
                     $this->assertEquals('text/html', $request->getHeaderLine('X-Content-Type'));
 
