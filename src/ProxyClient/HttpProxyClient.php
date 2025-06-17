@@ -40,9 +40,9 @@ abstract class HttpProxyClient implements ProxyClient
      *
      * @param Dispatcher                   $httpDispatcher Helper to send instructions to the caching proxy
      * @param array                        $options        Options for this client
-     * @param RequestFactoryInterface|null $requestFactory Factory for PSR-7 messages. If none supplied,
+     * @param RequestFactoryInterface|null $requestFactory PSR-17 factory for PSR-7 messages. If none supplied,
      *                                                     a default one is created
-     * @param StreamFactoryInterface|null  $streamFactory  Factory for PSR-7 streams. If none supplied,
+     * @param StreamFactoryInterface|null  $streamFactory  PSR-17 factory for PSR-7 streams. If none supplied,
      *                                                     a default one is created
      */
     public function __construct(
