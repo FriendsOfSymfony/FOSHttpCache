@@ -6,6 +6,13 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 3.x
 ===
 
+3.1.1
+-----
+
+### Varnish Cache
+
+* Fixed `banPath` to escape array of host names to be a correct regular expression.
+
 3.1.0
 -----
 
