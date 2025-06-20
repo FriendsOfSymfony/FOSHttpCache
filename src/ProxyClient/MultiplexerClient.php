@@ -156,8 +156,6 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
         return array_filter(
             $this->proxyClients,
             static function (ProxyClient $proxyClient) use ($interface) {
-                // https://github.com/phpstan/phpstan/issues/8464
-                // @phpstan-ignore-next-line
                 return is_subclass_of($proxyClient, $interface);
             }
         );
