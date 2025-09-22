@@ -37,6 +37,9 @@ jobs:
           varnish-modules-version: '0.20.0'
         - php: '8.4'
           symfony-version: '7.*'
+        - php: '8.4'
+          symfony-version: '8.*'
+          composer-stability: 'dev'
 
     steps:
       - name: Setup PHP
@@ -66,6 +69,11 @@ jobs:
         with:
           path: vendor
           key: ${{ runner.os }}-vendor-php-${{ matrix.php }}
+
+
+      - name: Set composer stability
+        if: ${{ matrix.composer-stability }}
+        run: composer config minimum-stability ${{ matrix.composer-stability }}
 
       - name: Install composer dependencies
         env:
