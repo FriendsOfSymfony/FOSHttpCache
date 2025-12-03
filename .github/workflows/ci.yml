@@ -39,7 +39,6 @@ jobs:
           symfony-version: '7.*'
         - php: '8.4'
           symfony-version: '8.*'
-          composer-stability: 'dev'
 
     steps:
       - name: Setup PHP
