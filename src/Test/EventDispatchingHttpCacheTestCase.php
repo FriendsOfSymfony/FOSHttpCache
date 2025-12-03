@@ -259,12 +259,10 @@ abstract class EventDispatchingHttpCacheTestCase extends TestCase
 
         $refHttpCache = new \ReflectionClass(HttpCache::class);
         $refStore = $refHttpCache->getProperty('store');
-        $refStore->setAccessible(true);
         $refStore->setValue($httpCache, $store);
 
         $refHttpCache = new \ReflectionObject($httpCache);
         $method = $refHttpCache->getMethod('store');
-        $method->setAccessible(true);
         $method->invokeArgs($httpCache, [$request, $regularResponse]);
         $this->assertEquals(1, $testListener->preStoreCalls);
     }
