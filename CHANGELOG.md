@@ -6,6 +6,12 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 3.x
 ===
 
+3.1.2
+-----
+
+* Compatible with Symfony 8.
+* Testing with PHP 8.5.
+
 3.1.1
 -----
 
