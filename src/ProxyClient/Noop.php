@@ -13,6 +13,7 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PrefixCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -26,7 +27,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
  *
  * @author Gavin Staniforth <gavin@gsdev.me>
  */
-class Noop implements ProxyClient, BanCapable, PurgeCapable, RefreshCapable, TagCapable, ClearCapable
+class Noop implements ProxyClient, BanCapable, PrefixCapable, PurgeCapable, RefreshCapable, TagCapable, ClearCapable
 {
     public function ban(array $headers): static
     {
@@ -39,6 +40,11 @@ class Noop implements ProxyClient, BanCapable, PurgeCapable, RefreshCapable, Tag
     }
 
     public function invalidateTags(array $tags): static
+    {
+        return $this;
+    }
+
+    public function invalidatePrefixes(array $prefixes): static
     {
         return $this;
     }

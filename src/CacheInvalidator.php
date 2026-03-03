@@ -18,6 +18,7 @@ use FOS\HttpCache\Exception\ProxyUnreachableException;
 use FOS\HttpCache\Exception\UnsupportedProxyOperationException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PrefixCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -212,6 +213,20 @@ class CacheInvalidator
         }
 
         $this->cache->invalidateTags($tags);
+
+        return $this;
+    }
+
+    public function invalidatePrefixes(array $prefixes): static
+    {
+        if (!$this->cache instanceof PrefixCapable) {
+            throw UnsupportedProxyOperationException::cacheDoesNotImplement('Prefixes');
+        }
+        if (!$prefixes) {
+            return $this;
+        }
+
+        $this->cache->invalidatePrefixes($prefixes);
 
         return $this;
     }

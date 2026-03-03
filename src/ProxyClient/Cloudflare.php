@@ -12,6 +12,7 @@
 namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PrefixCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -27,7 +28,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @author Simon Jones <simon@studio24.net>
  */
-class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, TagCapable
+class Cloudflare extends HttpProxyClient implements ClearCapable, PrefixCapable, PurgeCapable, TagCapable
 {
     /**
      * @see https://api.cloudflare.com/#getting-started-endpoints
@@ -82,6 +83,32 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PurgeCapable, 
             [],
             false,
             json_encode(['tags' => $tags], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)
+        );
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * URL prefix only available with Cloudflare enterprise plans.
+     *
+     * The prefixes need to include the domain name, but not the protocol, e.g. "www.example.com/path"
+     *
+     * @see https://developers.cloudflare.com/api/resources/cache/methods/purge/
+     */
+    public function invalidatePrefixes(array $prefixes): static
+    {
+        if (!$prefixes) {
+            return $this;
+        }
+
+        $this->queueRequest(
+            'POST',
+            sprintf(self::API_ENDPOINT.'/zones/%s/purge_cache', $this->options['zone_identifier']),
+            [],
+            false,
+            json_encode(['prefixes' => $prefixes], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES)
         );
 
         return $this;
