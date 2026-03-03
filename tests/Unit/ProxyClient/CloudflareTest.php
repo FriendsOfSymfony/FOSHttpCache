@@ -71,6 +71,28 @@ class CloudflareTest extends TestCase
         $cloudflare->invalidateTags(['tag-one', 'tag-two']);
     }
 
+    public function testInvalidatePrefixesPurge(): void
+    {
+        $cloudflare = $this->getProxyClient();
+
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('POST', $request->getMethod());
+                    $this->assertEquals('Bearer '.self::AUTH_TOKEN, current($request->getHeader('Authorization')));
+                    $this->assertEquals(sprintf('/client/v4/zones/%s/purge_cache', self::ZONE_IDENTIFIER), $request->getRequestTarget());
+
+                    $this->assertEquals('{"prefixes":["example.com/one/","example.com/two/"]}', $request->getBody()->getContents());
+
+                    return true;
+                }
+            ),
+            false
+        );
+
+        $cloudflare->invalidateTags(['example.com/one/', 'example.com/two/']);
+    }
+
     public function testPurge(): void
     {
         $cloudflare = $this->getProxyClient();

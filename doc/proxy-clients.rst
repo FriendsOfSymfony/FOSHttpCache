@@ -19,17 +19,17 @@ Supported invalidation methods
 Not all clients support all :ref:`invalidation methods <invalidation methods>`.
 This table provides of methods supported by each proxy client:
 
-============= ======= ======= ======= ======= =======
-Client        Purge   Refresh Ban     Tagging Clear
-============= ======= ======= ======= ======= =======
+============= ======= ======= ======= ======= ====== =======
+Client        Purge   Refresh Ban     Tagging Prefix Clear
+============= ======= ======= ======= ======= ====== =======
 Varnish       ✓       ✓       ✓       ✓
-Fastly        ✓       ✓               ✓       ✓
+Fastly        ✓       ✓               ✓              ✓
 NGINX         ✓       ✓
-Symfony Cache ✓       ✓               ✓ (1)   ✓ (1)
-Cloudflare    ✓                       ✓ (2)   ✓
-Noop          ✓       ✓       ✓       ✓       ✓
-Multiplexer   ✓       ✓       ✓       ✓       ✓
-============= ======= ======= ======= ======= =======
+Symfony Cache ✓       ✓               ✓ (1)          ✓ (1)
+Cloudflare    ✓                       ✓ (2)   ✓ (2)  ✓
+Noop          ✓       ✓       ✓       ✓              ✓
+Multiplexer   ✓       ✓       ✓       ✓              ✓
+============= ======= ======= ======= ======= ====== =======
 
 | (1): Only when using `Toflar Psr6Store`_.
 | (2): Only available with `Cloudflare Enterprise`_.
@@ -357,7 +357,7 @@ the HttpDispatcher is not available for Cloudflare)::
     Cloudflare supports different cache purge methods depending on your account.
     All Cloudflare accounts support purging the cache by URL and clearing all
     cache items. You need a `Cloudflare Enterprise`_ account to purge by cache
-    tags.
+    tags or prefixes.
 
 Zone identifier
 ^^^^^^^^^^^^^^^
