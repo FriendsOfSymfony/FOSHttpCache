@@ -92,7 +92,7 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PrefixCapable,
      * {@inheritdoc}
      *
      * URL prefix only available with Cloudflare enterprise plans.
-     * 
+     *
      * The prefixes need to include the domain name, but not the protocol, e.g. "www.example.com/path"
      *
      * @see https://developers.cloudflare.com/api/resources/cache/methods/purge/
