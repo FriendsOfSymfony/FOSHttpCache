@@ -6,6 +6,11 @@ See also the [GitHub releases page](https://github.com/FriendsOfSymfony/FOSHttpC
 3.x
 ===
 
+3.2.0
+-----
+
+* Added support for prefix invalidation, a special case of banning for cloudflare enterprise.
+
 3.1.2
 -----
 

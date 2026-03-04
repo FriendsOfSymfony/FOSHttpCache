@@ -236,4 +236,23 @@ class VarnishTest extends TestCase
 
         $varnish->refresh('/fresh');
     }
+
+    public function testInvalidatePrefixes(): void
+    {
+        $varnish = new Varnish($this->httpDispatcher);
+        $this->httpDispatcher->shouldReceive('invalidate')->once()->with(
+            \Mockery::on(
+                function (RequestInterface $request) {
+                    $this->assertEquals('BAN', $request->getMethod());
+                    $this->assertEquals('example.org', $request->getHeaderLine('X-Host'));
+                    $this->assertEquals('/one/', $request->getHeaderLine('X-Url'));
+                    $this->assertEquals('.*', $request->getHeaderLine('X-Content-Type'));
+
+                    return true;
+                }
+            ),
+            false
+        );
+        $varnish->invalidatePrefixes(['example.org/one/']);
+    }
 }
