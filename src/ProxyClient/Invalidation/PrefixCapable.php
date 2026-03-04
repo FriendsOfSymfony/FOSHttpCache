@@ -14,18 +14,15 @@ namespace FOS\HttpCache\ProxyClient\Invalidation;
 use FOS\HttpCache\ProxyClient\ProxyClient;
 
 /**
- * An HTTP cache that supports invalidation by a cache tag, that is, removing
- * or expiring objects from the cache tagged with a given tag or set of tags.
- *
- * HTTP responses must carry the tags header name with the tags header value
- * for tag invalidation to work.
+ * An HTTP cache that supports invalidation by a prefix, that is, removing
+ * or expiring objects from the cache with a given prefix or set of prefixes.
  */
 interface PrefixCapable extends ProxyClient
 {
     /**
-     * Remove/Expire cache objects based on cache tags.
+     * Remove/Expire cache objects based on URL prefixes.
      *
-     * @param string[] $tags Tags that should be removed/expired from the cache. An empty tag list should be ignored.
+     * @param string[] $prefixes Prefixed objects that should be removed/expired from the cache. An empty prefix list should be ignored.
      */
     public function invalidatePrefixes(array $prefixes): static;
 }
