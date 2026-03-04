@@ -44,10 +44,10 @@ class EventDispatchingHttpCacheTest extends TestCase
             ->shouldReceive('handle')
             ->andReturn($expectedResponse)
             ->getMock();
-        // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
         $store = \Mockery::mock(StoreInterface::class)
             ->shouldReceive('lookup')->andReturn(null)->times(1)
+            // https://github.com/phpstan/phpstan-mockery/issues/8
+            /* @phpstan-ignore-next-line */
             ->shouldReceive('write')->times(1)
             ->shouldReceive('unlock')->times(1)
             // need to declare the cleanup function explicitly to avoid issue between register_shutdown_function and mockery
