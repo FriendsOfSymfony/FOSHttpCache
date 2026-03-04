@@ -90,7 +90,7 @@ class CloudflareTest extends TestCase
             false
         );
 
-        $cloudflare->invalidateTags(['example.com/one/', 'example.com/two/']);
+        $cloudflare->invalidatePrefixes(['example.com/one/', 'example.com/two/']);
     }
 
     public function testPurge(): void
