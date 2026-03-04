@@ -26,10 +26,10 @@ class IsCacheHitConstraintTestCase extends AbstractCacheConstraintTestCase
 
     public function testMatches(): void
     {
-        // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->andReturn(true)
+            // https://github.com/phpstan/phpstan-mockery/issues/8
+            /* @phpstan-ignore-next-line */
             ->shouldReceive('getHeaderLine')->with('cache-header')->once()->andReturn('MISS')
             ->shouldReceive('getStatusCode')->andReturn(500)
             ->shouldReceive('getHeaders')->andReturn([])
@@ -46,10 +46,10 @@ class IsCacheHitConstraintTestCase extends AbstractCacheConstraintTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Response has no "cache-header" header');
 
-        // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
         $response = $this->getResponseMock()
             ->shouldReceive('hasHeader')->with('cache-header')->once()->andReturn(false)
+            // https://github.com/phpstan/phpstan-mockery/issues/8
+            /* @phpstan-ignore-next-line */
             ->shouldReceive('getStatusCode')->andReturn(200)
             ->shouldReceive('getHeaders')->andReturn([])
             ->shouldReceive('getBody')->andReturn(new Stream(fopen('php://temp', 'r+')))

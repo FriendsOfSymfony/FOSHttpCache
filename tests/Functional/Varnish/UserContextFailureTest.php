@@ -26,9 +26,7 @@ class UserContextFailureTest extends VarnishTestCase
     public function setUp(): void
     {
         // needs to be decided before doing the setup
-        // phpunit 9 calls the method getName(), phpunit 10 name()
-        $name = method_exists($this, 'name') ? $this->name() : $this->getName(); /* @phpstan-ignore-line */
-        $this->mode = 'testHashRequestFailure' === $name ? 'failure' : 'cache';
+        $this->mode = 'testHashRequestFailure' === $this->name() ? 'failure' : 'cache';
 
         parent::setUp();
     }
