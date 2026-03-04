@@ -15,7 +15,7 @@ use FOS\HttpCache\ProxyClient\ProxyClient;
 
 /**
  * An HTTP cache that supports invalidation by a prefix, that is, removing
- * or expiring objects from the cache with a given prefix or set of prefixes.
+ * or expiring objects from the cache starting with the given string or strings.
  */
 interface PrefixCapable extends ProxyClient
 {
