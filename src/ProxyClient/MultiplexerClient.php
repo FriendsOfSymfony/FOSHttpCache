@@ -14,6 +14,7 @@ namespace FOS\HttpCache\ProxyClient;
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PrefixCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -23,7 +24,7 @@ use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
  *
  * @author Emanuele Panzeri <thepanz@gmail.com>
  */
-class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, TagCapable, ClearCapable
+class MultiplexerClient implements BanCapable, PrefixCapable, PurgeCapable, RefreshCapable, TagCapable, ClearCapable
 {
     /**
      * @var ProxyClient[]
@@ -89,6 +90,21 @@ class MultiplexerClient implements BanCapable, PurgeCapable, RefreshCapable, Tag
         }
 
         $this->invoke(TagCapable::class, 'invalidateTags', [$tags]);
+
+        return $this;
+    }
+
+    /**
+     * Forwards prefix invalidation request to all clients.
+     *
+     * {@inheritdoc}
+     */
+    public function invalidatePrefixes(array $prefixes): static
+    {
+        if (!$prefixes) {
+            return $this;
+        }
+        $this->invoke(PrefixCapable::class, 'invalidatePrefixes', [$prefixes]);
 
         return $this;
     }
