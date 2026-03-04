@@ -19,18 +19,19 @@ Supported invalidation methods
 Not all clients support all :ref:`invalidation methods <invalidation methods>`.
 This table provides of methods supported by each proxy client:
 
-============= ======= ======= ======= ======= ====== =======
-Client        Purge   Refresh Ban     Tagging Prefix Clear
-============= ======= ======= ======= ======= ====== =======
+============= ======= ======= ======= ======= ========= =======
+Client        Purge   Refresh Ban     Tagging Prefix(*) Clear
+============= ======= ======= ======= ======= ========= =======
 Varnish       ✓       ✓       ✓       ✓       ✓
-Fastly        ✓       ✓               ✓              ✓
+Fastly        ✓       ✓               ✓                 ✓
 NGINX         ✓       ✓
-Symfony Cache ✓       ✓               ✓ (1)          ✓ (1)
-Cloudflare    ✓                       ✓ (2)   ✓ (2)  ✓
-Noop          ✓       ✓       ✓       ✓       ✓      ✓
-Multiplexer   ✓       ✓       ✓       ✓       ✓      ✓
-============= ======= ======= ======= ======= ====== =======
+Symfony Cache ✓       ✓               ✓ (1)             ✓ (1)
+Cloudflare    ✓                       ✓ (2)   ✓ (2)     ✓
+Noop          ✓       ✓       ✓       ✓       ✓         ✓
+Multiplexer   ✓       ✓       ✓       ✓       ✓         ✓
+============= ======= ======= ======= ======= ========= =======
 
+| (*): A limited version of Ban, that allows to invalidate by the beginning of a path
 | (1): Only when using `Toflar Psr6Store`_.
 | (2): Only available with `Cloudflare Enterprise`_.
 
