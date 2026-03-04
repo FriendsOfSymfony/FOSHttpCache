@@ -1,6 +1,7 @@
 vendor/
 composer.lock
 phpunit.xml
+phpstan.neon
 doc/_build/
 .php-cs-fixer.cache
 puli.json

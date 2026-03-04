@@ -48,13 +48,13 @@ class ResponseTaggerTest extends TestCase
 
     public function testTagResponseReplace(): void
     {
-        // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
             ->andReturn('tag-1,tag-2')
+            // https://github.com/phpstan/phpstan-mockery/issues/8
+            /* @phpstan-ignore-next-line */
             ->shouldReceive('getTagsHeaderName')
             ->once()
             ->andReturn('FOS-Tags')
@@ -75,13 +75,13 @@ class ResponseTaggerTest extends TestCase
 
     public function testTagResponseAdd(): void
     {
-        // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
         $headerFormatter = \Mockery::mock(TagHeaderFormatter::class)
             ->shouldReceive('getTagsHeaderValue')
             ->with(['tag-1', 'tag-2'])
             ->once()
             ->andReturn('tag-1,tag-2')
+            // https://github.com/phpstan/phpstan-mockery/issues/8
+            /* @phpstan-ignore-next-line */
             ->shouldReceive('getTagsHeaderName')
             ->once()
             ->andReturn('FOS-Tags')
@@ -109,10 +109,10 @@ class ResponseTaggerTest extends TestCase
 
         $tagger = new ResponseTagger(['header_formatter' => $headerFormatter]);
 
-        // https://github.com/phpstan/phpstan-mockery/issues/8
-        /** @phpstan-ignore-next-line */
         $response = \Mockery::mock(ResponseInterface::class)
             ->shouldReceive('withHeader')->never()
+            // https://github.com/phpstan/phpstan-mockery/issues/8
+            /* @phpstan-ignore-next-line */
             ->shouldReceive('withAddedHeader')->never()
             ->getMock();
 
