@@ -33,6 +33,11 @@ class NoopTest extends TestCase
         $this->assertSame($this->noop, $this->noop->invalidateTags(['tag123']));
     }
 
+    public function testInvalidatePrefixes(): void
+    {
+        $this->assertSame($this->noop, $this->noop->invalidatePrefixes(['example.com/one/']));
+    }
+
     public function testBanPath(): void
     {
         $this->assertSame($this->noop, $this->noop->banPath('/123'));

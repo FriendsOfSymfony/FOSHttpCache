@@ -14,6 +14,7 @@ namespace FOS\HttpCache\Tests\Unit\ProxyClient;
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\ClearCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PrefixCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -101,6 +102,21 @@ class MultiplexerClientTest extends TestCase
         $multiplexer = new MultiplexerClient([$mockClient]);
 
         $this->assertSame($multiplexer, $multiplexer->invalidateTags($tags));
+    }
+
+    public function testInvalidatePrefixes(): void
+    {
+        $prefixes = ['example.com/one/', 'example.com/two/'];
+
+        $mockClient = \Mockery::mock(PrefixCapable::class)
+            ->shouldReceive('invalidatePrefixes')
+            ->once()
+            ->with($prefixes)
+            ->getMock();
+
+        $multiplexer = new MultiplexerClient([$mockClient]);
+
+        $this->assertSame($multiplexer, $multiplexer->invalidatePrefixes($prefixes));
     }
 
     public function testRefresh(): void
