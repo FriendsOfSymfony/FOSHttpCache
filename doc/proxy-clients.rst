@@ -22,7 +22,7 @@ This table provides of methods supported by each proxy client:
 ============= ======= ======= ======= ======= ====== =======
 Client        Purge   Refresh Ban     Tagging Prefix Clear
 ============= ======= ======= ======= ======= ====== =======
-Varnish       ✓       ✓       ✓       ✓
+Varnish       ✓       ✓       ✓       ✓       ✓
 Fastly        ✓       ✓               ✓              ✓
 NGINX         ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)          ✓ (1)

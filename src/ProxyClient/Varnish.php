@@ -13,6 +13,7 @@ namespace FOS\HttpCache\ProxyClient;
 
 use FOS\HttpCache\Exception\InvalidArgumentException;
 use FOS\HttpCache\ProxyClient\Invalidation\BanCapable;
+use FOS\HttpCache\ProxyClient\Invalidation\PrefixCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\PurgeCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\RefreshCapable;
 use FOS\HttpCache\ProxyClient\Invalidation\TagCapable;
@@ -36,7 +37,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @author David de Boer <david@driebit.nl>
  */
-class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, RefreshCapable, TagCapable
+class Varnish extends HttpProxyClient implements BanCapable, PrefixCapable, PurgeCapable, RefreshCapable, TagCapable
 {
     public const HTTP_METHOD_BAN = 'BAN';
 
@@ -125,6 +126,22 @@ class Varnish extends HttpProxyClient implements BanCapable, PurgeCapable, Refre
         }
 
         return $this->ban($headers);
+    }
+
+    public function invalidatePrefixes(array $prefixes): static
+    {
+        if (!$prefixes) {
+            return $this;
+        }
+
+        foreach ($prefixes as $prefix) {
+            $parts = explode('/', $prefix, 2);
+            $host = $parts[0];
+            $path = isset($parts[1]) ? '/'.$parts[1] : '/';
+            $this->banPath($path, null, $host);
+        }
+
+        return $this;
     }
 
     public function purge(string $url, array $headers = []): static
