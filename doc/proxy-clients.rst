@@ -26,14 +26,13 @@ Varnish       ✓       ✓       ✓       ✓       ✓
 Fastly        ✓       ✓               ✓                 ✓
 NGINX         ✓       ✓
 Symfony Cache ✓       ✓               ✓ (1)             ✓ (1)
-Cloudflare    ✓                       ✓ (2)   ✓ (2)     ✓
+Cloudflare    ✓                       ✓       ✓         ✓
 Noop          ✓       ✓       ✓       ✓       ✓         ✓
 Multiplexer   ✓       ✓       ✓       ✓       ✓         ✓
 ============= ======= ======= ======= ======= ========= =======
 
 | (*): A limited version of Ban, that allows to invalidate by the beginning of a path
 | (1): Only when using `Toflar Psr6Store`_.
-| (2): Only available with `Cloudflare Enterprise`_.
 
 If needed, you can also implement your own client for other needs. Have a look
 at the interfaces in namespace ``FOS\HttpCache\ProxyClient\Invalidation``.
@@ -353,13 +352,6 @@ the HttpDispatcher is not available for Cloudflare)::
 
     $cacheInvalidator->invalidatePath('https://example.com/path')->flush();
 
-.. note::
-
-    Cloudflare supports different cache purge methods depending on your account.
-    All Cloudflare accounts support purging the cache by URL and clearing all
-    cache items. You need a `Cloudflare Enterprise`_ account to purge by cache
-    tags or prefixes.
-
 Zone identifier
 ^^^^^^^^^^^^^^^
 To find the zone identifier for your domain request this from the API::
@@ -456,5 +448,4 @@ requests.
 .. _Cloudflare: https://developers.cloudflare.com/cache/
 .. _custom caching with page rules: https://support.cloudflare.com/hc/en-us/articles/360021023712-Best-Practices-Speed-up-your-Site-with-Custom-Caching-via-Cloudflare-Page-Rules
 .. _Cloudflare Purge API: https://api.cloudflare.com/#zone-purge-all-files
-.. _Cloudflare Enterprise: https://developers.cloudflare.com/cache/how-to/purge-cache#cache-tags-enterprise-only
 .. _Cloudflare Purge by URL: https://developers.cloudflare.com/cache/how-to/purge-cache#purge-by-single-file-by-url
