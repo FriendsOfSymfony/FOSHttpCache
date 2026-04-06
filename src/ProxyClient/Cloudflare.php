@@ -65,8 +65,6 @@ class Cloudflare extends HttpProxyClient implements ClearCapable, PrefixCapable,
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @see https://api.cloudflare.com/#zone-purge-files-by-cache-tags,-host-or-prefix
      */
     public function invalidateTags(array $tags): static
